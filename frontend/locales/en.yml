@@ -1,0 +1,5 @@
+en:
+  group:
+    permission_types:
+      manage_agency_registration: manage agency registration workflow
+
