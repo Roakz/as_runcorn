@@ -1,5 +1,4 @@
 module ManagedCreation
-
   def self.prepended(base)
     class << base
       prepend(ClassMethods)
@@ -7,11 +6,11 @@ module ManagedCreation
   end
 
   def update_from_json(json, opts = {}, apply_nested_records = true)
-    # no monkeying with draft status!
-    json['draft'] = self.draft == 1
+    # no monkeying with registration state!
+    json['registration_state'] = self.registration_state
 
     # no publishing drafts!
-    json['publish'] = false if json['draft']
+    json['publish'] = false unless json['registration_state'] == 'approved'
 
     super(json, opts, apply_nested_records)
   end
@@ -19,7 +18,7 @@ module ManagedCreation
   module ClassMethods
     def create_from_json(json, opts = {})
       # these are the defaults, but just in case someone is trying to break the rules!
-      json['draft'] = true
+      json['registration_state'] = 'draft'
       json['publish'] = false
 
       super(json, opts)
@@ -28,10 +27,10 @@ module ManagedCreation
     def populate_display_name(json)
       super
 
-      if json['draft']
+      unless json['registration_state'] == 'approved'
         ['sort_name', 'primary_name'].each do |field|
-          if json.display_name.has_key?(field) && json.display_name[field] !~ /^\[DRAFT\] /
-            json.display_name[field] = '[DRAFT] ' + json.display_name[field]
+          if json.display_name.has_key?(field)
+            json.display_name[field] = "[#{json['registration_state'].upcase}] #{json.display_name[field]}"
           end
         end
       end
