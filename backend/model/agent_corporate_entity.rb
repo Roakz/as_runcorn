@@ -1,0 +1,2 @@
+AgentCorporateEntity.prepend(ManagedCreation)
+#AgentCorporateEntity.include(ManagedCreation)
