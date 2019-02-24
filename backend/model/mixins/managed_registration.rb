@@ -1,4 +1,4 @@
-module ManagedCreation
+module ManagedRegistration
   def self.prepended(base)
     class << base
       prepend(ClassMethods)
@@ -6,11 +6,17 @@ module ManagedCreation
   end
 
   def update_from_json(json, opts = {}, apply_nested_records = true)
+    # no updating submissions
+    if self.registration_state == 'submitted'
+      raise ReadOnlyException.new("Can't update an object that has been submitted for registration." +
+                                  " Withdraw submission to edit the draft.")
+    end
+
     # no monkeying with registration state!
     json['registration_state'] = self.registration_state
 
     # no publishing drafts!
-    json['publish'] = false unless json['registration_state'] == 'approved'
+    json['publish'] = false unless self.registration_state == 'approved'
 
     super(json, opts, apply_nested_records)
   end

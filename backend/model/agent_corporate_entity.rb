@@ -1,2 +1,1 @@
-AgentCorporateEntity.prepend(ManagedCreation)
-#AgentCorporateEntity.include(ManagedCreation)
+AgentCorporateEntity.prepend(ManagedRegistration)
