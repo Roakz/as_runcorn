@@ -39,6 +39,13 @@ class ArchivesSpaceService < Sinatra::Base
   end
 
 
-
-
+  Endpoint.get('/agents/corporate_entities/registrations/:state')
+    .description("List all agency registrations with the provided state")
+    .params(["state", String])
+    .permissions([])
+    .returns([200, '[:agent_corporate_entity]'],
+             [400, :error]) \
+  do
+    json_response(Registration.list(AgentCorporateEntity, params[:state]))
+  end
 end
