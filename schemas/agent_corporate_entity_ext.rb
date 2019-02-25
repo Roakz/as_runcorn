@@ -1,7 +1,15 @@
 {
   "registration_state" => {
     "type" => "string",
-    "required" => false,
     "enum" => ["draft", "submitted", "approved"],
+    "readonly" => true
+  },
+  "registration_last_user" => {
+    "type" => "string",
+    "readonly" => true
+  },
+  "registration_last_time" => {
+    "type" => "date-time",
+    "readonly" => true
   },
 }

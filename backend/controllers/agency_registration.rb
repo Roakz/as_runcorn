@@ -10,6 +10,8 @@ class ArchivesSpaceService < Sinatra::Base
     agency = AgentCorporateEntity.get_or_die(params[:id])
 
     agency.update(:registration_state => 'draft',
+                  :registration_last_user => RequestContext.get(:current_username),
+                  :registration_last_time => Time.now,
                   :publish => 0,
                   :user_mtime => Time.now,
                   :last_modified_by => RequestContext.get(:current_username))
@@ -28,6 +30,8 @@ class ArchivesSpaceService < Sinatra::Base
     agency = AgentCorporateEntity.get_or_die(params[:id])
 
     agency.update(:registration_state => 'submitted',
+                  :registration_last_user => RequestContext.get(:current_username),
+                  :registration_last_time => Time.now,
                   :user_mtime => Time.now,
                   :last_modified_by => RequestContext.get(:current_username))
 
@@ -45,6 +49,8 @@ class ArchivesSpaceService < Sinatra::Base
     agency = AgentCorporateEntity.get_or_die(params[:id])
 
     agency.update(:registration_state => 'approved',
+                  :registration_last_user => RequestContext.get(:current_username),
+                  :registration_last_time => Time.now,
                   :user_mtime => Time.now,
                   :last_modified_by => RequestContext.get(:current_username))
 
