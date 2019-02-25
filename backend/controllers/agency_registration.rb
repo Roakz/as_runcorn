@@ -1,6 +1,6 @@
 class ArchivesSpaceService < Sinatra::Base
 
-  Endpoint.post('/agents/corporate_entities/:id/draft')
+  Endpoint.post('/agents/corporate_entities/:id/withdraw')
     .description("Revert agency to draft status")
     .params(["id", :id])
     .permissions([:update_agent_record])
