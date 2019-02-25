@@ -14,8 +14,6 @@ module ManagedRegistration
 
     # no monkeying with registration state!
     json['registration_state'] = self.registration_state
-    json['registration_last_user'] = RequestContext.get(:current_username)
-    json['registration_last_time'] = Time.now
 
     # no publishing drafts!
     json['publish'] = false unless self.registration_state == 'approved'
@@ -27,8 +25,6 @@ module ManagedRegistration
     def create_from_json(json, opts = {})
       # these are the defaults, but just in case someone is trying to break the rules!
       json['registration_state'] = 'draft'
-      json['registration_last_user'] = RequestContext.get(:current_username)
-      json['registration_last_time'] = Time.now
       json['publish'] = false
 
       super(json, opts)

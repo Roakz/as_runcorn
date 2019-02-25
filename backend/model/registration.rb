@@ -6,41 +6,46 @@ class Registration
     :approve => :approved
   }
 
-  def self.handle_action(obj, action)
-    if obj.registration_state.intern == ACTION_STATES[action]
-      return {
-        :message => "Already #{ACTION_STATES[action]}. No change.",
-        :state => obj.registration_state,
+  def self.response(obj, action, message)
+    out = {
+      :message => message,
+      :action => action,
+      :state => obj.registration_state,
+    }
+
+    if obj.registration_last_action
+      out[:last_action] = {
+        :action => obj.registration_last_action,
         :user => obj.registration_last_user,
-        :time => obj.registration_last_time.getlocal
+        :time => obj.registration_last_time.getlocal,
       }
     end
 
+    out
+  end
+
+
+  def self.handle_action(obj, action)
+    if obj.registration_state.intern == ACTION_STATES[action]
+      return response(obj, action, "Already #{ACTION_STATES[action]}. No change.")
+    end
+
     if obj.registration_state.intern == :draft && action == :approve
-      return {
-        :message => "Can't approve a draft. Please submit first. No change.",
-        :state => obj.registration_state,
-        :user => obj.registration_last_user,
-        :time => obj.registration_last_time.getlocal
-      }
+      return response(obj, action, "Can't approve a draft. Please submit first. No change.")
     end
 
     user = RequestContext.get(:current_username)
     time = Time.now
 
     obj.update(:registration_state => ACTION_STATES[action],
+               :registration_last_action => action,
                :registration_last_user => user,
                :registration_last_time => time,
                :publish => 0,
                :user_mtime => time,
                :last_modified_by => user)
 
-    {
-      :message => 'Success',
-      :state => ACTION_STATES[action],
-      :user => user,
-      :time => time
-    }
+    response(obj, action, "Success")
   end
 
 
