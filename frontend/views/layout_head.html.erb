@@ -1,0 +1,11 @@
+<% if controller_supports_current_record? && current_record.respond_to?(:registration_state) &&
+      current_record.registration_state != 'approved' && user_can?('update_agent_record') %>
+  <%= stylesheet_link_tag "#{AppConfig[:frontend_proxy_prefix]}assets/managed_registration.css" %>
+
+  <%= javascript_include_tag 'registration_action_dropdown' %>
+
+  <script>
+     REGISTRATION_STATE = '<%=j current_record.registration_state %>';
+     REGISTRATION_ACTION_DROPDOWN = $('<%=j render_aspace_partial :partial => "shared/registration_action_dropdown", :locals => {:state => current_record.registration_state} %>');
+  </script>
+<% end %>

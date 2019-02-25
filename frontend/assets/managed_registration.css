@@ -1,0 +1,8 @@
+.registration-action-form {
+  min-width: 300px;
+  padding: 20px;
+}
+
+.registration-action-form .form-actions {
+  padding-top: 10px;
+}

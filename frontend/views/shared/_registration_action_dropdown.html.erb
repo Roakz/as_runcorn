@@ -1,0 +1,30 @@
+<%
+  user_type = user_can?('approve_agency_registration') ? 'approver' : 'submitter'
+  actions = []
+  actions << if state == 'draft'
+               'submit'
+             else # submitted
+               if user_type == 'approver'
+                 'approve'
+               else # submitter
+                 'withdraw'
+               end
+             end
+
+  actions << 'withdraw' if user_type == 'approver' && state == 'submitted'
+%>
+
+<div id="registration-action-dropdown" class="btn-group dropdown">
+  <a class="btn btn-sm btn-default btn-success dropdown-toggle registration-action" data-toggle="dropdown" href="javascript:void(0);">
+    <%= I18n.t("managed_registration.actions.#{actions.first}") %> <span class="caret"></span>
+  </a>
+
+    <ul class="dropdown-menu registration-action-form open-aligned-right">
+      <% actions.each do |action| %>
+        <%= render_aspace_partial :partial => "shared/registration_action_form",
+                                  :locals => {:action => action,
+                                              :first => action == actions.first,
+                                              :last => action == actions.last} %>
+      <% end %>
+    </ul>
+</div>

@@ -2,4 +2,24 @@ en:
   group:
     permission_types:
       manage_agency_registration: manage agency registration workflow
-
+  managed_registration:
+    states:
+      draft: Draft
+      submitted: Submitted
+      approved: Approved
+    button_labels:
+      draft: Submit for approval
+      submitted: Approve/Reject registration
+    actions:
+      submit: Submit for Approval
+      approve: Approve Registration
+      withdraw: Withdraw Submission
+      help:
+        submit: Submit this draft registration for approval.  Once approved, it can be published to the public website.
+        approve: Approve this draft registration. Once approved, it can be published to the public website.
+        withdraw: Withdraw the submission of this draft for further work before registration.
+      success:
+        submit: You have submitted this draft registration for approval.
+        approve: You have approved this registration.
+        withdraw: You have withdrawn the submission of this draft.
+      error: There was a problem with your action.

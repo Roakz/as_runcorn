@@ -1,0 +1,26 @@
+<% unless first %>
+  <hr/>
+<% end %>
+
+      <li>
+        <%= I18n.t("managed_registration.actions.help.#{action}") %>
+      </li>
+
+      <li>
+        &nbsp;
+      </li>
+
+      <li>
+        <div class="">
+          <a class="btn btn-success registration-action-button"
+             href="<%= request.original_fullpath %>/managed_registration/<%= action %>">
+            <%= I18n.t("managed_registration.actions.#{action}") %>
+          </a>
+
+<% if last %>
+          <button class="btn btn-cancel pull-right" href="#"><%= I18n.t("actions.cancel") %></button>
+<% end %>
+
+        </div>
+      </li>
+
