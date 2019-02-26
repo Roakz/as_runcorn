@@ -46,6 +46,14 @@ class ArchivesSpaceService < Sinatra::Base
     .returns([200, '[:agent_corporate_entity]'],
              [400, :error]) \
   do
-    json_response(Registration.list(AgentCorporateEntity, params[:state]))
+    if params[:state].intern == :all
+      json_response({
+                      :draft => Registration.list(AgentCorporateEntity, :draft),
+                      :submitted => Registration.list(AgentCorporateEntity, :submitted),
+                      :approved => Registration.list(AgentCorporateEntity, :approved),
+                    })
+    else
+      json_response(Registration.list(AgentCorporateEntity, params[:state]))
+    end
   end
 end
