@@ -2,6 +2,8 @@ en:
   group:
     permission_types:
       manage_agency_registration: manage agency registration workflow
+  validation_errors:
+    unable_to_publish_when_in_draft: Draft agencies cannot be published
   managed_registration:
     button_label: Agency Registrations
     states:
