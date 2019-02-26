@@ -10,7 +10,12 @@
   <tbody>
     <% list.each do |agency| %>
       <tr>
-        <td><%= agency['title'] %></td>
+        <td>
+          <%= link_to agency['title'], {:controller => :agents,
+                                        :action => :show,
+                                        :agent_type => :agent_corporate_entity,
+                                        :id => JSONModel(:agent_corporate_entity).id_for(agency["uri"])} %>
+        </td>
         <td><%= agency['registration_last_user'] %></td>
         <td><%= agency['registration_last_time'] %></td>
       </tr>
