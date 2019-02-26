@@ -3,7 +3,7 @@
 
 <h2>Draft</h2>
 
-<% if @list['approved'].length > 0 %>
+<% if @list['draft'].length > 0 %>
   <%= render_aspace_partial :partial => 'managed_registration/list', :locals => {:list => @list['draft'], :state => :draft} %>
 <% else %>
   None
@@ -12,7 +12,7 @@
 
 <h2>Submitted</h2>
 
-<% if @list['approved'].length > 0 %>
+<% if @list['submitted'].length > 0 %>
   <%= render_aspace_partial :partial => 'managed_registration/list', :locals => {:list => @list['submitted'], :state => :submitted} %>
 <% else %>
   None
