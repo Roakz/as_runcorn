@@ -3,6 +3,7 @@ en:
     permission_types:
       manage_agency_registration: manage agency registration workflow
   managed_registration:
+    button_label: Agency Registrations
     states:
       draft: Draft
       submitted: Submitted

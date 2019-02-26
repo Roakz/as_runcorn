@@ -1,0 +1,29 @@
+
+<h1>Agency Registrations</h1>
+
+<h2>Draft</h2>
+
+<% if @list['approved'].length > 0 %>
+  <%= render_aspace_partial :partial => 'managed_registration/list', :locals => {:list => @list['draft'], :state => :draft} %>
+<% else %>
+  None
+<% end %>
+
+
+<h2>Submitted</h2>
+
+<% if @list['approved'].length > 0 %>
+  <%= render_aspace_partial :partial => 'managed_registration/list', :locals => {:list => @list['submitted'], :state => :submitted} %>
+<% else %>
+  None
+<% end %>
+
+
+<h2>Approved (last 20)</h2>
+
+<% if @list['approved'].length > 0 %>
+  <%= render_aspace_partial :partial => 'managed_registration/list', :locals => {:list => @list['approved'], :state => :approved} %>
+<% else %>
+  None
+<% end %>
+

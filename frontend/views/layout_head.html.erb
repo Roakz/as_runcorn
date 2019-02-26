@@ -9,3 +9,22 @@
      REGISTRATION_ACTION_DROPDOWN = $('<%=j render_aspace_partial :partial => "shared/registration_action_dropdown", :locals => {:state => current_record.registration_state} %>');
   </script>
 <% end %>
+
+<script type="text/template" id="managedRegistrationButtonTemplate">
+  <%= link_to I18n.t("managed_registration.button_label"), {:controller => :managed_registration, :action => :index} %>
+</script>
+
+<script>
+    // put link in the System menu
+    $(function() {
+      var setupButton = function(templ) {
+        $('.system-menu .dropdown-menu').append($('<li class="divider" />'));
+        $but = $(AS.renderTemplate(templ));
+        $('.system-menu .dropdown-menu').append($('<li />').append($but));
+        $('.system-menu').show();
+      };
+
+      setupButton("managedRegistrationButtonTemplate");
+
+    });
+</script>

@@ -1,7 +1,13 @@
 class ManagedRegistrationController < ApplicationController
 
-  set_access_control  "approve_agency_registration" => [:approve],
-                      "update_agent_record" => [:submit, :withdraw]
+  set_access_control "approve_agency_registration" => [:approve],
+                     "update_agent_record" => [:submit, :withdraw],
+                     :public => [:index]
+
+
+  def index
+    @list = JSONModel::HTTP.get_json("/agents/corporate_entities/registrations/all")
+  end
 
 
   def submit

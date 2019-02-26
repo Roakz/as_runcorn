@@ -1,0 +1,19 @@
+<table class="table table-striped table-bordered table-condensed table-hover table-sortable">
+  <thead>
+    <tr>
+      <th class="col title sortable">Agency</th>
+      <th class="col sortable"><%= state %> by</th>
+      <th class="col sortable">At</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% list.each do |agency| %>
+      <tr>
+        <td><%= agency['title'] %></td>
+        <td><%= agency['registration_last_user'] %></td>
+        <td><%= agency['registration_last_time'] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
