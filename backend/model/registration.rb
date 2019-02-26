@@ -37,8 +37,8 @@ class Registration
     user = RequestContext.get(:current_username)
     time = Time.now
 
-    obj.update(:registration_state => ACTION_STATES[action],
-               :registration_last_action => action,
+    obj.update(:registration_state => ACTION_STATES[action].to_s,
+               :registration_last_action => action.to_s,
                :registration_last_user => user,
                :registration_last_time => time,
                :publish => 0,
