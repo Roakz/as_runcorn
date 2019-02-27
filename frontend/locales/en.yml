@@ -11,6 +11,11 @@ en:
       draft: Draft
       submitted: Submitted
       approved: Approved
+    sections:
+      draft: Draft
+      withdrawn: Withdrawn
+      submitted: Submitted
+      approved: Approved
     button_labels:
       draft: Submit for approval
       submitted: Approve/Reject registration
