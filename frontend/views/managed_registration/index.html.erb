@@ -9,50 +9,12 @@
   <div class="col-md-9">
     <div class="record-pane">
 
-<h2><%= t("managed_registration.title") %></h2>
+      <h2><%= t("managed_registration.title") %></h2>
 
-<section id="draft">
-<h3><%= t("managed_registration.sections.draft") %></h3>
+      <% ['draft', 'withdrawn', 'submitted', 'approved'].each do |section| %>
+        <%= render_aspace_partial :partial => 'managed_registration/section', :locals => {:section => section} %>
+      <% end %>
 
-<% if @list['draft'].length > 0 %>
-  <%= render_aspace_partial :partial => 'managed_registration/list', :locals => {:list => @list['draft'], :section => :draft} %>
-<% else %>
-  <%= t("managed_registration.list.no_records") %>
-<% end %>
-</section>
-
-<section id="withdrawn">
-<h3><%= t("managed_registration.sections.withdrawn") %></h3>
-
-<% if @list['withdrawn'].length > 0 %>
-  <%= render_aspace_partial :partial => 'managed_registration/list', :locals => {:list => @list['withdrawn'], :section => :withdrawn} %>
-<% else %>
-  <%= t("managed_registration.list.no_records") %>
-<% end %>
-</section>
-
-
-<section id="submitted">
-<h3><%= t("managed_registration.sections.submitted") %></h3>
-
-<% if @list['submitted'].length > 0 %>
-  <%= render_aspace_partial :partial => 'managed_registration/list', :locals => {:list => @list['submitted'], :section => :submitted} %>
-<% else %>
-  <%= t("managed_registration.list.no_records") %>
-<% end %>
-</section>
-
-
-<section id="approved">
-<h3><%= t("managed_registration.sections.approved") %> <%= t("managed_registration.list.last_number", :number => 20) %></h3>
-
-<% if @list['approved'].length > 0 %>
-  <%= render_aspace_partial :partial => 'managed_registration/list', :locals => {:list => @list['approved'], :section => :approved} %>
-<% else %>
-  <%= t("managed_registration.list.no_records") %>
-<% end %>
-</section>
-
-</div>
-</div>
+    </div>
+  </div>
 </div>
