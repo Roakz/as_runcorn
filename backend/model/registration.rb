@@ -64,12 +64,13 @@ class Registration
   end
 
 
-  def self.list(model, state)
-    ds = model.filter(:registration_state => state.to_s).reverse(:user_mtime)
+  def self.list(model, action = nil)
+    # new drafts have a nil action
+    ds = model.filter(:registration_last_action => (action.nil? ? nil : action.to_s)).reverse(:user_mtime)
 
     # just show the last 20 approved records
     # because this is the state at the end of the workflow
-    ds = ds.limit(20) if state.intern == :approved
+    ds = ds.limit(20) if !action.nil? && action.intern == :approve
 
     model.sequel_to_jsonmodel(ds.all)
   end

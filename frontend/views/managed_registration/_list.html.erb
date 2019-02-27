@@ -1,4 +1,7 @@
 <table class="table table-striped table-bordered table-condensed table-hover table-sortable">
+  <col style="width:55%">
+  <col style="width:20%">
+  <col style="width:25%">
   <thead>
     <tr>
       <th class="col title sortable">Agency</th>
@@ -16,8 +19,8 @@
                                         :agent_type => :agent_corporate_entity,
                                         :id => JSONModel(:agent_corporate_entity).id_for(agency["uri"])} %>
         </td>
-        <td><%= agency['registration_last_user'] %></td>
-        <td><%= agency['registration_last_time'] %></td>
+        <td><%= state == :draft ? agency['last_modified_by'] : agency['registration_last_user'] %></td>
+        <td><%= state == :draft ? agency['user_mtime'] :agency['registration_last_time'] %></td>
       </tr>
     <% end %>
   </tbody>

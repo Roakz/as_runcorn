@@ -5,6 +5,7 @@ en:
   validation_errors:
     unable_to_publish_when_in_draft: Draft agencies cannot be published
   managed_registration:
+    title: Agency Registrations
     button_label: Agency Registrations
     states:
       draft: Draft

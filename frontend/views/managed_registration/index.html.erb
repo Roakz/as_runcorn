@@ -1,29 +1,58 @@
+<%= setup_context(:title => I18n.t("managed_registration.title")) %>
 
-<h1>Agency Registrations</h1>
+<div class="row">
+  <div class="col-md-3">
+    <div class="sidebar">
+      <%= render_aspace_partial :partial => "sidebar" %>
+    </div>
+  </div>
+  <div class="col-md-9">
+    <div class="record-pane">
 
-<h2>Draft</h2>
+<h2><%= I18n.t("managed_registration.title") %></h2>
+
+<section id="draft">
+<h3>Draft</h3>
 
 <% if @list['draft'].length > 0 %>
   <%= render_aspace_partial :partial => 'managed_registration/list', :locals => {:list => @list['draft'], :state => :draft} %>
 <% else %>
   None
 <% end %>
+</section>
+
+<section id="withdrawn">
+<h3>Withdrawn</h3>
+
+<% if @list['withdrawn'].length > 0 %>
+  <%= render_aspace_partial :partial => 'managed_registration/list', :locals => {:list => @list['withdrawn'], :state => :withdrawn} %>
+<% else %>
+  None
+<% end %>
+</section>
 
 
-<h2>Submitted</h2>
+<section id="submitted">
+<h3>Submitted</h3>
 
 <% if @list['submitted'].length > 0 %>
   <%= render_aspace_partial :partial => 'managed_registration/list', :locals => {:list => @list['submitted'], :state => :submitted} %>
 <% else %>
   None
 <% end %>
+</section>
 
 
-<h2>Approved (last 20)</h2>
+<section id="approved">
+<h3>Approved (last 20)</h3>
 
 <% if @list['approved'].length > 0 %>
   <%= render_aspace_partial :partial => 'managed_registration/list', :locals => {:list => @list['approved'], :state => :approved} %>
 <% else %>
   None
 <% end %>
+</section>
 
+</div>
+</div>
+</div>
