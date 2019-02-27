@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Managed Registration' do
+describe 'Managed Registration Model' do
 
   describe "Agency" do
     let!(:agency) do
@@ -76,16 +76,6 @@ describe 'Managed Registration' do
 
       json = JSONModel(:agent_corporate_entity).find(agency.id)
       expect(json['title']).to match(/^\[SUBMITTED\] /)
-    end
-
-
-    it 'can only be submitted by a user who can edit agents' do
-      create(:user, {:username => 'noperms'})
-
-      as_test_user('noperms') do
-        Registration.submit(agency)
-#        expect(Registration.submit(agency)).to raise_error(ReadOnlyException)
-      end
     end
   end
 
