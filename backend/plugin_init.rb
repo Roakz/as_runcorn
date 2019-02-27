@@ -6,6 +6,5 @@ Permission.define("manage_agency_registration",
 
 Permission.define("approve_agency_registration",
                   "The ability to approve the registration of a draft agency",
-                  :implied_by => "manage_agency_creation",
+                  :implied_by => "manage_agency_registration",
                   :level => "global")
-
