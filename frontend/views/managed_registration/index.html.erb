@@ -1,4 +1,4 @@
-<%= setup_context(:title => I18n.t("managed_registration.title")) %>
+<%= setup_context(:title => t("managed_registration.title")) %>
 
 <div class="row">
   <div class="col-md-3">
@@ -9,47 +9,47 @@
   <div class="col-md-9">
     <div class="record-pane">
 
-<h2><%= I18n.t("managed_registration.title") %></h2>
+<h2><%= t("managed_registration.title") %></h2>
 
 <section id="draft">
-<h3>Draft</h3>
+<h3><%= t("managed_registration.sections.draft") %></h3>
 
 <% if @list['draft'].length > 0 %>
-  <%= render_aspace_partial :partial => 'managed_registration/list', :locals => {:list => @list['draft'], :state => :draft} %>
+  <%= render_aspace_partial :partial => 'managed_registration/list', :locals => {:list => @list['draft'], :section => :draft} %>
 <% else %>
-  None
+  <%= t("managed_registration.list.no_records") %>
 <% end %>
 </section>
 
 <section id="withdrawn">
-<h3>Withdrawn</h3>
+<h3><%= t("managed_registration.sections.withdrawn") %></h3>
 
 <% if @list['withdrawn'].length > 0 %>
-  <%= render_aspace_partial :partial => 'managed_registration/list', :locals => {:list => @list['withdrawn'], :state => :withdrawn} %>
+  <%= render_aspace_partial :partial => 'managed_registration/list', :locals => {:list => @list['withdrawn'], :section => :withdrawn} %>
 <% else %>
-  None
+  <%= t("managed_registration.list.no_records") %>
 <% end %>
 </section>
 
 
 <section id="submitted">
-<h3>Submitted</h3>
+<h3><%= t("managed_registration.sections.submitted") %></h3>
 
 <% if @list['submitted'].length > 0 %>
-  <%= render_aspace_partial :partial => 'managed_registration/list', :locals => {:list => @list['submitted'], :state => :submitted} %>
+  <%= render_aspace_partial :partial => 'managed_registration/list', :locals => {:list => @list['submitted'], :section => :submitted} %>
 <% else %>
-  None
+  <%= t("managed_registration.list.no_records") %>
 <% end %>
 </section>
 
 
 <section id="approved">
-<h3>Approved (last 20)</h3>
+<h3><%= t("managed_registration.sections.approved") %> <%= t("managed_registration.list.last_number", :number => 20) %></h3>
 
 <% if @list['approved'].length > 0 %>
-  <%= render_aspace_partial :partial => 'managed_registration/list', :locals => {:list => @list['approved'], :state => :approved} %>
+  <%= render_aspace_partial :partial => 'managed_registration/list', :locals => {:list => @list['approved'], :section => :approved} %>
 <% else %>
-  None
+  <%= t("managed_registration.list.no_records") %>
 <% end %>
 </section>
 

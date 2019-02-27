@@ -4,9 +4,9 @@
   <col style="width:25%">
   <thead>
     <tr>
-      <th class="col title sortable">Agency</th>
-      <th class="col sortable"><%= state %> by</th>
-      <th class="col sortable">At</th>
+      <th class="col title sortable"><%= t('agent_corporate_entity._singular') %></th>
+      <th class="col sortable"><%= t("managed_registration.list.#{section}") %></th>
+      <th class="col sortable"><%= t("managed_registration.list.last_action_time") %></th>
     </tr>
   </thead>
 
@@ -19,8 +19,8 @@
                                         :agent_type => :agent_corporate_entity,
                                         :id => JSONModel(:agent_corporate_entity).id_for(agency["uri"])} %>
         </td>
-        <td><%= state == :draft ? agency['last_modified_by'] : agency['registration_last_user'] %></td>
-        <td><%= state == :draft ? agency['user_mtime'] :agency['registration_last_time'] %></td>
+        <td><%= section == :draft ? agency['last_modified_by'] : agency['registration_last_user'] %></td>
+        <td><%= section == :draft ? agency['user_mtime'] :agency['registration_last_time'] %></td>
       </tr>
     <% end %>
   </tbody>

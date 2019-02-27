@@ -16,6 +16,14 @@ en:
       withdrawn: Withdrawn
       submitted: Submitted
       approved: Approved
+    list:
+      draft: Last edit by
+      withdrawn: Withdrawn by
+      submitted: Submitted by
+      approved: Approved by
+      last_action_time: At
+      no_records: -- None --
+      last_number: (last %{number})
     button_labels:
       draft: Submit for approval
       submitted: Approve/Reject registration
