@@ -28,7 +28,7 @@
                                             :id => JSONModel(:agent_corporate_entity).id_for(agency["uri"])} %>
             </td>
             <td><%= section == 'draft' ? agency['last_modified_by'] : agency['registration_last_user'] %></td>
-            <td><%= section == 'draft' ? agency['user_mtime'] :agency['registration_last_time'] %></td>
+            <td><%= section == 'draft' ? agency['user_mtime'] : agency['registration_last_time'] %></td>
           </tr>
         <% end %>
       </tbody>
