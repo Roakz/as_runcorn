@@ -2,7 +2,7 @@ class ManagedRegistrationController < ApplicationController
 
   set_access_control "approve_agency_registration" => [:approve],
                      "update_agent_record" => [:submit, :withdraw],
-                     :public => [:index]
+                     "view_repository" => [:index]
 
 
   def index
