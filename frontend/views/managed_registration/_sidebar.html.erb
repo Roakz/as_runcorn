@@ -6,13 +6,11 @@
              :suppress_submit_buttons => true,
            }) do |sidebar| %>
 
-    <%= sidebar.render_for_view_and_edit(:subrecord_type => 'draft', :property => :none, :anchor => 'draft',
-                                         :title => t('managed_registration.sections.draft')) %>
-    <%= sidebar.render_for_view_and_edit(:subrecord_type => 'withdrawn', :property => :none, :anchor => 'withdrawn',
-                                         :title => t('managed_registration.sections.withdrawn')) %>
-    <%= sidebar.render_for_view_and_edit(:subrecord_type => 'submitted', :property => :none, :anchor => 'submitted',
-                                         :title => t('managed_registration.sections.submitted')) %>
-    <%= sidebar.render_for_view_and_edit(:subrecord_type => 'approved', :property => :none, :anchor => 'approved',
-                                         :title => t('managed_registration.sections.approved')) %>
+    <% @sections.each do |section| %>
+      <%= sidebar.render_for_view_and_edit(:subrecord_type => section,
+                                           :property => :none,
+                                           :anchor => section,
+                                           :title => t("managed_registration.sections.#{section}") + " (#{@list[section].length})") %>
+    <% end %>
 
 <% end %>

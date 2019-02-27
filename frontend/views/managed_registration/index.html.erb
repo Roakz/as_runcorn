@@ -11,7 +11,7 @@
 
       <h2><%= t("managed_registration.title") %></h2>
 
-      <% ['draft', 'withdrawn', 'submitted', 'approved'].each do |section| %>
+      <% @sections.each do |section| %>
         <%= render_aspace_partial :partial => 'managed_registration/section', :locals => {:section => section} %>
       <% end %>
 

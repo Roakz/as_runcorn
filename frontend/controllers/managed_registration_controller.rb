@@ -7,6 +7,7 @@ class ManagedRegistrationController < ApplicationController
 
   def index
     @list = JSONModel::HTTP.get_json("/agents/corporate_entities/registrations/all")
+    @sections = @list.keys.map(&:to_s)
   end
 
 
