@@ -12,6 +12,7 @@ Sequel.migration do
 
     # assume extant agencies have been approved
     self[:agent_corporate_entity].update(:registration_state => 'approved')
+    self[:agent_corporate_entity].update(:registration_last_action => 'approve')
   end
 
   down do
