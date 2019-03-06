@@ -15,9 +15,5 @@
   "registration_last_time" => {
     "type" => "date-time",
     "readonly" => true
-  },
-  "qsa_id" => {
-    "type" => "integer",
-    "readonly" => true
   }
 }

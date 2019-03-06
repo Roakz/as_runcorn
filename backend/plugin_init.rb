@@ -20,8 +20,14 @@ Permission.define("approve_agency_registration",
 ].each do |model|
   model.instance_eval do
     self.include(AutoGenerator)
+
     self.auto_generate :property => :qsa_id,
-                  :generator => proc { |json| Sequence.get("QSA_ID_#{model.table_name.upcase}") },
-                  :only_on_create => true
+                       :generator => proc { |json| Sequence.get("QSA_ID_#{model.table_name.upcase}") },
+                       :only_on_create => true
+
+    model.my_jsonmodel.schema['properties']['qsa_id'] = {
+      "type" => "integer",
+      "readonly" => true
+    }
   end
 end
