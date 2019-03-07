@@ -1,4 +1,6 @@
 en:
+  as_runcorn:
+    qsa_id: ID Number
   group:
     permission_types:
       manage_agency_registration: manage agency registration workflow
