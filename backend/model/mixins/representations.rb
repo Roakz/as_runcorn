@@ -3,7 +3,14 @@ module Representations
   extend JSONModel
 
   def self.included(base)
+    @supported_models ||= []
+    @supported_models << base
+
     base.extend(ClassMethods)
+  end
+
+  def self.supported_models
+    ASUtils.wrap(@supported_models)
   end
 
   def update_from_json(json, opts = {}, apply_nested_records = true)

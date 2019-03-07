@@ -15,6 +15,21 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
 
   set_model_scope :repository
 
+  def self.ref_for(physical_representation_id)
+
+    obj = PhysicalRepresentation[physical_representation_id]
+
+    raise NotFoundException.new unless obj
+
+    Representations.supported_models.each do |model|
+      if obj[:"#{model.table_name}_id"]
+        return model[obj[:"#{model.table_name}_id"]].uri
+      end
+    end
+
+    raise NotFoundException.new
+  end
+
 
   def self.sequel_to_jsonmodel(objs, opts = {})
     jsons = super

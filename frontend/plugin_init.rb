@@ -16,4 +16,7 @@ Rails.application.config.after_initialize do
   )
 
   Plugins.add_resolve_field(['approved_by'])
+
+  # Force load
+  JSONModel(:physical_representation)
 end
