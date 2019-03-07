@@ -42,3 +42,10 @@ en:
         approve: You have approved this registration.
         withdraw: You have withdrawn the submission of this draft.
       error: There was a problem with your action.
+  physical_representation:
+    description: Description
+    _plural: Physical Representations
+    _singular: Physical Representation
+    _frontend:
+      action:
+        add: Add Physical Representation
