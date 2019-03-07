@@ -43,7 +43,25 @@ en:
         withdraw: You have withdrawn the submission of this draft.
       error: There was a problem with your action.
   physical_representation:
+    access_category: Access Category
+    current_location: Current Location
+    normal_location: Normal Location
+    access_clearance_procedure: Access Clearance Procedure
+    accessioned_status: Accessioned Status
+    agency_assigned_id: Agency Assigned ID
+    approval_date: Approved Date
+    approved_by: Approved By
+    colour: Colour
     description: Description
+    file_issue_allowed: File Issue Allowed
+    format: Format
+    original_registration_date: Original Registration Date
+    physical_description_type: Physical Description Type
+    publish: Publish
+    preservation_restriction_status: Preservation Restriction Status
+    salvage_priority_code: Salvage Priority Code
+    sterilised_status: Sterilised Status
+    title: Title
     _plural: Physical Representations
     _singular: Physical Representation
     _frontend:
