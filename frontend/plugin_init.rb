@@ -3,12 +3,14 @@ ArchivesSpace::Application.extend_aspace_routes(File.join(File.dirname(__FILE__)
 Rails.application.config.after_initialize do
   Plugins.register_plugin_section(
     Plugins::PluginSubRecord.new(
-      'series_system',
-      'physical_representation',
+      'as_runcorn',
+      'physical_representations',
       ['resource', 'archival_object'],
       {
         template_name: 'physical_representation',
-        heading_text:  I18n.t('physical_representation._singular'),
+        js_edit_template_name: 'template_physical_representation',
+        heading_text:  I18n.t('physical_representation._plural'),
+        sidebar_label:  I18n.t('physical_representation._plural'),
       }
     )
   )
