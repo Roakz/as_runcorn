@@ -46,13 +46,21 @@ module Representations
   def self.apply_representations(obj, json)
     # Representations with refs get updated.  Otherwise, create new records.
 
-    backlink = {"#{obj.class.table_name}_id" => obj.id}
+    backlink = {:"#{obj.class.table_name}_id" => obj.id}
 
     grouped = json['physical_representations'].group_by {|rep| rep['existing_ref']}
+
+    ids_to_keep = grouped.keys.compact.map {|ref| JSONModel.parse_reference(ref)[:id]}
+
+    PhysicalRepresentation
+      .filter(backlink)
+      .filter(Sequel.~(:id => ids_to_keep))
+      .each(&:delete)
 
     # Create the ones that don't exist yet (no ref)
     ASUtils.wrap(grouped.delete(nil)).each do |to_create|
       PhysicalRepresentation.create_from_json(JSONModel(:physical_representation).from_hash(to_create), backlink)
+      obj.mark_as_system_modified
     end
 
     # Update the others
