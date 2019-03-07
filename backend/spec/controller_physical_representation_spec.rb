@@ -32,4 +32,27 @@ describe 'Physical representations' do
     end
   end
 
+  it "removes representations that are no longer referenced" do
+    json = build(:json_archival_object)
+
+    json.physical_representations = [
+      {
+        "description" => "Let us get physical!",
+      }
+    ]
+
+    obj = ArchivalObject.create_from_json(json)
+
+    json = ArchivalObject.to_jsonmodel(obj.id)
+
+    dead_uri = json.physical_representations[0]['existing_ref']
+
+    json.physical_representations = []
+    obj.update_from_json(json)
+
+    json = ArchivalObject.to_jsonmodel(obj.id)
+    expect(json.physical_representations.length).to eq(0)
+    expect(Tombstone[:uri => dead_uri]).to be_truthy
+  end
+
 end
