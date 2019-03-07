@@ -9,25 +9,10 @@ Permission.define("approve_agency_registration",
                   :implied_by => "manage_agency_registration",
                   :level => "global")
 
-[
- Resource,
- ArchivalObject,
- DigitalObject,
- Function,
- Mandate,
- Accession,
- AgentCorporateEntity,
-].each do |model|
-  model.instance_eval do
-    model.include(AutoGenerator)
-
-    model.auto_generate :property => :qsa_id,
-                        :generator => proc { |json| Sequence.get("QSA_ID_#{model.table_name.upcase}") },
-                        :only_on_create => true
-
-    model.my_jsonmodel.schema['properties']['qsa_id'] = {
-      "type" => "integer",
-      "readonly" => true
-    }
-  end
-end
+QSAId.register(Resource, :id_0)
+QSAId.register(ArchivalObject, :ref_id)
+QSAId.register(DigitalObject, :digital_object_id)
+QSAId.register(Function)
+QSAId.register(Mandate)
+QSAId.register(Accession, :id_0)
+QSAId.register(AgentCorporateEntity)
