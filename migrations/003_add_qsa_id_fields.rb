@@ -24,10 +24,6 @@ Sequel.migration do
         self[model].filter(:id => obj[:id]).update(:qsa_id => seq)
       end
 
-      alter_table(model) do
-        set_column_not_null :qsa_id
-      end
-
       self[:sequence].insert(:sequence_name => "QSA_ID_#{model.upcase}", :value => seq)
     end
   end
