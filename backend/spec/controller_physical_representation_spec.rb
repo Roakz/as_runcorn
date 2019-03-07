@@ -4,7 +4,7 @@ describe 'Physical representations' do
 
   it "applies to archival objects and resources" do
     [[:json_archival_object, ArchivalObject], [:json_resource, Resource]].each do |factory, model|
-      json = build(factory, :qsa_id => 123)
+      json = build(factory)
 
       json.physical_representations = [
         {
