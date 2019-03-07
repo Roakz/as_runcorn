@@ -14,4 +14,6 @@ Rails.application.config.after_initialize do
       }
     )
   )
+
+  Plugins.add_resolve_field(['approved_by'])
 end

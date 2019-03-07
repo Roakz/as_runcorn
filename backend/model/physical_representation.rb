@@ -10,7 +10,8 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
 
   define_relationship(:name => :representation_approved_by,
                       :json_property => 'approved_by',
-                      :contains_references_to_types => proc {[AgentPerson]})
+                      :contains_references_to_types => proc {[AgentPerson]},
+                      :is_array => false)
 
   set_model_scope :repository
 
