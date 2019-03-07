@@ -1,5 +1,19 @@
 class QSAId
 
+  def self.models_hash
+    @models ||= {}
+  end
+
+  def self.models
+    models_hash.keys
+  end
+
+
+  def self.existing_id_for(model)
+    models_hash[model]
+  end
+
+
   def self.register(model, existing_id_field = false)
     model.instance_eval do
       model.include(AutoGenerator)
@@ -13,7 +27,7 @@ class QSAId
 
         model.auto_generate :property => existing_id_field,
                             :generator => proc { |json| json['qsa_id'].to_s },
-                            :only_on_create => true
+                            :only_if => proc { |json| json['qsa_id'] }
       end
 
       model.my_jsonmodel.schema['properties']['qsa_id'] = {
@@ -21,6 +35,8 @@ class QSAId
         "readonly" => true
       }
     end
+
+    models_hash[model] = existing_id_field
   end
 
 end
