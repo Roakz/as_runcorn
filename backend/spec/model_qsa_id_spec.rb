@@ -4,6 +4,8 @@ require 'spec_helper'
 disabled_tests = [
                   'Resource model reports an error if id_0 has no value',
                   'Resource model prevents duplicate IDs ',
+                  'Archival Object controller allows some non-alphanumeric characters in ref_ids',
+                  'Archival Object controller enforces uniqueness of ref_ids within a Resource',
                  ]
 
 RSpec.configure do |config|
