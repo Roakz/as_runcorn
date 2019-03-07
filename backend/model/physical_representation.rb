@@ -2,6 +2,16 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
   include ASModel
   corresponds_to JSONModel(:physical_representation)
 
+  include Deaccessions
+  include Extents
+  include ExternalIDs
+  include Notes
+  include Publishable
+
+  define_relationship(:name => :representation_approved_by,
+                      :json_property => 'approved_by',
+                      :contains_references_to_types => proc {[AgentPerson]})
+
   set_model_scope :repository
 
 
