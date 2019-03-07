@@ -1,5 +1,18 @@
 require 'spec_helper'
 
+# don't run tests that are no longer valid because of the changes we've made
+disabled_tests = [
+                  'Resource model reports an error if id_0 has no value',
+                  'Resource model prevents duplicate IDs ',
+                 ]
+
+RSpec.configure do |config|
+  config.around(:each) do |example|
+    example.run unless disabled_tests.include?(example.full_description)
+  end
+end
+
+
 describe 'QSA Id model' do
 
   it 'generates a qsa id from a sequence on create' do
