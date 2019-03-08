@@ -52,13 +52,22 @@ en:
     approval_date: Approved Date
     approved_by: Approved By
     colour: Colour
+    contained_within: Contained Within
     description: Description
+    exhibition_history: Exhibition History
+    exhibition_notes: Exhibition Notes
+    exhibition_quality: Exhibition Quality
     file_issue_allowed: File Issue Allowed
     format: Format
+    intended_use: Intended Use
+    other_restrictions_notes: Other Restriction Notes
     original_registration_date: Original Registration Date
+    preferred_citation: Preferred Citation
+    preservation_notes: Preservation Notes
     physical_description_type: Physical Description Type
     publish: Publish
     preservation_restriction_status: Preservation Restriction Status
+    remarks: Remarks
     salvage_priority_code: Salvage Priority Code
     sterilised_status: Sterilised Status
     title: Title

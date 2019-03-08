@@ -9,6 +9,10 @@ describe 'Physical representations' do
       json.physical_representations = [
         {
           "description" => "Let us get physical!",
+          "current_location" => "N/A",
+          "normal_location" => "N/A",
+          "format" => "OTH",
+          "preservation_restriction_status" => "FIXME",
         }
       ]
 
@@ -38,6 +42,10 @@ describe 'Physical representations' do
     json.physical_representations = [
       {
         "description" => "Let us get physical!",
+        "current_location" => "N/A",
+        "normal_location" => "N/A",
+        "format" => "OTH",
+        "preservation_restriction_status" => "FIXME",
       }
     ]
 

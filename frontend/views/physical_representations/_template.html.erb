@@ -42,18 +42,26 @@
       </div>
     <% end %>
     <%= form.label_and_select "colour", form.possible_options_for("colour", true) %>
-    <%= form.label_and_boolean "file_issue_allowed" %>
+    <%= form.label_and_select "contained_within", form.possible_options_for("contained_within", true) %>
+    <%= form.label_and_textarea "exhibition_history" %>
+    <%= form.label_and_textarea "exhibition_notes" %>
+    <%= form.label_and_boolean "exhibition_quality" %>
+    <%= form.label_and_boolean "file_issue_allowed", {}, true %>
     <%= form.label_and_select "format", form.possible_options_for("format", true) %>
+    <%= form.label_and_select "intended_use", form.possible_options_for("intended_use", true) %>
     <%= form.label_and_textfield "original_registration_date" %>
+    <%= form.label_and_textarea "other_restrictions_notes" %>
     <%= form.label_and_select "physical_description_type", form.possible_options_for("physical_description_type", true) %>
+    <%= form.label_and_textarea "preferred_citation" %>
+    <%= form.label_and_textarea "preservation_notes" %>
     <%= form.label_and_select "preservation_restriction_status", form.possible_options_for("preservation_restriction_status", true) %>
+    <%= form.label_and_textarea "remarks" %>
     <%= form.label_and_select "salvage_priority_code", form.possible_options_for("salvage_priority_code", true) %>
     <%= form.label_and_boolean "sterilised_status" %>
     <%= form.label_and_boolean "publish" %>
 
     <div class="subrecord-form-container">
       <%= render_aspace_partial :partial => "shared/subrecord_form", :locals => {:form => form, :name => "deaccessions"} %>
-      <%= render_aspace_partial :partial => "notes/form", :locals => {:form => form} %>
       <%= render_aspace_partial :partial => "shared/subrecord_form", :locals => {:form => form, :name => "extents"} %>
       <%= render_aspace_partial :partial => "external_ids/edit", :locals => {:form => form} %>
 

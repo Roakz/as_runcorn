@@ -5,7 +5,6 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
   include Deaccessions
   include Extents
   include ExternalIDs
-  include Notes
   include Publishable
 
   define_relationship(:name => :representation_approved_by,
@@ -14,6 +13,7 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
                       :is_array => false)
 
   set_model_scope :repository
+
 
   def self.ref_for(physical_representation_id)
 
@@ -36,9 +36,20 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
 
     objs.zip(jsons).each do |obj, json|
       json['existing_ref'] = obj.uri
+      json['display_string'] = build_display_string(json)
     end
 
     jsons
+  end
+
+  def self.build_display_string(json)
+    return json["title"] if json["title"]
+
+    values = []
+    values << json["description"]
+    values << I18n.t("enumerations.runcorn_format.#{json["format"]}", default: json["format"])
+
+    values.compact.join('; ')
   end
 
 end

@@ -11,8 +11,10 @@
       "display_string" => {"type" => "string", "maxLength" => 8192, "readonly" => true},
 
       "access_category" => {"type" => "string", "dynamic_enum" => "runcorn_access_category"},
-      "current_location" => {"type" => "string", "dynamic_enum" => "runcorn_location"},
-      "normal_location" => {"type" => "string", "dynamic_enum" => "runcorn_location"},
+
+      "current_location" => {"type" => "string", "dynamic_enum" => "runcorn_location", "ifmissing" => "error"},
+
+      "normal_location" => {"type" => "string", "dynamic_enum" => "runcorn_location", "ifmissing" => "error"},
 
       "access_clearance_procedure" => {"type" => "string", "dynamic_enum" => "runcorn_access_clearance_procedure"},
 
@@ -21,6 +23,7 @@
       "agency_assigned_id" => {"type" => "string"},
 
       "approval_date" => {"type" => "string"},
+
       "approved_by" => {
         "type" => "object",
         "subtype" => "ref",
@@ -38,37 +41,49 @@
 
       "colour" => {"type" => "string", "dynamic_enum" => "runcorn_colour"},
 
+      "contained_within" => {"type" => "string", "dynamic_enum" => "runcorn_physical_representation_contained_within"},
+
       "deaccessions" => {"type" => "array", "items" => {"type" => "JSONModel(:deaccession) object"}},
 
       "description" => {"type" => "string"},
 
-      "notes" => {
-        "type" => "array",
-        "items" => {"type" => [{"type" => "JSONModel(:note_multipart) object"},
-                               {"type" => "JSONModel(:note_singlepart) object"}]},
-      },
+      "exhibition_history" => {"type" => "string"},
+
+      "exhibition_notes" => {"type" => "string"},
+
+      "exhibition_quality" => {"type" => "boolean"},
 
       "extents" => {"type" => "array", "items" => {"type" => "JSONModel(:extent) object"}},
 
-      "file_issue_allowed" => {"type" => "boolean"},
+      "external_ids" => {"type" => "array", "items" => {"type" => "JSONModel(:external_id) object"}},
 
-      "format" => {"type" => "string", "dynamic_enum" => "runcorn_format"},
+      "file_issue_allowed" => {"type" => "boolean", "default" => true},
+
+      "format" => {"type" => "string", "dynamic_enum" => "runcorn_format", "ifmissing" => "error"},
+
+      "intended_use" => {"type" => "string", "dynamic_enum" => "runcorn_intended_use"},
 
       "original_registration_date" => {"type" => "string"},
 
+      "other_restrictions_notes" => {"type" => "string"},
+
       "physical_description_type" => {"type" => "string", "dynamic_enum" => "runcorn_physical_description_type"},
 
-      "preservation_restriction_status" => {"type" => "string", "dynamic_enum" => "runcorn_physical_preservation_restriction_status"},
+      "publish" => {"type" => "boolean"},
 
-      "external_ids" => {"type" => "array", "items" => {"type" => "JSONModel(:external_id) object"}},
+      "preferred_citation" => {"type" => "string"},
 
-      "title" => {"type" => "string"},
+      "preservation_notes" => {"type" => "string"},
+
+      "preservation_restriction_status" => {"type" => "string", "dynamic_enum" => "runcorn_physical_preservation_restriction_status", "ifmissing" => "error"},
+
+      "remark" => {"type" => "string"},
 
       "salvage_priority_code" => {"type" => "string", "dynamic_enum" => "runcorn_salvage_priority_code"},
 
       "sterilised_status" => {"type" => "boolean"},
 
-      "publish" => {"type" => "boolean"},
+      "title" => {"type" => "string"},
     },
   },
 }

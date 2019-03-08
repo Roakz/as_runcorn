@@ -13,22 +13,30 @@ Sequel.migration do
       Integer :resource_id
 
       DynamicEnum :access_category_id
-      DynamicEnum :current_location_id
-      DynamicEnum :normal_location_id
+      DynamicEnum :current_location_id, :null => false
+      DynamicEnum :normal_location_id, :null => false
       DynamicEnum :access_clearance_procedure_id
       DynamicEnum :accessioned_status_id
       String :agency_assigned_id
       String :approval_date
       DynamicEnum :colour_id
+      DynamicEnum :contained_within_id
       TextField :description
-      Integer :file_issue_allowed
-      DynamicEnum :format_id
+      TextField :exhibition_history
+      TextField :exhibition_notes
+      Integer :exhibition_quality, :default => 0
+      Integer :file_issue_allowed, :default => 1
+      DynamicEnum :format_id, :null => false
+      DynamicEnum :intended_use_id
       String :original_registration_date
       DynamicEnum :physical_description_type_id
-      DynamicEnum :preservation_restriction_status_id
+      TextField :preferred_citation
+      TextField :preservation_notes
+      DynamicEnum :preservation_restriction_status_id, :null => false
+      TextField :remark
       String :title
       DynamicEnum :salvage_priority_code_id
-      Integer :sterilised_status
+      Integer :sterilised_status, :default => 0
       Integer :publish
 
       apply_mtime_columns
@@ -90,8 +98,10 @@ Sequel.migration do
                 ['AIC', 'BHG', 'LOW'])
 
 
+    create_enum('runcorn_physical_representation_contained_within', ['FIXME'])
     create_enum('runcorn_physical_description_type', ['FIXME'])
     create_enum('runcorn_physical_preservation_restriction_status', ['FIXME'])
+    create_enum('runcorn_intended_use', ['FIXME'])
 
 
     create_table(:representation_approved_by_rlshp) do
@@ -118,11 +128,6 @@ Sequel.migration do
     alter_table(:extent) do
       add_column(:physical_representation_id, :integer,  :null => true)
       add_foreign_key([:physical_representation_id], :physical_representation, :key => :id, :name => 'extent_physrep_id_fk')
-    end
-
-    alter_table(:note) do
-      add_column(:physical_representation_id, :integer,  :null => true)
-      add_foreign_key([:physical_representation_id], :physical_representation, :key => :id, :name => 'note_physrep_id_fk')
     end
 
     alter_table(:external_id) do
