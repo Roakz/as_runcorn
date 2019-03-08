@@ -1,1 +1,12 @@
-<pre>TODO</pre>
+<% render_aspace_partial :partial => "physical_representations/template" %>
+
+<section id="<%= section_id %>" class="subrecord-form-dummy">
+  <h3><%= I18n.t("physical_representation._plural") %></h3>
+  <% physical_representations.each do |physical_representation| %>
+    <div class="subrecord-form-container">
+      <% context.push("physical_representation", physical_representation) do |context| %>
+        <% context.emit_template("physical_representation") %>
+      <% end %>
+    </div>
+  <% end %>
+</section>

@@ -10,36 +10,52 @@
     <%= form.label_and_select "accessioned_status", form.possible_options_for("accessioned_status", true) %>
     <%= form.label_and_textfield "agency_assigned_id" %>
     <%= form.label_and_textfield "approval_date" %>
-    <% form.push("approved_by", form.obj["approved_by"] || {}) do %>
-      <div class="form-group">
-        <%= form.label('approved_by', {:for => 'approved_by_linker'}, ['col-sm-2']) %>
-        <div class="col-sm-9">
-          <div class="form-group required">
-            <div class="input-group linker-wrapper">
-              <input type="text" class="linker"
-                     id="approved_by_linker"
-                     data-label="Approved By"
-                     data-label_plural="Approved By"
-                     data-path="<%= form.path %>"
-                     data-name="ref"
-                     data-url="<%= url_for :controller => :search, :action => :do_search, :format => :json %>"
-                     data-browse-url="<%= url_for :controller => :search, :action => :do_search, :format => :js, :facets => [], :display_identifier => true %>"
-                     data-selected="<%= ASUtils.to_json(form.obj['_resolved'] || {}) %>"
-                     data-format_property="display_string"
-                     data-multiplicity="one"
-                     data-types='["agent_with_user"]'
-                />
-
-              <div class="input-group-btn">
-                <a class="btn btn-default dropdown-toggle last" data-toggle="dropdown" href="javascript:void(0);"><span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                  <li><a href="javascript:void(0);" class="linker-browse-btn"><%= I18n.t("actions.browse") %></a></li>
-                </ul>
+    <% if form.readonly? %>
+      <% if form['approved_by']  %>
+        <div class="form-group">
+          <div class="control-label col-sm-2"><%= I18n.t("physical_representation.approved_by") %></div>
+          <div class="controls token-list col-sm-10">
+            <% ASUtils.wrap(form['approved_by']).each do |record| %>
+              <%= render_token :object => record['_resolved'],
+                               :label => record['_resolved']['title'] || record['_resolved']['display_string'],
+                               :type => record['_resolved']['jsonmodel_type'],
+                               :uri => record['ref'],
+                               :placement => "top" %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <% form.push("approved_by", form.obj["approved_by"] || {}) do %>
+        <div class="form-group">
+          <%= form.label('approved_by', {:for => 'approved_by_linker'}, ['col-sm-2']) %>
+          <div class="col-sm-9">
+            <div class="form-group required">
+              <div class="input-group linker-wrapper">
+                <input type="text" class="linker"
+                       id="approved_by_linker"
+                       data-label="Approved By"
+                       data-label_plural="Approved By"
+                       data-path="<%= form.path %>"
+                       data-name="ref"
+                       data-url="<%= url_for :controller => :search, :action => :do_search, :format => :json %>"
+                       data-browse-url="<%= url_for :controller => :search, :action => :do_search, :format => :js, :facets => [], :display_identifier => true %>"
+                       data-selected="<%= ASUtils.to_json(form.obj['_resolved'] || {}) %>"
+                       data-format_property="display_string"
+                       data-multiplicity="one"
+                       data-types='["agent_with_user"]'
+                  />
+                <div class="input-group-btn">
+                  <a class="btn btn-default dropdown-toggle last" data-toggle="dropdown" href="javascript:void(0);"><span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="javascript:void(0);" class="linker-browse-btn"><%= I18n.t("actions.browse") %></a></li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      <% end %>
     <% end %>
     <%= form.label_and_select "colour", form.possible_options_for("colour", true) %>
     <%= form.label_and_select "contained_within", form.possible_options_for("contained_within", true) %>
@@ -61,9 +77,17 @@
     <%= form.label_and_boolean "publish" %>
 
     <div class="subrecord-form-container">
-      <%= render_aspace_partial :partial => "shared/subrecord_form", :locals => {:form => form, :name => "deaccessions"} %>
-      <%= render_aspace_partial :partial => "shared/subrecord_form", :locals => {:form => form, :name => "extents"} %>
-      <%= render_aspace_partial :partial => "external_ids/edit", :locals => {:form => form} %>
+      <% unless form.readonly? && ASUtils.wrap(form.obj['deaccessions']).empty? %>
+        <%= render_aspace_partial :partial => "shared/subrecord_form", :locals => {:form => form, :name => "deaccessions"} %>
+      <% end %>
+      <% unless form.readonly? && ASUtils.wrap(form.obj['extents']).empty? %>
+        <%= render_aspace_partial :partial => "shared/subrecord_form", :locals => {:form => form, :name => "extents"} %>
+      <% end %>
+      <% if !form.readonly? %>
+        <%= render_aspace_partial :partial => "external_ids/edit", :locals => {:form => form} %>
+      <% elsif !ASUtils.wrap(form.obj['external_ids']).empty? %>
+        <%= render_aspace_partial :partial => "external_ids/show", :locals => {:external_ids => form.obj['external_ids']} %>
+      <% end %>
 
       <%= form_plugins_for("physical_representation", form, JSONModel(:physical_representation).new._always_valid!) %>
     </div>
