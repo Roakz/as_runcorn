@@ -1,6 +1,7 @@
 <% define_template "physical_representation", jsonmodel_definition(:physical_representation) do |form| %>
   <div class="subrecord-form-fields">
     <%= form.hidden_input "existing_ref" %>
+    <%= render_aspace_partial :partial => 'shared/qsa_id_form', :locals => {:form => form, :model => :physical_representation} %>
     <%= form.label_and_textfield "title" %>
     <%= form.label_and_textarea "description" %>
     <%= form.label_and_select "access_category", form.possible_options_for("access_category", true) %>

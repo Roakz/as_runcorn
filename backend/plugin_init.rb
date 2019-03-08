@@ -16,3 +16,6 @@ QSAId.register(Function)
 QSAId.register(Mandate)
 QSAId.register(Accession, :id_0)
 QSAId.register(AgentCorporateEntity)
+QSAId.register(PhysicalRepresentation)
+QSAId.register(DigitalRepresentation)
+

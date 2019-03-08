@@ -43,4 +43,6 @@ Rails.application.config.after_initialize do
   QSAId.register(:mandate)
   QSAId.register(:accession, :id_0)
   QSAId.register(:agent_corporate_entity)
+  QSAId.register(:physical_representation)
+  QSAId.register(:digital_representation)
 end
