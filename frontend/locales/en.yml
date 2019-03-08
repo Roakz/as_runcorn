@@ -1,6 +1,7 @@
 en:
   as_runcorn:
-    qsa_id: ID Number
+    qsa_id: QSA ID
+    qsa_id_auto_generation_message: "-- auto-generated upon save --"
   group:
     permission_types:
       manage_agency_registration: manage agency registration workflow

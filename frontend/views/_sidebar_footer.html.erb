@@ -1,0 +1,12 @@
+<% if controller_supports_current_record? && current_record.respond_to?(:qsa_id) &&
+      QSAId.existing_id_for(current_record.jsonmodel_type.intern) %>
+
+  <script>
+     QSA_ID_MODEL = '<%=j current_record.jsonmodel_type %>';
+     QSA_ID_EXISTING_ID = '<%=j QSAId.existing_id_for(current_record.jsonmodel_type.intern).to_s %>';
+  </script>
+
+  <%= javascript_include_tag 'qsa_id' %>
+
+<% end %>
+

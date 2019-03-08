@@ -9,6 +9,11 @@ class IndexerCommon
       end
     }
 
-  end
+    indexer.add_document_prepare_hook do |doc, record|
+      if record['record'].has_key?('qsa_id')
+        doc['qsa_id__u_sint'] = record['record']['qsa_id']
+      end
+    end
 
+  end
 end
