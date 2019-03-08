@@ -32,17 +32,24 @@ module Representations
       # Grab all referenced representations and slot them in
       backlink_col = :"#{self.table_name}_id"
 
+      physical_representation_jsons = {}
+      digital_representation_jsons = {}
+
       representations = PhysicalRepresentation.filter(backlink_col => objs.map(&:id)).all
-
-      representation_jsons = {}
-
       representations.zip(PhysicalRepresentation.sequel_to_jsonmodel(representations)).each do |sequel_obj, json|
-        representation_jsons[sequel_obj[backlink_col]] ||= []
-        representation_jsons[sequel_obj[backlink_col]] << json
+        physical_representation_jsons[sequel_obj[backlink_col]] ||= []
+        physical_representation_jsons[sequel_obj[backlink_col]] << json
+      end
+
+      representations = DigitalRepresentation.filter(backlink_col => objs.map(&:id)).all
+      representations.zip(DigitalRepresentation.sequel_to_jsonmodel(representations)).each do |sequel_obj, json|
+        digital_representation_jsons[sequel_obj[backlink_col]] ||= []
+        digital_representation_jsons[sequel_obj[backlink_col]] << json
       end
 
       objs.zip(jsons).each do |obj, json|
-        json['physical_representations'] = representation_jsons.fetch(obj.id, [])
+        json['physical_representations'] = physical_representation_jsons.fetch(obj.id, [])
+        json['digital_representations'] = digital_representation_jsons.fetch(obj.id, [])
       end
 
       jsons
@@ -55,27 +62,32 @@ module Representations
 
     backlink = {:"#{obj.class.table_name}_id" => obj.id}
 
-    grouped = json['physical_representations'].group_by {|rep| rep['existing_ref']}
+    [
+      [PhysicalRepresentation, 'physical_representations', :physical_representation],
+      [DigitalRepresentation, 'digital_representations', :digital_representation]
+    ].each do |representation_class, representation_property, representation_jsonmodel|
+      grouped = json[representation_property].group_by {|rep| rep['existing_ref']}
 
-    ids_to_keep = grouped.keys.compact.map {|ref| JSONModel.parse_reference(ref)[:id]}
+      ids_to_keep = grouped.keys.compact.map {|ref| JSONModel.parse_reference(ref)[:id]}
 
-    PhysicalRepresentation
-      .filter(backlink)
-      .filter(Sequel.~(:id => ids_to_keep))
-      .each(&:delete)
+      representation_class
+        .filter(backlink)
+        .filter(Sequel.~(:id => ids_to_keep))
+        .each(&:delete)
 
-    # Create the ones that don't exist yet (no ref)
-    ASUtils.wrap(grouped.delete(nil)).each do |to_create|
-      PhysicalRepresentation.create_from_json(JSONModel(:physical_representation).from_hash(to_create), backlink)
-      obj.mark_as_system_modified
-    end
+      # Create the ones that don't exist yet (no ref)
+      ASUtils.wrap(grouped.delete(nil)).each do |to_create|
+        representation_class.create_from_json(JSONModel(representation_jsonmodel).from_hash(to_create), backlink)
+        obj.mark_as_system_modified
+      end
 
-    # Update the others
-    grouped.each do |ref, to_update|
-      # to_update is always a single element array since the ref ensures uniqueness within the set...
-      id = JSONModel.parse_reference(ref)[:id]
+      # Update the others
+      grouped.each do |ref, to_update|
+        # to_update is always a single element array since the ref ensures uniqueness within the set...
+        id = JSONModel.parse_reference(ref)[:id]
 
-      PhysicalRepresentation[id].update_from_json(JSONModel(:physical_representation).from_hash(to_update[0]), backlink)
+        representation_class[id].update_from_json(JSONModel(representation_jsonmodel).from_hash(to_update[0]), backlink)
+      end
     end
   end
 

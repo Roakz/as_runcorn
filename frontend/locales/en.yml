@@ -77,3 +77,34 @@ en:
     _frontend:
       action:
         add: Add Physical Representation
+  digital_representation:
+    access_category: Access Category
+    normal_location: Normal Location
+    access_clearance_procedure: Access Clearance Procedure
+    accessioned_status: Accessioned Status
+    agency_assigned_id: Agency Assigned ID
+    approval_date: Approved Date
+    approved_by: Approved By
+    colour: Colour
+    contained_within: Contained Within
+    description: Description
+    exhibition_history: Exhibition History
+    exhibition_notes: Exhibition Notes
+    exhibition_quality: Exhibition Quality
+    file_issue_allowed: File Issue Allowed
+    format: Format
+    intended_use: Intended Use
+    other_restrictions_notes: Other Restriction Notes
+    original_registration_date: Original Registration Date
+    preferred_citation: Preferred Citation
+    preservation_notes: Preservation Notes
+    publish: Publish
+    preservation_restriction_status: Preservation Restriction Status
+    remarks: Remarks
+    salvage_priority_code: Salvage Priority Code
+    title: Title
+    _plural: Digital Representations
+    _singular: Digital Representation
+    _frontend:
+      action:
+        add: Add Digital Representation

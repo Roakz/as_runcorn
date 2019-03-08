@@ -1,11 +1,18 @@
 class IndexerCommon
   @@record_types << :physical_representation
+  @@record_types << :digital_representation
 
   add_indexer_initialize_hook do |indexer|
 
     indexer.add_document_prepare_hook {|doc, record|
       if doc['primary_type'] == 'physical_representation'
-        doc['title'] = record['record']['display_string'] 
+        doc['title'] = record['record']['display_string']
+      end
+    }
+
+    indexer.add_document_prepare_hook {|doc, record|
+      if doc['primary_type'] == 'digital_representation'
+        doc['title'] = record['record']['display_string']
       end
     }
 

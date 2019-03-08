@@ -1,0 +1,12 @@
+<% render_aspace_partial :partial => "digital_representations/template" %>
+
+<section id="<%= section_id %>" class="subrecord-form-dummy">
+  <h3><%= I18n.t("digital_representation._plural") %></h3>
+  <% digital_representations.each do |digital_representation| %>
+    <div class="subrecord-form-container">
+      <% context.push("digital_representation", digital_representation) do |context| %>
+        <% context.emit_template("digital_representation") %>
+      <% end %>
+    </div>
+  <% end %>
+</section>
