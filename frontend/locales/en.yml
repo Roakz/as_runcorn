@@ -132,6 +132,9 @@ en:
     _frontend:
       action:
         add: Add Digital Representation
+  representation:
+    _singular: Representation
+    _plural: Representations
   container:
     _singular: Container
     _plural: Containers
@@ -140,3 +143,6 @@ en:
     indicator_2: Child Indicator
     type_3: Grandchild Type
     indicator_3: Grandchild Indicator
+  search_results:
+    filter:
+      representation_intended_use_u_sstr: Intended Use

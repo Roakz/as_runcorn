@@ -15,6 +15,10 @@
   <%= link_to I18n.t("managed_registration.button_label"), {:controller => :managed_registration, :action => :index} %>
 </script>
 
+<script type="text/template" id="browseRepresentationsTemplate">
+  <li><%= link_to I18n.t("representation._plural"), {:controller => :representations, :action => :index} %></li>
+</script>
+
 <script>
     // put link in the System menu
     $(function() {
@@ -27,6 +31,8 @@
 
       setupButton("managedRegistrationButtonTemplate");
 
+      // Put representation browse in Repo menu
+      $('.repository-header .navbar-nav .browse-container .dropdown-menu .divider:first').before(AS.renderTemplate("browseRepresentationsTemplate"))
     });
 </script>
 
