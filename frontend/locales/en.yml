@@ -108,3 +108,11 @@ en:
     _frontend:
       action:
         add: Add Digital Representation
+  container:
+    _singular: Container
+    _plural: Containers
+  runcorn_sub_container:
+    type_2: Child Type
+    indicator_2: Child Indicator
+    type_3: Grandchild Type
+    indicator_3: Grandchild Indicator

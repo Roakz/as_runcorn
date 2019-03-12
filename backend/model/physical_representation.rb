@@ -12,6 +12,11 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
                       :contains_references_to_types => proc {[AgentPerson]},
                       :is_array => false)
 
+  one_to_many :sub_container
+  def_nested_record(:the_property => :containers,
+                    :contains_records_of_type => :sub_container,
+                    :corresponding_to_association => :sub_container)
+
   set_model_scope :repository
 
 

@@ -29,7 +29,7 @@ Rails.application.config.after_initialize do
     )
   )
 
-  Plugins.add_resolve_field(['approved_by'])
+  Plugins.add_resolve_field(['approved_by', 'container'])
 
   # Force load
   JSONModel(:physical_representation)

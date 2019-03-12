@@ -78,11 +78,27 @@
     <%= form.label_and_boolean "publish" %>
 
     <div class="subrecord-form-container">
-      <% unless form.readonly? && ASUtils.wrap(form.obj['deaccessions']).empty? %>
-        <%= render_aspace_partial :partial => "shared/subrecord_form", :locals => {:form => form, :name => "deaccessions"} %>
+      <% if form.readonly? %>
+        <% unless ASUtils.wrap(form.obj['containers']).empty? %>
+          <section class="subrecord-form">
+            <h3 class="subrecord-form-heading"><%= I18n.t('container._plural') %></h3>
+            <div class="subrecord-form-container">
+              <% form.obj['containers'].each do |container| %>
+                <div class="subrecord-form-fields">
+                  <%= render_aspace_partial :partial => "sub_containers/show", :locals => {:sub_container => container}%>
+                </div>
+              <% end %>
+            </div>
+          </section>
+        <% end %>
+      <% else %>
+        <%= render_aspace_partial :partial => "shared/subrecord_form", :locals => {:form => form, :name => "containers", :template => 'runcorn_sub_container', :template_erb => 'sub_containers/runcorn_template'} %>
       <% end %>
       <% unless form.readonly? && ASUtils.wrap(form.obj['extents']).empty? %>
         <%= render_aspace_partial :partial => "shared/subrecord_form", :locals => {:form => form, :name => "extents"} %>
+      <% end %>
+      <% unless form.readonly? && ASUtils.wrap(form.obj['deaccessions']).empty? %>
+        <%= render_aspace_partial :partial => "shared/subrecord_form", :locals => {:form => form, :name => "deaccessions"} %>
       <% end %>
       <% if !form.readonly? %>
         <%= render_aspace_partial :partial => "external_ids/edit", :locals => {:form => form} %>
