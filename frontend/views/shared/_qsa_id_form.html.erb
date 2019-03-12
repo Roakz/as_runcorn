@@ -1,5 +1,8 @@
 <% define_template "as_runcorn", jsonmodel_definition(model) do |form| %>
-    <%= form.label_and_readonly "qsa_id", "<em>#{I18n.t("as_runcorn.qsa_id_auto_generation_message")}</em>", :control_class => 'as-runcorn-qsa-id' %>
+    <%= form.label_and_readonly "qsa_id",
+                                "<em>#{I18n.t("as_runcorn.qsa_id_auto_generation_message")}</em>",
+                                :control_class => 'as-runcorn-qsa-id',
+                                :label_opts => { :contextual => model } %>
 <% end %>
 
 <% form.emit_template("as_runcorn") %>

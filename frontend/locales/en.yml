@@ -1,7 +1,31 @@
 en:
   as_runcorn:
-    qsa_id: QSA ID
     qsa_id_auto_generation_message: "-- auto-generated upon save --"
+  agent_corporate_entity:
+    as_runcorn:
+      qsa_id: Agency Id
+  resource:
+    as_runcorn:
+      qsa_id: Series Id
+  archival_object:
+    as_runcorn:
+      qsa_id: Record Id
+  physical_representation:
+    as_runcorn:
+      qsa_id: Physical Representation Id
+  digital_representation:
+    as_runcorn:
+      qsa_id: Digital Representation Id
+  function:
+    as_runcorn:
+      qsa_id: Function Id
+  mandate:
+    as_runcorn:
+      qsa_id: Mandate Id
+  accession:
+    as_runcorn:
+      qsa_id: Transfer Id
+
   group:
     permission_types:
       manage_agency_registration: manage agency registration workflow
