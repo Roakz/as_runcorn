@@ -29,7 +29,7 @@ Sequel.migration do
       DynamicEnum :format_id, :null => false
       DynamicEnum :intended_use_id
       String :original_registration_date
-      DynamicEnum :physical_description_type_id
+      TextField :physical_format_details
       TextField :preferred_citation
       TextField :preservation_notes
       DynamicEnum :preservation_priority_rating_id
@@ -183,17 +183,17 @@ Sequel.migration do
     create_editable_enum('runcorn_physical_representation_contained_within',
                          [
                            'ALB', 'ARCBX', 'BUN', 'CBX', 'CDR', 'FLM', 'MBX',
-                           'NAA', 'NAS', 'OTH', 'PHBX', 'SLD', 'SOLBX', 'TYPE1',
+                           'NAA', 'OTH', 'PHBX', 'SLD', 'SOLBX', 'TYPE1',
                            'TYPE10', 'TYPE11', 'TYPE2', 'TYPE31', 'TYPE51',
                            'TYPE6',
                          ])
 
-    create_enum('runcorn_physical_description_type', ['FIXME'])
     create_enum('runcorn_preservation_priority_rating', ['High', 'Medium', 'Low'])
     create_enum('runcorn_intended_use', [
                   'Master',
                   'Access Copy',
-                  'Preservation Copy'
+                  'Preservation Copy',
+                  'Backup Copy',
                 ])
 
 

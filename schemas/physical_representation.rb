@@ -69,7 +69,7 @@
 
       "other_restrictions_notes" => {"type" => "string"},
 
-      "physical_description_type" => {"type" => "string", "dynamic_enum" => "runcorn_physical_description_type"},
+      "physical_format_details" => {"type" => "string"},
 
       "publish" => {"type" => "boolean"},
 
