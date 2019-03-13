@@ -85,8 +85,8 @@
               <div class="input-group linker-wrapper">
                 <input type="text" class="linker"
                        id="approved_by_linker"
-                       data-label="Approved By"
-                       data-label_plural="Approved By"
+                       data-label="<%= I18n.t("physical_representation.approved_by") %>"
+                       data-label_plural="<%= I18n.t("physical_representation.approved_by") %>"
                        data-path="<%= form.path %>"
                        data-name="ref"
                        data-url="<%= url_for :controller => :search, :action => :do_search, :format => :json %>"
