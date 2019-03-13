@@ -28,7 +28,7 @@ Sequel.migration do
       Integer :exhibition_quality, :default => 0
       Integer :file_issue_allowed, :default => 1
       String :file_size
-      DynamicEnum :file_type_id, :null => false,
+      DynamicEnum :file_type_id, :null => false
       DynamicEnum :intended_use_id
       String :original_registration_date
       TextField :preferred_citation
