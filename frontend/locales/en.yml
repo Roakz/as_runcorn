@@ -94,10 +94,13 @@ en:
     intended_use: Intended Use
     other_restrictions_notes: Other Restriction Notes
     original_registration_date: Original Registration Date
+    physical_format_details: Physical Format Details
     preferred_citation: Preferred Citation
     preservation_notes: Preservation Notes
+    preservation_priority_rating: Preservation Priority Rating
     physical_description_type: Physical Description Type
     publish: Publish
+    related_accession: Transfer
     remarks: Remarks
     salvage_priority_code: Salvage Priority Code
     sterilised_status: Sterilised Status
@@ -107,6 +110,9 @@ en:
     _frontend:
       action:
         add: Add Physical Representation
+    as_runcorn:
+      qsa_id: Physical Representation Id
+
   digital_representation:
     access_category: Access Category
     normal_location: Normal Location
@@ -122,16 +128,22 @@ en:
     exhibition_notes: Exhibition Notes
     exhibition_quality: Exhibition Quality
     file_issue_allowed: File Issue Allowed
+    file_size: File Size
+    file_type: File Type
     format: Format
     intended_use: Intended Use
     other_restrictions_notes: Other Restriction Notes
     original_registration_date: Original Registration Date
     preferred_citation: Preferred Citation
     preservation_notes: Preservation Notes
+    preservation_priority_rating: Preservation Priority Rating
     publish: Publish
+    related_accession: Transfer
     remarks: Remarks
     salvage_priority_code: Salvage Priority Code
     title: Title
+    as_runcorn:
+      qsa_id: Physical Representation Id
     _plural: Digital Representations
     _singular: Digital Representation
     _frontend:
