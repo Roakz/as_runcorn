@@ -20,7 +20,7 @@ Sequel.migration do
       String :agency_assigned_id
       String :approval_date
       DynamicEnum :colour_id
-      DynamicEnum :contained_within_id
+      DynamicEnum :contained_within_id, :null => false
       TextField :description
       TextField :exhibition_history
       TextField :exhibition_notes
@@ -32,7 +32,7 @@ Sequel.migration do
       DynamicEnum :physical_description_type_id
       TextField :preferred_citation
       TextField :preservation_notes
-      DynamicEnum :preservation_restriction_status_id, :null => false
+      DynamicEnum :preservation_priority_rating_id
       TextField :remark
       String :title
       DynamicEnum :salvage_priority_code_id
@@ -89,19 +89,112 @@ Sequel.migration do
                  'MON',
                 ])
 
-    create_enum('runcorn_format',
-                ['A/V', 'AER', 'ARC', 'ART', 'CAR', 'COM',
-                 'FCH', 'FIL', 'FLM', 'GRA', 'LFFLM', 'MAP', 'MIC', 'MMF', 'MSC',
-                 'NEG', 'OBJ', 'OTH', 'PAS', 'PHO', 'TEC', 'VOL', ])
+    create_editable_enum('runcorn_format',
+                [
+                  'Not Set',
+                  'Drafting Cloth (Linen)',
+                  'Magnetic Media',
+                  'Magnetic Media -- Cartridge Tape',
+                  'Magnetic Media -- Cassette Tape',
+                  'Magnetic Media -- Floppy Disk',
+                  'Magnetic Media -- Hard Disc Drive',
+                  'Magnetic Media -- Reel Tape',
+                  'Magnetic Media -- Reel Tape -- 7 Track',
+                  'Magnetic Media -- Reel Tape -- 9 Track',
+                  'Magnetic Media -- Reel Tape -- 21 Track',
+                  'Magnetic Media -- Video Tape',
+                  'Magnetic Media -- Video Tape -- Betamax',
+                  'Magnetic Media -- Video Tape -- U-Matic',
+                  'Magnetic Media -- Video Tape -- VHS',
+                  'Microform',
+                  'Microform -- Aperture Cards',
+                  'Microform -- Aperture Cards -- Acetate',
+                  'Microform -- Aperture Cards -- Cellulose',
+                  'Microform -- Aperture Cards -- Nitrate',
+                  'Microform -- Aperture Cards -- Silver Halide',
+                  'Microform -- Microfiche',
+                  'Microform -- Microfiche -- Acetate',
+                  'Microform -- Microfiche -- Cellulose',
+                  'Microform -- Microfiche -- Nitrate',
+                  'Microform -- Microfiche -- Silver Halide',
+                  'Microform -- Microfilm',
+                  'Microform -- Microfilm -- Acetate',
+                  'Microform -- Microfilm -- Cellulose',
+                  'Microform -- Microfilm -- Nitrate',
+                  'Microform -- Microfilm -- Silver Halide',
+                  'Motion Picture Film',
+                  'Motion Picture Film -- 8 mm',
+                  'Motion Picture Film -- 9.5 mm',
+                  'Motion Picture Film -- 16 mm',
+                  'Motion Picture Film -- 35 mm',
+                  'Motion Picture Film -- 70 mm',
+                  'Motion Picture Film -- Super 8',
+                  'Negative, Slide or Transparency',
+                  'Negative, Slide or Transparency -- Glass Plate Negative',
+                  'Negative, Slide or Transparency -- Lantern Slide',
+                  'Negative, Slide or Transparency -- Mounted Slide Frame',
+                  'Negative, Slide or Transparency -- Mounted Slide Frame -- 110 Slide',
+                  'Negative, Slide or Transparency -- Mounted Slide Frame -- 126 Slide',
+                  'Negative, Slide or Transparency -- Mounted Slide Frame -- 127 Slide',
+                  'Negative, Slide or Transparency -- Mounted Slide Frame -- 127 Super Slide',
+                  'Negative, Slide or Transparency -- Mounted Slide Frame -- 35 mm Half Frame Slide',
+                  'Negative, Slide or Transparency -- Mounted Slide Frame -- 35 mm Slide',
+                  'Negative, Slide or Transparency -- Polyester Negative',
+                  'Object',
+                  'Object -- Glass',
+                  'Object -- Metal',
+                  'Object -- Plastic',
+                  'Object -- Stone',
+                  'Object -- Textile',
+                  'Object -- Wood',
+                  'Optical Media',
+                  'Optical Media -- Compact Disc (CD)',
+                  'Optical Media -- Digital Versatile Disc (DVD)',
+                  'Paper',
+                  'Paper -- Blueprint',
+                  'Paper -- Cardboard',
+                  'Paper -- Mounted',
+                  'Paper -- Synthetic',
+                  'Paper -- Tracing / Offset',
+                  'Phonographic Media',
+                  'Phonographic Media -- Acetate',
+                  'Phonographic Media -- Shellac',
+                  'Phonographic Media -- Vinyl Disc',
+                  'Phonographic Media -- Wax Cylinder',
+                  'Photographic Print',
+                  'Photographic Print -- Album',
+                  'Photographic Print -- Framed',
+                  'Photographic Print -- Loose',
+                  'Photographic Print -- Mounted',
+                  'Photographic Print -- Sleeved',
+                  'Plastic Film',
+                  'Vellum or Parchment',
+                  'Volume',
+                  'Volume -- Bolted',
+                  'Volume -- Kalamazoo',
+                  'Volume -- Locked',
+                ])
 
     create_enum('runcorn_salvage_priority_code',
                 ['AIC', 'BHG', 'LOW'])
 
 
-    create_enum('runcorn_physical_representation_contained_within', ['FIXME'])
+
+    create_editable_enum('runcorn_physical_representation_contained_within',
+                         [
+                           'ALB', 'ARCBX', 'BUN', 'CBX', 'CDR', 'FLM', 'MBX',
+                           'NAA', 'NAS', 'OTH', 'PHBX', 'SLD', 'SOLBX', 'TYPE1',
+                           'TYPE10', 'TYPE11', 'TYPE2', 'TYPE31', 'TYPE51',
+                           'TYPE6',
+                         ])
+
     create_enum('runcorn_physical_description_type', ['FIXME'])
-    create_enum('runcorn_physical_preservation_restriction_status', ['FIXME'])
-    create_enum('runcorn_intended_use', ['FIXME'])
+    create_enum('runcorn_preservation_priority_rating', ['High', 'Medium', 'Low'])
+    create_enum('runcorn_intended_use', [
+                  'Master',
+                  'Access Copy',
+                  'Preservation Copy'
+                ])
 
 
     create_table(:representation_approved_by_rlshp) do

@@ -12,7 +12,6 @@ describe 'Physical representations' do
           "current_location" => "N/A",
           "normal_location" => "N/A",
           "format" => "OTH",
-          "preservation_restriction_status" => "FIXME",
         }
       ]
 
@@ -45,7 +44,6 @@ describe 'Physical representations' do
         "current_location" => "N/A",
         "normal_location" => "N/A",
         "format" => "OTH",
-        "preservation_restriction_status" => "FIXME",
       }
     ]
 

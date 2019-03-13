@@ -3,13 +3,17 @@ class DigitalRepresentation < Sequel::Model(:digital_representation)
   corresponds_to JSONModel(:digital_representation)
 
   include Deaccessions
-  include Extents
   include ExternalIDs
   include Publishable
 
   define_relationship(:name => :representation_approved_by,
                       :json_property => 'approved_by',
                       :contains_references_to_types => proc {[AgentPerson]},
+                      :is_array => false)
+
+  define_relationship(:name => :representation_accession,
+                      :json_property => 'related_accession',
+                      :contains_references_to_types => proc {[Accession]},
                       :is_array => false)
 
   set_model_scope :repository

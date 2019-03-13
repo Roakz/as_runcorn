@@ -41,7 +41,7 @@
 
       "colour" => {"type" => "string", "dynamic_enum" => "runcorn_colour"},
 
-      "contained_within" => {"type" => "string", "dynamic_enum" => "runcorn_physical_representation_contained_within"},
+      "contained_within" => {"type" => "string", "dynamic_enum" => "runcorn_physical_representation_contained_within", "ifmissing" => "error"},
 
       "containers" => {"type" => "array", "items" => {"type" => "JSONModel(:sub_container) object"}},
 
@@ -77,7 +77,7 @@
 
       "preservation_notes" => {"type" => "string"},
 
-      "preservation_restriction_status" => {"type" => "string", "dynamic_enum" => "runcorn_physical_preservation_restriction_status", "ifmissing" => "error"},
+      "preservation_priority_rating" => {"type" => "string", "dynamic_enum" => "runcorn_preservation_priority_rating"},
 
       "remark" => {"type" => "string"},
 
@@ -86,6 +86,20 @@
       "sterilised_status" => {"type" => "boolean"},
 
       "title" => {"type" => "string"},
+
+      "related_accession" => {
+        "type" => "object",
+        "subtype" => "ref",
+        "properties" => {
+          "ref" => {"type" => [{"type" => "JSONModel(:accession) uri"}],
+                    "ifmissing" => "error"},
+          "_resolved" => {
+            "type" => "object",
+            "readonly" => "true"
+          }
+        }
+      },
+
     },
   },
 }

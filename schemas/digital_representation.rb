@@ -39,7 +39,7 @@
 
       "colour" => {"type" => "string", "dynamic_enum" => "runcorn_colour"},
 
-      "contained_within" => {"type" => "string", "dynamic_enum" => "runcorn_digital_representation_contained_within"},
+      "contained_within" => {"type" => "string", "dynamic_enum" => "runcorn_digital_representation_contained_within", "ifmissing" => "error"},
 
       "deaccessions" => {"type" => "array", "items" => {"type" => "JSONModel(:deaccession) object"}},
 
@@ -51,13 +51,13 @@
 
       "exhibition_quality" => {"type" => "boolean"},
 
-      "extents" => {"type" => "array", "items" => {"type" => "JSONModel(:extent) object"}},
-
       "external_ids" => {"type" => "array", "items" => {"type" => "JSONModel(:external_id) object"}},
 
       "file_issue_allowed" => {"type" => "boolean", "default" => true},
 
-      "format" => {"type" => "string", "dynamic_enum" => "runcorn_format", "ifmissing" => "error"},
+      "file_size" => {"type" => "string"},
+
+      "file_type" => {"type" => "string", "dynamic_enum" => "runcorn_digital_file_type", "ifmissing" => "error"},
 
       "intended_use" => {"type" => "string", "dynamic_enum" => "runcorn_intended_use"},
 
@@ -71,13 +71,27 @@
 
       "preservation_notes" => {"type" => "string"},
 
-      "preservation_restriction_status" => {"type" => "string", "dynamic_enum" => "runcorn_digital_preservation_restriction_status", "ifmissing" => "error"},
+      "preservation_priority_rating" => {"type" => "string", "dynamic_enum" => "runcorn_preservation_priority_rating"},
 
       "remark" => {"type" => "string"},
 
       "salvage_priority_code" => {"type" => "string", "dynamic_enum" => "runcorn_salvage_priority_code"},
 
       "title" => {"type" => "string"},
+
+      "related_accession" => {
+        "type" => "object",
+        "subtype" => "ref",
+        "properties" => {
+          "ref" => {"type" => [{"type" => "JSONModel(:accession) uri"}],
+                    "ifmissing" => "error"},
+          "_resolved" => {
+            "type" => "object",
+            "readonly" => "true"
+          }
+        }
+      },
+
     },
   },
 }
