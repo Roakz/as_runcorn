@@ -10,6 +10,9 @@ en:
   archival_object:
     as_runcorn:
       qsa_id: Record Id
+    _frontend:
+      action:
+        add_sibling_from_clone: Clone to Sibling
   physical_representation:
     as_runcorn:
       qsa_id: Physical Representation Id
