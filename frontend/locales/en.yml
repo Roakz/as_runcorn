@@ -7,9 +7,13 @@ en:
   resource:
     as_runcorn:
       qsa_id: Series Id
+    approval_date: Approval Date
+    approved_by: Approved By
   archival_object:
     as_runcorn:
       qsa_id: Record Id
+    approval_date: Approval Date
+    approved_by: Approved By
     _frontend:
       action:
         add_sibling_from_clone: Clone to Sibling

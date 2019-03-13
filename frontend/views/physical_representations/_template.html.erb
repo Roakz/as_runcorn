@@ -60,7 +60,7 @@
     <%= form.label_and_select "access_clearance_procedure", form.possible_options_for("access_clearance_procedure", true) %>
     <%= form.label_and_select "accessioned_status", form.possible_options_for("accessioned_status", true) %>
     <%= form.label_and_textfield "agency_assigned_id" %>
-    <%= form.label_and_textfield "approval_date" %>
+    <%= form.label_and_date "approval_date" %>
     <% if form.readonly? %>
       <% if form['approved_by']  %>
         <div class="form-group">
@@ -118,7 +118,7 @@
     <%= form.label_and_select "intended_use", form.possible_options_for("intended_use", true) %>
     <%= form.label_and_textfield "original_registration_date" %>
     <%= form.label_and_textarea "other_restrictions_notes" %>
-    <%= form.label_and_select "physical_description_type", form.possible_options_for("physical_description_type", true) %>
+    <%= form.label_and_textarea "physical_format_details" %>
     <%= form.label_and_textarea "preferred_citation" %>
     <%= form.label_and_textarea "preservation_notes" %>
     <%= form.label_and_select "preservation_priority_rating", form.possible_options_for("preservation_priority_rating", true) %>

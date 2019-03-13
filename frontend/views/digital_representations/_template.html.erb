@@ -59,7 +59,7 @@
     <%= form.label_and_select "access_clearance_procedure", form.possible_options_for("access_clearance_procedure", true) %>
     <%= form.label_and_select "accessioned_status", form.possible_options_for("accessioned_status", true) %>
     <%= form.label_and_textfield "agency_assigned_id" %>
-    <%= form.label_and_textfield "approval_date" %>
+    <%= form.label_and_date "approval_date" %>
     <% if form.readonly? %>
       <% if form['approved_by']  %>
         <div class="form-group">
