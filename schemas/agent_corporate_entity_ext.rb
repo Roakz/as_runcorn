@@ -15,5 +15,8 @@
   "registration_last_time" => {
     "type" => "date-time",
     "readonly" => true
-  }
+  },
+  "agency_note" => {
+    "type" => "string",
+  },
 }

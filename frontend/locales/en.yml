@@ -4,6 +4,8 @@ en:
   agent_corporate_entity:
     as_runcorn:
       qsa_id: Agency Id
+  agent:
+    agency_note: Note
   resource:
     as_runcorn:
       qsa_id: Series Id
