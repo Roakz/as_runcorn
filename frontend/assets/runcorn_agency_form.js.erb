@@ -1,0 +1,15 @@
+$(function() {
+    var enforceDateCardinality = function () {
+        var section = $('#agent_corporate_entity_dates_of_existence');
+        var allowAdd = section.find('.subrecord-form-fields').length == 0;
+
+        section.find('.subrecord-form-heading button').attr('disabled', allowAdd ? null : 'disabled');
+
+        if (!allowAdd) {
+            section.find('.subrecord-add-as-you-go-actions').remove();
+        }
+    };
+
+    $(document).on('subrecordcreated.aspace', enforceDateCardinality);
+    $(document).on('subrecorddeleted.aspace', enforceDateCardinality);
+});
