@@ -167,3 +167,12 @@ en:
   search_results:
     filter:
       representation_intended_use_u_sstr: Intended Use
+
+  external_id:
+    _plural: Internal References
+    _singular: Internal Reference
+    source: Source
+    external_id: Internal Reference
+    _frontend:
+      action:
+        add: Add Internal Reference
