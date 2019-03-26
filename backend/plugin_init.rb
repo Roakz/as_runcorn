@@ -1,4 +1,5 @@
 require_relative '../common/managed_registration_init'
+require_relative '../common/validation_overrides'
 
 Permission.define("manage_agency_registration",
                   "The ability to manage the agency registration workflow",

@@ -48,4 +48,6 @@ Rails.application.config.after_initialize do
   QSAId.register(:agent_corporate_entity)
   QSAId.register(:physical_representation)
   QSAId.register(:digital_representation)
+
+  require_relative '../common/validation_overrides'
 end
