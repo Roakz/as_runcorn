@@ -5,7 +5,7 @@ Rails.application.config.after_initialize do
     Plugins::PluginSubRecord.new(
       'as_runcorn',
       'physical_representations',
-      ['resource', 'archival_object'],
+      ['archival_object'],
       {
         template_name: 'physical_representation',
         js_edit_template_name: 'template_physical_representation',
@@ -19,7 +19,7 @@ Rails.application.config.after_initialize do
     Plugins::PluginSubRecord.new(
       'as_runcorn',
       'digital_representations',
-      ['resource', 'archival_object'],
+      ['archival_object'],
       {
         template_name: 'digital_representation',
         js_edit_template_name: 'template_digital_representation',

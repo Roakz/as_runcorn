@@ -2,37 +2,36 @@ require 'spec_helper'
 
 describe 'Physical representations' do
 
-  it "applies to archival objects and resources" do
-    [[:json_archival_object, ArchivalObject], [:json_resource, Resource]].each do |factory, model|
-      json = build(factory)
+  it "applies to archival objects" do
+    json = build(:json_archival_object)
 
-      json.physical_representations = [
-        {
-          "description" => "Let us get physical!",
-          "current_location" => "N/A",
-          "normal_location" => "N/A",
-          "format" => "OTH",
-        }
-      ]
+    json.physical_representations = [
+      {
+        "description" => "Let us get physical!",
+        "current_location" => "N/A",
+        "normal_location" => "N/A",
+        "format" => "Drafting Cloth (Linen)",
+        "contained_within" => "OTH",
+      }
+    ]
 
-      obj = model.create_from_json(json)
+    obj = ArchivalObject.create_from_json(json)
 
-      json = model.to_jsonmodel(obj.id)
+    json = ArchivalObject.to_jsonmodel(obj.id)
 
-      expect(json.physical_representations.length).to eq(1)
-      expect(json.physical_representations[0]['existing_ref']).to be_truthy
-      expect(json.physical_representations[0]['description']).to eq("Let us get physical!")
+    expect(json.physical_representations.length).to eq(1)
+    expect(json.physical_representations[0]['existing_ref']).to be_truthy
+    expect(json.physical_representations[0]['description']).to eq("Let us get physical!")
 
-      # And we can update it...
-      json.physical_representations[0]['description'] = "I hated that song..."
+    # And we can update it...
+    json.physical_representations[0]['description'] = "I hated that song..."
 
-      obj.update_from_json(json)
+    obj.update_from_json(json)
 
-      json = model.to_jsonmodel(obj.id)
-      expect(json.physical_representations.length).to eq(1)
-      expect(json.physical_representations[0]['existing_ref']).to be_truthy
-      expect(json.physical_representations[0]['description']).to eq("I hated that song...")
-    end
+    json = ArchivalObject.to_jsonmodel(obj.id)
+    expect(json.physical_representations.length).to eq(1)
+    expect(json.physical_representations[0]['existing_ref']).to be_truthy
+    expect(json.physical_representations[0]['description']).to eq("I hated that song...")
   end
 
   it "removes representations that are no longer referenced" do
@@ -43,7 +42,8 @@ describe 'Physical representations' do
         "description" => "Let us get physical!",
         "current_location" => "N/A",
         "normal_location" => "N/A",
-        "format" => "OTH",
+        "format" => "Drafting Cloth (Linen)",
+        "contained_within" => "OTH",
       }
     ]
 
@@ -59,6 +59,69 @@ describe 'Physical representations' do
     json = ArchivalObject.to_jsonmodel(obj.id)
     expect(json.physical_representations.length).to eq(0)
     expect(Tombstone[:uri => dead_uri]).to be_truthy
+  end
+
+  it "provides representation counts on the archival object" do
+    obj = create(:json_archival_object, {
+      "physical_representations" => [
+        {
+          "description" => "Let us get physical!",
+          "current_location" => "N/A",
+          "normal_location" => "N/A",
+          "format" => "Drafting Cloth (Linen)",
+          "contained_within" => "OTH",
+        },
+        {
+          "description" => "Let us also not get too physical",
+          "current_location" => "N/A",
+          "normal_location" => "N/A",
+          "format" => "Drafting Cloth (Linen)",
+          "contained_within" => "OTH",
+        },
+      ]
+    })
+
+    json = ArchivalObject.to_jsonmodel(obj.id)
+    json['physical_representations_count'].should eq(2)
+  end
+
+
+  it "provides representation counts on the resource" do
+    resource = create(:json_resource)
+    ao_1 = create(:json_archival_object, {
+      "resource" => {"ref" => resource.uri},
+      "physical_representations" => [
+        {
+          "description" => "Let us get physical!",
+          "current_location" => "N/A",
+          "normal_location" => "N/A",
+          "format" => "Drafting Cloth (Linen)",
+          "contained_within" => "OTH",
+        },
+        {
+          "description" => "Let us also not get too physical",
+          "current_location" => "N/A",
+          "normal_location" => "N/A",
+          "format" => "Drafting Cloth (Linen)",
+          "contained_within" => "OTH",
+        },
+      ]
+    })
+    ao_2 = create(:json_archival_object, {
+      "resource" => {"ref" => resource.uri},
+      "physical_representations" => [
+        {
+          "description" => "Let us watch TV",
+          "current_location" => "N/A",
+          "normal_location" => "N/A",
+          "format" => "Drafting Cloth (Linen)",
+          "contained_within" => "OTH",
+        },
+      ]
+    })
+
+    json = Resource.to_jsonmodel(resource.id)
+    json['physical_representations_count'].should eq(3)
   end
 
 end

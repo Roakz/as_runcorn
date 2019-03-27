@@ -15,15 +15,6 @@
     }
   },
 
-  "physical_representations" => {
-    "type" => "array",
-    "items" => {"type" => "JSONModel(:physical_representation) object"}
-  },
-  "digital_representations" => {
-    "type" => "array",
-    "items" => {"type" => "JSONModel(:digital_representation) object"}
-  },
-
   "physical_representations_count" => {"type"=> "number", "readonly" => "true"},
   "digital_representations_count" => {"type"=> "number", "readonly" => "true"},
 }
