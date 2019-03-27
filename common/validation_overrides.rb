@@ -5,9 +5,8 @@
 JSONModel.custom_validations['check_date'] = proc do |hash|
   errors = []
 
-  if hash["begin"].nil? && hash["end"].nil?
-    errors << ["begin", "is required unless an end date is given"]
-    errors << ["end", "is required unless a begin date is given"]
+  if hash["begin"].nil?
+    errors << ["begin", "is required"]
   else
     begin
       begin_date = JSONModel::Validations.parse_sloppy_date(hash['begin']) if hash['begin']
