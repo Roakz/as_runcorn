@@ -147,7 +147,7 @@ en:
     salvage_priority_code: Salvage Priority Code
     title: Title
     as_runcorn:
-      qsa_id: Physical Representation Id
+      qsa_id: Digital Representation Id
     _plural: Digital Representations
     _singular: Digital Representation
     _frontend:
