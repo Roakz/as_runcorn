@@ -24,6 +24,8 @@ class QSAId
       "readonly" => true
     }
 
+    JSONModel(model).define_accessors(['qsa_id'])
+
     models_hash[model] = existing_id_field
   end
 

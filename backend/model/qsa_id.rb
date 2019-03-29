@@ -34,6 +34,8 @@ class QSAId
         "type" => "integer",
         "readonly" => true
       }
+
+      model.my_jsonmodel.define_accessors(['qsa_id'])
     end
 
     models_hash[model] = existing_id_field
