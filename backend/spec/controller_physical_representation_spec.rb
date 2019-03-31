@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Physical representations' do
+describe 'Runcorn Physical representations' do
 
   it "applies to archival objects" do
     json = build(:json_archival_object)

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'QSA Id model' do
+describe 'Runcorn QSA Id model' do
 
   it 'generates a qsa id from a sequence on create' do
     QSAId.models.each do |model|

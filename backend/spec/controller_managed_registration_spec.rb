@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Managed Registration Controller' do
+describe 'Runcorn Managed Registration Controller' do
 
   before(:each) do
     submitter = make_test_user("submitter")

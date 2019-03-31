@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Managed Registration Model' do
+describe 'Runcorn Managed Registration Model' do
 
   describe "Agency" do
     let!(:agency) do
