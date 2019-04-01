@@ -8,6 +8,7 @@ class IndexerCommon
       if doc['primary_type'] == 'physical_representation'
         doc['title'] = record['record']['display_string']
         doc['representation_intended_use_u_sstr'] = record['record']['intended_use']
+        doc['top_container_uri_u_sstr'] = ASUtils.wrap(record['record']['containers']).map{|container| container['top_container']['ref']}
       end
     }
 
