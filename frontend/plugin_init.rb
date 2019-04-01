@@ -29,6 +29,25 @@ Rails.application.config.after_initialize do
     )
   )
 
+  Plugins.register_plugin_section(
+    Plugins::PluginSubRecord.new(
+      'as_runcorn',
+      'external_ids',
+      ['accession', 'resource', 'archival_object',
+       'collection_management', 'event', 'location', 'subject',
+       'agent_corporate_entity', 'agent_person', 'agent_family', 'agent_software',
+       'mandate', 'function'
+      ],
+      {
+        template_name: 'external_id',
+        js_edit_template_name: 'template_external_id',
+        heading_text:  I18n.t('external_id._plural'),
+        sidebar_label:  I18n.t('external_id._plural'),
+      }
+    )
+  )
+
+
   Plugins.add_resolve_field(['approved_by', 'container', 'related_accession'])
 
   Plugins.add_facet_group_i18n("representation_intended_use_u_sstr",

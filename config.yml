@@ -1,5 +1,4 @@
 depends_on_plugins:
   - series_system
-  - editable_external_ids
 recommends_plugins:
   - in_a_rush
