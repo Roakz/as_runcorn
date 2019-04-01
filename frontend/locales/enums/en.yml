@@ -192,3 +192,17 @@ en:
       TYPE31: "Type 3.1 box"
       TYPE51: "Type 5.1 box"
       TYPE6: "Type 6 box"
+
+  enumeration_names:
+    runcorn_access_category: Runcorn Plugin - Access Category
+    runcorn_access_clearance_procedure: Runcorn Plugin - Runcorn Access Clearance Procedure
+    runcorn_accessioned_status: Runcorn Plugin - Runcorn Accessioned Status
+    runcorn_colour: Runcorn Plugin - Runcorn Colour
+    runcorn_digital_file_type: Runcorn Plugin - Runcorn Digital File Type
+    runcorn_digital_representation_contained_within: Runcorn Plugin - Runcorn Digital Representation Contained Within
+    runcorn_format: Runcorn Plugin - Runcorn Format
+    runcorn_intended_use: Runcorn Plugin - Runcorn Intended Use
+    runcorn_location: Runcorn Plugin - Runcorn Location
+    runcorn_physical_representation_contained_within: Runcorn Plugin - Runcorn Physical Representation Contained Within
+    runcorn_preservation_priority_rating: Runcorn Plugin - Runcorn Preservation Priority Rating
+    runcorn_salvage_priority_code: Runcorn Plugin - Runcorn Salvage Priority Code
