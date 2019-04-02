@@ -36,7 +36,7 @@ Rails.application.config.after_initialize do
       ['accession', 'resource', 'archival_object',
        'collection_management', 'event', 'location', 'subject',
        'agent_corporate_entity', 'agent_person', 'agent_family', 'agent_software',
-       'mandate', 'function'
+       'mandate',
       ],
       {
         template_name: 'external_id',
