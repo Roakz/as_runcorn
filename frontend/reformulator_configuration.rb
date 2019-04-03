@@ -1,5 +1,5 @@
-module Reformulator
-  CONFIG = {
+Reformulator.configure(
+  {
     # Rules here apply to any controller and any section
     "_global" => {
       "hideFields" => [
@@ -108,4 +108,4 @@ module Reformulator
       }
     },
   }
-end
+)

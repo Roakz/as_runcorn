@@ -75,4 +75,6 @@ Rails.application.config.after_initialize do
   QSAId.register(:digital_representation)
 
   require_relative '../common/validation_overrides'
+
+  require_relative 'reformulator_configuration'
 end
