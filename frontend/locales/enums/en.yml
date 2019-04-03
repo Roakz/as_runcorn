@@ -192,6 +192,34 @@ en:
       TYPE31: "Type 3.1 box"
       TYPE51: "Type 5.1 box"
       TYPE6: "Type 6 box"
+    agency_category:
+      COI: Commission of Inquiry
+      CWLTH: Commonwealth government authority
+      COR: Correctional facility
+      DEPT: Department
+      CRT: District Court
+      LAN: Land Court
+      DST: District Office
+      REG: Registry
+      EDF: Educational facility
+      EXEC: Executive Council
+      GOC: Government-owned corporation
+      GOV: Governor
+      LOC: Local government authority
+      MAG: Magistrates Court
+      MIN: Ministerial Office
+      NPA: Non Public Authority
+      NSW: New South Wales government authority
+      OTHER: Other agency type
+      RES: Residential care facility
+      STAT: Statutory authority
+      SUP: Supreme Court
+      TRB: Tribunal
+      FIRM: Commercial entity
+      LEESA: Law Enforcement/Emergency Services agency
+      BUSU: Business Unit/Area or Division
+      COM: Commission
+      UNP: Unprocessed
 
   enumeration_names:
     runcorn_access_category: Runcorn Plugin - Access Category

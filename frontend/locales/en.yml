@@ -176,3 +176,14 @@ en:
     _frontend:
       action:
         add: Add Internal Reference
+
+  enumeration_names:
+    agency_category: Agency Category
+
+  search_results:
+    filter:
+      agency_category_u_sstr: Agency Category
+
+  runcorn_agency:
+    agency_category: Agency Category
+    agency_note: Note

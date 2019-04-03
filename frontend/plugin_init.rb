@@ -53,6 +53,12 @@ Rails.application.config.after_initialize do
   Plugins.add_facet_group_i18n("representation_intended_use_u_sstr",
                                proc {|facet| "enumerations.runcorn_intended_use.#{facet}" })
 
+  # Show a new search facet for our category
+  Plugins.add_search_facets(:agent_corporate_entity, "agency_category_u_sstr")
+
+  Plugins.add_facet_group_i18n("agency_category_u_sstr",
+                               proc {|facet| "enumerations.agency_category.#{facet}" })
+
   # Force load
   JSONModel(:physical_representation)
   JSONModel(:digital_representation)

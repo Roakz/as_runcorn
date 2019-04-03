@@ -35,5 +35,11 @@ class IndexerCommon
         doc['title'] += " - #{summary}" unless summary.empty?
       end
     }
+
+    indexer.add_document_prepare_hook do |doc, record|
+      if ['agent_corporate_entity'].include?(record['record']['jsonmodel_type'])
+        doc['agency_category_u_sstr'] = record['record']['agency_category']
+      end
+    end
   end
 end

@@ -19,4 +19,8 @@
   "agency_note" => {
     "type" => "string",
   },
+  "agency_category" => {
+    "type" => "string",
+    "dynamic_enum" => "agency_category",
+  },
 }
