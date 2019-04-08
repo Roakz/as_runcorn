@@ -1,4 +1,5 @@
 Resource.include(SeriesRepresentationCounts)
+Resource.include(AllExistenceDates)
 
 class Resource
   define_relationship(:name => :representation_approved_by,

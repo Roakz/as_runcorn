@@ -17,4 +17,6 @@
 
   "physical_representations_count" => {"type"=> "number", "readonly" => "true"},
   "digital_representations_count" => {"type"=> "number", "readonly" => "true"},
+
+  "all_existence_dates_range" => {"type"=> "string", "readonly" => "true"},
 }
