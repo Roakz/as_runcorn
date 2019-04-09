@@ -16,8 +16,13 @@ disabled_tests =
    'Record transfers Full repository transfers reports conflicts between the records in two repositories being merged',
    'MARCXML converter',
    'MARC Export',
-   'OAI handler OAI protocol and mapping support responds to a GetRecord request for type oai_ead, mapping appropriately',
+   'OAI handler',
    'EAD3 export mappings',
+   'Date Calculator model',
+   'Exported MODS',
+   'Exported METS',
+   'EAD converter',
+   'EAC Export',
   ]
 
 RSpec.configure do |config|
