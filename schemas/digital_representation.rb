@@ -7,7 +7,7 @@
     "properties" => {
       "uri" => {"type" => "string"},
 
-      "existing_ref" => { "type" => "JSONModel(:digital_representation) uri", "readonly" => true },
+      "existing_ref" => { "type" => "JSONModel(:digital_representation) uri"},
       "display_string" => {"type" => "string", "maxLength" => 8192, "readonly" => true},
 
       "access_category" => {"type" => "string", "dynamic_enum" => "runcorn_access_category"},
