@@ -88,6 +88,12 @@ Reformulator.configure(
           {"path" => ["archival_object_extents_", "_extent_type_"], "value" => "volumes"},
         ]
       },
+      "resource_instances_" => {
+        "show" => [],
+      },
+      "archival_object_instances_" => {
+        "show" => [],
+      },
     },
 
     "agents" => {
