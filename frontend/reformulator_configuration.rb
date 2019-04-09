@@ -29,7 +29,15 @@ Reformulator.configure(
         },
         {
           "selector" => '.extent-calculator-btn',
-        }
+        },
+        {
+          "selector" => 'input[name="archival_object[component_id]"]',
+          "hideClosestSelector" => '.form-group',
+        },
+        {
+          "selector" => 'textarea[name="archival_object[repository_processing_note]"]',
+          "hideClosestSelector" => '.form-group',
+        },
       ],
       "defaultValues" => [
         {
@@ -49,6 +57,10 @@ Reformulator.configure(
         },
         {
           "selector" => 'input[name="resource[language]"]',
+          "value" => 'eng',
+        },
+        {
+          "selector" => 'input[name="archival_object[language]"]',
           "value" => 'eng',
         },
         {

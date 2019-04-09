@@ -79,7 +79,7 @@ en:
         withdraw: You have withdrawn the submission of this draft.
       error: There was a problem with your action.
   physical_representation:
-    access_category: Access Category
+    access_category: Access Status
     current_location: Current Location
     normal_location: Normal Location
     access_clearance_procedure: Access Clearance Procedure
@@ -118,7 +118,7 @@ en:
       qsa_id: Physical Representation Id
 
   digital_representation:
-    access_category: Access Category
+    access_category: Access Status
     normal_location: Normal Location
     access_clearance_procedure: Access Clearance Procedure
     accessioned_status: Accessioned Status
