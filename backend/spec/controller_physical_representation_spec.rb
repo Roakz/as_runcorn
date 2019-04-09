@@ -7,6 +7,7 @@ describe 'Runcorn Physical representations' do
 
     json.physical_representations = [
       {
+        "title" => "bad song",
         "description" => "Let us get physical!",
         "current_location" => "N/A",
         "normal_location" => "N/A",
@@ -39,6 +40,7 @@ describe 'Runcorn Physical representations' do
 
     json.physical_representations = [
       {
+        "title" => "bad song",
         "description" => "Let us get physical!",
         "current_location" => "N/A",
         "normal_location" => "N/A",
@@ -65,6 +67,7 @@ describe 'Runcorn Physical representations' do
     obj = create(:json_archival_object, {
       "physical_representations" => [
         {
+          "title" => "bad song",
           "description" => "Let us get physical!",
           "current_location" => "N/A",
           "normal_location" => "N/A",
@@ -72,6 +75,7 @@ describe 'Runcorn Physical representations' do
           "contained_within" => "OTH",
         },
         {
+          "title" => "also a bad song",
           "description" => "Let us also not get too physical",
           "current_location" => "N/A",
           "normal_location" => "N/A",
@@ -92,6 +96,7 @@ describe 'Runcorn Physical representations' do
       "resource" => {"ref" => resource.uri},
       "physical_representations" => [
         {
+          "title" => "bad song",
           "description" => "Let us get physical!",
           "current_location" => "N/A",
           "normal_location" => "N/A",
@@ -99,6 +104,7 @@ describe 'Runcorn Physical representations' do
           "contained_within" => "OTH",
         },
         {
+          "title" => "also a bad song",
           "description" => "Let us also not get too physical",
           "current_location" => "N/A",
           "normal_location" => "N/A",
@@ -111,6 +117,7 @@ describe 'Runcorn Physical representations' do
       "resource" => {"ref" => resource.uri},
       "physical_representations" => [
         {
+          "title" => "bad tv",
           "description" => "Let us watch TV",
           "current_location" => "N/A",
           "normal_location" => "N/A",

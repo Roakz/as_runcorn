@@ -7,6 +7,7 @@ describe 'Runcorn Digital representations' do
 
     json.digital_representations = [
       {
+        "title" => "bad song",
         "description" => "Let us get digital!",
         "file_type" => "JPEG",
         "contained_within" => "Floppy Disk",
@@ -38,6 +39,7 @@ describe 'Runcorn Digital representations' do
 
     json.digital_representations = [
       {
+        "title" => "bad song",
         "description" => "Let us get digital!",
         "file_type" => "JPEG",
         "contained_within" => "Floppy Disk",
@@ -63,12 +65,14 @@ describe 'Runcorn Digital representations' do
     obj = create(:json_archival_object, {
       "digital_representations" => [
         {
+          "title" => "bad song",
           "description" => "Let us get digital!",
           "file_type" => "JPEG",
           "contained_within" => "Floppy Disk",
           "normal_location" => "N/A",
         },
         {
+          "title" => "also a bad song",
           "description" => "Let us also not get too digital",
           "file_type" => "JPEG",
           "contained_within" => "Floppy Disk",
@@ -88,12 +92,14 @@ describe 'Runcorn Digital representations' do
       "resource" => {"ref" => resource.uri},
       "digital_representations" => [
         {
+          "title" => "bad song",
           "description" => "Let us get digital!",
           "file_type" => "JPEG",
           "contained_within" => "Floppy Disk",
           "normal_location" => "N/A",
         },
         {
+          "title" => "also a bad song",
           "description" => "Let us also not get too digital",
           "file_type" => "JPEG",
           "contained_within" => "Floppy Disk",
@@ -105,6 +111,7 @@ describe 'Runcorn Digital representations' do
       "resource" => {"ref" => resource.uri},
       "digital_representations" => [
         {
+          "title" => "bad tv",
           "description" => "Let us watch TV",
           "file_type" => "JPEG",
           "contained_within" => "Floppy Disk",

@@ -18,6 +18,7 @@ FactoryBot.define do
 
   factory :json_digital_representation, class: JSONModel::JSONModel(:digital_representation) do
     uri { generate(:url) }
+    title { generate(:generic_title) }
     description { generate(:generic_description) }
     normal_location { generate(:runcorn_location) }
     file_type { generate(:runcorn_file_type) }
@@ -26,6 +27,7 @@ FactoryBot.define do
 
   factory :json_physical_representation, class: JSONModel::JSONModel(:physical_representation) do
     uri { generate(:url) }
+    title { generate(:generic_title) }
     description { generate(:generic_description) }
     current_location { generate(:runcorn_location) }
     normal_location { generate(:runcorn_location) }
