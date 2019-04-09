@@ -23,6 +23,8 @@ disabled_tests =
    'Exported METS',
    'EAD converter',
    'EAC Export',
+   'Accession converter',
+   'Deletion of Archival Records',
   ]
 
 RSpec.configure do |config|
