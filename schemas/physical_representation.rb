@@ -85,7 +85,7 @@
 
       "sterilised_status" => {"type" => "boolean"},
 
-      "title" => {"type" => "string"},
+      "title" => {"type" => "string", "ifmissing" => "error"},
 
       "related_accession" => {
         "type" => "object",

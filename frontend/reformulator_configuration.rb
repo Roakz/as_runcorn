@@ -50,6 +50,16 @@ Reformulator.configure(
         {
           "selector" => 'input[name="resource[language]"]',
           "value" => 'eng',
+        },
+        {
+          "selector" => 'input[name^="archival_object[physical_representations]"]',
+          "nameMustMatchRegex" => ".*\\[title\\]",
+          "valueSelector" => 'textarea[name="archival_object[title]"]',
+        },
+        {
+          "selector" => 'input[name^="archival_object[digital_representations]"]',
+          "nameMustMatchRegex" => ".*\\[title\\]",
+          "valueSelector" => 'textarea[name="archival_object[title]"]',
         }
       ],
     },

@@ -54,13 +54,7 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
   end
 
   def self.build_display_string(json)
-    return json["title"] if json["title"]
-
-    values = []
-    values << json["description"]
-    values << I18n.t("enumerations.runcorn_format.#{json["format"]}", default: json["format"])
-
-    values.compact.join('; ')
+    json["title"] + '; ' + I18n.t("enumerations.runcorn_format.#{json["format"]}", default: json["format"])
   end
 
 end
