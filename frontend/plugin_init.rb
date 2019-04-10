@@ -64,15 +64,28 @@ Rails.application.config.after_initialize do
   JSONModel(:digital_representation)
 
   # register qsa_id models
-  QSAId.register(:resource, :id_0)
-  QSAId.register(:archival_object, :ref_id)
-  QSAId.register(:digital_object, :digital_object_id)
-  QSAId.register(:function)
-  QSAId.register(:mandate)
-  QSAId.register(:accession, :id_0)
-  QSAId.register(:agent_corporate_entity)
-  QSAId.register(:physical_representation)
-  QSAId.register(:digital_representation)
+  require_relative '../common/qsa_id'
+  QSAId.mode(:frontend)
+  require_relative '../common/qsa_id_registrations'
+
+  # make sure the identifier column in search results shows qsa_ids where they exist
+  module SearchHelper
+    alias :identifier_for_search_result_orig :identifier_for_search_result
+
+    def identifier_for_search_result(result)
+      if QSAId.models.include?(result["primary_type"].intern)
+        if result.has_key? 'qsa_id__u_sint'
+          identifier = result['qsa_id__u_sint'].first
+        else
+          json       = ASUtils.json_parse(result["json"])
+          identifier = json.fetch('qsa_id', "")
+        end
+        identifier.to_s.html_safe
+      else
+        identifier_for_search_result_orig(result)
+      end
+    end
+  end
 
   require_relative '../common/validation_overrides'
 

@@ -3,6 +3,9 @@ class IndexerCommon
   @@record_types << :digital_representation
 
   add_indexer_initialize_hook do |indexer|
+    require_relative '../common/qsa_id'
+    QSAId.mode(:indexer)
+    require_relative '../common/qsa_id_registrations'
 
     indexer.add_document_prepare_hook {|doc, record|
       if doc['primary_type'] == 'physical_representation'
