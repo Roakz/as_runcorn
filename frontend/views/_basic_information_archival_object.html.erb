@@ -1,3 +1,6 @@
+<%= form.label_and_textarea "description" %>
+<%= form.label_and_select "access_clearance_procedure", form.possible_options_for("access_clearance_procedure", true) %>
+
 <%= form.label_and_date "approval_date" %>
 <% if form.readonly? %>
   <% if form['approved_by']  %>

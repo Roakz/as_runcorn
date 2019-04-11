@@ -12,6 +12,8 @@ en:
     approval_date: Approval Date
     approved_by: Approved By
   archival_object:
+    description: Description
+    access_clearance_procedure: Access Clearance Procedure
     as_runcorn:
       qsa_id: Record Id
     approval_date: Approval Date
@@ -82,7 +84,6 @@ en:
     access_category: Access Status
     current_location: Current Location
     normal_location: Normal Location
-    access_clearance_procedure: Access Clearance Procedure
     accessioned_status: Accessioned Status
     agency_assigned_id: Agency Assigned ID
     approval_date: Approved Date
@@ -120,7 +121,6 @@ en:
   digital_representation:
     access_category: Access Status
     normal_location: Normal Location
-    access_clearance_procedure: Access Clearance Procedure
     accessioned_status: Accessioned Status
     agency_assigned_id: Agency Assigned ID
     approval_date: Approved Date

@@ -14,8 +14,6 @@
 
       "normal_location" => {"type" => "string", "dynamic_enum" => "runcorn_location", "ifmissing" => "error"},
 
-      "access_clearance_procedure" => {"type" => "string", "dynamic_enum" => "runcorn_access_clearance_procedure"},
-
       "accessioned_status" => {"type" => "string", "dynamic_enum" => "runcorn_accessioned_status"},
 
       "agency_assigned_id" => {"type" => "string"},
