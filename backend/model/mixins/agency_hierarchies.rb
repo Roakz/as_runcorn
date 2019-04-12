@@ -60,9 +60,9 @@ module AgencyHierarchies
           end 
 
           ancestors[child_id] ||= []
-          ancestors[child_id] << parent_id
+          ancestors[child_id] += ancestors.fetch(parent_id, []) + [parent_id]
           descendents[parent_id] ||= []
-          descendents[parent_id] << child_id
+          descendents[parent_id] += descendents.fetch(child_id, []) + [child_id]
         end
 
         inserts = []
