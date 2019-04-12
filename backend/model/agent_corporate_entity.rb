@@ -1,1 +1,2 @@
 AgentCorporateEntity.prepend(ManagedRegistration)
+AgentCorporateEntity.include(AgencyHierarchies)
