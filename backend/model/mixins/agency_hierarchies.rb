@@ -10,8 +10,22 @@ module AgencyHierarchies
     agency
   end
 
-
   module ClassMethods
+
+    def handle_delete(ids_to_delete)
+      DB.open do |db|
+        db[:agency_descendent].filter(:agent_corporate_entity_id => ids_to_delete).delete
+        db[:agency_descendent].filter(:descendent_id => ids_to_delete).delete
+        db[:agency_ancestor].filter(:agent_corporate_entity_id => ids_to_delete).delete
+        db[:agency_ancestor].filter(:ancestor_id => ids_to_delete).delete
+      end
+
+      result = super
+
+      regenerate_hierarchy_for_agencies
+
+      result
+    end
 
     def create_from_json(json, extra_values = {})
       agency = super
