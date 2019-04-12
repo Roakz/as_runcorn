@@ -14,8 +14,8 @@ module AgencyHierarchies
 
     def handle_delete(ids_to_delete)
       DB.open do |db|
-        db[:agency_descendent].filter(:agent_corporate_entity_id => ids_to_delete).delete
-        db[:agency_descendent].filter(:descendent_id => ids_to_delete).delete
+        db[:agency_descendant].filter(:agent_corporate_entity_id => ids_to_delete).delete
+        db[:agency_descendant].filter(:descendant_id => ids_to_delete).delete
         db[:agency_ancestor].filter(:agent_corporate_entity_id => ids_to_delete).delete
         db[:agency_ancestor].filter(:ancestor_id => ids_to_delete).delete
       end
@@ -36,9 +36,9 @@ module AgencyHierarchies
     def regenerate_hierarchy_for_agencies
       DB.open do |db|
         ancestors = {}
-        descendents = {}
+        descendants = {}
 
-        db[:agency_descendent].delete
+        db[:agency_descendant].delete
         db[:agency_ancestor].delete
 
         db[:series_system_rlshp]
@@ -67,7 +67,7 @@ module AgencyHierarchies
             end
           end
 
-          descendents.each do |_, path|
+          descendants.each do |_, path|
             if path.include?(parent_id)
               path << child_id
             end
@@ -75,21 +75,21 @@ module AgencyHierarchies
 
           ancestors[child_id] ||= []
           ancestors[child_id] += ancestors.fetch(parent_id, []) + [parent_id]
-          descendents[parent_id] ||= []
-          descendents[parent_id] += descendents.fetch(child_id, []) + [child_id]
+          descendants[parent_id] ||= []
+          descendants[parent_id] += descendants.fetch(child_id, []) + [child_id]
         end
 
         inserts = []
-        descendents.map do |parent_id, descendent_ids|
-          descendent_ids.each do |descendent_id|
+        descendants.map do |parent_id, descendant_ids|
+          descendant_ids.each do |descendant_id|
             inserts << {
               :agent_corporate_entity_id => parent_id,
-              :descendent_id => descendent_id,
+              :descendant_id => descendant_id,
             }
           end
         end
 
-        db[:agency_descendent].multi_insert(inserts)
+        db[:agency_descendant].multi_insert(inserts)
 
         inserts = []
         ancestors.map do |child_id, ancestor_ids|
