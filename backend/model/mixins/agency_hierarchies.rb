@@ -29,7 +29,7 @@ module AgencyHierarchies
 
     def create_from_json(json, extra_values = {})
       agency = super
-      self.class.regenerate_hierarchy_for_agencies
+      self.regenerate_hierarchy_for_agencies
       agency
     end
 
