@@ -9,13 +9,15 @@ Sequel.migration do
       add_foreign_key([:access_clearance_procedure_id], :enumeration_value, :key => :id, :name => 'access_clearance_procedure_fk')
     end
 
+    self[:physical_representation].filter(Sequel.~(:access_clearance_procedure_id => nil)).delete
+
     alter_table(:physical_representation) do
-      self[:physical_representation].filter(Sequel.~(:access_clearance_procedure_id => nil)).delete
       drop_foreign_key(:access_clearance_procedure_id)
     end
 
+    self[:digital_representation].filter(Sequel.~(:access_clearance_procedure_id => nil)).delete
+
     alter_table(:digital_representation) do
-      self[:digital_representation].filter(Sequel.~(:access_clearance_procedure_id => nil)).delete
       drop_foreign_key(:access_clearance_procedure_id)
     end
   end
