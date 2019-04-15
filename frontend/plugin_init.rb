@@ -62,6 +62,7 @@ Rails.application.config.after_initialize do
   # Force load
   JSONModel(:physical_representation)
   JSONModel(:digital_representation)
+  SearchHelper
 
   # register qsa_id models
   require_relative '../common/qsa_id'
