@@ -26,6 +26,17 @@ module Representations
       obj
     end
 
+    def handle_delete(ids_to_delete)
+      # When a record is deleted, delete its representations as well.
+      backlink_col = :"#{table_name}_id"
+
+      PhysicalRepresentation.filter(backlink_col => ids_to_delete).each(&:delete)
+      DigitalRepresentation.filter(backlink_col => ids_to_delete).each(&:delete)
+
+      super
+    end
+
+
     def sequel_to_jsonmodel(objs, opts = {})
       jsons = super
 
