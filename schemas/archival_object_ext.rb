@@ -2,6 +2,7 @@
   "description" => {"type" => "string"},
   "access_clearance_procedure" => {"type" => "string", "dynamic_enum" => "runcorn_access_clearance_procedure"},
   "disposal_class" => {"type" => "string"},
+  "sensitivity_label" => {"type" => "string", "dynamic_enum" => "runcorn_sensitivity_label"},
 
   "approval_date" => {"type" => "string"},
   "approved_by" => {

@@ -51,3 +51,5 @@
 <% end %>
 
 <%= form.label_and_textfield "disposal_class" %>
+
+<%= form.label_and_select "sensitivity_label", form.possible_options_for('sensitivity_label', true) %>

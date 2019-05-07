@@ -11,10 +11,13 @@ en:
       qsa_id: Series Id
     approval_date: Approval Date
     approved_by: Approved By
+    disposal_class: Disposal Class
+    sensitivity_label: Sensitivity Label
   archival_object:
     description: Description
     access_clearance_procedure: Access Clearance Procedure
     disposal_class: Disposal Class
+    sensitivity_label: Sensitivity Label
     as_runcorn:
       qsa_id: Record Id
     approval_date: Approval Date

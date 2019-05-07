@@ -220,6 +220,12 @@ en:
       BUSU: Business Unit/Area or Division
       COM: Commission
       UNP: Unprocessed
+    runcorn_sensitivity_label:
+      published: Public Access / Published
+      cultural_sensitivity: Cultural Sensitivity Warning
+      secret_and_sacred: Secret and Sacred
+      distressing: This record may contain information or photographs which some people may find distressing
+      atsi_cultural: These records may contain terms or images which Aboriginal and Torres Strait Islander people may find distressing or offensive
 
   enumeration_names:
     runcorn_access_category: Runcorn Plugin - Access Category
