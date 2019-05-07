@@ -1,6 +1,7 @@
 {
   "description" => {"type" => "string"},
   "access_clearance_procedure" => {"type" => "string", "dynamic_enum" => "runcorn_access_clearance_procedure"},
+  "disposal_class" => {"type" => "string"},
 
   "approval_date" => {"type" => "string"},
   "approved_by" => {
