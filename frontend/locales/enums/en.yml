@@ -146,6 +146,7 @@ en:
       SORTRM: "In Sorting Room"
       VAULT1: "MF Vault QSA1"
       VAULT2: "MF Vault QSA2"
+      TFR: "Transfer in progress"
     runcorn_access_clearance_procedure:
       ADMIN: "Permission to access restricted material by responsible agency"
       BLANK: ""
