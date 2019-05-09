@@ -31,4 +31,19 @@
 
   "physical_representations_count" => {"type"=> "number", "readonly" => "true"},
   "digital_representations_count" => {"type"=> "number", "readonly" => "true"},
+
+  "transfer" => {
+    "type" => "object",
+    "subtype" => "ref",
+    "properties" => {
+      "ref" => {
+        "type" => [{"type" => "JSONModel(:transfer) uri"}],
+        "ifmissing" => "error"
+      },
+      "_resolved" => {
+        "type" => "object",
+        "readonly" => "true"
+      }
+    }
+  },
 }

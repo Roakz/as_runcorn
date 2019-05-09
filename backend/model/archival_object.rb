@@ -1,3 +1,4 @@
+ArchivalObject.include(Transfers)
 ArchivalObject.include(Representations)
 
 class ArchivalObject
