@@ -4,6 +4,13 @@ module Transfers
     base.extend(ClassMethods)
   end
 
+
+  def update_from_json(json, opts = {}, apply_nested_records = true)
+    # no editing please
+    json['transfer_id'] = self.transfer_id
+    super
+  end
+
   module ClassMethods
     def sequel_to_jsonmodel(objs, opts = {})
       jsons = super
@@ -15,6 +22,13 @@ module Transfers
       end
 
       jsons
+    end
+
+    def create_from_json(json, opts = {})
+      if json['transfer']
+        json['transfer_id'] = json['transfer']['ref'].split('/').last.to_i
+      end
+      super
     end
   end
 end

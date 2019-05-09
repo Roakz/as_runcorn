@@ -18,6 +18,7 @@ en:
     access_clearance_procedure: Access Clearance Procedure
     disposal_class: Disposal Class
     sensitivity_label: Sensitivity Label
+    transfer: Transfer
     as_runcorn:
       qsa_id: Record Id
     approval_date: Approval Date

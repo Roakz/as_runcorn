@@ -32,6 +32,7 @@
   "physical_representations_count" => {"type"=> "number", "readonly" => "true"},
   "digital_representations_count" => {"type"=> "number", "readonly" => "true"},
 
+  "transfer_id" => {"type"=> "number"},
   "transfer" => {
     "type" => "object",
     "subtype" => "ref",

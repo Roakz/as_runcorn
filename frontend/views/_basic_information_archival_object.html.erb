@@ -53,3 +53,19 @@
 <%= form.label_and_textfield "disposal_class" %>
 
 <%= form.label_and_select "sensitivity_label", form.possible_options_for('sensitivity_label', true) %>
+
+<% if form.readonly? %>
+  <% if form['transfer'] %>
+    <% tfr = form['transfer'] %>
+    <div class="form-group">
+      <div class="control-label col-sm-2"><%= I18n.t("archival_object.transfer") %></div>
+      <div class="controls token-list col-sm-10">
+        <%= render_token :object => tfr['_resolved'],
+                           :label => tfr['_resolved']['title'],
+                           :type => tfr['_resolved']['jsonmodel_type'],
+                           :uri => tfr['ref'],
+                           :placement => "top" %>
+      </div>
+    </div>
+  <% end %>
+<% end %>
