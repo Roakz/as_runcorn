@@ -16,6 +16,10 @@ FactoryBot.define do
   sequence(:runcorn_digital_representation_contained_within) { sample(JSONModel::JSONModel(:digital_representation).schema['properties']['contained_within']) }
   sequence(:runcorn_file_type) { sample(JSONModel::JSONModel(:digital_representation).schema['properties']['file_type']) }
 
+  sequence(:runcorn_charge_quantity_unit) { sample(JSONModel::JSONModel(:chargeable_item).schema['properties']['charge_quantity_unit']) }
+  sequence(:runcorn_price_cents) { rand(10000) + 99 }
+  sequence(:runcorn_quote_line_quantity) { rand(100) }
+
   factory :json_digital_representation, class: JSONModel::JSONModel(:digital_representation) do
     uri { generate(:url) }
     title { generate(:generic_title) }
@@ -33,5 +37,30 @@ FactoryBot.define do
     normal_location { generate(:runcorn_location) }
     format { generate(:runcorn_format) }
     contained_within { generate(:runcorn_physical_representation_contained_within) }
+  end
+
+  factory :json_chargeable_item, class: JSONModel::JSONModel(:chargeable_item) do
+    uri { generate(:url) }
+    description { generate(:generic_description) }
+    price_cents { generate(:runcorn_price_cents) }
+    charge_quantity_unit { generate(:runcorn_charge_quantity_unit) }
+  end
+
+  factory :json_chargeable_service, class: JSONModel::JSONModel(:chargeable_service) do
+    uri { generate(:url) }
+    name { generate(:generic_title) }
+    description { generate(:generic_description) }
+    service_items { [{'ref' => create(:json_chargeable_item).uri}] }
+  end
+
+  factory :json_service_quote, class: JSONModel::JSONModel(:service_quote) do
+    uri { generate(:url) }
+    chargeable_service { {'ref' => create(:json_chargeable_service).uri} }
+    line_items { [build(:json_service_quote_line)] }
+  end
+
+  factory :json_service_quote_line, class: JSONModel::JSONModel(:service_quote_line) do
+    chargeable_item { {'ref' => create(:json_chargeable_item).uri} }
+    quantity { generate(:runcorn_quote_line_quantity) }
   end
 end
