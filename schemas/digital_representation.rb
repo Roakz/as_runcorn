@@ -71,7 +71,7 @@
 
       "preservation_priority_rating" => {"type" => "string", "dynamic_enum" => "runcorn_preservation_priority_rating"},
 
-      "remark" => {"type" => "string"},
+      "remarks" => {"type" => "string"},
 
       "salvage_priority_code" => {"type" => "string", "dynamic_enum" => "runcorn_salvage_priority_code"},
 
