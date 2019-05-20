@@ -77,6 +77,19 @@
 
       "title" => {"type" => "string", "ifmissing" => "error"},
 
+      "controlling_record" => {
+        "type" => "object",
+        "subtype" => "ref",
+        "properties" => {
+          "ref" => {"type" => [{"type" => "JSONModel(:archival_object) uri"}],
+                    "ifmissing" => "error"},
+          "_resolved" => {
+            "type" => "object",
+            "readonly" => "true"
+          }
+        }
+      },
+
       "related_accession" => {
         "type" => "object",
         "subtype" => "ref",
