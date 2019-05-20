@@ -12,7 +12,7 @@ class ChargeableItem < Sequel::Model(:chargeable_item)
 
 
   def self.display_price(cents)
-    '$' + cents.to_s.insert(-3, '.')
+    '$' + cents.to_s.ljust(3, '0').insert(-3, '.')
   end
 
 
