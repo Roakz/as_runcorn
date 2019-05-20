@@ -69,6 +69,10 @@ Sequel.migration do
       Integer :service_quote_id, :null => false
       Integer :quantity, :null => false
 
+      TextField :description, :null => false
+      Integer :charge_per_unit_cents, :null => false
+      DynamicEnum :charge_quantity_unit_id, :null => false
+
       apply_mtime_columns
     end
 

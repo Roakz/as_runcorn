@@ -9,6 +9,7 @@ class ServiceQuoteLine < Sequel::Model(:service_quote_line)
                       :contains_references_to_types => proc {[ChargeableItem]},
                       :is_array => false)
 
+
   def self.sequel_to_jsonmodel(objs, opts = {})
     jsons = super
 
@@ -22,11 +23,6 @@ class ServiceQuoteLine < Sequel::Model(:service_quote_line)
 
 
   def calculate_charge
-    self.quantity *
-    db[:service_quote_line_item_rlshp]
-      .filter(:service_quote_line_id => self.id)
-      .left_join(:chargeable_item, :service_quote_line_item_rlshp__chargeable_item_id => :chargeable_item__id)
-      .get(Sequel.qualify(:chargeable_item, :price_cents))
+    self.quantity * self.charge_per_unit_cents
   end
-
 end
