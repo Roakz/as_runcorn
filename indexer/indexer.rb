@@ -2,6 +2,23 @@ class IndexerCommon
   @@record_types << :physical_representation
   @@record_types << :digital_representation
 
+  def self.build_recent_agency_filter(recent_agencies)
+    result = []
+
+    recent_agencies.each do |ref|
+      agency_uri = ref['ref']
+
+      date = Date.parse(ref['end_date'])
+
+      90.times do |i|
+        result << agency_uri + "_" + (date + i).strftime('%Y-%m-%d')
+      end
+    end
+
+    result
+  end
+
+
   add_indexer_initialize_hook do |indexer|
     require_relative '../common/qsa_id'
     QSAId.mode(:indexer)
@@ -44,5 +61,19 @@ class IndexerCommon
         doc['agency_category_u_sstr'] = record['record']['agency_category']
       end
     end
+
+    indexer.add_document_prepare_hook do |doc, record|
+      jsonmodel = record['record']
+
+      if jsonmodel.has_key?('responsible_agency')
+        doc['responsible_agency_u_ustr'] = jsonmodel['responsible_agency']['ref']
+      end
+
+      if jsonmodel.has_key?('recent_responsible_agencies')
+        doc['recent_responsible_agency_filter_u_ustr'] =
+          IndexerCommon.build_recent_agency_filter(jsonmodel['recent_responsible_agencies'])
+      end
+    end
+
   end
 end

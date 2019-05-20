@@ -7,6 +7,8 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
   include ExternalIDs
   include Publishable
 
+  include RepresentationControl
+
   define_relationship(:name => :representation_approved_by,
                       :json_property => 'approved_by',
                       :contains_references_to_types => proc {[AgentPerson]},
@@ -45,9 +47,15 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
   def self.sequel_to_jsonmodel(objs, opts = {})
     jsons = super
 
+    controlling_records_by_representation_id = self.build_controlling_record_map(objs)
+
     objs.zip(jsons).each do |obj, json|
       json['existing_ref'] = obj.uri
       json['display_string'] = build_display_string(json)
+
+      controlling_record = controlling_records_by_representation_id.fetch(obj.id)
+      json['responsible_agency'] = { 'ref' => controlling_record.responsible_agency }
+      json['recent_responsible_agencies'] = controlling_record.recent_responsible_agencies
     end
 
     jsons
