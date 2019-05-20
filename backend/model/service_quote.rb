@@ -48,4 +48,14 @@ class ServiceQuote < Sequel::Model(:service_quote)
     ChargeableItem.to_jsonmodel(ChargeableItem[JSONModel.parse_reference(uri)[:id]])
   end
 
+
+  def issue
+    self.issued_date = Time.now
+    self.save
+  end
+
+
+  def issued?
+    !!self.issued_date
+  end
 end

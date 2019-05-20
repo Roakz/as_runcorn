@@ -33,30 +33,31 @@ describe 'Runcorn Charges' do
                                                                   {'ref' => work.uri}]))
     end
 
+    let(:items) do
+      [
+       {
+         'quantity' => 1,
+         'chargeable_item' => {
+           'ref' => call_out.uri
+         }
+       },
+       {
+         'quantity' => 3,
+         'chargeable_item' => {
+           'ref' => chlorine.uri
+         }
+       },
+       {
+         'quantity' => 8,
+         'chargeable_item' => {
+           'ref' => work.uri
+         }
+       }
+      ]
+    end
+
 
     it 'can calculate a total charge' do
-
-      items = [
-               {
-                 'quantity' => 1,
-                 'chargeable_item' => {
-                   'ref' => call_out.uri
-                 }
-               },
-               {
-                 'quantity' => 3,
-                 'chargeable_item' => {
-                   'ref' => chlorine.uri
-                 }
-               },
-               {
-                 'quantity' => 8,
-                 'chargeable_item' => {
-                   'ref' => work.uri
-                 }
-               }
-              ]
-
       we_cleaned_your_pool = ServiceQuote.create_from_json(build(:json_service_quote,
                                                                  :chargeable_service => {'ref' => pool_cleaning.uri},
                                                                  :line_items => items))
@@ -64,6 +65,26 @@ describe 'Runcorn Charges' do
       json = URIResolver.resolve_references(ServiceQuote.to_jsonmodel(we_cleaned_your_pool.id), ['chargeable_item'])
 
       expect(json['total_charge_cents']).to eq(13385)
+    end
+
+
+    it 'supports issuing the quote' do
+      we_cleaned_your_pool = ServiceQuote.create_from_json(build(:json_service_quote,
+                                                                 :chargeable_service => {'ref' => pool_cleaning.uri},
+                                                                 :line_items => items))
+
+      json = ServiceQuote.to_jsonmodel(we_cleaned_your_pool.id)
+
+      expect(we_cleaned_your_pool.issued?).to eq(false)
+      expect(json['issued_date']).to eq(nil)
+
+      # issue it!
+      we_cleaned_your_pool.issue
+
+      json = ServiceQuote.to_jsonmodel(we_cleaned_your_pool.id)
+
+      expect(we_cleaned_your_pool.issued?).to eq(true)
+      expect(json['issued_date']).to eq(Time.now.getlocal.strftime("%Y-%m-%d"))
     end
   end
 end

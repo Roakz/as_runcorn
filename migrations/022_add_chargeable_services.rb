@@ -44,6 +44,9 @@ Sequel.migration do
     create_table(:service_quote) do
       primary_key :id
       Integer :lock_version, :default => 0, :null => false
+
+      Date :issued_date, :null => true
+
       apply_mtime_columns
     end
 
