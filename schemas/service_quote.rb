@@ -5,6 +5,8 @@
     "type" => "object",
     "uri" => "/service_quotes",
     "properties" => {
+      "uri" => {"type" => "string"},
+
       "issued_date" => {"type" => "date", "readonly" => "true"},
       "total_charge_cents" => {"type" => "integer", "readonly" => "true"},
       "total_charge_display" => {"type" => "string", "readonly" => "true"},
