@@ -9,6 +9,7 @@ Sequel.migration do
       primary_key :id
       Integer :lock_version, :default => 0, :null => false
 
+      String :name, :null => false, :unique => true
       TextField :description, :null => false
       Integer :price_cents, :null => false
       DynamicEnum :charge_quantity_unit_id, :null => false
@@ -20,7 +21,7 @@ Sequel.migration do
       primary_key :id
       Integer :lock_version, :default => 0, :null => false
 
-      String :name, :null => false
+      String :name, :null => false, :unique => true
       TextField :description, :null => false
 
       apply_mtime_columns

@@ -6,6 +6,7 @@
     "uri" => "/chargeable_items",
     "properties" => {
       "uri" => {"type" => "string"},
+      "name" => {"type" => "string", "ifmissing" => "error"},
       "description" => {"type" => "string", "ifmissing" => "error"},
       "price_cents" => {"type" => "integer", "ifmissing" => "error"},
       "price_dollars" => {"type" => "string"},

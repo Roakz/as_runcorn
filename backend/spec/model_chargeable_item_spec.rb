@@ -10,11 +10,13 @@ describe 'Runcorn Charges' do
     it 'has some properties' do
       dollar_store = ChargeableItem.create_from_json(build(:json_chargeable_item,
                                                            :price_cents => 100,
+                                                           :name => 'dollar thing',
                                                            :description => 'So Cheap!',
                                                            :charge_quantity_unit => 'order'))
 
       json = ChargeableItem.to_jsonmodel(dollar_store.id)
 
+      expect(json['name']).to eq('dollar thing')
       expect(json['price_dollars']).to eq('$1.00')
       expect(json['description']).to eq('So Cheap!')
       expect(json['charge_quantity_unit']).to eq('order')

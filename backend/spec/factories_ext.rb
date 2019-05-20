@@ -19,6 +19,7 @@ FactoryBot.define do
   sequence(:runcorn_charge_quantity_unit) { sample(JSONModel::JSONModel(:chargeable_item).schema['properties']['charge_quantity_unit']) }
   sequence(:runcorn_price_cents) { rand(10000) + 99 }
   sequence(:runcorn_quote_line_quantity) { rand(100) }
+  sequence(:runcorn_unique_name) { SecureRandom.hex }
 
   factory :json_digital_representation, class: JSONModel::JSONModel(:digital_representation) do
     uri { generate(:url) }
@@ -41,6 +42,7 @@ FactoryBot.define do
 
   factory :json_chargeable_item, class: JSONModel::JSONModel(:chargeable_item) do
     uri { generate(:url) }
+    name { generate(:runcorn_unique_name) }
     description { generate(:generic_description) }
     price_cents { generate(:runcorn_price_cents) }
     charge_quantity_unit { generate(:runcorn_charge_quantity_unit) }

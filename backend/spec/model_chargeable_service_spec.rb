@@ -6,16 +6,19 @@ describe 'Runcorn Charges' do
     it 'has some properties' do
       call_out = ChargeableItem.create_from_json(build(:json_chargeable_item,
                                                        :price_cents => 5000,
+                                                       :name => 'call out',
                                                        :description => 'You call, we come',
                                                        :charge_quantity_unit => 'order'))
 
       chlorine = ChargeableItem.create_from_json(build(:json_chargeable_item,
                                                        :price_cents => 1995,
+                                                       :name => 'chlorine',
                                                        :description => 'Kill the bugs',
                                                        :charge_quantity_unit => 'record'))
 
       work = ChargeableItem.create_from_json(build(:json_chargeable_item,
                                                    :price_cents => 300,
+                                                   :name => 'time',
                                                    :description => 'Minimum wage mofos',
                                                    :charge_quantity_unit => 'qtr_hour'))
 
