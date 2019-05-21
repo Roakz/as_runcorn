@@ -16,6 +16,7 @@ class ServiceQuoteLine < Sequel::Model(:service_quote_line)
     jsons.zip(objs).each do |json, obj|
       json['charge_cents'] = obj.calculate_charge
       json['charge_display'] = ChargeableItem.display_price(json['charge_cents'])
+      json['charge_per_unit_display'] = ChargeableItem.display_price(json['charge_per_unit_cents'])
     end
 
     jsons

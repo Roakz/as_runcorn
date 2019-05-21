@@ -6,6 +6,7 @@
     "properties" => {
       "description" => {"type" => "string", "ifmissing" => "error"},
       "charge_per_unit_cents" => {"type" => "integer", "ifmissing" => "error"},
+      "charge_per_unit_display" => {"type" => "string", "readonly" => "true"},
       "charge_quantity_unit" => {"type" => "string", "dynamic_enum" => "runcorn_charge_quantity_unit"},
       "quantity" => {"type" => "integer", "ifmissing" => "error"},
       "charge_cents" => {"type" => "integer", "readonly" => "true"},
