@@ -38,6 +38,10 @@ Reformulator.configure(
           "selector" => 'textarea[name="archival_object[repository_processing_note]"]',
           "hideClosestSelector" => '.form-group',
         },
+        {
+          "selector" => '#resource_form select[name^="resource[dates]["][name$="][label]"] option:not([value="existence"])',
+          "hideClosestSelector" => 'option'
+        }
       ],
       "defaultValues" => [
         {
@@ -72,6 +76,10 @@ Reformulator.configure(
           "selector" => 'input[name^="archival_object[digital_representations]"]',
           "nameMustMatchRegex" => ".*\\[title\\]",
           "valueSelector" => 'textarea[name="archival_object[title]"]',
+        },
+        {
+          "selector" => '#resource_form select[name^="resource[dates]["][name$="][label]"]',
+          "value" => 'existence'
         }
       ],
     },
@@ -110,7 +118,7 @@ Reformulator.configure(
         "fieldMoves" => [
           {"path" => ["archival_object", "_description_"], "moveAfter" => "_title_"},
         ]
-      },
+      }
     },
 
     "agents" => {
@@ -139,6 +147,6 @@ Reformulator.configure(
           {"path" => ["agent_dates_of_existence_", "_date_type_"], "value" => "range"}
         ]
       }
-    },
+    }
   }
 )
