@@ -108,6 +108,7 @@ en:
     preferred_citation: Preferred Citation
     preservation_notes: Preservation Notes
     preservation_priority_rating: Preservation Priority Rating
+    processing_handling_notes: Processing/Handling Notes
     physical_description_type: Physical Description Type
     publish: Publish
     related_accession: Transfer
@@ -146,6 +147,7 @@ en:
     preferred_citation: Preferred Citation
     preservation_notes: Preservation Notes
     preservation_priority_rating: Preservation Priority Rating
+    processing_handling_notes: Processing/Handling Notes
     publish: Publish
     related_accession: Transfer
     remarks: Remarks
