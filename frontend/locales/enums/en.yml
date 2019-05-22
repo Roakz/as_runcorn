@@ -227,6 +227,11 @@ en:
       secret_and_sacred: Secret and Sacred
       distressing: This record may contain information or photographs which some people may find distressing
       atsi_cultural: These records may contain terms or images which Aboriginal and Torres Strait Islander people may find distressing or offensive
+    runcorn_charge_quantity_unit:
+      order: Order
+      record: Record
+      page: Page
+      qtr_hour: 15 mins
 
   enumeration_names:
     runcorn_access_category: Runcorn Plugin - Access Category
@@ -241,3 +246,4 @@ en:
     runcorn_physical_representation_contained_within: Runcorn Plugin - Runcorn Physical Representation Contained Within
     runcorn_preservation_priority_rating: Runcorn Plugin - Runcorn Preservation Priority Rating
     runcorn_salvage_priority_code: Runcorn Plugin - Runcorn Salvage Priority Code
+    runcorn_charge_quantity_unit: Runcorn Plugin - Runcorn Charge Quantity Unit
