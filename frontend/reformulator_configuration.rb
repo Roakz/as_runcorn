@@ -71,11 +71,13 @@ Reformulator.configure(
           "selector" => 'input[name^="archival_object[physical_representations]"]',
           "nameMustMatchRegex" => ".*\\[title\\]",
           "valueSelector" => 'textarea[name="archival_object[title]"]',
+          "onlyIfEmpty" => true,
         },
         {
           "selector" => 'input[name^="archival_object[digital_representations]"]',
           "nameMustMatchRegex" => ".*\\[title\\]",
           "valueSelector" => 'textarea[name="archival_object[title]"]',
+          "onlyIfEmpty" => true,
         },
         {
           "selector" => '#resource_form select[name^="resource[dates]["][name$="][label]"]',
