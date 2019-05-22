@@ -55,6 +55,12 @@ class ServiceQuote < Sequel::Model(:service_quote)
   end
 
 
+  def withdraw
+    self.issued_date = nil
+    self.save
+  end
+
+
   def issued?
     !!self.issued_date
   end
