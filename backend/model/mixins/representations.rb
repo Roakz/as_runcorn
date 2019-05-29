@@ -13,9 +13,22 @@ module Representations
     ASUtils.wrap(@supported_models)
   end
 
+  def reindex_representations!
+    DB.open do |db|
+      id_set = db[:archival_object].filter(:root_record_id => self.root_record_id).select(:id)
+
+      [:physical_representation, :digital_representation].each do |tbl|
+        db[tbl].filter(:archival_object_id => id_set).update(:system_mtime => Time.now)
+      end
+    end
+  end
+
   def update_from_json(json, opts = {}, apply_nested_records = true)
     obj = super
     Representations.apply_representations(obj, json)
+
+    reindex_representations!
+
     obj
   end
 
