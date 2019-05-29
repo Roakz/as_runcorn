@@ -200,3 +200,5 @@ en:
     view_file: Click to open in new window
     upload: Upload a file
     upload_replace: Replace current file
+    upload_clear: Remove current file
+    uploading: Uploading...

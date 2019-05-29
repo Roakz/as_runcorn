@@ -127,7 +127,7 @@
     <% end %>
 
     <% form.push('representation_file', (form.obj['representation_file'] || {})) do |form| %>
-      <div class="form-group">
+      <div class="<% unless form.readonly?%>representation-file-widget<% end %> form-group">
         <label class="col-sm-2 control-label"><%= I18n.t('representation_file.attached_file') %></label>
         <div class="col-sm-9">
           <%= form.hidden_input('key', form.obj['key'], {:class => 'representation-file-key-input'}) %>
@@ -149,12 +149,12 @@
           <% end %>
 
           <% unless form.readonly? %>
-            <button class="btn btn-xs btn-primary representation-file-upload">
-              <% if form.obj['key'] %>
-                <%= I18n.t("representation_file.upload_replace") %>
-              <% else %>
-                <%= I18n.t("representation_file.upload") %>
-              <% end %>
+            <span style="display: none" class="representation-file-upload-label"><%= I18n.t("representation_file.upload") %></span>
+            <span style="display: none" class="representation-file-replace-label"><%= I18n.t("representation_file.upload_replace") %></span>
+            <span style="display: none" class="representation-file-uploading-label"><%= I18n.t("representation_file.uploading") %></span>
+            <button style="display: none" class="btn btn-xs btn-primary representation-file-upload"></button>
+            <button style="display: none" class="btn btn-xs btn-cancel representation-file-clear">
+              <%= I18n.t("representation_file.upload_clear") %>
             </button>
 
             <% unless form.obj['key'] %>
