@@ -20,4 +20,25 @@ class ArchivesSpaceService < Sinatra::Base
     json_response({'ref' => DigitalRepresentation.ref_for(params[:digital_representation_id])})
   end
 
+  Endpoint.post("/repositories/:repo_id/digital_representations/upload_file")
+    .description("Upload a digital representation file")
+    .params(["file", UploadFile, "The file stream"])
+    .permissions([])
+    .returns([200, '{"key": "<opaque key>"}']) \
+  do
+    # FIXME: We should store these in S3
+    key = RepresentationFileStore.new.store_file(params[:file])
+
+    json_response({"key" => key})
+  end
+
+  Endpoint.get("/repositories/:repo_id/digital_representations/view_file")
+    .description("Fetch a digital representation file")
+    .params(["key", String, "The key returned by a previous call to upload_file"])
+    .permissions([])
+    .returns([200, 'application/octet-stream']) \
+  do
+    send_file RepresentationFileStore.new.get_file(params[:key])
+  end
+
 end

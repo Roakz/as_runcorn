@@ -140,8 +140,9 @@
             }
           }
         }
-      }
+      },
 
+      "representation_file" => {"type" => "JSONModel(:representation_file) object"},
     },
   },
 }

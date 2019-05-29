@@ -8,6 +8,8 @@ ArchivesSpace::Application.routes.draw do
       match('physical_representations/show/:id' => 'physical_representations#show', :via => [:get])
       match('digital_representations/show/:id' => 'digital_representations#show', :via => [:get])
       match('representations/index' => 'representations#index', :via => [:get])
+      match('representations/view_file' => 'representations#view_file', :via => [:get])
+      match('representations/upload_file' => 'representations#upload_file', :via => [:post])
     end
   end
 end

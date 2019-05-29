@@ -194,3 +194,9 @@ en:
   runcorn_agency:
     agency_category: Agency Category
     agency_note: Note
+
+  representation_file:
+    attached_file: Attached File
+    view_file: Click to open in new window
+    upload: Upload a file
+    upload_replace: Replace current file

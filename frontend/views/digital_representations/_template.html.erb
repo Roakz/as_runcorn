@@ -126,6 +126,57 @@
       <% end %>
     <% end %>
 
+    <% form.push('representation_file', (form.obj['representation_file'] || {})) do |form| %>
+      <div class="form-group">
+        <label class="col-sm-2 control-label"><%= I18n.t('representation_file.attached_file') %></label>
+        <div class="col-sm-9">
+          <%= form.hidden_input('key', form.obj['key'], {:class => 'representation-file-key-input'}) %>
+          <%= form.hidden_input('mime_type', form.obj['mime_type'], {:class => 'representation-file-mime-type-input'}) %>
+
+          <% if form.obj['key'] %>
+            <%= link_to(I18n.t("representation_file.view_file"),
+                        {
+                          :controller => :representations,
+                          :action => :view_file,
+                          :key => form.obj['key'],
+                          :mime_type => form.obj['mime_type'],
+                        },
+                        {
+                          :class => "view-representation-file-link label-only",
+                          :target => "_blank",
+                        })
+            %>
+          <% end %>
+
+          <% unless form.readonly? %>
+            <button class="btn btn-xs btn-primary representation-file-upload">
+              <% if form.obj['key'] %>
+                <%= I18n.t("representation_file.upload_replace") %>
+              <% else %>
+                <%= I18n.t("representation_file.upload") %>
+              <% end %>
+            </button>
+
+            <% unless form.obj['key'] %>
+              <%# Hidden link that will be used if the user uploads a new file %>
+              <%= link_to(I18n.t("representation_file.view_file"),
+                          {
+                            :controller => :representations,
+                            :action => :view_file,
+                          },
+                          {
+                            :class => "view-representation-file-link label-only",
+                            :target => "_blank",
+                            :style => "display: none;",
+                          })
+              %>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+
     <div class="subrecord-form-container">
       <% unless form.readonly? && ASUtils.wrap(form.obj['deaccessions']).empty? %>
         <%= render_aspace_partial :partial => "shared/subrecord_form", :locals => {:form => form, :name => "deaccessions"} %>
@@ -140,3 +191,8 @@
     </div>
   </div>
 <% end %>
+
+
+<script>
+  new RepresentationFiles();
+</script>

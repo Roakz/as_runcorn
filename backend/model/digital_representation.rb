@@ -18,7 +18,14 @@ class DigitalRepresentation < Sequel::Model(:digital_representation)
                       :contains_references_to_types => proc {[Accession]},
                       :is_array => false)
 
+  one_to_one :representation_file
+  def_nested_record(:the_property => :representation_file,
+                    :contains_records_of_type => :representation_file,
+                    :corresponding_to_association  => :representation_file,
+                    :is_array => false)
+
   set_model_scope :repository
+
 
 
   def self.ref_for(digital_representation_id)
