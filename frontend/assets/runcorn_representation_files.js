@@ -13,9 +13,6 @@
 
             var fileInput = $('<input type="file" style="display: none;"></input>');
 
-            button.attr('disabled', 'disabled');
-            button.text('Uploading...')
-
             var restoreButton = function () {
                 button.text(buttonLabel);
                 button.attr('disabled', null);
@@ -23,6 +20,9 @@
             };
 
             fileInput.on('change', function () {
+                button.attr('disabled', 'disabled');
+                button.text('Uploading...')
+
                 var promise = self.handleUpload(fileInput[0]);
 
                 promise
