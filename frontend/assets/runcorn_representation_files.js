@@ -62,7 +62,7 @@
                 promise
                     .done(function (data) {
                         var key = data.key;
-                        var mimeType = fileInput[0].files[0].type;
+                        var mimeType = fileInput[0].files[0].type || "application/octet-stream";
 
                         var link = container.find('.view-representation-file-link');
                         var hiddenKey = container.find('.representation-file-key-input');
