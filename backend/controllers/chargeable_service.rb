@@ -38,7 +38,7 @@ class ArchivesSpaceService < Sinatra::Base
 
   Endpoint.get('/chargeable_services')
     .description("Get a list of Chargeable Services")
-    .params()
+    .params(["resolve", :resolve])
     .permissions([])
     .returns([200, "[(:chargeable_service)]"]) \
   do

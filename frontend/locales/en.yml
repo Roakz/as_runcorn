@@ -175,6 +175,21 @@ en:
     filter:
       representation_intended_use_u_sstr: Intended Use
 
+  chargeable_item:
+    name: Name
+    description: Description
+    price_dollars: Charge
+    charge_quantity_unit: Unit
+    button_label: Manage Chargeable Items
+    _plural: Chargeable Items
+
+  chargeable_service:
+    name: Name
+    description: Description
+    service_items: Chargeable Items
+    button_label: Manage Chargeable Services
+    _plural: Chargeable Services
+
   external_id:
     _plural: Internal References
     _singular: Internal Reference

@@ -18,6 +18,14 @@
   <%= link_to I18n.t("managed_registration.button_label"), {:controller => :managed_registration, :action => :index} %>
 </script>
 
+<script type="text/template" id="chargeableItemButtonTemplate">
+  <%= link_to I18n.t("chargeable_item.button_label"), {:controller => :chargeable_items, :action => :index} %>
+</script>
+
+<script type="text/template" id="chargeableServiceButtonTemplate">
+  <%= link_to I18n.t("chargeable_service.button_label"), {:controller => :chargeable_services, :action => :index} %>
+</script>
+
 <script type="text/template" id="browseRepresentationsTemplate">
   <li><%= link_to I18n.t("representation._plural"), {:controller => :representations, :action => :index} %></li>
 </script>
@@ -25,14 +33,18 @@
 <script>
     // put link in the System menu
     $(function() {
-      var setupButton = function(templ) {
-        $('.system-menu .dropdown-menu').append($('<li class="divider" />'));
+      var setupButton = function(templ, divider) {
+        if (divider) {
+          $('.system-menu .dropdown-menu').append($('<li class="divider" />'));
+        }
         $but = $(AS.renderTemplate(templ));
         $('.system-menu .dropdown-menu').append($('<li />').append($but));
         $('.system-menu').show();
       };
 
-      setupButton("managedRegistrationButtonTemplate");
+      setupButton("managedRegistrationButtonTemplate", true);
+      setupButton("chargeableItemButtonTemplate", true);
+      setupButton("chargeableServiceButtonTemplate");
 
       // Put representation browse in Repo menu
       $('.repository-header .navbar-nav .browse-container .dropdown-menu .divider:first').before(AS.renderTemplate("browseRepresentationsTemplate"))

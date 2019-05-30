@@ -48,7 +48,7 @@ Rails.application.config.after_initialize do
   )
 
 
-  Plugins.add_resolve_field(['approved_by', 'container', 'related_accession', 'transfer'])
+  Plugins.add_resolve_field(['approved_by', 'container', 'related_accession', 'transfer', 'service_items'])
 
   Plugins.add_facet_group_i18n("representation_intended_use_u_sstr",
                                proc {|facet| "enumerations.runcorn_intended_use.#{facet}" })

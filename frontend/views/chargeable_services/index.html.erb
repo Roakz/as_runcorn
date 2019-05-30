@@ -1,0 +1,47 @@
+<%= setup_context(:title => I18n.t("chargeable_service._plural")) %>
+
+<div class="row">
+  <div class="col-md-3">
+    <div class="sidebar">
+    </div>
+  </div>
+  <div class="col-md-9">
+    <% if user_can?('update_accession_record') %>
+      <div class="record-toolbar">
+        <div class="btn-group pull-right">
+          <%# link_to I18n.t("actions.export_csv"), request.parameters.merge({ :format => :csv}), id: "searchExport",  class:  "btn btn-sm btn-info" %>
+        </div>
+        <br style="clear:both" />
+      </div>
+    <% end %>
+    <div class="record-pane">
+      <h2><%= I18n.t("chargeable_service._plural") %></h2>
+
+      <table class="table table-striped table-bordered table-hover">
+        <thead>
+          <tr>
+            <th class="col title"><%= I18n.t('chargeable_service.description') %></th>
+            <th class="col"><%= I18n.t('chargeable_service.service_items') %></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @list.each do |service| %>
+            <tr>
+              <td><%= service['description'] %></td>
+              <td>
+                <% service['service_items'].each do |item| %>
+                  <%= render_token :object => item['_resolved'],
+                                   :label => item['_resolved']['description'],
+                                   :type => item['_resolved']['jsonmodel_type'],
+                                   :uri => item['ref'] %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        <tbody>
+      </table>
+
+    </div>
+  </div>
+</div>
