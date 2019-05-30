@@ -15,6 +15,8 @@ class RepresentationFileStore
     FileUtils.cp(upload_file.tempfile.path,
                  target_file)
 
+    FileUtils.chmod(0644, [target_file])
+
     key
   end
 
