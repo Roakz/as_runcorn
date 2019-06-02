@@ -127,28 +127,48 @@
     <% end %>
 
     <% form.push('representation_file', (form.obj['representation_file'] || {})) do |form| %>
-      <div class="<% unless form.readonly?%>representation-file-widget<% end %> form-group">
-        <label class="col-sm-2 control-label"><%= I18n.t('representation_file.attached_file') %></label>
-        <div class="col-sm-9">
-          <%= form.hidden_input('key', form.obj['key'], {:class => 'representation-file-key-input'}) %>
-          <%= form.hidden_input('mime_type', form.obj['mime_type'], {:class => 'representation-file-mime-type-input'}) %>
+      <% if form.readonly? %>
+        <% unless !form.obj['key'] %>
+          <div class="form-group">
+            <label class="col-sm-2 control-label"><%= I18n.t('representation_file.attached_file') %></label>
+            <div class="col-sm-9">
+              <%= link_to(I18n.t("representation_file.view_file"),
+                          {
+                            :controller => :representations,
+                            :action => :view_file,
+                            :key => form.obj['key'],
+                            :mime_type => form.obj['mime_type'],
+                          },
+                          {
+                            :class => "view-representation-file-link label-only",
+                            :target => "_blank",
+                          })
+              %>
+            </div>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="representation-file-widget form-group">
+          <label class="col-sm-2 control-label"><%= I18n.t('representation_file.attached_file') %></label>
+          <div class="col-sm-9">
+            <%= form.hidden_input('key', form.obj['key'], {:class => 'representation-file-key-input'}) %>
+            <%= form.hidden_input('mime_type', form.obj['mime_type'], {:class => 'representation-file-mime-type-input'}) %>
 
-          <% if form.obj['key'] %>
-            <%= link_to(I18n.t("representation_file.view_file"),
-                        {
-                          :controller => :representations,
-                          :action => :view_file,
-                          :key => form.obj['key'],
-                          :mime_type => form.obj['mime_type'],
-                        },
-                        {
-                          :class => "view-representation-file-link label-only",
-                          :target => "_blank",
-                        })
-            %>
-          <% end %>
+            <% if form.obj['key'] %>
+              <%= link_to(I18n.t("representation_file.view_file"),
+                          {
+                            :controller => :representations,
+                            :action => :view_file,
+                            :key => form.obj['key'],
+                            :mime_type => form.obj['mime_type'],
+                          },
+                          {
+                            :class => "view-representation-file-link label-only",
+                            :target => "_blank",
+                          })
+              %>
+            <% end %>
 
-          <% unless form.readonly? %>
             <span style="display: none" class="representation-file-upload-label"><%= I18n.t("representation_file.upload") %></span>
             <span style="display: none" class="representation-file-replace-label"><%= I18n.t("representation_file.upload_replace") %></span>
             <span style="display: none" class="representation-file-uploading-label"><%= I18n.t("representation_file.uploading") %></span>
@@ -171,11 +191,10 @@
                           })
               %>
             <% end %>
-          <% end %>
+          </div>
         </div>
-      </div>
+      <% end %>
     <% end %>
-
 
     <div class="subrecord-form-container">
       <% unless form.readonly? && ASUtils.wrap(form.obj['deaccessions']).empty? %>
