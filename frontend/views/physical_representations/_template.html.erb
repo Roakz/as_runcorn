@@ -152,13 +152,14 @@
       <% unless form.readonly? && ASUtils.wrap(form.obj['deaccessions']).empty? %>
         <%= render_aspace_partial :partial => "shared/subrecord_form", :locals => {:form => form, :name => "deaccessions"} %>
       <% end %>
-      <% if !form.readonly? %>
-        <%= render_aspace_partial :partial => "external_ids/edit", :locals => {:form => form} %>
-      <% elsif !ASUtils.wrap(form.obj['external_ids']).empty? %>
-        <%= render_aspace_partial :partial => "external_ids/show", :locals => {:external_ids => form.obj['external_ids']} %>
-      <% end %>
 
-      <%= form_plugins_for("physical_representation", form, JSONModel(:physical_representation).new._always_valid!) %>
+      <% if form.readonly? %>
+        <% unless ASUtils.wrap(form.obj['external_ids']).empty? %>
+          <%= render_aspace_partial :partial => "shared/subrecord_form", :locals => {:form => form, :name => "external_ids"} %>
+        <% end %>
+      <% else %>
+        <%= form_plugins_for("physical_representation", form, form.obj) %>
+      <% end %>
     </div>
   </div>
 <% end %>
