@@ -202,9 +202,7 @@
       <% end %>
 
       <% if form.readonly? %>
-        <% unless ASUtils.wrap(form.obj['external_ids']).empty? %>
-          <%= render_aspace_partial :partial => "shared/subrecord_form", :locals => {:form => form, :name => "external_ids"} %>
-        <% end %>
+        <%= show_plugins_for(JSONModel(:digital_representation).from_hash(form.obj, :trusted), form) %>
       <% else %>
         <%= form_plugins_for("digital_representation", form, form.obj) %>
       <% end %>
