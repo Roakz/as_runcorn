@@ -11,3 +11,10 @@ Permission.define("approve_agency_registration",
                   "The ability to approve the registration of a draft agency",
                   :implied_by => "manage_agency_registration",
                   :level => "global")
+
+begin
+  History.register_model(ChargeableItem)
+  History.register_model(ChargeableService)
+rescue NameError
+  Log.info("Unable to register ChargeableItem and ChargeableService for history. Please install the as_history plugin")
+end

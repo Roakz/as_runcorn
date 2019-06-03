@@ -3,3 +3,4 @@ depends_on_plugins:
   - as_reformulator
 recommends_plugins:
   - in_a_rush
+  - as_history
