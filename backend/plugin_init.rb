@@ -18,3 +18,10 @@ begin
 rescue NameError
   Log.info("Unable to register ChargeableItem and ChargeableService for history. Please install the as_history plugin")
 end
+
+require_relative 'lib/file_storage'
+require_relative 'lib/s3_storage'
+require_relative 'lib/byte_storage'
+
+# Config test!
+ByteStorage.get

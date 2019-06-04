@@ -26,7 +26,6 @@ class ArchivesSpaceService < Sinatra::Base
     .permissions([])
     .returns([200, '{"key": "<opaque key>"}']) \
   do
-    # FIXME: We should store these in S3
     key = RepresentationFileStore.new.store_file(params[:file])
 
     json_response({"key" => key})
@@ -38,7 +37,11 @@ class ArchivesSpaceService < Sinatra::Base
     .permissions([])
     .returns([200, 'application/octet-stream']) \
   do
-    send_file RepresentationFileStore.new.get_file(params[:key])
+    [
+      200,
+      {"Content-Type" => "application/octet-stream"},
+      RepresentationFileStore.new.to_enum(:get_file, params[:key])
+    ]
   end
 
 end
