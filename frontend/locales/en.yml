@@ -182,6 +182,13 @@ en:
     charge_quantity_unit: Unit
     button_label: Manage Chargeable Items
     _plural: Chargeable Items
+    _singular: Chargeable Item
+    _frontend:
+      messages:
+        created: Chargeable Item created
+        updated: Chargeable Item updated
+      action:
+        create: Create Chargeable Item
 
   chargeable_service:
     name: Name

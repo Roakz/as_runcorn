@@ -1,0 +1,19 @@
+<%= render_aspace_partial :partial => "shared/form_messages", :locals => {:object => @chargeable_item, :form => form} %>
+
+<% define_template "chargeable_item", jsonmodel_definition(:chargeable_item) do |form| %>
+  <div class="subrecord-form-fields">
+    <%= form.hidden_input "price_cents" %>
+
+    <% if ['new', 'create'].include?(controller.action_name) %>
+      <%= form.label_and_textfield "name" %>
+    <% else %>
+      <%= form.hidden_input "name" %>
+      <%= form.label_and_readonly "name" %>
+    <% end %>
+    <%= form.label_and_textfield "description" %>
+    <%= form.label_and_textfield "price_dollars" %>
+    <%= form.label_and_select "charge_quantity_unit", form.possible_options_for("charge_quantity_unit", false) %>
+  </div>
+<% end %>
+
+<% form.emit_template("chargeable_item") %>

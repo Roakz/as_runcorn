@@ -11,6 +11,7 @@ ArchivesSpace::Application.routes.draw do
       match('representations/view_file' => 'representations#view_file', :via => [:get])
       match('representations/upload_file' => 'representations#upload_file', :via => [:post])
 
+      resources :chargeable_items
       match('chargeable_items/index' => 'chargeable_items#index', :via => [:get])
       match('chargeable_services/index' => 'chargeable_services#index', :via => [:get])
     end

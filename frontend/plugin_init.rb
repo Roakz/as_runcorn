@@ -62,6 +62,8 @@ Rails.application.config.after_initialize do
   # Force load
   JSONModel(:physical_representation)
   JSONModel(:digital_representation)
+  JSONModel(:chargeable_item)
+  JSONModel(:chargeable_service)
   SearchHelper
 
   # register qsa_id models

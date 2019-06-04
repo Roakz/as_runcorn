@@ -9,7 +9,7 @@
     <% if user_can?('update_accession_record') %>
       <div class="record-toolbar">
         <div class="btn-group pull-right">
-          <%# link_to I18n.t("actions.export_csv"), request.parameters.merge({ :format => :csv}), id: "searchExport",  class:  "btn btn-sm btn-info" %>
+          <%= link_to I18n.t("chargeable_item._frontend.action.create"), {:controller => :chargeable_items, :action => :new}, :class => "btn btn-sm btn-default" %>
         </div>
         <br style="clear:both" />
       </div>
@@ -23,6 +23,7 @@
             <th class="col title"><%= I18n.t('chargeable_item.description') %></th>
             <th class="col"><%= I18n.t('chargeable_item.price_dollars') %></th>
             <th class="col"><%= I18n.t('chargeable_item.charge_quantity_unit') %></th>
+            <th class="col"></th>
           </tr>
         </thead>
 
@@ -32,6 +33,14 @@
               <td><%= item['description'] %></td>
               <td><%= item['price_dollars'] %></td>
               <td><%= I18n.t('enumerations.runcorn_charge_quantity_unit.' + item['charge_quantity_unit']) %></td>
+
+              <td class="table-record-actions">
+                <div class="btn-group">
+                  <%= link_to I18n.t("actions.view"), {:controller => :resolver, :action => :resolve_readonly, :uri => item['uri']}, :class => "btn btn-xs btn-default" %>
+                  <%= link_to I18n.t("actions.edit"), {:controller => :resolver, :action => :resolve_edit, :uri => item['uri']}, :class => "btn btn-xs btn-primary" %>
+                </div>
+              </td>
+
             </tr>
           <% end %>
         <tbody>
