@@ -1,2 +1,3 @@
 AgentCorporateEntity.prepend(ManagedRegistration)
 AgentCorporateEntity.include(ExternalIDs)
+AgentCorporateEntity.include(AgencyDeletionRules)
