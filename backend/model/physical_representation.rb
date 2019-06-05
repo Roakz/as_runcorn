@@ -7,6 +7,8 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
   include ExternalIDs
   include Publishable
 
+  include Movements
+
   include RepresentationControl
 
   define_relationship(:name => :representation_approved_by,

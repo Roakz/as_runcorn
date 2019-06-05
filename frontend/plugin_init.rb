@@ -90,7 +90,7 @@ Rails.application.config.after_initialize do
     end
   end
 
-  require_relative '../common/validation_overrides'
+  require_relative '../common/validations'
 
   require_relative 'reformulator_configuration'
 end

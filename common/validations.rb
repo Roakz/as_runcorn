@@ -40,3 +40,30 @@ JSONModel.custom_validations['check_date'] = proc do |hash|
   errors
 
 end
+
+# And add some new validations
+module JSONModel
+  module Validations
+    def self.check_movement_location(hash)
+      errors = []
+      if hash['functional_location'] && hash['storage_location']
+        errors << ['functional_location', 'Cannot have a value if a storage location is specified']
+        errors << ['storage_location', 'Cannot have a value if a functional location is specified']
+      end
+
+      if !hash['functional_location'] && !hash['storage_location']
+        errors << ['functional_location', 'Must have a value if a storage location is not specified']
+        errors << ['storage_location', 'Must have a value if a functional location is not specified']
+      end
+
+      errors
+    end
+
+    if JSONModel(:movement)
+      JSONModel(:movement).add_validation("check_movement_location") do |hash|
+        check_movement_location(hash)
+      end
+    end
+
+  end
+end
