@@ -11,8 +11,8 @@ module Movements
 
 
   def update_from_json(json, opts = {}, apply_nested_records = true)
-    self.check_move_to_storage(json)
-    self.set_current_to_last_move!(json)
+    self.class.check_move_to_storage(json)
+    self.class.set_current_to_last_move!(json)
     super
   end
 
