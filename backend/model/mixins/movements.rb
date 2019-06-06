@@ -40,13 +40,17 @@ module Movements
     end
 
 
-    # FIXME: can this be done in a more standard way?
-    # FIXME: and if not then the error should reference the movement properly
     def check_move_to_storage(json)
       unless @move_to_storage_permitted
-        moves_to_storage = json['movements'].select{|m| m['storage_location']}
-        unless moves_to_storage.empty?
-          raise JSONModel::ValidationException.new(:errors => {:movements => ["Cannot move to a storage location"]})
+        errors = {}
+
+        json['movements'].each_with_index do |move, ix|
+          next unless move['storage_location']
+          errors["movements/#{ix}/storage_location"] = ["Cannot move to a storage location"]
+        end
+
+        unless errors.empty?
+          raise JSONModel::ValidationException.new(:errors => errors)
         end
       end
     end
