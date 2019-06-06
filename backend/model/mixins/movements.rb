@@ -7,10 +7,13 @@ module Movements
     base.def_nested_record(:the_property => :movements,
                            :contains_records_of_type => :movement,
                            :corresponding_to_association => :movement)
+
+    @move_to_storage_permitted = false
   end
 
 
   def update_from_json(json, opts = {}, apply_nested_records = true)
+    self.check_move_to_storage(json)
     self.set_current_to_last_move!(json)
     super
   end
@@ -18,6 +21,7 @@ module Movements
 
   module ClassMethods
     def create_from_json(json, opts = {})
+      check_move_to_storage(json)
       set_current_to_last_move!(json)
       super
     end
@@ -33,5 +37,20 @@ module Movements
       end
     end
 
+    def move_to_storage_permitted
+      @move_to_storage_permitted = true
+    end
+
+
+    # FIXME: can this be done in a more standard way?
+    # FIXME: and if not then the error should reference the movement properly
+    def check_move_to_storage(json)
+      unless @move_to_storage_permitted
+        moves_to_storage = json['movements'].select{|m| m['storage_location']}
+        unless moves_to_storage.empty?
+          raise JSONModel::ValidationException.new(:errors => {:movements => ["Cannot move to a storage location"]})
+        end
+      end
+    end
   end
 end

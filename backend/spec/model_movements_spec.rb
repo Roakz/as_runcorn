@@ -159,4 +159,32 @@ describe 'Runcorn Movements Mixin' do
     expect(prep['movements'][0]['functional_location']).to eq('HOME')
 
   end
+
+  it "does not allow moves to storage for non-storable models" do
+    location = create(:json_location)
+
+    json = build(:json_archival_object)
+
+    json.physical_representations =
+      [
+       {
+         "title" => "bad song",
+         "description" => "Let us get physical!",
+         "current_location" => "CONS",
+         "normal_location" => "HOME",
+         "format" => "Drafting Cloth (Linen)",
+         "contained_within" => "OTH",
+         "movements" =>
+         [
+          {
+            "storage_location" => {"ref" => location.uri},
+            "user" => "admin",
+            "move_date" => "2019-06-06"
+          }
+         ]
+       }
+      ]
+
+    expect {ArchivalObject.create_from_json(json)}.to raise_error(JSONModel::ValidationException)
+  end
 end
