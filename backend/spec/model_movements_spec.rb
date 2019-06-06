@@ -10,8 +10,8 @@ describe 'Runcorn Movements Mixin' do
        {
          "title" => "bad song",
          "description" => "Let us get physical!",
-         "current_location" => "N/A",
-         "normal_location" => "N/A",
+         "current_location" => "CONS",
+         "normal_location" => "HOME",
          "format" => "Drafting Cloth (Linen)",
          "contained_within" => "OTH",
          "movements" =>
