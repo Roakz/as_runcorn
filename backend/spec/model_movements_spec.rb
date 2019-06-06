@@ -19,7 +19,7 @@ describe 'Runcorn Movements Mixin' do
           {
             "functional_location" => "CONS",
             "user" => "admin",
-            "move_context" => { "ref" => "/file_issue/1"},
+            "move_context" => { "ref" => "/file_issues/1"},
             "move_date" => "2019-06-06"
           }
          ]
@@ -126,13 +126,13 @@ describe 'Runcorn Movements Mixin' do
           {
             "functional_location" => "HOME",
             "user" => "admin",
-            "move_context" => { "ref" => "/file_issue/1"},
+            "move_context" => { "ref" => "/file_issues/1"},
             "move_date" => "2019-05-05"
           },
           {
             "functional_location" => "PER", # with agency
             "user" => "admin",
-            "move_context" => { "ref" => "/file_issue/1"},
+            "move_context" => { "ref" => "/file_issues/1"},
             "move_date" => "2019-04-04"
           },
           {
