@@ -17,7 +17,7 @@ Sequel.migration do
       String :context_uri, :null => true
       String :user, :null => false
 
-      Date :move_date, :null => false
+      DateTime :move_date, :null => false
 
       apply_mtime_columns
     end
