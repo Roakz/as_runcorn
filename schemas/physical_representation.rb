@@ -41,7 +41,19 @@
 
       "contained_within" => {"type" => "string", "dynamic_enum" => "runcorn_physical_representation_contained_within", "ifmissing" => "error"},
 
-      "containers" => {"type" => "array", "items" => {"type" => "JSONModel(:sub_container) object"}},
+      "container" => {
+        "ifmissing" => "error",
+        "type" => "object",
+        "subtype" => "ref",
+        "properties" => {
+          "ref" => {"type" => "JSONModel(:top_container) uri",
+                    "ifmissing" => "error",},
+        },
+        "_resolved" => {
+            "type" => "object",
+            "readonly" => "true",
+          }
+      },
 
       "deaccessions" => {"type" => "array", "items" => {"type" => "JSONModel(:deaccession) object"}},
 

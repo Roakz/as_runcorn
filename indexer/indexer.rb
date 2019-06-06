@@ -28,7 +28,7 @@ class IndexerCommon
       if doc['primary_type'] == 'physical_representation'
         doc['title'] = record['record']['display_string']
         doc['representation_intended_use_u_sstr'] = record['record']['intended_use']
-        doc['top_container_uri_u_sstr'] = ASUtils.wrap(record['record']['containers']).map{|container| container['top_container']['ref']}
+        doc['top_container_uri_u_sstr'] = record['record'].fetch('container', {}).fetch('ref', nil)
         doc['controlling_record_u_sstr'] = record['record']['controlling_record']['ref']
         doc['file_issue_allowed_u_sbool'] = [record['record']['file_issue_allowed']]
       end

@@ -22,10 +22,10 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
                       :is_array => false)
 
 
-  one_to_many :sub_container
-  def_nested_record(:the_property => :containers,
-                    :contains_records_of_type => :sub_container,
-                    :corresponding_to_association => :sub_container)
+  define_relationship(:name => :representation_container,
+                      :json_property => 'container',
+                      :contains_references_to_types => proc {[TopContainer]},
+                      :is_array => false)
 
   set_model_scope :repository
 
@@ -45,6 +45,16 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
     raise NotFoundException.new
   end
 
+
+  def update_from_json(json, opts = {}, apply_nested_records = true)
+    # If we're linked to a top container, reindex it to make sure its series
+    # info is up-to-date.
+    if json.container
+      TopContainer.update_mtime_for_ids([JSONModel.parse_reference(json.container['ref']).fetch(:id)])
+    end
+
+    super
+  end
 
   def self.sequel_to_jsonmodel(objs, opts = {})
     jsons = super

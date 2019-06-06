@@ -131,20 +131,11 @@
 
     <div class="subrecord-form-container">
       <% if form.readonly? %>
-        <% unless ASUtils.wrap(form.obj['containers']).empty? %>
-          <section class="subrecord-form">
-            <h3 class="subrecord-form-heading"><%= I18n.t('container._plural') %></h3>
-            <div class="subrecord-form-container">
-              <% form.obj['containers'].each do |container| %>
-                <div class="subrecord-form-fields">
-                  <%= render_aspace_partial :partial => "sub_containers/show", :locals => {:sub_container => container}%>
-                </div>
-              <% end %>
-            </div>
-          </section>
-        <% end %>
+        <pre>FIXME <%= form.obj['container'] %></pre>
       <% else %>
-        <%= render_aspace_partial :partial => "shared/subrecord_form", :locals => {:form => form, :name => "containers", :template => 'runcorn_sub_container', :template_erb => 'sub_containers/runcorn_template'} %>
+        <% form.push("container", form.obj["container"] || {}) do %>
+          <%= render_aspace_partial :partial => "top_containers/linker", :locals => {:form => form, :label => I18n.t("top_container._singular")} %>
+        <% end %>
       <% end %>
       <% unless form.readonly? && ASUtils.wrap(form.obj['extents']).empty? %>
         <%= render_aspace_partial :partial => "shared/subrecord_form", :locals => {:form => form, :name => "extents"} %>
