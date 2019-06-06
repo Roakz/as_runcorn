@@ -10,6 +10,32 @@ module Movements
   end
 
 
+  def move(opts)
+    json = self.class.to_jsonmodel(self)
+
+    mvmt = {
+      'user' => opts[:user],
+      'move_date' => opts.fetch(:date, Time.now),
+    }
+
+    mvmt['context_uri'] = opts[:context] if opts[:context]
+
+    if (opts[:location])
+      if (loc = JSONModel.parse_reference(opts[:location]))
+        mvmt['storage_location'] = {'ref' => opts[:location]}
+      else
+        mvmt['functional_location'] = opts[:location]
+      end
+    else
+      mvmt['functional_location'] = 'HOME'
+    end
+
+    json['movements'].push(mvmt)
+
+    self.update_from_json(json)
+  end
+
+
   def update_from_json(json, opts = {}, apply_nested_records = true)
     self.class.check_move_to_storage(json)
     self.class.set_current_to_last_move!(json)

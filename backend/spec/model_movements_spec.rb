@@ -3,6 +3,8 @@ require 'spec_helper'
 describe 'Runcorn Movements Mixin' do
 
   it "keeps track of physical representation movements" do
+    tcon = create(:json_top_container)
+
     json = build(:json_archival_object)
 
     json.physical_representations =
@@ -14,6 +16,7 @@ describe 'Runcorn Movements Mixin' do
          "normal_location" => "HOME",
          "format" => "Drafting Cloth (Linen)",
          "contained_within" => "OTH",
+         "container" => {"ref" => tcon.uri},
          "movements" =>
          [
           {
@@ -105,6 +108,8 @@ describe 'Runcorn Movements Mixin' do
   end
 
   it "sets current location to the value of the latest movement and sorts movements by move date" do
+    tcon = create(:json_top_container)
+
     json = build(:json_archival_object)
 
     json.physical_representations =
@@ -116,6 +121,7 @@ describe 'Runcorn Movements Mixin' do
          "normal_location" => "HOME",
          "format" => "Drafting Cloth (Linen)",
          "contained_within" => "OTH",
+         "container" => {"ref" => tcon.uri},
          "movements" =>
          [
           { # deliberately out of order - should be fixed on update
@@ -186,5 +192,24 @@ describe 'Runcorn Movements Mixin' do
       ]
 
     expect {ArchivalObject.create_from_json(json)}.to raise_error(JSONModel::ValidationException)
+  end
+
+  it 'provides a handy move method' do
+    location = create(:json_location)
+
+    json = build(:json_top_container)
+
+    tc = TopContainer.create_from_json(json)
+
+    mvmt = {
+      :user => 'test_monkey'
+    }
+
+    tc.move(mvmt)
+
+    json = TopContainer.to_jsonmodel(tc.id)
+
+    # defaults to home
+    expect(json['movements'][0]['functional_location']).to eq('HOME')
   end
 end
