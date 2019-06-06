@@ -2,6 +2,8 @@ require 'spec_helper'
 
 describe 'Runcorn Physical representations' do
 
+  let! (:top_container) { create(:json_top_container) }
+
   it "applies to archival objects" do
     json = build(:json_archival_object)
 
@@ -13,6 +15,7 @@ describe 'Runcorn Physical representations' do
         "normal_location" => "N/A",
         "format" => "Drafting Cloth (Linen)",
         "contained_within" => "OTH",
+        "container" => {"ref" => top_container.uri},
       }
     ]
 
@@ -46,6 +49,7 @@ describe 'Runcorn Physical representations' do
         "normal_location" => "N/A",
         "format" => "Drafting Cloth (Linen)",
         "contained_within" => "OTH",
+        "container" => {"ref" => top_container.uri},
       }
     ]
 
@@ -73,6 +77,7 @@ describe 'Runcorn Physical representations' do
           "normal_location" => "N/A",
           "format" => "Drafting Cloth (Linen)",
           "contained_within" => "OTH",
+          "container" => {"ref" => top_container.uri},
         },
         {
           "title" => "also a bad song",
@@ -81,6 +86,7 @@ describe 'Runcorn Physical representations' do
           "normal_location" => "N/A",
           "format" => "Drafting Cloth (Linen)",
           "contained_within" => "OTH",
+          "container" => {"ref" => top_container.uri},
         },
       ]
     })
@@ -102,6 +108,7 @@ describe 'Runcorn Physical representations' do
           "normal_location" => "N/A",
           "format" => "Drafting Cloth (Linen)",
           "contained_within" => "OTH",
+          "container" => {"ref" => top_container.uri},
         },
         {
           "title" => "also a bad song",
@@ -110,6 +117,7 @@ describe 'Runcorn Physical representations' do
           "normal_location" => "N/A",
           "format" => "Drafting Cloth (Linen)",
           "contained_within" => "OTH",
+          "container" => {"ref" => top_container.uri},
         },
       ]
     })
@@ -123,6 +131,7 @@ describe 'Runcorn Physical representations' do
           "normal_location" => "N/A",
           "format" => "Drafting Cloth (Linen)",
           "contained_within" => "OTH",
+          "container" => {"ref" => top_container.uri},
         },
       ]
     })
