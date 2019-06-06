@@ -21,14 +21,16 @@ class Movement < Sequel::Model(:movement)
   end
 
 
-  def self.create_from_json(json, opts = {})
+  def self.create_from_json(json, extra_values = {})
     json['context_uri'] = json['move_context'] ? json['move_context']['ref'] : nil
 
+    extras = {}
+
     if json['storage_location']
-      json['storage_location_id'] = json['storage_location']['ref'].split('/').last.to_i
+      extras['storage_location_id'] = JSONModel.parse_reference(json['storage_location']['ref'])[:id]
     end
 
-    super
+    super(json, extra_values.merge(extras))
   end
 
 end

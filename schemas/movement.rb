@@ -5,7 +5,6 @@
     "type" => "object",
 
     "properties" => {
-      "storage_location_id" => {"type"=> "number"},
       "storage_location" => {
         "type" => "object",
         "subtype" => "ref",
@@ -25,7 +24,10 @@
         "type" => "object",
         "subtype" => "ref",
         "properties" => {
-          "ref" => {"type" => ["JSONModel(:file_issue) uri", "JSONModel(:assessment) uri"]},
+          "ref" => {
+            "type" => [{"type" => "JSONModel(:file_issue) uri"},
+                       {"type" => "JSONModel(:assessment) uri"}],
+          },
           "_resolved" => {
             "type" => "object",
             "readonly" => "true"
