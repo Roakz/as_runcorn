@@ -7,8 +7,6 @@ module Movements
     base.def_nested_record(:the_property => :movements,
                            :contains_records_of_type => :movement,
                            :corresponding_to_association => :movement)
-
-    @move_to_storage_permitted = false
   end
 
 
