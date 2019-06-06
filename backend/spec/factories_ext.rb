@@ -6,6 +6,9 @@ FactoryBot.modify do
   factory :json_date_single, class: JSONModel::JSONModel(:date) do
     self.certainty 'approximate'
   end
+  factory :json_top_container, class: JSONModel::JSONModel(:top_container) do
+    self.current_location 'HOME'
+  end
 end
 
 

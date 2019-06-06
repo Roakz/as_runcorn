@@ -34,7 +34,7 @@
       },
 
       "user" => {"type" => "string", "maxLength" => 255, "ifmissing" => "error"},
-      "move_date" => {"type" => "date", "minLength" => 1, "ifmissing" => "error"},
+      "move_date" => {"type" => "date-time", "ifmissing" => "error"},
     },
   },
 }

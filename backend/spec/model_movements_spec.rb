@@ -103,4 +103,60 @@ describe 'Runcorn Movements Mixin' do
 
     expect {TopContainer.create_from_json(json)}.to raise_error(JSONModel::ValidationException)
   end
+
+  it "sets current location to the value of the latest movement and sorts movements by move date" do
+    json = build(:json_archival_object)
+
+    json.physical_representations =
+      [
+       {
+         "title" => "bad song",
+         "description" => "Let us get physical!",
+         "current_location" => "PER", # wrong - should be fixed on update
+         "normal_location" => "HOME",
+         "format" => "Drafting Cloth (Linen)",
+         "contained_within" => "OTH",
+         "movements" =>
+         [
+          { # deliberately out of order - should be fixed on update
+            "functional_location" => "CONS",
+            "user" => "admin",
+            "move_date" => "2019-02-02"
+          },
+          {
+            "functional_location" => "HOME",
+            "user" => "admin",
+            "move_context" => { "ref" => "/file_issue/1"},
+            "move_date" => "2019-05-05"
+          },
+          {
+            "functional_location" => "PER", # with agency
+            "user" => "admin",
+            "move_context" => { "ref" => "/file_issue/1"},
+            "move_date" => "2019-04-04"
+          },
+          {
+            "functional_location" => "HOME",
+            "user" => "admin",
+            "move_date" => "2019-03-03"
+          },
+          {
+            "functional_location" => "HOME",
+            "user" => "admin",
+            "move_date" => "2019-01-01"
+          },
+         ]
+       }
+      ]
+
+    obj = ArchivalObject.create_from_json(json)
+    json = ArchivalObject.to_jsonmodel(obj.id)
+
+    prep = json.physical_representations[0]
+
+    expect(prep['current_location']).to eq('HOME')
+
+    expect(prep['movements'][0]['functional_location']).to eq('HOME')
+
+  end
 end
