@@ -41,6 +41,7 @@ FactoryBot.define do
     normal_location { generate(:runcorn_location) }
     format { generate(:runcorn_format) }
     contained_within { generate(:runcorn_physical_representation_contained_within) }
+    container { {:ref => create(:json_top_container).uri} }
   end
 
   factory :json_chargeable_item, class: JSONModel::JSONModel(:chargeable_item) do
