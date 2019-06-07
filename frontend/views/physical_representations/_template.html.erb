@@ -147,7 +147,7 @@
       <% if form.readonly? %>
         <%= show_plugins_for(JSONModel(:physical_representation).from_hash(form.obj, :trusted), form) %>
       <% else %>
-        <%= form_plugins_for("physical_representation", form, form.obj) %>
+        <%= form_plugins_for("physical_representation", form, JSONModel(:physical_representation).new._always_valid!) %>
       <% end %>
     </div>
   </div>
