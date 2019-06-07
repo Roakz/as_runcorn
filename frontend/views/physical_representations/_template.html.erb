@@ -131,7 +131,20 @@
 
     <div class="subrecord-form-container">
       <% if form.readonly? %>
-        <pre>FIXME <%= form.obj['container'] %></pre>
+        <% if form['container']  %>
+          <div class="form-group">
+            <div class="control-label col-sm-2"><%= I18n.t("top_container._singular") %></div>
+            <div class="controls token-list col-sm-10">
+              <% ASUtils.wrap(form['container']).each do |record| %>
+                <%= render_token :object => record['_resolved'],
+                 :label => record['_resolved']['title'] || record['_resolved']['display_string'],
+                 :type => record['_resolved']['jsonmodel_type'],
+                 :uri => record['ref'],
+                 :placement => "top" %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
       <% else %>
         <% form.push("container", form.obj["container"] || {}) do %>
           <%= render_aspace_partial :partial => "top_containers/linker", :locals => {:form => form, :label => I18n.t("top_container._singular")} %>
