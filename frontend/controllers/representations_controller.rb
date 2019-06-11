@@ -26,7 +26,7 @@ class RepresentationsController < ApplicationController
       JSONModel::HTTP.stream("/repositories/#{session[:repo_id]}/digital_representations/view_file",
                              :key => params[:key]) do |response|
         response.read_body do |chunk|
-          stream << chunk if !chunk.blank?
+          stream << chunk
         end
       end
     end
