@@ -47,6 +47,21 @@ Rails.application.config.after_initialize do
     )
   )
 
+  Plugins.register_plugin_section(
+    Plugins::PluginSubRecord.new(
+      'as_runcorn',
+      'deaccessions',
+      ['archival_object'],
+      {
+        template_name: 'deaccession',
+        js_edit_template_name: 'template_deaccession',
+        heading_text:  I18n.t('deaccession._plural'),
+        sidebar_label:  I18n.t('deaccession._plural'),
+        erb_readonly_template_path: 'deaccessions/show',
+      }
+    )
+  )
+
 
   Plugins.add_resolve_field(['approved_by', 'container', 'related_accession', 'transfer', 'service_items'])
 
