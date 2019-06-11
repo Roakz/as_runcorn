@@ -21,6 +21,7 @@ end
 
 require_relative 'lib/file_storage'
 require_relative 'lib/s3_storage'
+require_relative 'lib/s3_authenticated_storage'
 require_relative 'lib/byte_storage'
 
 # Config test!
