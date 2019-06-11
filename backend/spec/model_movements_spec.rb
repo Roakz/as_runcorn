@@ -2,6 +2,14 @@ require 'spec_helper'
 
 describe 'Runcorn Movements Mixin' do
 
+  it "gives you a list of models using the mixin" do
+    expect(Movements.models.empty?).to eq(false)
+    Movements.models.map do |m|
+      expect(m.ancestors.include?(ASModel)).to eq(true)
+    end
+  end
+
+
   it "keeps track of physical representation movements" do
     tcon = create(:json_top_container)
 

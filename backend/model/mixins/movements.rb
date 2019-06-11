@@ -1,5 +1,7 @@
 module Movements
 
+  @@models = []
+
   def self.included(base)
     base.extend(ClassMethods)
 
@@ -7,6 +9,13 @@ module Movements
     base.def_nested_record(:the_property => :movements,
                            :contains_records_of_type => :movement,
                            :corresponding_to_association => :movement)
+
+    @@models << base
+  end
+
+
+  def self.models
+    @@models
   end
 
 
