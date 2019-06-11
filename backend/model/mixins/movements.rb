@@ -24,7 +24,7 @@ module Movements
 
     mvmt = {
       'user' => opts[:user],
-      'move_date' => opts.fetch(:date, Time.now),
+      'move_date' => opts.fetch(:date, Time.now.getlocal.iso8601),
     }
 
     mvmt['context_uri'] = opts[:context] if opts[:context]
