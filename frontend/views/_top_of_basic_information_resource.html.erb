@@ -1,1 +1,11 @@
+<% if form.obj['deaccessioned'] %>
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="alert alert-info">
+        <%= I18n.t('resource.deaccessioned') %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
 <%= render_aspace_partial :partial => 'shared/qsa_id_form', :locals => {:form => form, :model => :resource} %>

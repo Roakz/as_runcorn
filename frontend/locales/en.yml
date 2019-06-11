@@ -13,6 +13,7 @@ en:
     approved_by: Approved By
     disposal_class: Disposal Class
     sensitivity_label: Sensitivity Label
+    deaccessioned: This record has been deaccessioned
   archival_object:
     description: Description
     access_clearance_procedure: Access Clearance Procedure
@@ -23,15 +24,10 @@ en:
       qsa_id: Record Id
     approval_date: Approval Date
     approved_by: Approved By
+    deaccessioned: This record has been deaccessioned
     _frontend:
       action:
         add_sibling_from_clone: Clone to Sibling
-  physical_representation:
-    as_runcorn:
-      qsa_id: Physical Representation Id
-  digital_representation:
-    as_runcorn:
-      qsa_id: Digital Representation Id
   function:
     as_runcorn:
       qsa_id: Function Id
@@ -116,6 +112,7 @@ en:
     salvage_priority_code: Salvage Priority Code
     sterilised_status: Sterilised Status
     title: Title
+    deaccessioned: This record has been deaccessioned
     _plural: Physical Representations
     _singular: Physical Representation
     _frontend:
@@ -153,6 +150,7 @@ en:
     remarks: Remarks
     salvage_priority_code: Salvage Priority Code
     title: Title
+    deaccessioned: This record has been deaccessioned
     as_runcorn:
       qsa_id: Digital Representation Id
     _plural: Digital Representations
@@ -171,9 +169,6 @@ en:
     indicator_2: Child Indicator
     type_3: Grandchild Type
     indicator_3: Grandchild Indicator
-  search_results:
-    filter:
-      representation_intended_use_u_sstr: Intended Use
 
   chargeable_item:
     name: Name
@@ -212,6 +207,7 @@ en:
   search_results:
     filter:
       agency_category_u_sstr: Agency Category
+      representation_intended_use_u_sstr: Intended Use
 
   runcorn_agency:
     agency_category: Agency Category

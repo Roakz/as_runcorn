@@ -1,5 +1,16 @@
 <% define_template "physical_representation", jsonmodel_definition(:physical_representation) do |form| %>
   <div class="subrecord-form-fields">
+
+    <% if form.obj['deaccessioned'] %>
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="alert alert-info">
+            <%= I18n.t('physical_representation.deaccessioned') %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
     <%= form.hidden_input "existing_ref" %>
     <%= render_aspace_partial :partial => 'shared/qsa_id_form', :locals => {:form => form, :model => :physical_representation} %>
     <%= form.label_and_textfield "title" %>
