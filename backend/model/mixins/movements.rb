@@ -27,7 +27,7 @@ module Movements
       'move_date' => opts.fetch(:date, Time.now.getlocal.iso8601),
     }
 
-    mvmt['context_uri'] = opts[:context] if opts[:context]
+    mvmt['move_context'] = {:ref => opts[:context]} if opts[:context]
 
     if (opts[:location])
       if (loc = JSONModel.parse_reference(opts[:location]))
