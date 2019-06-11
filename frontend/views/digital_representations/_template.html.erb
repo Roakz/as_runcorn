@@ -212,5 +212,8 @@
 
 
 <script>
-  new RepresentationFiles();
+  if (!window.RepresentationFilesLoaded) {
+    window.RepresentationFilesLoaded = true;
+    new RepresentationFiles();
+  }
 </script>
