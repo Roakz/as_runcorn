@@ -69,6 +69,8 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
       json['controlling_record'] = { 'ref' => controlling_record.uri }
       json['responsible_agency'] = { 'ref' => controlling_record.responsible_agency }
       json['recent_responsible_agencies'] = controlling_record.recent_responsible_agencies
+
+      json['deaccessioned'] = !json['deaccessions'].empty? || controlling_record.deaccessioned?
     end
 
     jsons

@@ -7,4 +7,19 @@ class Resource
                       :json_property => 'approved_by',
                       :contains_references_to_types => proc {[AgentPerson]},
                       :is_array => false)
+
+
+  def self.sequel_to_jsonmodel(objs, opts = {})
+    jsons = super
+
+    jsons.each do |json|
+      json['deaccessioned'] = !json['deaccessions'].empty?
+    end
+
+    jsons
+  end
+
+  def deaccessioned?
+    !self.deaccession.empty?
+  end
 end

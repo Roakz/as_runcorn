@@ -57,6 +57,8 @@
 
       "deaccessions" => {"type" => "array", "items" => {"type" => "JSONModel(:deaccession) object"}},
 
+      "deaccessioned" => {"type" => "boolean", "readonly" => "true"},
+
       "description" => {"type" => "string"},
 
       "exhibition_history" => {"type" => "string"},
