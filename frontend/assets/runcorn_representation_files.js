@@ -1,7 +1,12 @@
 (function() {
     function RepresentationFiles() {
+        var self = this;
         this.setupInputHandlers();
         this.render();
+
+        $(document).on('subrecordcreated.aspace', function () {
+            self.render()
+        });
     }
 
     RepresentationFiles.prototype.render = function () {
@@ -97,6 +102,8 @@
     RepresentationFiles.prototype.handleUpload = function (fileInput) {
         var formData = new FormData();
         formData.append('file', fileInput.files[0]);
+
+        $(fileInput).remove();
 
         return $.ajax({
             type: "POST",
