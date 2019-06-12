@@ -1,0 +1,8 @@
+<ul>
+  <% records.each do |record| %>
+    <li>
+      <span class="badge"><%= I18n.t("#{record[0]}._singular")%></span>
+      <%= record[1] %>
+    </li>
+  <% end %>
+</ul>
