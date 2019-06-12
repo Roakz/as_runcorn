@@ -14,6 +14,8 @@ ArchivesSpace::Application.routes.draw do
       resources :chargeable_items
       match('chargeable_items/index' => 'chargeable_items#index', :via => [:get])
       match('chargeable_services/index' => 'chargeable_services#index', :via => [:get])
+
+      match('deaccessions/affected_records' => 'deaccessions#affected_records', :via => [:get])
     end
   end
 end

@@ -1,0 +1,16 @@
+<table class="table table-condensed table-bordered">
+  <thead>
+    <th style="width:200px;">Record Type</th>
+    <th style="width:100px;">Record ID</th>
+    <th>Title</th>
+  </thead>
+  <tbody>
+    <% records.each do |record| %>
+        <tr>
+          <td><%= I18n.t("#{record[0]}._singular")%></td>
+          <td><%= record[2] %></td>
+          <td><%= record[1] %></td>
+        </tr>
+    <% end %>
+  </tbody>
+</table>
