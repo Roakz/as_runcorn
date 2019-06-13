@@ -41,7 +41,19 @@ Reformulator.configure(
         {
           "selector" => '#resource_form select[name^="resource[dates]["][name$="][label]"] option:not([value="existence"])',
           "hideClosestSelector" => 'option'
-        }
+        },
+        {
+          "selector" => 'select[name*="[deaccessions]"][name$="[scope]"]',
+          "hideClosestSelector" => '.form-group'
+        },
+        {
+          "selector" => 'select[name*="[deaccessions]"][name$="[date][label]"]',
+          "hideClosestSelector" => '.form-group'
+        },
+        {
+          "selector" => 'input[name*="[deaccessions]"][name$="[date][end]"]',
+          "hideClosestSelector" => '.form-group'
+        },
       ],
       "defaultValues" => [
         {
@@ -82,7 +94,15 @@ Reformulator.configure(
         {
           "selector" => '#resource_form select[name^="resource[dates]["][name$="][label]"]',
           "value" => 'existence'
-        }
+        },
+        {
+          "selector" => 'select[name*="[deaccessions]"][name$="[scope]"]',
+          "value" => 'whole'
+        },
+        {
+          "selector" => 'select[name*="[deaccessions]"][name$="[date][label]"]',
+          "value" => 'deaccession'
+        },
       ],
     },
 
