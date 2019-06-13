@@ -40,11 +40,11 @@ module Representations
     end
 
     def handle_delete(ids_to_delete)
-      # When a record is deleted, delete its representations as well.
       backlink_col = :"#{table_name}_id"
 
-      PhysicalRepresentation.filter(backlink_col => ids_to_delete).each(&:delete)
-      DigitalRepresentation.filter(backlink_col => ids_to_delete).each(&:delete)
+      unless PhysicalRepresentation.filter(backlink_col => ids_to_delete).empty? && DigitalRepresentation.filter(backlink_col => ids_to_delete).empty?
+          raise ConflictException.new("Record cannot be deleted if linked to representations")
+      end
 
       super
     end
