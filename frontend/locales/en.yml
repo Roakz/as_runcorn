@@ -220,3 +220,15 @@ en:
     upload_replace: Replace current file
     upload_clear: Remove current file
     uploading: Uploading...
+
+  movement:
+    _plural: Movements
+    _singular: Movement
+    user: User
+    move_date: Move date
+    functional_location: To Location
+    storage_location: To Location
+    move_context: Context
+    _frontend:
+      action:
+        add: Add Movement

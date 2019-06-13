@@ -1,0 +1,32 @@
+<% define_template "movement", jsonmodel_definition(:movement) do |form| %>
+  <div class="subrecord-form-fields">
+      <%= form.label_and_textfield "user" %>
+      <%= form.label_and_textfield "move_date" %>
+      <%= form.label_and_select "functional_location", form.possible_options_for("functional_location", true) %>
+
+      <% if form.obj['storage_location'] %>
+        <% obj = form.obj['storage_location'] %>
+
+        <% token = render_token :object => obj['_resolved'],
+                                :label => obj['_resolved']['title'],
+                                :type => "location",
+                                :uri => obj["ref"],
+                                :placement => "top" %>
+
+        <%= form.label_with_field "storage_location", token %>
+      <% end %>
+
+      <% if form.obj['move_context'] %>
+        <% obj = form.obj['move_context'] %>
+
+        <% token = render_token :object => obj['_resolved'],
+                                :label => obj['_resolved']['title'],
+                                :type => obj['_resolved']['jsonmodel_type'],
+                                :uri => obj["ref"],
+                                :placement => "top" %>
+
+        <%= form.label_with_field "move_context", token %>
+      <% end %>
+
+  </div>
+<% end %>

@@ -63,7 +63,27 @@ Rails.application.config.after_initialize do
   )
 
 
-  Plugins.add_resolve_field(['approved_by', 'container', 'related_accession', 'transfer', 'service_items'])
+  Plugins.register_plugin_section(
+    Plugins::PluginSubRecord.new(
+      'as_runcorn',
+      'movements',
+      ['physical_representation', 'top_container'],
+      {
+        template_name: 'movement',
+        heading_text:  I18n.t('movement._plural'),
+        sidebar_label:  I18n.t('movement._plural'),
+      }
+    )
+  )
+
+
+  Plugins.add_resolve_field(['approved_by',
+                             'container',
+                             'related_accession',
+                             'transfer',
+                             'service_items',
+                             'storage_location',
+                             'move_context'])
 
   Plugins.add_facet_group_i18n("representation_intended_use_u_sstr",
                                proc {|facet| "enumerations.runcorn_intended_use.#{facet}" })

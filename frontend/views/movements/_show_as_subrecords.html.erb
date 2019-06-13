@@ -1,0 +1,12 @@
+<% render_aspace_partial :partial => "movements/template" %>
+
+<section id="<%= section_id %>" class="subrecord-form-dummy">
+  <h3><%= I18n.t("movement._plural") %></h3>
+  <% movements.each do |movement| %>
+    <div class="subrecord-form-container">
+      <% context.push("movement", movement) do |context| %>
+        <% context.emit_template("movement") %>
+      <% end %>
+    </div>
+  <% end %>
+</section>
