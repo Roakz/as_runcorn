@@ -69,7 +69,7 @@ module JSONModel
     def self.check_physical_representation_container(hash)
       errors = []
 
-      unless hash['deaccessioned']
+      unless hash['deaccessioned'] || ASUtils.wrap(hash['deaccessions']).length > 0
         unless hash['container'] && hash['container']['ref']
           errors << ['container', 'is required']
         end

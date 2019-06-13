@@ -74,8 +74,8 @@ module Representations
       objs.zip(jsons).each do |obj, json|
         json['physical_representations'] = physical_representation_jsons.fetch(obj.id, [])
         json['digital_representations'] = digital_representation_jsons.fetch(obj.id, [])
-        json['physical_representations_count'] = physical_representation_jsons.fetch(obj.id, []).length
-        json['digital_representations_count'] = digital_representation_jsons.fetch(obj.id, []).length
+        json['physical_representations_count'] = physical_representation_jsons.fetch(obj.id, []).reject{|rep| rep['deaccessioned']}.length
+        json['digital_representations_count'] = digital_representation_jsons.fetch(obj.id, []).reject{|rep| rep['deaccessioned']}.length
       end
 
       jsons

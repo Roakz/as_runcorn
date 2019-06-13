@@ -33,16 +33,47 @@ module SeriesRepresentationCounts
 
       PhysicalRepresentation
         .inner_join(self.node_model.table_name, Sequel.qualify(PhysicalRepresentation.table_name, node_type_backlink_col) => Sequel.qualify(self.node_model.table_name, :id))
-        .filter(node_type_backlink_col => node_ids)
+        .left_join(:deaccession, Sequel.qualify(:deaccession, :physical_representation_id) => Sequel.qualify(:physical_representation, :id))
+        .filter(Sequel.qualify(PhysicalRepresentation.table_name, node_type_backlink_col) => node_ids)
+        .filter(Sequel.qualify(:deaccession, :id) => nil)
         .group_and_count(Sequel.qualify(self.node_model.table_name, :root_record_id)).each do |row|
         node_physical_representation_counts[row[:root_record_id]] = row[:count]
       end
 
       DigitalRepresentation
         .inner_join(self.node_model.table_name, Sequel.qualify(DigitalRepresentation.table_name, node_type_backlink_col) => Sequel.qualify(self.node_model.table_name, :id))
-        .filter(node_type_backlink_col => node_ids)
+        .left_join(:deaccession, Sequel.qualify(:deaccession, :digital_representation_id) => Sequel.qualify(:digital_representation, :id))
+        .filter(Sequel.qualify(DigitalRepresentation.table_name, node_type_backlink_col) => node_ids)
+        .filter(Sequel.qualify(:deaccession, :id) => nil)
         .group_and_count(Sequel.qualify(self.node_model.table_name, :root_record_id)).each do |row|
         node_digital_representation_counts[row[:root_record_id]] = row[:count]
+      end
+
+      to_process = self.node_model
+                     .filter(:root_record_id => root_ids)
+                     .inner_join(:deaccession, Sequel.qualify(:deaccession, :archival_object_id) => Sequel.qualify(:archival_object, :id))
+                     .select(Sequel.qualify(:archival_object, :id))
+
+      while(!to_process.empty?)
+        PhysicalRepresentation
+          .inner_join(self.node_model.table_name, Sequel.qualify(PhysicalRepresentation.table_name, node_type_backlink_col) => Sequel.qualify(self.node_model.table_name, :id))
+          .left_join(:deaccession, Sequel.qualify(:deaccession, :physical_representation_id) => Sequel.qualify(:physical_representation, :id))
+          .filter(Sequel.qualify(PhysicalRepresentation.table_name, node_type_backlink_col) => to_process)
+          .filter(Sequel.qualify(:deaccession, :id) => nil)
+          .group_and_count(Sequel.qualify(self.node_model.table_name, :root_record_id)).each do |row|
+          node_physical_representation_counts[row[:root_record_id]] -= row[:count]
+        end
+
+        DigitalRepresentation
+          .inner_join(self.node_model.table_name, Sequel.qualify(DigitalRepresentation.table_name, node_type_backlink_col) => Sequel.qualify(self.node_model.table_name, :id))
+          .left_join(:deaccession, Sequel.qualify(:deaccession, :digital_representation_id) => Sequel.qualify(:digital_representation, :id))
+          .filter(Sequel.qualify(DigitalRepresentation.table_name, node_type_backlink_col) => to_process)
+          .filter(Sequel.qualify(:deaccession, :id) => nil)
+          .group_and_count(Sequel.qualify(self.node_model.table_name, :root_record_id)).each do |row|
+          node_digital_representation_counts[row[:root_record_id]] -= row[:count]
+        end
+
+        to_process = ArchivalObject.filter(:parent_id => to_process).select(:id)
       end
 
       objs.each do |obj|

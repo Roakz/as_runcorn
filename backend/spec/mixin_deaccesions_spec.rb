@@ -23,6 +23,142 @@ describe 'Runcorn Deaccessions' do
       json.deaccessions.length.should eq(1)
       json.deaccessioned.should be_truthy
     end
+
+    it "representation counts take into account deaccessions via inheritance" do
+      series = create(:json_resource)
+
+      parent = create(:json_archival_object, {
+        "resource" => {"ref" => series.uri}
+      })
+
+      deaccessioned_child = create(:json_archival_object, {
+        "parent" => {"ref" => parent.uri},
+        "resource" => {"ref" => series.uri},
+        "deaccessions" => [
+          build(:json_deaccession, {'scope' => 'whole'})
+        ],
+        "physical_representations" => [
+          {
+            "title" => "Great song",
+            "description" => "Let us get physical!",
+            "current_location" => "N/A",
+            "normal_location" => "N/A",
+            "format" => "Drafting Cloth (Linen)",
+            "contained_within" => "OTH",
+            "container" => {"ref" => top_container.uri},
+          }
+        ],
+        "digital_representations" => [
+          {
+            "title" => "bad song",
+            "description" => "Let us get digital!",
+            "file_type" => "JPEG",
+            "contained_within" => "Floppy Disk",
+            "normal_location" => "N/A",
+          }
+        ],
+      })
+
+      child = create(:json_archival_object, {
+        "parent" => {"ref" => parent.uri},
+        "resource" => {"ref" => series.uri},
+        "physical_representations" => [
+          {
+            "title" => "Another great song",
+            "description" => "Let us get physical!",
+            "current_location" => "N/A",
+            "normal_location" => "N/A",
+            "format" => "Drafting Cloth (Linen)",
+            "contained_within" => "OTH",
+            "container" => {"ref" => top_container.uri},
+          }
+        ],
+        "digital_representations" => [
+          {
+            "title" => "bad song",
+            "description" => "Let us get digital!",
+            "file_type" => "JPEG",
+            "contained_within" => "Floppy Disk",
+            "normal_location" => "N/A",
+          }
+        ],
+      })
+
+      json = Resource.to_jsonmodel(series.id)
+      json['physical_representations_count'].should eq(1)
+      json['digital_representations_count'].should eq(1)
+    end
+
+    it "representation counts take into account deaccessioned representations" do
+      series = create(:json_resource)
+
+      parent = create(:json_archival_object, {
+        "resource" => {"ref" => series.uri}
+      })
+
+      deaccessioned_child = create(:json_archival_object, {
+        "parent" => {"ref" => parent.uri},
+        "resource" => {"ref" => series.uri},
+        "physical_representations" => [
+          {
+            "title" => "Great song",
+            "description" => "Let us get physical!",
+            "current_location" => "N/A",
+            "normal_location" => "N/A",
+            "format" => "Drafting Cloth (Linen)",
+            "contained_within" => "OTH",
+            "container" => {"ref" => top_container.uri},
+          }
+        ],
+        "digital_representations" => [
+          {
+            "title" => "bad song",
+            "description" => "Let us get digital!",
+            "file_type" => "JPEG",
+            "contained_within" => "Floppy Disk",
+            "normal_location" => "N/A",
+            "deaccessions" => [
+              build(:json_deaccession, {'scope' => 'whole'})
+            ],
+          }
+        ],
+      })
+
+      child = create(:json_archival_object, {
+        "parent" => {"ref" => parent.uri},
+        "resource" => {"ref" => series.uri},
+        "deaccessions" => [
+          build(:json_deaccession, {'scope' => 'whole'})
+        ],
+        "physical_representations" => [
+          {
+            "title" => "Another great song",
+            "description" => "Let us get physical!",
+            "current_location" => "N/A",
+            "normal_location" => "N/A",
+            "format" => "Drafting Cloth (Linen)",
+            "contained_within" => "OTH",
+            "container" => {"ref" => top_container.uri},
+            "deaccessions" => [
+              build(:json_deaccession, {'scope' => 'whole'})
+            ],
+          }
+        ],
+        "digital_representations" => [
+          {
+            "title" => "bad song",
+            "description" => "Let us get digital!",
+            "file_type" => "JPEG",
+            "contained_within" => "Floppy Disk",
+            "normal_location" => "N/A",
+          }
+        ],
+      })
+
+      json = Resource.to_jsonmodel(series.id)
+      json['physical_representations_count'].should eq(1)
+      json['digital_representations_count'].should eq(0)
+    end
   end
 
   describe 'on Archival Objects' do
