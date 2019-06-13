@@ -1,6 +1,7 @@
 Resource.include(SeriesRepresentationCounts)
 Resource.include(AllExistenceDates)
 Resource.include(ReindexSeriesRepresentations)
+Resource.include(RuncornDeaccession)
 
 class Resource
   define_relationship(:name => :representation_approved_by,
@@ -22,4 +23,9 @@ class Resource
   def deaccessioned?
     !self.deaccession.empty?
   end
+
+  def deaccession!
+    self.children.each(&:deaccession!)
+  end
 end
+

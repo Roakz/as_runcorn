@@ -6,6 +6,7 @@
         <div class="col-sm-12">
           <div class="alert alert-info record-is-deaccessioned">
             <%= I18n.t('physical_representation.deaccessioned') %>
+            <%= form.hidden_input "deaccessioned" %>
           </div>
         </div>
       </div>
@@ -157,8 +158,9 @@
           </div>
         <% end %>
       <% else %>
+        <% is_container_required  = !form.obj['deaccessioned'] %>
         <% form.push("container", form.obj["container"] || {}) do %>
-          <%= render_aspace_partial :partial => "top_containers/linker", :locals => {:form => form, :label => I18n.t("top_container._singular")} %>
+          <%= render_aspace_partial :partial => "top_containers/linker", :locals => {:form => form, :label => I18n.t("top_container._singular"), :required => is_container_required} %>
         <% end %>
       <% end %>
       <% unless form.readonly? && ASUtils.wrap(form.obj['extents']).empty? %>

@@ -42,7 +42,6 @@
       "contained_within" => {"type" => "string", "dynamic_enum" => "runcorn_physical_representation_contained_within", "ifmissing" => "error"},
 
       "container" => {
-        "ifmissing" => "error",
         "type" => "object",
         "subtype" => "ref",
         "properties" => {
@@ -57,7 +56,7 @@
 
       "deaccessions" => {"type" => "array", "items" => {"type" => "JSONModel(:deaccession) object"}},
 
-      "deaccessioned" => {"type" => "boolean", "readonly" => "true"},
+      "deaccessioned" => {"type" => "boolean"},
 
       "description" => {"type" => "string"},
 

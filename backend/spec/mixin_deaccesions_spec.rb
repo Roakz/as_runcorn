@@ -179,6 +179,106 @@ describe 'Runcorn Deaccessions' do
       rep_json.deaccessions.length.should eq(0)
       rep_json.deaccessioned.should be_truthy
     end
+
+    it 'has container removed upon deaccession' do
+      ao = create(:json_archival_object, {
+        "physical_representations" => [
+          {
+            "title" => "Great song",
+            "description" => "Let us get physical!",
+            "current_location" => "N/A",
+            "normal_location" => "N/A",
+            "format" => "Drafting Cloth (Linen)",
+            "contained_within" => "OTH",
+            "container" => {"ref" => top_container.uri},
+          }
+        ]
+      })
+
+      rep_id = ao.physical_representations.first['id']
+
+      rep_json = PhysicalRepresentation.to_jsonmodel(rep_id)
+      rep_json.deaccessioned.should be_falsy
+      rep_json['deaccessions'] = [build(:json_deaccession, {'scope' => 'whole'})]
+
+      PhysicalRepresentation[rep_id].update_from_json(rep_json)
+
+      rep_json = PhysicalRepresentation.to_jsonmodel(rep_id)
+      rep_json.deaccessioned.should be_truthy
+      rep_json.container.should be_nil
+    end
+
+    it 'has container removed upon deaccession of parent record' do
+      series = create(:json_resource)
+
+      parent = create(:json_archival_object, {
+        "resource" => {"ref" => series.uri}
+      })
+
+      child = create(:json_archival_object, {
+        "parent" => {"ref" => parent.uri},
+        "resource" => {"ref" => series.uri},
+        "physical_representations" => [
+          {
+            "title" => "Great song",
+            "description" => "Let us get physical!",
+            "current_location" => "N/A",
+            "normal_location" => "N/A",
+            "format" => "Drafting Cloth (Linen)",
+            "contained_within" => "OTH",
+            "container" => {"ref" => top_container.uri},
+          }
+        ]
+      })
+
+      rep_id = child.physical_representations.first['id']
+
+      ao_json = ArchivalObject.to_jsonmodel(parent.id)
+      ao_json.deaccessioned.should be_falsy
+      ao_json['deaccessions'] = [build(:json_deaccession, {'scope' => 'whole'})]
+
+      ArchivalObject[parent.id].update_from_json(ao_json)
+
+      rep_json = PhysicalRepresentation.to_jsonmodel(rep_id)
+      rep_json.deaccessioned.should be_truthy
+      rep_json.container.should be_nil
+    end
+
+    it 'has container removed upon deaccession of the resource' do
+      series = create(:json_resource)
+
+      parent = create(:json_archival_object, {
+        "resource" => {"ref" => series.uri}
+      })
+
+      child = create(:json_archival_object, {
+        "parent" => {"ref" => parent.uri},
+        "resource" => {"ref" => series.uri},
+        "physical_representations" => [
+          {
+            "title" => "Great song",
+            "description" => "Let us get physical!",
+            "current_location" => "N/A",
+            "normal_location" => "N/A",
+            "format" => "Drafting Cloth (Linen)",
+            "contained_within" => "OTH",
+            "container" => {"ref" => top_container.uri},
+          }
+        ]
+      })
+
+      rep_id = child.physical_representations.first['id']
+
+      series_json = Resource.to_jsonmodel(series.id)
+      series_json.deaccessioned.should be_falsy
+      series_json['deaccessions'] = [build(:json_deaccession, {'scope' => 'whole'})]
+
+      Resource[series.id].update_from_json(series_json)
+
+      rep_json = PhysicalRepresentation.to_jsonmodel(rep_id)
+      rep_json.deaccessioned.should be_truthy
+      rep_json.container.should be_nil
+    end
   end
 
   describe 'on Digital Representations' do

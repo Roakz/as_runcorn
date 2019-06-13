@@ -1,6 +1,7 @@
 ArchivalObject.include(Transfers)
 ArchivalObject.include(Representations)
 ArchivalObject.include(Deaccessions)
+ArchivalObject.include(RuncornDeaccession)
 
 class ArchivalObject
   define_relationship(:name => :representation_approved_by,
@@ -26,5 +27,15 @@ class ArchivalObject
     else
       Resource[self.root_record_id].deaccessioned?
     end
+  end
+
+  def deaccession!
+    PhysicalRepresentation
+      .filter(:archival_object_id => self.id)
+      .each do |rep|
+      rep.deaccession!
+    end
+
+    self.children.each(&:deaccession!)
   end
 end

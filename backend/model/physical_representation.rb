@@ -10,6 +10,7 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
   include Movements
 
   include RepresentationControl
+  include RuncornDeaccession
 
   define_relationship(:name => :representation_approved_by,
                       :json_property => 'approved_by',
@@ -78,6 +79,16 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
 
   def self.build_display_string(json)
     json["title"] + '; ' + I18n.t("enumerations.runcorn_format.#{json["format"]}", default: json["format"])
+  end
+
+  def deaccession!
+    self.my_relationships(:representation_container).each(&:delete)
+  end
+
+  def deaccessioned?
+    return true if !self.deaccession.empty?
+
+    ArchivalObject[self.archival_object_id].deaccessioned?
   end
 
 end

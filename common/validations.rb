@@ -65,5 +65,24 @@ module JSONModel
       end
     end
 
+
+    def self.check_physical_representation_container(hash)
+      errors = []
+
+      unless hash['deaccessioned']
+        unless hash['container'] && hash['container']['ref']
+          errors << ['container', 'is required']
+        end
+      end
+
+      errors
+    end
+
+    if JSONModel(:physical_representation)
+      JSONModel(:physical_representation).add_validation("check_physical_representation_container") do |hash|
+        check_physical_representation_container(hash)
+      end
+    end
+
   end
 end
