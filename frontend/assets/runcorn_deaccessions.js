@@ -68,7 +68,7 @@
 
     RuncornDeaccessionSubrecord.prototype.isNewRecord = function() {
         if (this.$context.is('li')) {
-            return this.$section.find(':input[id$=_existing_ref_]').val() == "";
+            return this.$context.find(':input[id$=_existing_ref_]').val() == "";
         } else {
             return this.$context.find(':hidden[id="id"]').val() == "";
         }
