@@ -70,6 +70,7 @@ Rails.application.config.after_initialize do
       ['physical_representation', 'top_container'],
       {
         template_name: 'movement',
+        js_edit_template_name: 'template_movement',
         heading_text:  I18n.t('movement._plural'),
         sidebar_label:  I18n.t('movement._plural'),
       }
