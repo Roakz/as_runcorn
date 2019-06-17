@@ -65,7 +65,11 @@ class DigitalRepresentation < Sequel::Model(:digital_representation)
   end
 
   def self.build_display_string(json)
-    json["title"] + '; ' + I18n.t("enumerations.runcorn_format.#{json["file_type"]}", default: json["file_type"])
+    if json['file_type']
+      json["title"] + '; ' + I18n.t("enumerations.runcorn_format.#{json["file_type"]}", default: json["file_type"])
+    else
+      json["title"]
+    end
   end
 
 end

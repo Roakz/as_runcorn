@@ -57,7 +57,7 @@
 
       "file_size" => {"type" => "string"},
 
-      "file_type" => {"type" => "string", "dynamic_enum" => "runcorn_digital_file_type", "ifmissing" => "error"},
+      "file_type" => {"type" => "string", "dynamic_enum" => "runcorn_digital_file_type"},
 
       "intended_use" => {"type" => "string", "dynamic_enum" => "runcorn_intended_use"},
 
