@@ -25,6 +25,7 @@ en:
     approval_date: Approval Date
     approved_by: Approved By
     deaccessioned: This record has been deaccessioned
+    agency_assigned_id: Agency Assigned ID
     _frontend:
       action:
         add_sibling_from_clone: Clone to Sibling

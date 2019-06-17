@@ -50,4 +50,6 @@
 
   "deaccessions" => {"type" => "array", "items" => {"type" => "JSONModel(:deaccession) object"}},
   "deaccessioned" => {"type" => "boolean", "readonly" => "true"},
+
+  "agency_assigned_id" => {"type" => "string"},
 }
