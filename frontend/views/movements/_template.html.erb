@@ -1,21 +1,59 @@
+<% storable_parent = !defined?(form) || form.obj.dig('move_to_storage_permitted') %>
+
 <% define_template "movement", jsonmodel_definition(:movement) do |form| %>
   <div class="subrecord-form-fields">
+      <% storage_permitted = form.obj.fetch('move_to_storage_permitted', storable_parent) %>
+
+      <% required = storage_permitted ? :conditionally : true %>
+      <%= form.hidden_input "move_to_storage_permitted", storage_permitted ? 1 : 0 %>
       <%= form.label_and_textfield "user" %>
       <%= form.label_and_textfield "move_date" %>
-      <%= form.label_and_select "functional_location", form.possible_options_for("functional_location", true) %>
+      <%= form.label_and_select "functional_location", form.possible_options_for("functional_location", true), :required => required %>
 
-      <% if form.obj['storage_location'] %>
-        <% obj = form.obj['storage_location'] %>
+      <% if form.readonly? %>
+        <% if form.obj['storage_location'] %>
+          <% obj = form.obj['storage_location'] %>
 
-        <% token = render_token :object => obj['_resolved'],
-                                :label => obj['_resolved']['title'],
-                                :type => "location",
-                                :uri => obj["ref"],
-                                :placement => "top" %>
+          <% token = render_token :object => obj['_resolved'],
+                                  :label => obj['_resolved']['title'],
+                                  :type => "location",
+                                  :uri => obj["ref"],
+                                  :placement => "top" %>
 
-        <%= form.label_with_field "storage_location", token %>
-      <% end %>
-
+          <%= form.label_with_field "storage_location", token %>
+        <% end %>
+      <% elsif storage_permitted %>
+        <div class="form-group conditionally-required">
+          <%= form.label('storage_location', {}, ['col-sm-2']) %>
+          <% form.push("storage_location", form.obj["storage_location"] || {}) do %>
+            <div class="col-sm-9">
+              <div class="form-group conditionally-required">
+                <div class="input-group linker-wrapper">
+                  <input type="text" class="linker"
+                         id="storage_location_linker"
+                         data-label="Location"
+                         data-label_plural="Locations"
+                         data-path="<%= form.path %>"
+                         data-name="ref"
+                         data-url="<%= url_for :controller => :search, :action => :do_search, :format => :json %>"
+                         data-browse-url="<%= url_for :controller => :search, :action => :do_search, :format => :js, :facets => [], :display_identifier => true %>"
+                         data-selected="<%= ASUtils.to_json(form.obj['_resolved'] || {}) %>"
+                         data-format_property="display_string"
+                         data-multiplicity="one"
+                         data-types='["location"]'
+                  />
+                  <div class="input-group-btn">
+                    <a class="btn btn-default dropdown-toggle last" data-toggle="dropdown" href="javascript:void(0);"><span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                      <li><a href="javascript:void(0);" class="linker-browse-btn"><%= I18n.t("actions.browse") %></a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+    <% end %>
 
     <% if form.readonly? %>
       <% if form.obj['move_context'] %>
@@ -29,8 +67,11 @@
 
         <%= form.label_with_field "move_context", token %>
       <% end %>
-
     <% else %>
+
+      <%# BITEME: yes this is really happening - don't want to hardcode the typex for the linker, so extract them from the schema %>
+      <% linker_types = JSONModel(:movement).schema['properties']['move_context']['properties']['ref']['type'].map{|t| t['type'].match(/\(\:([^)]+)\)/)[1]}.to_s %>
+
       <% form.push("move_context", form.obj["move_context"] || {}) do %>
         <div class="form-group">
           <%= form.label('move_context', {:for => 'move_context_linker'}, ['col-sm-2']) %>
@@ -48,7 +89,7 @@
                        data-selected="<%= ASUtils.to_json(form.obj['_resolved'] || {}) %>"
                        data-format_property="display_string"
                        data-multiplicity="one"
-                       data-types='["file_issue", "assessment"]'
+                       data-types='<%= linker_types %>'
                 />
                 <div class="input-group-btn">
                   <a class="btn btn-default dropdown-toggle last" data-toggle="dropdown" href="javascript:void(0);"><span class="caret"></span></a>
@@ -62,10 +103,5 @@
         </div>
       <% end %>
     <% end %>
-
-
-
-
-
   </div>
 <% end %>

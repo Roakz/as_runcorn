@@ -45,6 +45,11 @@ en:
     unable_to_publish_when_in_draft: Draft agencies cannot be published
     is_required_unless_a_begin_date_is_given: Property is required if no end date is set
     is_required_unless_an_end_date_is_given: Property is required if no begin date is set
+    must_have_a_value_if_a_storage_location_is_not_specified: Property is required if storage location not specified
+    must_have_a_value_if_a_functional_location_is_not_specified: Property is required if functional location not specified
+    cannot_have_a_value_if_a_storage_location_is_specified: Cannot have a value if functional location is specified
+    cannot_have_a_value_if_a_functional_location_is_specified: Cannot have a value if storage location is specified
+    location_must_be_specified: Property is required
   managed_registration:
     title: Agency Registrations
     button_label: Agency Registrations
@@ -226,8 +231,8 @@ en:
     _singular: Movement
     user: User
     move_date: Move date
-    functional_location: To Location
-    storage_location: To Location
+    functional_location: Functional location
+    storage_location: Storage location
     move_context: Context
     _frontend:
       action:

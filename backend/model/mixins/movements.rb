@@ -1,5 +1,3 @@
-require 'pp'
-
 module Movements
 
   @@models = []
@@ -59,6 +57,8 @@ module Movements
 
 
   def update_from_json(json, opts = {}, apply_nested_records = true)
+    json['movements'] = json['movements'].map{|m| m.merge('move_to_storage_permitted' => !!self.class.move_to_storage_permitted?)}
+
     self.class.check_move_to_storage(json)
     self.class.set_current_to_last_move!(json)
 
@@ -73,6 +73,8 @@ module Movements
 
 
     def create_from_json(json, opts = {})
+      json['movements'] = json['movements'].map{|m| m.merge('move_to_storage_permitted' => move_to_storage_permitted?)}
+
       check_move_to_storage(json)
       set_current_to_last_move!(json)
       super
@@ -83,7 +85,8 @@ module Movements
       jsons = super
 
       objs.zip(jsons).each do |obj, json|
-        json['movements'] = sort_movements(json['movements'])
+        json['movements'] = sort_movements(json['movements']).map{|m| m.merge('move_to_storage_permitted' => move_to_storage_permitted?)}
+        json['move_to_storage_permitted'] = move_to_storage_permitted?
       end
 
       jsons
@@ -101,13 +104,19 @@ module Movements
       end
     end
 
+
     def move_to_storage_permitted
       @move_to_storage_permitted = true
     end
 
 
+    def move_to_storage_permitted?
+      !!@move_to_storage_permitted
+    end
+
+
     def check_move_to_storage(json)
-      unless @move_to_storage_permitted
+      unless move_to_storage_permitted?
         errors = {}
 
         json['movements'].each_with_index do |move, ix|

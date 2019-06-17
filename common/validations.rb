@@ -46,14 +46,20 @@ module JSONModel
   module Validations
     def self.check_movement_location(hash)
       errors = []
-      if hash['functional_location'] && hash['storage_location']
-        errors << ['functional_location', 'Cannot have a value if a storage location is specified']
-        errors << ['storage_location', 'Cannot have a value if a functional location is specified']
-      end
+      if hash.fetch('move_to_storage_permitted', true)
+        if hash['functional_location'] && hash['storage_location']
+          errors << ['functional_location', 'Cannot have a value if a storage location is specified']
+          errors << ['storage_location', 'Cannot have a value if a functional location is specified']
+        end
 
-      if !hash['functional_location'] && !hash['storage_location']
-        errors << ['functional_location', 'Must have a value if a storage location is not specified']
-        errors << ['storage_location', 'Must have a value if a functional location is not specified']
+        if !hash['functional_location'] && !hash['storage_location']
+          errors << ['functional_location', 'Must have a value if a storage location is not specified']
+          errors << ['storage_location', 'Must have a value if a functional location is not specified']
+        end
+      else
+        unless hash['functional_location']
+          errors << ['functional_location', 'Location must be specified']
+        end
       end
 
       errors
