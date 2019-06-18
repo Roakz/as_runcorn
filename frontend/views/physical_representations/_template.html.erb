@@ -68,6 +68,7 @@
 
 
     <%= form.label_and_select "access_category", form.possible_options_for("access_category", true) %>
+    <%= form.hidden_input "current_location" %>
     <%= form.label_and_readonly "current_location" %>
     <%= form.label_and_select "normal_location", form.possible_options_for("normal_location", true) %>
     <%= form.label_and_select "accessioned_status", form.possible_options_for("accessioned_status", true) %>
