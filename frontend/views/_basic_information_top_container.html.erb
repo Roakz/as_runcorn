@@ -1,6 +1,6 @@
 <%= form.label_and_readonly "current_location" %>
 
-<% unless form['container_locations'].empty?  %>
+<% if !form['container_locations'].nil? && !form['container_locations'].empty? %>
     <div class="form-group">
         <div class="control-label col-sm-2"><%= I18n.t("top_container.storage_location") %></div>
         <div class="controls token-list col-sm-10">
