@@ -169,6 +169,13 @@ Reformulator.configure(
           {"path" => ["agent_dates_of_existence_", "_date_type_"], "value" => "range"}
         ]
       }
+    },
+
+    "top_containers" => {
+      "container_locations" => {
+        "show" => [],
+      },
+
     }
   }
 )
