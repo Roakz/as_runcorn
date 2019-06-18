@@ -40,6 +40,7 @@ en:
       qsa_id: Transfer Id
   top_container:
       current_location: Current location
+      storage_location: Home location
   group:
     permission_types:
       manage_agency_registration: manage agency registration workflow

@@ -1,1 +1,15 @@
 <%= form.label_and_readonly "current_location" %>
+
+<% unless form['container_locations'].empty?  %>
+    <div class="form-group">
+        <div class="control-label col-sm-2"><%= I18n.t("top_container.storage_location") %></div>
+        <div class="controls token-list col-sm-10">
+            <% loc = form['container_locations'].first %>
+            <%= render_token :object => loc['_resolved'],
+                             :label => loc['_resolved']['title'] || loc['_resolved']['display_string'],
+                             :type => loc['_resolved']['jsonmodel_type'],
+                             :uri => loc['ref'],
+                             :placement => "top" %>
+        </div>
+    </div>
+<% end %>

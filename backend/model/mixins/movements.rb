@@ -60,7 +60,7 @@ module Movements
     json['movements'] = json['movements'].map{|m| m.merge('move_to_storage_permitted' => !!self.class.move_to_storage_permitted?)}
 
     self.class.check_move_to_storage(json)
-    self.class.set_current_to_last_move!(json)
+    self.class.set_locations_to_last_moves!(json)
 
     super
   end
@@ -76,7 +76,8 @@ module Movements
       json['movements'] = json['movements'].map{|m| m.merge('move_to_storage_permitted' => move_to_storage_permitted?)}
 
       check_move_to_storage(json)
-      set_current_to_last_move!(json)
+      set_locations_to_last_moves!(json)
+
       super
     end
 
@@ -93,7 +94,7 @@ module Movements
     end
 
 
-    def set_current_to_last_move!(json)
+    def set_locations_to_last_moves!(json)
       # sort movements by move_date and
       # set the current location to the value in the most
       # recent move to a functional location if there is one
@@ -101,6 +102,19 @@ module Movements
         json['movements'] = sort_movements(json['movements'])
         last_fn_loc = json['movements'].select{|m| m['functional_location']}.first
         json['current_location'] = last_fn_loc['functional_location'] if last_fn_loc
+        if move_to_storage_permitted?
+          last_stg_loc = json['movements'].select{|m| m['storage_location']}.first
+          if last_stg_loc
+            json['container_locations'] =
+              [
+               {
+                 "status" => "current",
+                 "start_date" => last_stg_loc['move_date'],
+                 "ref" => last_stg_loc['storage_location']['ref']
+               }
+              ]
+          end
+        end
       end
     end
 
