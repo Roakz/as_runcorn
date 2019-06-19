@@ -1,15 +1,30 @@
 <%= form.label_and_readonly "current_location" %>
 
-<% if !form['container_locations'].nil? && !form['container_locations'].empty? %>
+<% unless @top_container['container_locations'].empty? %>
     <div class="form-group">
         <div class="control-label col-sm-2"><%= I18n.t("top_container.storage_location") %></div>
         <div class="controls token-list col-sm-10">
-            <% loc = form['container_locations'].first %>
+            <% loc = @top_container['container_locations'].first %>
             <%= render_token :object => loc['_resolved'],
                              :label => loc['_resolved']['title'] || loc['_resolved']['display_string'],
                              :type => loc['_resolved']['jsonmodel_type'],
                              :uri => loc['ref'],
                              :placement => "top" %>
+        </div>
+    </div>
+<% end %>
+
+<% if form.readonly? && !@top_container['absent_contents'].empty? %>
+    <div class="form-group">
+        <div class="control-label col-sm-2"><%= I18n.t("top_container.absent_contents") %></div>
+        <div class="controls token-list col-sm-10">
+            <% form['absent_contents'].each do |ac| %>
+              <%= render_token :object => ac,
+                               :label => "#{ac['title']} (#{ I18n.t('enumerations.runcorn_location.' + ac['current_location']) })",
+                               :type => 'physical_representation',
+                               :uri => ac['ref'],
+                               :placement => "top" %>
+            <% end %>
         </div>
     </div>
 <% end %>
