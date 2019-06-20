@@ -131,17 +131,17 @@ describe 'Runcorn Movements Mixin' do
          "contained_within" => "OTH",
          "container" => {"ref" => tcon.uri},
          "movements" =>
-         [
-          { # deliberately out of order - should be fixed on update
-            "functional_location" => "CONS",
-            "user" => "admin",
-            "move_date" => "2019-02-02"
-          },
+         [ # deliberately out of order - should be fixed on update
           {
             "functional_location" => "HOME",
             "user" => "admin",
             "move_context" => { "ref" => "/file_issues/1"},
-            "move_date" => "2019-05-05"
+            "move_date" => "2019-05-05" # here and next have same date
+          },
+          {
+            "functional_location" => "CONS",
+            "user" => "admin",
+            "move_date" => "2019-05-05" # original order should break the tie
           },
           {
             "functional_location" => "PER", # with agency
@@ -168,9 +168,9 @@ describe 'Runcorn Movements Mixin' do
 
     prep = json.physical_representations[0]
 
-    expect(prep['current_location']).to eq('HOME')
+    expect(prep['current_location']).to eq('CONS')
 
-    expect(prep['movements'][0]['functional_location']).to eq('HOME')
+    expect(prep['movements'].last['functional_location']).to eq('CONS')
 
   end
 

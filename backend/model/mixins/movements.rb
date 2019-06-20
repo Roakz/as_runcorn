@@ -68,7 +68,7 @@ module Movements
 
   module ClassMethods
     def sort_movements(mvmts)
-        mvmts.sort{|a,b| b['move_date'] <=> a['move_date']}
+      mvmts.each_with_index.sort_by {|m,ix| [m['move_date'], ix] }.map(&:first)
     end
 
 
@@ -100,10 +100,10 @@ module Movements
       # recent move to a functional location if there is one
       unless json['movements'].empty?
         json['movements'] = sort_movements(json['movements'])
-        last_fn_loc = json['movements'].select{|m| m['functional_location']}.first
+        last_fn_loc = json['movements'].select{|m| m['functional_location']}.last
         json['current_location'] = last_fn_loc['functional_location'] if last_fn_loc
         if move_to_storage_permitted?
-          last_stg_loc = json['movements'].select{|m| m['storage_location']}.first
+          last_stg_loc = json['movements'].select{|m| m['storage_location']}.last
           if last_stg_loc
             json['container_locations'] =
               [
