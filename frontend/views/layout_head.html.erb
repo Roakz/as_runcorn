@@ -95,3 +95,23 @@
     </div>
   </script>
 <% end %>
+
+
+<%# Accession records aren't used.  Remove them from the Browse & Create menus %>
+<script>
+ $(function () {
+   $('.repository-header .navbar-nav .browse-container .dropdown-menu a').each(function () {
+     if ($(this).text() === 'Accessions') {
+       this.remove();
+     }
+   });
+
+   $('.repository-header .navbar-nav .create-container .dropdown-menu a').each(function () {
+     if ($(this).text() === 'Accession') {
+       this.remove();
+     }
+   });
+
+
+ });
+</script>
