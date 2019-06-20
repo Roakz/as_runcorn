@@ -4,6 +4,10 @@ Reformulator.configure(
     "_global" => {
       "hideFields" => [
         {
+          "selector" => 'select#event_chronotype_label_',
+          "hideClosestSelector" => '.form-group',
+        },
+        {
           "selector" => 'select[name*="[era]"]',
           "nameMustMatchRegex" => "date.*\\[era\\]",
           "hideClosestSelector" => '.form-group',
@@ -57,9 +61,13 @@ Reformulator.configure(
       ],
       "defaultValues" => [
         {
+          "selector" => 'select#event_chronotype_label_',
+          "value" => 'timestamp',
+        },
+        {
           "selector" => 'select[name*="[date_type]"]',
           "nameMustMatchRegex" => "date.*\\[date_type\\]",
-          "nameMustNotMatchRegex" => "(dates_of_existence|(mandate|function)\\[date\\])",
+          "nameMustNotMatchRegex" => "(dates_of_existence|(mandate|function|event)\\[date\\])",
           "value" => 'inclusive',
         },
         {
