@@ -107,6 +107,9 @@ Reformulator.configure(
     },
 
     "resources" => {
+      "resource_related_accessions_" => {
+        "show" => [],
+      },
       "finding_aid" => {
         "show" => [],
       },
