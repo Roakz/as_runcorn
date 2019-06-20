@@ -1,13 +1,13 @@
 FactoryBot.modify do
   # Override json_date now that 'approximate' is the only valid option
   factory :json_date, class: JSONModel::JSONModel(:date) do
-    self.certainty 'approximate'
+    self.certainty { 'approximate' }
   end
   factory :json_date_single, class: JSONModel::JSONModel(:date) do
-    self.certainty 'approximate'
+    self.certainty { 'approximate' }
   end
   factory :json_top_container, class: JSONModel::JSONModel(:top_container) do
-    self.current_location 'HOME'
+    self.current_location { 'HOME' }
   end
 end
 
