@@ -235,6 +235,7 @@ en:
     _singular: Movement
     user: User
     move_date: Move date
+    move_date_placeholder: YYYY-MM-DD
     functional_location: Functional location
     storage_location: Storage location
     move_context: Context
