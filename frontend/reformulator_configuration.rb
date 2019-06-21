@@ -8,6 +8,11 @@ Reformulator.configure(
           "hideClosestSelector" => '.form-group',
         },
         {
+          "selector" => 'select[name*="[label]"]',
+          "nameMustMatchRegex" => "date.*\\[label\\]",
+          "hideClosestSelector" => '.form-group',
+        },
+        {
           "selector" => 'select[name*="[era]"]',
           "nameMustMatchRegex" => "date.*\\[era\\]",
           "hideClosestSelector" => '.form-group',
