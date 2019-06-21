@@ -152,6 +152,9 @@ Reformulator.configure(
       "archival_object_instances_" => {
         "show" => [],
       },
+      "container_locations" => {
+        "show" => [],
+      },
       "basic_information" => {
         "fieldMoves" => [
           {"path" => ["archival_object", "_description_"], "moveAfter" => "_title_"},
