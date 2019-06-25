@@ -17,12 +17,6 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
                       :contains_references_to_types => proc {[AgentPerson]},
                       :is_array => false)
 
-  define_relationship(:name => :representation_accession,
-                      :json_property => 'related_accession',
-                      :contains_references_to_types => proc {[Accession]},
-                      :is_array => false)
-
-
   define_relationship(:name => :representation_container,
                       :json_property => 'container',
                       :contains_references_to_types => proc {[TopContainer]},

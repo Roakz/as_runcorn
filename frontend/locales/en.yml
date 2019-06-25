@@ -116,7 +116,6 @@ en:
     processing_handling_notes: Processing/Handling Notes
     physical_description_type: Physical Description Type
     publish: Publish
-    related_accession: Transfer
     remarks: Remarks
     salvage_priority_code: Salvage Priority Code
     sterilised_status: Sterilised Status
@@ -155,7 +154,6 @@ en:
     preservation_priority_rating: Preservation Priority Rating
     processing_handling_notes: Processing/Handling Notes
     publish: Publish
-    related_accession: Transfer
     remarks: Remarks
     salvage_priority_code: Salvage Priority Code
     title: Title

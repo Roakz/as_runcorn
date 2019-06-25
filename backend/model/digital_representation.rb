@@ -13,11 +13,6 @@ class DigitalRepresentation < Sequel::Model(:digital_representation)
                       :contains_references_to_types => proc {[AgentPerson]},
                       :is_array => false)
 
-  define_relationship(:name => :representation_accession,
-                      :json_property => 'related_accession',
-                      :contains_references_to_types => proc {[Accession]},
-                      :is_array => false)
-
   one_to_one :representation_file
   def_nested_record(:the_property => :representation_file,
                     :contains_records_of_type => :representation_file,

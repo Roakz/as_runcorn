@@ -17,55 +17,6 @@
     <%= form.label_and_textarea "description" %>
     <%= form.label_and_textfield "agency_assigned_id" %>
 
-    <% if form.readonly? %>
-      <% if form['related_accession']  %>
-        <div class="form-group">
-          <div class="control-label col-sm-2"><%= I18n.t("digital_representation.related_accession") %></div>
-          <div class="controls token-list col-sm-10">
-            <% ASUtils.wrap(form['related_accession']).each do |record| %>
-              <%= render_token :object => record['_resolved'],
-              :label => record['_resolved']['title'] || record['_resolved']['display_string'],
-              :type => record['_resolved']['jsonmodel_type'],
-              :uri => record['ref'],
-              :placement => "top" %>
-            <% end %>
-          </div>
-        </div>
-      <% end %>
-    <% else %>
-      <% form.push("related_accession", form.obj["related_accession"] || {}) do %>
-        <div class="form-group">
-          <%= form.label('related_accession', {:for => 'related_accession_linker'}, ['col-sm-2']) %>
-          <div class="col-sm-9">
-            <div class="form-group required">
-              <div class="input-group linker-wrapper">
-                <input type="text" class="linker"
-                       id="accession_linker"
-                       data-label="Accession"
-                       data-label_plural="Accession"
-                       data-path="<%= form.path %>"
-                       data-name="ref"
-                       data-url="<%= url_for :controller => :search, :action => :do_search, :format => :json %>"
-                       data-browse-url="<%= url_for :controller => :search, :action => :do_search, :format => :js, :facets => [], :display_identifier => true %>"
-                       data-selected="<%= ASUtils.to_json(form.obj['_resolved'] || {}) %>"
-                       data-format_property="display_string"
-                       data-multiplicity="one"
-                       data-types='["accession"]'
-                />
-                <div class="input-group-btn">
-                  <a class="btn btn-default dropdown-toggle last" data-toggle="dropdown" href="javascript:void(0);"><span class="caret"></span></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="javascript:void(0);" class="linker-browse-btn"><%= I18n.t("actions.browse") %></a></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      <% end %>
-    <% end %>
-
-
     <%= form.label_and_select "access_category", form.possible_options_for("access_category", true) %>
     <%= form.label_and_select "normal_location", form.possible_options_for("normal_location", true) %>
     <%= form.label_and_select "accessioned_status", form.possible_options_for("accessioned_status", true) %>

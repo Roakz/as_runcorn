@@ -113,19 +113,6 @@
         }
       },
 
-      "related_accession" => {
-        "type" => "object",
-        "subtype" => "ref",
-        "properties" => {
-          "ref" => {"type" => [{"type" => "JSONModel(:accession) uri"}],
-                    "ifmissing" => "error"},
-          "_resolved" => {
-            "type" => "object",
-            "readonly" => "true"
-          }
-        }
-      },
-
       "responsible_agency" => {
         "type" => "object",
         "subtype" => "ref",
