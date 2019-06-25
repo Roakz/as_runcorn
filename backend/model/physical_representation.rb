@@ -28,6 +28,11 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
                       :contains_references_to_types => proc {[TopContainer]},
                       :is_array => false)
 
+  # Apply reverse relationship so we don't mess with delete.
+  TopContainer.define_relationship(:name => :representation_container,
+                                   :contains_references_to_types => proc {[PhysicalRepresentation]})
+
+
   set_model_scope :repository
 
 
