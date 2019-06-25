@@ -81,6 +81,10 @@ Reformulator.configure(
           "value" => 'range',
         },
         {
+          "selector" => 'select[name*="[dates]"][name*="[label]"]',
+          "value" => 'existence',
+        },
+        {
           "selector" => 'select[name="resource[level]"]',
           "value" => 'series',
         },
