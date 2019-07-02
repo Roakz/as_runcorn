@@ -30,7 +30,7 @@ class IndexerCommon
         doc['representation_intended_use_u_sstr'] = record['record']['intended_use']
         doc['top_container_uri_u_sstr'] = record['record'].fetch('container', {}).fetch('ref', nil)
         doc['controlling_record_u_sstr'] = record['record']['controlling_record']['ref']
-        doc['file_issue_allowed_u_sbool'] = [record['record']['file_issue_allowed']]
+        doc['file_issue_allowed_u_sbool'] = [record['record']['file_issue_allowed'] && !record['record']['deaccessioned']]
       end
     }
 
@@ -39,7 +39,7 @@ class IndexerCommon
         doc['title'] = record['record']['display_string']
         doc['representation_intended_use_u_sstr'] = record['record']['intended_use']
         doc['controlling_record_u_sstr'] = record['record']['controlling_record']['ref']
-        doc['file_issue_allowed_u_sbool'] = [record['record']['file_issue_allowed']]
+        doc['file_issue_allowed_u_sbool'] = [record['record']['file_issue_allowed'] && !record['record']['deaccessioned']]
       end
     }
 
