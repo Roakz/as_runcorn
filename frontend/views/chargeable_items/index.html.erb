@@ -20,7 +20,8 @@
       <table class="table table-striped table-bordered table-condensed table-hover">
         <thead>
           <tr>
-            <th class="col title"><%= I18n.t('chargeable_item.description') %></th>
+            <th class="col title"><%= I18n.t('chargeable_item.name') %></th>
+            <th class="col"><%= I18n.t('chargeable_item.description') %></th>
             <th class="col"><%= I18n.t('chargeable_item.price_dollars') %></th>
             <th class="col"><%= I18n.t('chargeable_item.charge_quantity_unit') %></th>
             <th class="col"></th>
@@ -30,6 +31,7 @@
         <tbody>
           <% @list.each do |item| %>
             <tr>
+              <td><%= item['name'] %></td>
               <td><%= item['description'] %></td>
               <td><%= item['price_dollars'] %></td>
               <td><%= I18n.t('enumerations.runcorn_charge_quantity_unit.' + item['charge_quantity_unit']) %></td>
