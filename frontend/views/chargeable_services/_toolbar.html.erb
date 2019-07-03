@@ -1,0 +1,21 @@
+<% if user_can?('administer_system') %>
+  <div class="record-toolbar">
+
+    <% if ['show'].include?(controller.action_name) %>
+      <div class="btn-group pull-left">
+        <%= link_to I18n.t("actions.edit"), {:controller => :chargeable_services, :action => :edit, :id => @chargeable_service.id}, :class => "btn btn-sm btn-primary" %>
+      </div>
+    <% end %>
+
+
+    <% if ['new', 'create', 'edit', 'update'].include?(controller.action_name) %>
+      <div class="pull-left save-changes">
+        <button type="submit" class="btn btn-primary btn-sm"><%= I18n.t("actions.save_prefix") %></button>
+      </div>
+    <% end %>
+
+    <div class="btn-group btn-toolbar pull-right">
+    </div>
+    <div class="clearfix"></div>
+  </div>
+<% end %>

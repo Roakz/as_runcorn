@@ -198,6 +198,10 @@ en:
     service_items: Chargeable Items
     button_label: Manage Chargeable Services
     _plural: Chargeable Services
+    _singular: Chargeable Service
+    _frontend:
+      messages:
+        updated: Chargeable Service Updated
 
   external_id:
     _plural: Internal References

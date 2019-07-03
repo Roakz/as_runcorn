@@ -1,0 +1,20 @@
+<%= setup_context(:object => @chargeable_service, :title => @chargeable_service.name) %>
+
+<%= form_for @chargeable_service, :as => "chargeable_service", :url => {:action => :update}, :html => {:class => 'form-horizontal aspace-record-form', :id => "chargeable_service_form"}.merge(update_monitor_params(@chargeable_service)) do |f| %>
+  <%= readonly_context :chargeable_service, @chargeable_service do |readonly| %>
+    <div class="row">
+      <div class="col-md-3">
+        <%# render_aspace_partial :partial => "sidebar" %>
+      </div>
+
+      <div class="col-md-9">
+        <%= render_aspace_partial :partial => "chargeable_services/toolbar" %>
+        <div class="record-pane">
+          <h2><%= @chargeable_service.name %> <span class="label label-info"><%= I18n.t("chargeable_service._singular") %></span></h2>
+          <input type="hidden" name="_method" value="put" />
+          <%= render_aspace_partial :partial => "chargeable_services/template", :locals => {:form => readonly} %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% end %>

@@ -21,6 +21,12 @@ class ChargeableServicesController < ApplicationController
 
 
   def update
+    # wangle the service_items coz the multi-linker sends em back wonky
+    # FIXME: surely this is just my stoopid
+    hash = params[:chargeable_service].to_hash
+    hash['service_items'] = hash['service_items']['ref'].zip(hash['service_items']['_resolved']).map{|ref,res| {'ref' => ref, '_resolved' => res}}
+    params[:chargeable_service] = hash
+
     handle_crud(:instance => :chargeable_service,
                 :model => JSONModel(:chargeable_service),
                 :obj => JSONModel(:chargeable_service).find(params[:id], find_opts.merge('resolve[]' => RESOLVES)),

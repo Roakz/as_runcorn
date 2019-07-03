@@ -1,6 +1,8 @@
 class IndexerCommon
   @@record_types << :physical_representation
   @@record_types << :digital_representation
+  @@record_types << :chargeable_service
+  @@record_types << :chargeable_item
 
   def self.build_recent_agency_filter(recent_agencies)
     result = []
@@ -40,6 +42,12 @@ class IndexerCommon
         doc['representation_intended_use_u_sstr'] = record['record']['intended_use']
         doc['controlling_record_u_sstr'] = record['record']['controlling_record']['ref']
         doc['file_issue_allowed_u_sbool'] = [record['record']['file_issue_allowed'] && !record['record']['deaccessioned']]
+      end
+    }
+
+    indexer.add_document_prepare_hook {|doc, record|
+      if doc['primary_type'] == 'chargeable_item'
+        doc['title'] = record['record']['name']
       end
     }
 

@@ -1,0 +1,76 @@
+<%= render_aspace_partial :partial => "shared/form_messages", :locals => {:object => @chargeable_service, :form => form} %>
+
+<% define_template "chargeable_service", jsonmodel_definition(:chargeable_service) do |form| %>
+  <div class="subrecord-form-fields">
+    <% if ['new', 'create'].include?(controller.action_name) %>
+      <%= form.label_and_textfield "name" %>
+    <% else %>
+      <%= form.hidden_input "name" %>
+      <%= form.label_and_readonly "name" %>
+    <% end %>
+    <%= form.label_and_textfield "description" %>
+
+    <% if form.readonly? %>
+      <div class="form-group required">
+        <div class="control-label col-sm-2"><%= I18n.t("chargeable_service.service_items") %></div>
+        <div class="col-sm-9">
+          <% @chargeable_service['service_items'].each do |item| %>
+            <%= render_token :object => item['_resolved'],
+                             :label => item['_resolved']['description'],
+                             :type => item['_resolved']['jsonmodel_type'],
+                             :uri => item['ref'] %>
+            <br><br>
+          <% end %>
+        </div>
+      </div>
+    <% else %>
+      <% form.push("service_items", form.obj["service_items"] || []) do %>
+        <div class="form-group required">
+          <%= form.label('service_items', {:for => 'token-input-chargeable_service_service_items_'}, ['col-sm-2']) %>
+
+          <div class="col-sm-9">
+            <div class="form-group required">
+              <div class="input-group linker-wrapper">
+                <input id="chargeable_service_service_items_" type="text" class="linker"
+                       data-label="<%= I18n.t("chargeable_service.service_item") %>"
+                       data-label_plural="<%= I18n.t("chargeable_service.service_items") %>"
+                       data-path="<%= form.path %>"
+                       data-name="ref"
+                       data-url="<%= url_for(:controller => :search,
+                                             :action => :do_search,
+                                             :format => :json,
+                                             :filter_term => [])
+                                 %>"
+                       data-browse-url="<%= url_for(:controller => :search,
+                                                    :action => :do_search,
+                                                    :format => :js,
+                                                    :filter_term => [])
+                                        %>"
+                       data-selected="<%= form.obj.map{|obj| ASUtils.to_json(obj['_resolved'].merge('title' => obj['_resolved']['name']))} %>"
+                       data-format_property="name"
+                       data-multiplicity="many"
+                       data-sortable="true"
+                       data-types='["chargeable_item"]'/>
+
+                <div class="input-group-btn">
+                  <a class="btn btn-default dropdown-toggle last" data-toggle="dropdown" href="javascript:void(0);"><span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="javascript:void(0);" class="linker-browse-btn"><%= I18n.t("actions.browse") %></a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+
+<% form.emit_template("chargeable_service") %>
+
+<script>
+ $(function() {
+     $(".linker:not(.initialised)").linker();
+ });
+</script>

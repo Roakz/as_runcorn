@@ -29,11 +29,14 @@ class ArchivesSpaceService < Sinatra::Base
 
   Endpoint.get('/chargeable_services/:id')
     .description("Get a Chargeable Service by ID")
-    .params(["id", :id])
+    .params(["id", :id],
+            ["resolve", :resolve])
     .permissions([])
     .returns([200, "(:chargeable_service)"]) \
   do
-    json_response(ChargeableService.to_jsonmodel(params[:id]))
+
+    json = ChargeableService.to_jsonmodel(params[:id])
+    json_response(resolve_references(json, params[:resolve]))
   end
 
   Endpoint.get('/chargeable_services')
