@@ -8,6 +8,7 @@
       "uri" => {"type" => "string"},
       "name" => {"type" => "string", "ifmissing" => "error"},
       "description" => {"type" => "string", "ifmissing" => "error"},
+      "last_revised_statement" => {"type" => "string"},
 
       "service_items" => {
         "type" => "array",

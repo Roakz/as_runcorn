@@ -195,6 +195,7 @@ en:
   chargeable_service:
     name: Name
     description: Description
+    last_revised_statement: Last Revised
     service_items: Chargeable Items
     button_label: Manage Chargeable Services
     _plural: Chargeable Services
