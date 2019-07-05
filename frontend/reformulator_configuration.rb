@@ -63,6 +63,26 @@ Reformulator.configure(
           "selector" => 'input[name*="[deaccessions]"][name$="[date][end]"]',
           "hideClosestSelector" => '.form-group'
         },
+        {
+          "selector" => 'input[name="location[temporary_question]"]',
+          "hideClosestSelector" => '.form-group'
+        },
+        {
+          "selector" => 'select[name="location[temporary]"]',
+          "hideClosestSelector" => '.form-group'
+        },
+        {
+          "selector" => 'input[name="top_container[ils_holding_id]"]',
+          "hideClosestSelector" => '.form-group'
+        },
+        {
+          "selector" => 'label[for="top_container_ils_item_id_"]',
+          "hideClosestSelector" => '.form-group'
+        },
+        {
+          "selector" => 'label[for="top_container_exported_to_ils_"]',
+          "hideClosestSelector" => '.form-group'
+        },
       ],
       "defaultValues" => [
         {
@@ -119,6 +139,18 @@ Reformulator.configure(
         {
           "selector" => 'select[name*="[deaccessions]"][name$="[date][label]"]',
           "value" => 'deaccession'
+        },
+        {
+          "selector" => 'input[name="location[coordinate_1_label]"]',
+          "value" => 'Row'
+        },
+        {
+          "selector" => 'input[name="location[coordinate_2_label]"]',
+          "value" => 'Press'
+        },
+        {
+          "selector" => 'input[name="location[coordinate_3_label]"]',
+          "value" => 'Bay'
         },
       ],
     },

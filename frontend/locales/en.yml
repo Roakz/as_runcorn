@@ -42,6 +42,10 @@ en:
       current_location: Current location
       storage_location: Home Location
       absent_contents: Absent Contents
+  location:
+    building: Repository
+    barcode: Repository ID
+    classification: Location Storage Type
   group:
     permission_types:
       manage_agency_registration: manage agency registration workflow
@@ -240,7 +244,7 @@ en:
     move_date: Move date
     move_date_placeholder: YYYY-MM-DD
     functional_location: Functional location
-    storage_location: Storage location
+    storage_location: Home location
     move_context: Context
     _frontend:
       action:
