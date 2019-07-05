@@ -83,6 +83,14 @@ Reformulator.configure(
           "selector" => 'label[for="top_container_exported_to_ils_"]',
           "hideClosestSelector" => '.form-group'
         },
+        {
+          "selector" => 'select[name="exported"]',
+          "hideClosestSelector" => '.form-group'
+        },
+        {
+          "selector" => 'label[for="collection_accession"]',
+          "hideClosestSelector" => '.form-group'
+        },
       ],
       "defaultValues" => [
         {
