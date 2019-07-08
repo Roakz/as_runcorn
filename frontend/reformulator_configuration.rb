@@ -72,6 +72,14 @@ Reformulator.configure(
           "hideClosestSelector" => '.form-group'
         },
         {
+          "selector" => 'input[name="location_batch[temporary_question]"]',
+          "hideClosestSelector" => '.form-group'
+        },
+        {
+          "selector" => 'select[name="location_batch[temporary]"]',
+          "hideClosestSelector" => '.form-group'
+        },
+        {
           "selector" => 'input[name="top_container[ils_holding_id]"]',
           "hideClosestSelector" => '.form-group'
         },
@@ -158,6 +166,18 @@ Reformulator.configure(
         },
         {
           "selector" => 'input[name="location[coordinate_3_label]"]',
+          "value" => 'Bay'
+        },
+        {
+          "selector" => 'input[name="location_batch[coordinate_1_label]"]',
+          "value" => 'Row'
+        },
+        {
+          "selector" => 'input[name="location_batch[coordinate_2_label]"]',
+          "value" => 'Press'
+        },
+        {
+          "selector" => 'input[name="location_batch[coordinate_3_label]"]',
           "value" => 'Bay'
         },
       ],

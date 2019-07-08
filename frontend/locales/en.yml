@@ -46,6 +46,10 @@ en:
     building: Repository
     barcode: Repository ID
     classification: Location Storage Type
+  location_batch:
+    building: Repository
+    barcode: Repository ID
+    classification: Location Storage Type
   group:
     permission_types:
       manage_agency_registration: manage agency registration workflow
