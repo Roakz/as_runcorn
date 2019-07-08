@@ -62,6 +62,9 @@
                 button.attr('disabled', 'disabled');
                 button.text(container.find('.representation-file-uploading-label').text());
 
+                var formSubmit = button.closest('form').find(':submit:enabled');
+                formSubmit.prop('disabled', true);
+
                 var promise = self.handleUpload(fileInput[0]);
 
                 promise
@@ -84,9 +87,11 @@
                         self.render();
 
                         container.find('.representation-file-upload:visible').removeClass('btn-primary').addClass('btn-success').text('Upload successful');
+                        formSubmit.prop('disabled', false);
                         setTimeout(restoreButton, 2000);
                     })
                     .fail(function () {
+                        formSubmit.prop('disabled', false);
                         button.removeClass('btn-primary').addClass('btn-danger').text('Upload failed');
                         setTimeout(restoreButton, 2000);
                     });
