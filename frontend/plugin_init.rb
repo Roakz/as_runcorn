@@ -128,4 +128,22 @@ Rails.application.config.after_initialize do
   require_relative '../common/validations'
 
   require_relative 'reformulator_configuration'
+
+  begin
+    HistoryController.add_skip_field('move_to_storage_permitted')
+    HistoryController.add_enum_handler {|type, field|
+      if ['physical_representation', 'movement'].include?(type) && ['current_location', 'normal_location', 'functional_location'].include?(field)
+        ['runcorn', 'location']
+      elsif type == 'physical_representation' && field == 'contained_within'
+        ['runcorn_physical_representation', 'contained_within']
+      elsif type == 'digital_representation' && field == 'contained_within'
+        ['runcorn_digital_representation', 'contained_within']
+      else
+        [type, field]
+      end
+    }
+  rescue NameError
+    # never mind
+  end
+
 end
