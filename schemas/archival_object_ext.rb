@@ -52,4 +52,9 @@
   "deaccessioned" => {"type" => "boolean", "readonly" => "true"},
 
   "agency_assigned_id" => {"type" => "string"},
+
+  "raps_attached" => {
+    "type" => "array",
+    "items" => {"type" => "JSONModel(:rap) object"}
+  }
 }

@@ -12,6 +12,8 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
   include RepresentationControl
   include RuncornDeaccession
 
+  include RAPs
+
   define_relationship(:name => :representation_approved_by,
                       :json_property => 'approved_by',
                       :contains_references_to_types => proc {[AgentPerson]},

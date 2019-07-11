@@ -152,6 +152,11 @@
 
       "movements" => {"type" => "array", "items" => {"type" => "JSONModel(:movement) object"}},
       "move_to_storage_permitted" => {"type" => "boolean", "readonly" => "true"},
+
+      "raps_attached" => {
+        "type" => "array",
+        "items" => {"type" => "JSONModel(:rap) object"}
+      }
     },
   },
 }
