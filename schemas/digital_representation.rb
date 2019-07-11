@@ -132,6 +132,11 @@
       },
 
       "representation_file" => {"type" => "JSONModel(:representation_file) object"},
+
+      "raps_attached" => {
+        "type" => "array",
+        "items" => {"type" => "JSONModel(:rap) object"}
+      }
     },
   },
 }
