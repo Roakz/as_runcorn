@@ -2,11 +2,35 @@
 
 <section id="<%= section_id %>" class="subrecord-form-dummy">
   <h3><%= I18n.t("digital_representation._plural") %></h3>
-  <% digital_representations.each do |digital_representation| %>
-    <div class="subrecord-form-container">
-      <% context.push("digital_representation", digital_representation) do |context| %>
-        <% context.emit_template("digital_representation") %>
-      <% end %>
-    </div>
-  <% end %>
+  <div class="panel-group details" id="<%= section_id %>_accordion">
+  <% digital_representations.each_with_index do |digital_representation, ix| %>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <div class="row accordion-toggle collapsed"
+               data-toggle="collapse"
+               data-parent="#<%= section_id %>_accordion"
+               href="#<%= section_id %>_digital_representation_<%= ix %>">
+            <div class="col-md-1">
+              <span class="glyphicon"></span>
+            </div>
+            <div class="col-md-2">
+              ID: <%= digital_representation['qsa_id'] %>
+            </div>
+            <div class="col-md-6">
+              <%= digital_representation['title'] %>
+            </div>
+            <div class="col-md-3">
+            </div>
+          </div>
+        </div>
+        <div id="<%= section_id %>_digital_representation_<%= ix %>" class="panel-collapse collapse">
+          <div class="subrecord-form-container">
+            <% context.push("digital_representation", digital_representation) do |context| %>
+              <% context.emit_template("digital_representation") %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
 </section>
