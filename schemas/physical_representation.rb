@@ -153,10 +153,33 @@
       "movements" => {"type" => "array", "items" => {"type" => "JSONModel(:movement) object"}},
       "move_to_storage_permitted" => {"type" => "boolean", "readonly" => "true"},
 
-      "raps_attached" => {
+      "rap_attached" => {"type" => "JSONModel(:rap) object"},
+
+      "rap_applied" => {
+        "type" => "JSONModel(:rap) object",
+        "readonly" => "true",
+      },
+
+      "rap_history" => {
+        "readonly" => "true",
         "type" => "array",
-        "items" => {"type" => "JSONModel(:rap) object"}
-      }
+        "items" => {
+          "type" => "object",
+          "subtype" => "ref",
+          "properties" => {
+            "ref" => {
+              "type" => [{"type" => "JSONModel(:rap) uri"}],
+              "readonly" => "true"
+            },
+            "is_active" => {"type" => "boolean"},
+            "version" => {"type" => "integer"},
+            "_resolved" => {
+              "type" => "object",
+              "readonly" => "true"
+            }
+          }
+        }
+      },
     },
   },
 }

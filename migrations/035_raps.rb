@@ -13,19 +13,7 @@ Sequel.migration do
       DynamicEnum :access_status_id, :null => false
       DynamicEnum :access_category_id, :null => false
 
-      String :period, :null => false
-
-      apply_mtime_columns
-    end
-
-    create_table(:rap_rlshp) do
-      primary_key :id
-
-      Integer :rap_id
-      Integer :archival_object_id
-      Integer :digital_representation_id
-      Integer :physical_representation_id
-      Integer :aspace_relationship_position
+      Integer :years, :null => false
 
       TextField :change_description
       String :authorised_by
@@ -33,12 +21,36 @@ Sequel.migration do
       String :approved_by
       String :internal_reference
 
-      apply_mtime_columns(false)
+      Integer :default_for_repo_id
+
+      Integer :archival_object_id
+      Integer :digital_representation_id
+      Integer :physical_representation_id
+
+      apply_mtime_columns
     end
 
-    alter_table(:rap_rlshp) do
-      add_foreign_key([:rap_id], :rap, :key => :id)
+    alter_table(:rap) do
+      add_foreign_key([:default_for_repo_id], :repository, :key => :id)
       add_foreign_key([:archival_object_id], :archival_object, :key => :id)
+      add_foreign_key([:digital_representation_id], :digital_representation, :key => :id)
+      add_foreign_key([:physical_representation_id], :physical_representation, :key => :id)
+    end
+
+    create_table(:rap_applied) do
+      primary_key :id
+
+      Integer :digital_representation_id
+      Integer :physical_representation_id
+
+      Integer :rap_id, :null => false
+      Integer :version, :null => false
+      Integer :is_active, :null => false
+    end
+
+    alter_table(:rap_applied) do
+      add_index([:rap_id], :unique => false, :name => "rap_applied_rap_id")
+      add_foreign_key([:rap_id], :rap, :key => :id)
       add_foreign_key([:digital_representation_id], :digital_representation, :key => :id)
       add_foreign_key([:physical_representation_id], :physical_representation, :key => :id)
     end

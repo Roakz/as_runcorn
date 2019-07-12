@@ -9,6 +9,7 @@ class DigitalRepresentation < Sequel::Model(:digital_representation)
   include RepresentationControl
 
   include RAPs
+  include RAPsApplied
 
   define_relationship(:name => :representation_approved_by,
                       :json_property => 'approved_by',

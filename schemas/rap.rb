@@ -7,9 +7,13 @@
     "properties" => {
       "uri" => {"type" => "string"},
 
+      "existing_ref" => { "type" => "JSONModel(:rap) uri"},
+
       "open_access_metadata" => {"type" => "boolean"},
       "access_status" => {"type" => "string", "dynamic_enum" => "runcorn_rap_access_status", "ifmissing" => "error"},
       "access_category" => {"type" => "string", "dynamic_enum" => "runcorn_rap_access_category", "ifmissing" => "error"},
+
+      "years" => {"type" => "integer", "ifmissing" => "error"},
 
       "change_description" => {"type" => "string", "ifmissing" => "error"},
       "authorised_by" => {"type" => "string", "ifmissing" => "error"},
