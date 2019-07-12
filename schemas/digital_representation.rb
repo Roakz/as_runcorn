@@ -133,10 +133,32 @@
 
       "representation_file" => {"type" => "JSONModel(:representation_file) object"},
 
-      "raps_attached" => {
+      "rap_attached" => {"type" => "JSONModel(:rap) object"},
+
+      "rap_applied" => {
+        "type" => "JSONModel(:rap) object",
+        "readonly" => "true",
+      },
+
+      "rap_history" => {
+        "readonly" => "true",
         "type" => "array",
-        "items" => {"type" => "JSONModel(:rap) object"}
-      }
+        "items" => {
+          "type" => "object",
+          "subtype" => "ref",
+          "properties" => {
+            "ref" => {
+              "type" => [{"type" => "JSONModel(:rap) uri"}],
+              "readonly" => "true"
+            },
+            "_resolved" => {
+              "type" => "object",
+              "readonly" => "true"
+            }
+          }
+        }
+      },
+
     },
   },
 }

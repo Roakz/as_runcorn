@@ -115,6 +115,9 @@ module Representations
         representation_class[id].update_from_json(JSONModel(representation_jsonmodel).from_hash(to_update[0]), backlink)
       end
     end
+
+    # Make sure our RAPs are up to date
+    Resource[obj.root_record_id].propagate_raps!
   end
 
 end

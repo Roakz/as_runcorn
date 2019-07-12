@@ -53,8 +53,5 @@
 
   "agency_assigned_id" => {"type" => "string"},
 
-  "raps_attached" => {
-    "type" => "array",
-    "items" => {"type" => "JSONModel(:rap) object"}
-  }
+  "rap_attached" => {"type" => "JSONModel(:rap) object"},
 }

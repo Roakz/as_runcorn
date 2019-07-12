@@ -13,6 +13,7 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
   include RuncornDeaccession
 
   include RAPs
+  include RAPsApplied
 
   define_relationship(:name => :representation_approved_by,
                       :json_property => 'approved_by',
