@@ -7,7 +7,7 @@
       <% required = storage_permitted ? :conditionally : true %>
       <%= form.hidden_input "move_to_storage_permitted", storage_permitted ? 1 : 0 %>
       <%= form.label_and_textfield "user" %>
-      <%= form.label_and_textfield "move_date" %>
+      <%= form.label_and_date "move_date", :default => Date.today.strftime('%Y-%m-%d') %>
       <%= form.label_and_select "functional_location", form.possible_options_for("functional_location", true), :required => required %>
 
       <% if form.readonly? %>
