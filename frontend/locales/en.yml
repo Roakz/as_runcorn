@@ -14,6 +14,7 @@ en:
     disposal_class: Disposal Class
     sensitivity_label: Sensitivity Label
     deaccessioned: This record has been deaccessioned
+    all_existence_dates_range: Date range of all records
   archival_object:
     description: Description
     access_clearance_procedure: Access Clearance Procedure
