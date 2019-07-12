@@ -1,12 +1,52 @@
 <% render_aspace_partial :partial => "movements/template" %>
 
+<%# we're nested so uniquify our section_id using the context object's uri %>
+<% section_id += '_' + context.obj['uri'].split('/')[-2,2].join('_') %>
+
 <section id="<%= section_id %>" class="subrecord-form-dummy">
   <h3><%= I18n.t("movement._plural") %></h3>
-  <% movements.each do |movement| %>
-    <div class="subrecord-form-container">
-      <% context.push("movement", movement) do |context| %>
-        <% context.emit_template("movement") %>
-      <% end %>
-    </div>
-  <% end %>
+  <div class="panel-group details" id="<%= section_id %>_accordion">
+  <% movements.each_with_index do |movement, ix| %>
+
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <div class="row accordion-toggle collapsed"
+               data-toggle="collapse"
+               data-parent="#<%= section_id %>_accordion"
+               href="#<%= section_id %>_movement_<%= ix %>">
+            <div class="col-md-1">
+              <span class="glyphicon"></span>
+            </div>
+            <div class="col-md-2">
+              <%= movement['move_date'] %>
+            </div>
+            <div class="col-md-2">
+              <%= movement['user'] %>
+            </div>
+            <div class="col-md-3">
+              <% if movement['functional_location'] %>
+                <%= I18n.t('enumerations.runcorn_location.' + movement['functional_location']) %>
+              <% else %>
+                <%= movement['storage_location']['_resolved']['title'] %>
+              <% end %>
+            </div>
+            <div class="col-md-4">
+
+              <% if movement['move_context'] %>
+                <% ctx = movement['move_context']['_resolved'] %>
+                <%= ctx['display_string'] || ctx['title'] || ctx['name'] %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+        <div id="<%= section_id %>_movement_<%= ix %>" class="panel-collapse collapse">
+          <div class="subrecord-form-container">
+            <% context.push("movement", movement) do |context| %>
+              <% context.emit_template("movement") %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
 </section>
