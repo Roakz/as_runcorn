@@ -13,13 +13,16 @@
             <div class="col-md-1">
               <span class="glyphicon"></span>
             </div>
-            <div class="col-md-2">
-              ID: <%= physical_representation['qsa_id'] %>
+            <div class="col-md-1">
+              PR<%= physical_representation['qsa_id'] %>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-5">
               <%= physical_representation['title'] %>
             </div>
             <div class="col-md-3">
+              <%= physical_representation['format'] %>
+            </div>
+            <div class="col-md-2">
               <%= I18n.t('enumerations.runcorn_location.' + physical_representation['current_location']) %>
             </div>
           </div>
