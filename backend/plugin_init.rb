@@ -26,3 +26,6 @@ require_relative 'lib/byte_storage'
 
 # Config test!
 ByteStorage.get
+
+require_relative 'lib/rap_provisioner'
+RapProvisioner.doit!
