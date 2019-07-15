@@ -107,4 +107,43 @@ describe 'Runcorn RAPs' do
     expect(updated.physical_representations[0].fetch('rap_history', []).length).to eq(2)
   end
 
+  it "clears the link of an existing RAP when it is replaced" do
+    series = create(:json_resource)
+
+    created_ao = create(:json_archival_object,
+                     :resource => {'ref' => series.uri},
+                     :rap_attached => {
+                       'open_access_metadata' => true,
+                       'access_status' => 'Open Access',
+                       'access_category' => 'N/A',
+
+                       'years' => 10,
+                       'change_description' => 'test',
+                       'authorised_by' => 'me',
+                       'change_date' => '2019-01-01',
+                       'approved_by' => 'you',
+                       'internal_reference' => '4a2b6588-11bb-4b98-a575-8109da2f44ea',
+                     })
+
+
+    json = ArchivalObject.to_jsonmodel(created_ao.id)
+
+    json['rap_attached'] = {
+      'open_access_metadata' => true,
+      'access_status' => 'Open Access',
+      'access_category' => 'N/A',
+
+      'years' => 100,
+      'change_description' => 'test',
+      'authorised_by' => 'me',
+      'change_date' => '2019-01-01',
+      'approved_by' => 'you',
+      'internal_reference' => '4a2b6588-11bb-4b98-a575-8109da2f44ea',
+    }
+
+    ArchivalObject[created_ao.id].update_from_json(json)
+
+    expect(RAP.filter(:archival_object_id => created_ao.id).count).to eq(1)
+  end
+
 end
