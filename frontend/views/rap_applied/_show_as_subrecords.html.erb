@@ -4,22 +4,35 @@
   <h3><%= I18n.t("rap_applied._plural") %></h3>
   <div class="subrecord-form-container">
     <div class="subrecord-form-fields">
-      <% form.push('rap', record['rap_applied']) do %>
-        <% form.emit_template 'rap' %>
-      <% end %>
-
-      <section class="subrecord-form-dummy">
-        <h4>History</h4>
-        <div class="subrecord-form-container">
-          <% record['rap_history'].reverse.map do |rap| %>
-            <% next if rap['is_active'] %>
-            <div class="subrecord-form-fields">
-              <% form.push('rap', rap['_resolved']) do %>
-                <% form.emit_template 'rap' %>
-              <% end %>
+      <div class="panel-group details" id="<%= section_id %>_accordion">
+        <% record['rap_history'].reverse.each_with_index do |rap, ix| %>
+          <div class="panel <% if rap['is_active'] %>panel-primary<% else %>panel-default<% end %>">
+            <div class="panel-heading">
+              <div class="row accordion-toggle <% unless rap['is_active'] %>collapsed<% end %>"
+                   data-toggle="collapse"
+                   data-parent="#<%= section_id %>_accordion"
+                   href="#<%= section_id %>_rap_<%= ix %>">
+                <div class="col-md-12">
+                  <span class="glyphicon"></span>
+                  <% if rap['is_active'] %><div class="badge badge-info">Active</div> <% end %>
+                  <% if record['rap_attached'] && rap['ref'] === record['rap_attached']['uri'] %><div class="badge badge-info">Attached</div> <% end %>
+                  <%= rap['_resolved']['open_access_metadata'] ? 'OPEN' : 'CLOSED' %>,
+                  <%= rap['_resolved']['access_status'] %>,
+                  <%= rap['_resolved']['access_category'] %>
+                </div>
+              </div>
             </div>
-          <% end %>
-        </div>
+            <div id="<%= section_id %>_rap_<%= ix %>" class="panel-collapse collapse <% if rap['is_active'] %>in<% end %>">
+              <div class="subrecord-form-container">
+                <% form.push('rap', rap['_resolved']) do %>
+                  <% form.emit_template 'rap' %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+          <% if ix === 0 && record['rap_history'].length > 1 %><h4>RAP History:</h4><% end %>
+        <% end %>
+      </div>
     </div>
   </div>
 </section>
