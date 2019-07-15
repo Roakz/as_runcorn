@@ -10,7 +10,9 @@
       <% if record['rap_attached'].nil? %>
         <div class="alert alert-info">No RAP attached.</div>
       <% else %>
-        <pre><%= JSON.pretty_generate(record['rap_attached']) %></pre>
+        <% form.push('rap', record['rap_attached']) do %>
+          <% form.emit_template 'rap' %>
+        <% end %>
       <% end %>
     </div>
   </div>

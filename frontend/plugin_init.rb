@@ -85,6 +85,7 @@ Rails.application.config.after_initialize do
           :record => record,
           :heading_text => @heading_text,
           :section_id => @section_id ? @section_id : build_section_id(form_context.obj['jsonmodel_type']),
+          :form => form_context,
         }
       )
     end
