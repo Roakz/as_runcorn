@@ -254,3 +254,6 @@ en:
     _frontend:
       action:
         add: Add Movement
+
+  contents_awareness:
+    no_delete_button_label: "Delete disabled - has contents!"

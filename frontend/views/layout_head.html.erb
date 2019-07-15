@@ -115,3 +115,18 @@
 
  });
 </script>
+
+
+<%# contents aware objects can't be deleted if they have contents, so disable the button %>
+<% if controller_supports_current_record? && current_record.respond_to?(:contents_count) &&
+      current_record.contents_count > 0 %>
+
+  <script>
+     $(function () {
+       $('button.delete-record').attr('disabled', 'disabled');
+
+       $('button.delete-record').text("<%=j I18n.t('contents_awareness.no_delete_button_label') %>");
+     });
+  </script>
+
+<% end %>
