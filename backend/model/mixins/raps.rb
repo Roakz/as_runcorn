@@ -70,6 +70,11 @@ module RAPs
       # Maybe this is a new RAP?
     end
 
+    # null out backlink in anticipation of new RAP
+    RAP.filter(backlink).update(:archival_object_id => nil,
+                                :physical_representation_id => nil,
+                                :digital_representation_id => nil)
+
     RAP.create_from_json(JSONModel(:rap).from_hash(rap), backlink)
     obj.mark_as_system_modified
 
