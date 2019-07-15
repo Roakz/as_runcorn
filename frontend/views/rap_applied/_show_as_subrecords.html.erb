@@ -1,0 +1,14 @@
+<% render_aspace_partial :partial => "raps/template" %>
+
+<section id="<%= section_id %>" class="subrecord-form-dummy">
+  <h3><%= I18n.t("rap_applied._plural") %></h3>
+  <div class="subrecord-form-container">
+    <div class="subrecord-form-fields">
+      <pre><%= JSON.pretty_generate(record['rap_applied']) %></pre>
+      <h4>History</h4>
+      <% record['rap_history'].reverse.map do |rap| %>
+        <pre><%= JSON.pretty_generate(rap) %></pre>
+      <% end %>
+    </div>
+  </div>
+</section>

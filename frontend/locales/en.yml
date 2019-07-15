@@ -257,3 +257,23 @@ en:
 
   contents_awareness:
     no_delete_button_label: "Delete disabled - has contents!"
+
+  rap_applied:
+    _plural: RAP - Applied
+    _singular: RAP - Applied
+
+  rap_attached:
+    _plural: RAP - Attached
+    _singular: RAP - Attached
+    success_message: RAP attached successfully
+
+  rap:
+    open_access_metadata: Open Access Metadata
+    access_status: Access Status
+    access_category: Access Category
+    years: Years
+    change_description: Change Description
+    authorised_by: Authorised By
+    change_date: Change Date
+    approved_by: Approved By
+    internal_reference: Internal Reference

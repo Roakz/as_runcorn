@@ -26,7 +26,7 @@ module RAPsApplied
         .sort_by {|rap_applied| rap_applied[:version]}
         .map {|rap_applied|
         {
-          'ref' => JSONModel::JSONModel(:rap).uri_for(rap_applied[:rap_id]),
+          'ref' => JSONModel::JSONModel(:rap).uri_for(rap_applied[:rap_id], { :repo_id => RequestContext.get(:repo_id) }),
           'version' => rap_applied[:version],
           'is_active' => rap_applied[:is_active] == 1,
         }

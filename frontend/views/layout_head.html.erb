@@ -116,7 +116,6 @@
  });
 </script>
 
-
 <%# contents aware objects can't be deleted if they have contents, so disable the button %>
 <% if controller_supports_current_record? && current_record.respond_to?(:contents_count) &&
       current_record.contents_count > 0 %>
@@ -129,4 +128,24 @@
      });
   </script>
 
+<% end %>
+
+<% if controller_supports_current_record? && current_record && current_record.jsonmodel_type == 'resource' && controller.action_name == 'show' %>
+  <%= javascript_include_tag 'runcorn_raps' %>
+  <script type="text/template" id="runcornRAPAttachWorkflowTemplate">
+    <div>
+      <div class="modal-body">
+        Loading...
+      </div>
+      <div class="modal-footer">
+        <button id="confirmRAPAttachButton" class="btn btn-primary" disabled>Attach and Apply RAP</button>
+        <button class="btn btn-cancel btn-default" data-dismiss="modal"><%= I18n.t "actions.cancel" %></button>
+      </div>
+    </div>
+  </script>
+  <script>
+    $(document).on('loadedrecordform.aspace', function(event, $container) {
+        new RuncornRAPs($container);
+    });
+  </script>
 <% end %>

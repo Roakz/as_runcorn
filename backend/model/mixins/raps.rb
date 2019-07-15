@@ -91,7 +91,12 @@ module RAPs
     RAP.create_from_json(JSONModel(:rap).from_hash(rap), backlink)
     obj.mark_as_system_modified
 
-    Resource[obj.root_record_id].propagate_raps!
+    if obj.is_a?(ArchivalObject)
+      Resource[obj.root_record_id].propagate_raps!
+    else
+      ao = ArchivalObject[obj.archival_object_id]
+      Resource[ao.root_record_id].propagate_raps!
+    end
   end
 
 end

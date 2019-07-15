@@ -77,13 +77,64 @@ Rails.application.config.after_initialize do
     )
   )
 
+  class RAPSection < Plugins::AbstractPluginSection
+    def render_readonly(view_context, record, form_context)
+      view_context.render_aspace_partial(
+        :partial => @erb_template,
+        :locals => {
+          :record => record,
+          :heading_text => @heading_text,
+          :section_id => @section_id ? @section_id : build_section_id(form_context.obj['jsonmodel_type']),
+        }
+      )
+    end
+
+    private
+
+    def parse_opts(opts)
+      super
+
+      @show_on_edit = false
+      @heading_text = opts.fetch(:heading_text)
+      @erb_template = opts.fetch(:erb_template)
+    end
+  end
+
+
+  Plugins.register_plugin_section(
+    RAPSection.new(
+      'as_runcorn',
+      'rap_attached',
+      ['archival_object', 'physical_representation', 'digital_representation'],
+      {
+        erb_template: 'rap_attached/show_as_subrecords',
+        heading_text:  I18n.t('rap_attached._plural'),
+        sidebar_label:  I18n.t('rap_attached._plural'),
+      }
+    )
+  )
+
+  Plugins.register_plugin_section(
+    RAPSection.new(
+      'as_runcorn',
+      'rap_applied',
+      ['physical_representation', 'digital_representation'],
+      {
+        erb_template: 'rap_applied/show_as_subrecords',
+        heading_text:  I18n.t('rap_applied._plural'),
+        sidebar_label:  I18n.t('rap_applied._plural'),
+      }
+    )
+  )
+
 
   Plugins.add_resolve_field(['approved_by',
                              'container',
                              'transfer',
                              'service_items',
                              'storage_location',
-                             'move_context'])
+                             'move_context',
+                             'rap_history'])
 
   Plugins.add_facet_group_i18n("representation_intended_use_u_sstr",
                                proc {|facet| "enumerations.runcorn_intended_use.#{facet}" })
