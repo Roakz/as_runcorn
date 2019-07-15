@@ -8,14 +8,18 @@
         <% form.emit_template 'rap' %>
       <% end %>
 
-      <h4>History</h4>
-      <% record['rap_history'].reverse.map do |rap| %>
-        <% next if rap['is_active'] %>
-        <% form.push('rap', rap['_resolved']) do %>
-          <% form.emit_template 'rap' %>
-          <hr>
-        <% end %>
-      <% end %>
+      <section class="subrecord-form-dummy">
+        <h4>History</h4>
+        <div class="subrecord-form-container">
+          <% record['rap_history'].reverse.map do |rap| %>
+            <% next if rap['is_active'] %>
+            <div class="subrecord-form-fields">
+              <% form.push('rap', rap['_resolved']) do %>
+                <% form.emit_template 'rap' %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
     </div>
   </div>
 </section>
