@@ -145,5 +145,115 @@ class Resource
       end
     end
   end
+
+  def generate_rap_summary
+    DB.open do |db|
+      rap_id_to_summary = {}
+
+      # grab the default rap
+      db[:rap]
+        .filter(:default_for_repo_id => RequestContext.get(:repo_id))
+        .each do |row|
+        rap_id_to_summary[row[:id]] = {
+          "default_repo_rap" => true,
+          "rap" => {
+            "ref" => JSONModel(:rap).uri_for(row[:id], :repo_id => RequestContext.get(:repo_id)),
+          },
+          "attached_to" => {
+            "ref" => JSONModel(:repository).uri_for(RequestContext.get(:repo_id)),
+          },
+          "digital_representation_count" => 0,
+          "physical_representation_count" => 0,
+        }
+      end
+
+      db[:archival_object]
+        .join(:rap, Sequel.qualify(:rap, :archival_object_id) => Sequel.qualify(:archival_object, :id))
+        .filter(Sequel.qualify(:archival_object, :root_record_id) => self.id)
+        .select(Sequel.qualify(:rap, :id),
+                Sequel.qualify(:rap, :archival_object_id))
+        .each do |row|
+        rap_id_to_summary[row[:id]] = {
+          "default_repo_rap" => false,
+          "rap" => {
+            "ref" => JSONModel(:rap).uri_for(row[:id], :repo_id => RequestContext.get(:repo_id)),
+          },
+          "attached_to" => {
+            "ref" => JSONModel(:archival_object).uri_for(row[:archival_object_id], :repo_id => RequestContext.get(:repo_id)),
+          },
+          "digital_representation_count" => 0,
+          "physical_representation_count" => 0,
+        }
+      end
+
+      db[:digital_representation]
+        .join(:rap, Sequel.qualify(:rap, :digital_representation_id) => Sequel.qualify(:digital_representation, :id))
+        .join(:archival_object, Sequel.qualify(:archival_object, :id) => Sequel.qualify(:digital_representation, :archival_object_id))
+        .filter(Sequel.qualify(:archival_object, :root_record_id) => self.id)
+        .select(Sequel.qualify(:rap, :id),
+                Sequel.qualify(:rap, :digital_representation_id))
+        .each do |row|
+        rap_id_to_summary[row[:id]] = {
+          "default_repo_rap" => false,
+          "rap" => {
+            "ref" => JSONModel(:rap).uri_for(row[:id], :repo_id => RequestContext.get(:repo_id)),
+          },
+          "attached_to" => {
+            "ref" => JSONModel(:digital_representation).uri_for(row[:digital_representation_id], :repo_id => RequestContext.get(:repo_id)),
+          },
+          "digital_representation_count" => 0,
+          "physical_representation_count" => 0,
+        }
+      end
+
+      db[:physical_representation]
+        .join(:rap, Sequel.qualify(:rap, :physical_representation_id) => Sequel.qualify(:physical_representation, :id))
+        .join(:archival_object, Sequel.qualify(:archival_object, :id) => Sequel.qualify(:physical_representation, :archival_object_id))
+        .filter(Sequel.qualify(:archival_object, :root_record_id) => self.id)
+        .select(Sequel.qualify(:rap, :id),
+                Sequel.qualify(:rap, :physical_representation_id))
+        .each do |row|
+        rap_id_to_summary[row[:id]] = {
+          "default_repo_rap" => false,
+          "rap" => {
+            "ref" => JSONModel(:rap).uri_for(row[:id], :repo_id => RequestContext.get(:repo_id)),
+          },
+          "attached_to" => {
+            "ref" => JSONModel(:physical_representation).uri_for(row[:physical_representation_id], :repo_id => RequestContext.get(:repo_id)),
+          },
+          "digital_representation_count" => 0,
+          "physical_representation_count" => 0,
+        }
+      end
+
+      db[:rap_applied]
+        .join(:digital_representation, Sequel.qualify(:digital_representation, :id) => Sequel.qualify(:rap_applied, :digital_representation_id))
+        .join(:archival_object, Sequel.qualify(:archival_object, :id) => Sequel.qualify(:digital_representation, :archival_object_id))
+        .filter(Sequel.qualify(:archival_object, :root_record_id) => self.id)
+        .filter(:rap_id => rap_id_to_summary.keys)
+        .filter(:is_active => 1)
+        .filter(Sequel.~(:digital_representation_id => nil))
+        .group_and_count(:rap_id)
+        .each do |row|
+        rap_id_to_summary.fetch(row[:rap_id])["digital_representation_count"] = row[:count]
+      end
+
+      db[:rap_applied]
+        .join(:physical_representation, Sequel.qualify(:physical_representation, :id) => Sequel.qualify(:rap_applied, :physical_representation_id))
+        .join(:archival_object, Sequel.qualify(:archival_object, :id) => Sequel.qualify(:physical_representation, :archival_object_id))
+        .filter(Sequel.qualify(:archival_object, :root_record_id) => self.id)
+        .filter(:rap_id => rap_id_to_summary.keys)
+        .filter(:is_active => 1)
+        .filter(Sequel.~(:physical_representation_id => nil))
+        .group_and_count(:rap_id)
+        .each do |row|
+        rap_id_to_summary.fetch(row[:rap_id])["physical_representation_count"] = row[:count]
+      end
+
+      JSONModel(:rap_summary).from_hash({
+        "raps" => rap_id_to_summary.values
+      })
+    end
+  end
 end
 
