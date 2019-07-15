@@ -18,6 +18,10 @@ ArchivesSpace::Application.routes.draw do
       match('chargeable_services/index' => 'chargeable_services#index', :via => [:get])
 
       match('deaccessions/affected_records' => 'deaccessions#affected_records', :via => [:get])
+
+      match('raps/attach' => 'raps#attach_and_apply', :via => [:post])
+      match('raps/attach' => 'raps#attach_form', :via => [:get])
+      match('raps/history' => 'raps#history', :via => [:get])
     end
   end
 end

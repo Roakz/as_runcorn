@@ -1,0 +1,17 @@
+<% render_aspace_partial :partial => "raps/template" %>
+
+<section id="<%= section_id %>" class="subrecord-form-dummy">
+  <h3>
+    <%= I18n.t("rap_attached._plural") %>
+    <button class="attach-rap-button btn btn-sm btn-default pull-right" data-uri="<%= record.uri %>">Attach RAP</button>
+  </h3>
+  <div class="subrecord-form-container">
+    <div class="subrecord-form-fields">
+      <% if record['rap_attached'].nil? %>
+        <div class="alert alert-info">No RAP attached.</div>
+      <% else %>
+        <pre><%= JSON.pretty_generate(record['rap_attached']) %></pre>
+      <% end %>
+    </div>
+  </div>
+</section>
