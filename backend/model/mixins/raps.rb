@@ -57,27 +57,9 @@ module RAPs
 
     # Possibilities here:
     #
-    #  We are creating a new AO/Representation with a new RAP (no existing_ref).  Create the RAP linked back to the AO/Representation and propagate.
+    #  We are updating details of the RAP that is already attached to our AO/Representation.  existing_ref will match the backlink ID.  Do the update, no need to propagate.(?)
     #
-    #  We are updating an existing AO/Representation to include a new RAP (no existing_ref), and there wasn't one previously.  As above.
-    #
-    #  We are updating details of the RAP that is already attached to our AO/Representation.  existing_ref will match the backlink ID.  Do the update, no need to propagate.
-    #
-    #  We are updating an AO/Representation to include a new RAP (no existing_ref), but it replaces a RAP that was already there.  Apply the new RAP and propagate.
-    #
-    #  We are updating an AO/Representation to remove all RAPs.  Find nearest parent RAP and propagate it.
-    #
-    # Other cases to handle elsewhere:
-    #
-    #   Record re-ordering
-    #
-    #     - propagate whole tree
-    #
-    #   AO deleted with RAP attached -- find nearest parent RAP and propagate it
-    #
-    #   New representations added -- find nearest parent RAP and propagate it
-    #
-    #  Propagation: feasible just to do the whole tree?  Might be easier.
+    #  We are updating an AO/Representation to remove all RAPs.  Find nearest parent RAP and propagate it.(?)
 
     backlink = {:"#{obj.class.table_name}_id" => obj.id}
 
