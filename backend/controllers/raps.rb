@@ -33,6 +33,19 @@ class ArchivesSpaceService < Sinatra::Base
     attach_rap(DigitalRepresentation, params[:id], params[:rap])
   end
 
+  Endpoint.get('/raps/repositories/:repo_id/resources/:id/summary')
+    .description("RAPs and Representation counts")
+    .params(["repo_id", :repo_id],
+            ["id", :id],
+            ["resolve", :resolve])
+    .permissions([])
+    .returns([200, "JSONModel(:rap_summary)"]) \
+  do
+    obj = Resource.get_or_die(params[:id])
+    summary_json = obj.generate_rap_summary
+      json_response(resolve_references(summary_json, params[:resolve]))
+  end
+
   private
 
   def attach_rap(model_class, id, rap)
