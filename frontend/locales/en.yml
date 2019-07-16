@@ -278,6 +278,7 @@ en:
     change_date: Change Date
     approved_by: Approved By
     internal_reference: Internal Reference
+    attached_to: Attached To
 
   rap_summary:
     heading: Access Notification Summary

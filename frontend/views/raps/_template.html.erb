@@ -13,4 +13,18 @@
   <%= form.label_and_textfield 'change_date' %>
   <%= form.label_and_textfield 'approved_by' %>
   <%= form.label_and_textfield 'internal_reference' %>
+
+  <% obj = form.obj['attached_to'] %>
+  <% if obj %>
+    <div class="token-list">
+      <% token = render_token :object => obj['_resolved'],
+                              :label => obj['_resolved']['display_string'] || obj['_resolved']['title'] || obj['_resolved']['name'],
+                              :type => obj['_resolved']['jsonmodel_type'],
+                              :uri => obj["ref"],
+                              :placement => "top",
+                              :inside_linker_browse => true %>
+
+      <%= form.label_with_field "attached_to", token %>
+    </div>
+  <% end %>
 <% end %>
