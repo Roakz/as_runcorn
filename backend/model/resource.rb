@@ -2,6 +2,7 @@ Resource.include(SeriesRepresentationCounts)
 Resource.include(AllExistenceDates)
 Resource.include(ReindexSeriesRepresentations)
 Resource.include(RuncornDeaccession)
+Resource.include(RAPs)
 
 class Resource
   define_relationship(:name => :representation_approved_by,
