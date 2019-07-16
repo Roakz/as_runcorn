@@ -8,7 +8,7 @@
   <div class="subrecord-form-container">
     <div class="subrecord-form-fields">
       <% if record['rap_attached'].nil? %>
-        <div class="alert alert-info">No RAP attached.</div>
+        <div class="alert alert-info">No RAP attached; representations will inherit their RAP from up the hierarchy.</div>
       <% else %>
         <div class="panel panel-default">
           <div class="panel-heading">
