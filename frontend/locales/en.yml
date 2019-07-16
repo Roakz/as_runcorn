@@ -255,12 +255,12 @@ en:
         add: Add Movement
 
   rap_applied:
-    _plural: RAP - Applied
-    _singular: RAP - Applied
+    _plural: Access Notification
+    _singular: Access Notification
 
   rap_attached:
-    _plural: RAP - Attached
-    _singular: RAP - Attached
+    _plural: Access Notification
+    _singular: Access Notification
     success_message: RAP attached successfully
 
   rap:
@@ -275,4 +275,4 @@ en:
     internal_reference: Internal Reference
 
   rap_summary:
-    header: RAP Summary
+    header: Access Notification Summary

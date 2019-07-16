@@ -10,9 +10,27 @@
       <% if record['rap_attached'].nil? %>
         <div class="alert alert-info">No RAP attached.</div>
       <% else %>
-        <% form.push('rap', record['rap_attached']) do %>
-          <% form.emit_template 'rap' %>
-        <% end %>
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <div class="row accordion-toggle collapsed"
+                 data-toggle="collapse"
+                 data-parent="#<%= section_id %>_accordion"
+                 href="#<%= section_id %>_rap">
+              <div class="col-md-12">
+                <span class="glyphicon"></span>
+                <div class="badge badge-info">Attached</div>
+                <%= record['rap_attached']['display_string'] %>
+              </div>
+            </div>
+          </div>
+          <div id="<%= section_id %>_rap" class="panel-collapse collapse">
+            <div class="subrecord-form-container">
+              <% form.push('rap', record['rap_attached']) do %>
+                <% form.emit_template 'rap' %>
+              <% end %>
+            </div>
+          </div>
+        </div>
       <% end %>
     </div>
   </div>
