@@ -29,6 +29,8 @@ class RAP < Sequel::Model(:rap)
           'ref' => JSONModel(:repository).uri_for(obj[:default_for_repo_id])
         }
       end
+
+      json['is_repository_default'] = !!obj[:default_for_repo_id]
     end
 
     jsons
