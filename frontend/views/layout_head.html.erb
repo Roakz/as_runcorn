@@ -130,7 +130,7 @@
 
 <% end %>
 
-<% if controller_supports_current_record? && current_record && current_record.jsonmodel_type == 'resource' && controller.action_name == 'show' %>
+<% if controller_supports_current_record? && current_record && current_record.jsonmodel_type == 'resource' %>
   <%= javascript_include_tag 'runcorn_raps' %>
   <script type="text/template" id="runcornRAPAttachWorkflowTemplate">
     <div>
