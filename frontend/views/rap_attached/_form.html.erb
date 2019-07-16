@@ -1,7 +1,12 @@
 <% render_aspace_partial :partial => "raps/template" %>
 
-<%= form_for rap, :as => "rap", :url => {:controller => :raps, :action => :attach_and_apply}, :html => {:class => 'form-horizontal aspace-record-form', :id => "rap_form"} do |f| %>
+<% 
+  form_action = :attach_and_apply if form_action.nil?
+%>
+
+<%= form_for rap, :as => "rap", :url => {:controller => :raps, :action => form_action}, :html => {:class => 'form-horizontal aspace-record-form', :id => "rap_form"} do |f| %>
   <input type="hidden" name="uri" value="<%= uri %>"/>
+  <input type="hidden" name="rap_uri" value="<%= rap['uri'] %>"/>
   <%= form_context :rap, rap do |form| %>
     <%= render_aspace_partial :partial => "shared/form_messages", :locals => {:object => rap, :form => form} %>
     <% form.emit_template('rap') %>

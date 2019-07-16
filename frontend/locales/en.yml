@@ -266,6 +266,7 @@ en:
     _plural: Access Notification
     _singular: Access Notification
     success_message: RAP attached successfully
+    update_success_message: RAP updated successfully
 
   rap:
     open_access_metadata: Open Access Metadata

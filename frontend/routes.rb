@@ -22,6 +22,8 @@ ArchivesSpace::Application.routes.draw do
       match('raps/attach' => 'raps#attach_and_apply', :via => [:post])
       match('raps/attach' => 'raps#attach_form', :via => [:get])
       match('raps/summary' => 'raps#summary', :via => [:get])
+      match('raps/edit' => 'raps#edit', :via => [:get])
+      match('raps/update' => 'raps#update', :via => [:post])
     end
   end
 end
