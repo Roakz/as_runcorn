@@ -22,6 +22,7 @@
               "subtype" => "ref",
               "properties" => {
                 "ref" => {"type" => [{"type" => "JSONModel(:repository) uri"},
+                                     {"type" => "JSONModel(:resource) uri"},
                                      {"type" => "JSONModel(:archival_object) uri"},
                                      {"type" => "JSONModel(:digital_representation) uri"},
                                      {"type" => "JSONModel(:physical_representation) uri"}]},

@@ -113,7 +113,7 @@ Rails.application.config.after_initialize do
     RAPSection.new(
       'as_runcorn',
       'rap_attached',
-      ['archival_object'],
+      ['resource', 'archival_object'],
       {
         erb_template: 'rap_attached/show_as_subrecords',
         heading_text:  I18n.t('rap_attached._plural'),

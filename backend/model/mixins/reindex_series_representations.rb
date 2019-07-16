@@ -11,9 +11,11 @@ module ReindexSeriesRepresentations
   end
 
   def update_from_json(json, opts = {}, apply_nested_records = true)
-    super
+    result = super
 
     reindex_representations!
+
+    result
   end
 
 end
