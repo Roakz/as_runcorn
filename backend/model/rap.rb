@@ -16,9 +16,20 @@ class RAP < Sequel::Model(:rap)
   def self.sequel_to_jsonmodel(objs, opts = {})
     jsons = super
 
-    # do magic
+    objs.zip(jsons).each do |obj, json|
+      json['display_string'] = obj.build_display_string(json)
+    end
 
     jsons
+  end
+
+  def build_display_string(json)
+    [
+      "%s years" % [json.years.to_s],
+      json.open_access_metadata ? "Open metadata" : "Closed Metadata",
+      json['access_status'],
+      json['access_category'],
+    ].join('; ')
   end
 
   def self.get_default_id

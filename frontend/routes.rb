@@ -21,7 +21,7 @@ ArchivesSpace::Application.routes.draw do
 
       match('raps/attach' => 'raps#attach_and_apply', :via => [:post])
       match('raps/attach' => 'raps#attach_form', :via => [:get])
-      match('raps/history' => 'raps#history', :via => [:get])
+      match('raps/summary' => 'raps#summary', :via => [:get])
     end
   end
 end

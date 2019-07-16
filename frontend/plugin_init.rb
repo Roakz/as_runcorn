@@ -128,6 +128,19 @@ Rails.application.config.after_initialize do
     )
   )
 
+  Plugins.register_plugin_section(
+    RAPSection.new(
+      'as_runcorn',
+      'rap_summary',
+      ['resource'],
+      {
+        erb_template: 'raps_summary/show_as_subrecords',
+        heading_text:  I18n.t('rap_summary.heading'),
+        sidebar_label:  I18n.t('rap_summary.heading'),
+      }
+    )
+  )
+
 
   Plugins.add_resolve_field(['approved_by',
                              'container',
