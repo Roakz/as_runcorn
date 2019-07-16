@@ -151,6 +151,8 @@
               "type" => [{"type" => "JSONModel(:rap) uri"}],
               "readonly" => "true"
             },
+            "is_active" => {"type" => "boolean"},
+            "version" => {"type" => "integer"},
             "_resolved" => {
               "type" => "object",
               "readonly" => "true"

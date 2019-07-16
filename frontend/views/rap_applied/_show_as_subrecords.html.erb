@@ -1,7 +1,10 @@
 <% render_aspace_partial :partial => "raps/template" %>
 
 <section id="<%= section_id %>" class="subrecord-form-dummy">
-  <h3><%= I18n.t("rap_applied._plural") %></h3>
+  <h3>
+    <%= I18n.t("rap_applied._plural") %>
+    <button class="attach-rap-button btn btn-sm btn-default pull-right" data-uri="<%= record.uri %>">Attach RAP</button>
+  </h3>
   <div class="subrecord-form-container">
     <div class="subrecord-form-fields">
       <div class="panel-group details" id="<%= section_id %>_accordion">
@@ -16,9 +19,7 @@
                   <span class="glyphicon"></span>
                   <% if rap['is_active'] %><div class="badge badge-info">Active</div> <% end %>
                   <% if record['rap_attached'] && rap['ref'] === record['rap_attached']['uri'] %><div class="badge badge-info">Attached</div> <% end %>
-                  <%= rap['_resolved']['open_access_metadata'] ? 'OPEN' : 'CLOSED' %>,
-                  <%= rap['_resolved']['access_status'] %>,
-                  <%= rap['_resolved']['access_category'] %>
+                  <%= rap['_resolved']['display_string'] %>
                 </div>
               </div>
             </div>
