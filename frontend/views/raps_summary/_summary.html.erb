@@ -1,0 +1,35 @@
+<% if summary.raps.all? {|rap_summary| rap_summary['default_repo_rap'] && rap_summary['digital_representation_count'] == 0 && rap_summary['physical_representation_count'] == 0} %>
+  <div class="alert alert-info">No RAPs applied.</div>
+<% else %>
+  <table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+      <th>RAP</th>
+      <th>Attached To</th>
+      <th>Physical Representation<br>Count</th>
+      <th>Digital Representation<br>Count</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% summary.raps.each do |rap_summary| %>
+      <% next if rap_summary['default_repo_rap'] && rap_summary['digital_representation_count'] == 0 && rap_summary['physical_representation_count'] == 0 %>
+      <tr>
+        <td><%= rap_summary.fetch('rap').fetch('_resolved').fetch('display_string') %></td>
+        <td>
+          <div class="token-list">
+            <% obj = rap_summary.fetch('attached_to') %>
+            <%= render_token :object => obj['_resolved'],
+                             :label => obj['_resolved']['display_string'] || obj['_resolved']['title'] || obj['_resolved']['name'],
+                             :type => obj['_resolved']['jsonmodel_type'],
+                             :uri => obj["ref"],
+                             :placement => "top",
+                             :inside_linker_browse => true %>
+          </div>
+        </td>
+        <td><%= rap_summary.fetch('physical_representation_count') %></td>
+        <td><%= rap_summary.fetch('digital_representation_count') %></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+<% end %>

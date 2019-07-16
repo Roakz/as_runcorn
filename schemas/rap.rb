@@ -20,6 +20,8 @@
       "change_date" => {"type" => "string", "ifmissing" => "error"},
       "approved_by" => {"type" => "string", "ifmissing" => "error"},
       "internal_reference" => {"type" => "string", "ifmissing" => "error"},
+
+      "display_string" => {"type" => "string", "readonly" => "true"},
     },
   },
 }

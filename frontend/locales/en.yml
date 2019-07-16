@@ -273,3 +273,6 @@ en:
     change_date: Change Date
     approved_by: Approved By
     internal_reference: Internal Reference
+
+  rap_summary:
+    header: RAP Summary

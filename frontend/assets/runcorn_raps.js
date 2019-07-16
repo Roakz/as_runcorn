@@ -55,6 +55,28 @@
         });
     };
 
+    function RAPSummary($section) {
+        this.$section = $section;
+        this.recordURI = $section.data('uri');
+        this.load();
+    };
+
+    RAPSummary.prototype.load = function() {
+        var self = this;
+
+        $.ajax({
+            url: APP_PATH + 'raps/summary',
+            data: {uri: self.recordURI},
+            type: 'get',
+            dataType: 'html',
+            success: function (html) {
+                self.$section.find('.subrecord-form-fields').html(html);
+                $(document).trigger('loadedrecordform.aspace', [self.$section]);
+            }
+        });
+    };
+
     window.RuncornRAPAttachWorkflow = RuncornRAPAttachWorkflow;
     window.RuncornRAPs = RuncornRAPs;
+    window.RAPSummary = RAPSummary;
 })();
