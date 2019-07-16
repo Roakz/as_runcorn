@@ -90,12 +90,19 @@ Rails.application.config.after_initialize do
       )
     end
 
+    def render_edit(view_context, record, form_context)
+      view_context.readonly_context record['jsonmodel_type'], record do |readonly_context|
+        render_readonly(view_context, record, readonly_context)
+      end
+    end
+
     private
 
     def parse_opts(opts)
       super
 
-      @show_on_edit = false
+      @show_on_edit = true
+      @show_on_readonly = true
       @heading_text = opts.fetch(:heading_text)
       @erb_template = opts.fetch(:erb_template)
     end
