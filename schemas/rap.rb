@@ -22,6 +22,20 @@
       "internal_reference" => {"type" => "string", "ifmissing" => "error"},
 
       "display_string" => {"type" => "string", "readonly" => "true"},
+
+      "attached_to" => {
+        "type" => "object",
+        "subtype" => "ref",
+        "properties" => {
+          "ref" => {
+            "type" => [{"type" => "JSONModel(:repository) uri"},
+                       {"type" => "JSONModel(:resource) uri"},
+                       {"type" => "JSONModel(:archival_object) uri"},
+                       {"type" => "JSONModel(:digital_representation) uri"},
+                       {"type" => "JSONModel(:physical_representation) uri"}]
+          }
+        }
+      },
     },
   },
 }

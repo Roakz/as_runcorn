@@ -17,6 +17,18 @@ class RAP < Sequel::Model(:rap)
 
     objs.zip(jsons).each do |obj, json|
       json['display_string'] = obj.build_display_string(json)
+      RAPs.supported_models.each do |model|
+        if obj[:"#{model.table_name}_id"]
+          json['attached_to'] = {
+            'ref' => model.get_or_die(obj[:"#{model.table_name}_id"]).uri
+          }
+        end
+      end
+      if json['attached_to'].nil? && obj[:default_for_repo_id]
+        json['attached_to'] = {
+          'ref' => JSONModel(:repository).uri_for(obj[:default_for_repo_id])
+        }
+      end
     end
 
     jsons
