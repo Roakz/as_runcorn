@@ -23,6 +23,7 @@ Sequel.migration do
 
       Integer :default_for_repo_id
 
+      Integer :resource_id
       Integer :archival_object_id
       Integer :digital_representation_id
       Integer :physical_representation_id
@@ -32,6 +33,7 @@ Sequel.migration do
 
     alter_table(:rap) do
       add_foreign_key([:default_for_repo_id], :repository, :key => :id)
+      add_foreign_key([:resource_id], :resource, :key => :id)
       add_foreign_key([:archival_object_id], :archival_object, :key => :id)
       add_foreign_key([:digital_representation_id], :digital_representation, :key => :id)
       add_foreign_key([:physical_representation_id], :physical_representation, :key => :id)

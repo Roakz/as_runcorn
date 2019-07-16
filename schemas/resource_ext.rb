@@ -24,4 +24,6 @@
   "all_existence_dates_range" => {"type"=> "string", "readonly" => "true"},
 
   "deaccessioned" => {"type" => "boolean", "readonly" => "true"},
+
+  "rap_attached" => {"type" => "JSONModel(:rap) object"},
 }

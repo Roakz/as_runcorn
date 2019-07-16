@@ -146,4 +146,31 @@ describe 'Runcorn RAPs' do
     expect(RAP.filter(:archival_object_id => created_ao.id).count).to eq(1)
   end
 
+  it "allows a RAP to be attached to a series" do
+    series = create(:json_resource,
+                    :rap_attached => {
+                      'open_access_metadata' => true,
+                      'access_status' => 'Open Access',
+                      'access_category' => 'N/A',
+
+                      'years' => 11,
+                      'change_description' => 'test',
+                      'authorised_by' => 'me',
+                      'change_date' => '2019-01-01',
+                      'approved_by' => 'you',
+                      'internal_reference' => 'cc8f30cc-9534-4bbb-92e6-fb3a7732b480',
+                    })
+
+    child = create(:json_archival_object,
+                   :resource => {'ref' => series.uri},
+                   :physical_representations => [
+                     build(:json_physical_representation)
+                   ])
+
+    ao = ArchivalObject.to_jsonmodel(child.id)
+
+    expect(ao.physical_representations[0].fetch('rap_applied').fetch('internal_reference')).to eq('cc8f30cc-9534-4bbb-92e6-fb3a7732b480')
+  end
+
+
 end
