@@ -4,13 +4,12 @@ class RAP < Sequel::Model(:rap)
 
   set_model_scope :repository
 
-  
-
-
   def update_from_json(json, opts = {}, apply_nested_records = true)
-    # do magic
+    result = super
 
-    super
+    touch_attached_record_mtime
+
+    result
   end
 
   def self.sequel_to_jsonmodel(objs, opts = {})
@@ -52,5 +51,13 @@ class RAP < Sequel::Model(:rap)
     end
 
     default.id
+  end
+
+  def touch_attached_record_mtime
+    RAPs.supported_models.each do |model|
+      if self[:"#{model.table_name}_id"]
+        model.update_mtime_for_ids([self[:"#{model.table_name}_id"]])
+      end
+    end
   end
 end
