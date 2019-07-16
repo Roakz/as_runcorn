@@ -46,6 +46,27 @@ class ArchivesSpaceService < Sinatra::Base
       json_response(resolve_references(summary_json, params[:resolve]))
   end
 
+  Endpoint.get('/raps/repositories/:repo_id/raps/:id')
+    .description("RAP")
+    .params(["repo_id", :repo_id],
+            ["id", :id])
+    .permissions([])
+    .returns([200, "JSONModel(:rap_summary)"]) \
+  do
+    json_response(RAP.to_jsonmodel(params[:id]))
+  end
+
+  Endpoint.post('/raps/repositories/:repo_id/raps/:id')
+    .description("RAP")
+    .params(["repo_id", :repo_id],
+            ["id", :id],
+            ["rap", JSONModel(:rap), "The RAP record", :body =>true])
+    .permissions([])
+    .returns([200, "JSONModel(:rap_summary)"]) \
+  do
+    handle_update(RAP, params[:id], params[:rap])
+  end
+
   private
 
   def attach_rap(model_class, id, rap)

@@ -6,34 +6,34 @@
     <button class="attach-rap-button btn btn-sm btn-default pull-right" data-uri="<%= record['uri'] %>">Attach RAP</button>
   </h3>
   <div class="subrecord-form-container">
-    <div class="subrecord-form-fields">
-      <div class="panel-group details" id="<%= section_id %>_accordion">
-        <% ASUtils.wrap(record['rap_history']).reverse.each_with_index do |rap, ix| %>
-          <div class="panel <% if rap['is_active'] %>panel-primary<% else %>panel-default<% end %>">
-            <div class="panel-heading">
-              <div class="row accordion-toggle <% unless rap['is_active'] %>collapsed<% end %>"
-                   data-toggle="collapse"
-                   data-parent="#<%= section_id %>_accordion"
-                   href="#<%= section_id %>_rap_<%= ix %>">
-                <div class="col-md-12">
-                  <span class="glyphicon"></span>
-                  <% if rap['is_active'] %><div class="badge badge-info">Active</div> <% end %>
-                  <% if record['rap_attached'] && rap['ref'] === record['rap_attached']['uri'] %><div class="badge badge-info">Attached</div> <% end %>
-                  <%= rap['_resolved']['display_string'] %>
-                </div>
-              </div>
-            </div>
-            <div id="<%= section_id %>_rap_<%= ix %>" class="panel-collapse collapse <% if rap['is_active'] %>in<% end %>">
-              <div class="subrecord-form-container">
-                <% form.push('rap', rap['_resolved']) do %>
-                  <% form.emit_template 'rap' %>
+    <div class="panel-group details" id="<%= section_id %>_accordion">
+      <% ASUtils.wrap(record['rap_history']).reverse.each_with_index do |rap, ix| %>
+        <div class="panel <% if rap['is_active'] %>panel-primary<% else %>panel-default<% end %>">
+          <div class="panel-heading">
+            <div class="row accordion-toggle <% unless rap['is_active'] %>collapsed<% end %>"
+                 data-toggle="collapse"
+                 data-parent="#<%= section_id %>_accordion"
+                 href="#<%= section_id %>_rap_<%= ix %>">
+              <div class="col-md-12">
+                <span class="glyphicon"></span>
+                <% if record['rap_attached'] && rap['ref'] === record['rap_attached']['uri'] %><div class="badge badge-info">Attached</div> <% end %>
+                <%= rap['_resolved']['display_string'] %>
+                <% if record['rap_attached'] && rap['ref'] === record['rap_attached']['uri'] %>
+                  <button class="edit-rap-button btn btn-default btn-xs pull-right" data-attached-uri="<%= record['uri'] %>" data-rap-uri="<%= record['rap_attached']['uri'] %>">Edit RAP</button>
                 <% end %>
               </div>
             </div>
           </div>
-          <% if ix === 0 && record['rap_history'].length > 1 %><h4>RAP History:</h4><% end %>
-        <% end %>
-      </div>
+          <div id="<%= section_id %>_rap_<%= ix %>" class="panel-collapse collapse <% if rap['is_active'] %>in<% end %>">
+            <div class="subrecord-form-container">
+              <% form.push('rap', rap['_resolved']) do %>
+                <% form.emit_template 'rap' %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+        <% if ix === 0 && record['rap_history'].length > 1 %><h4>RAP History:</h4><% end %>
+      <% end %>
     </div>
   </div>
 </section>
