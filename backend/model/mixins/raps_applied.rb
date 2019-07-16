@@ -39,8 +39,6 @@ module RAPsApplied
       backlink_col = :"#{representation_objs[0].class.table_name}_id"
 
       DB.open do |db|
-        rap_id_to_representation_ids = {}
-
         db[:rap_applied].filter(backlink_col => representation_objs.map(&:id)).each do |row|
           @rap_applied_by_representation_id[row[backlink_col]] ||= []
           @rap_applied_by_representation_id[row[backlink_col]] << row
