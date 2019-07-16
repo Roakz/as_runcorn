@@ -168,6 +168,24 @@ class Resource
         }
       end
 
+      db[:resource]
+        .join(:rap, Sequel.qualify(:rap, :resource_id) => Sequel.qualify(:resource, :id))
+        .filter(Sequel.qualify(:resource, :id) => self.id)
+        .select(Sequel.qualify(:rap, :id))
+        .each do |row|
+        rap_id_to_summary[row[:id]] = {
+          "default_repo_rap" => false,
+          "rap" => {
+            "ref" => JSONModel(:rap).uri_for(row[:id], :repo_id => RequestContext.get(:repo_id)),
+          },
+          "attached_to" => {
+            "ref" => self.uri,
+          },
+          "digital_representation_count" => 0,
+          "physical_representation_count" => 0,
+        }
+      end
+
       db[:archival_object]
         .join(:rap, Sequel.qualify(:rap, :archival_object_id) => Sequel.qualify(:archival_object, :id))
         .filter(Sequel.qualify(:archival_object, :root_record_id) => self.id)

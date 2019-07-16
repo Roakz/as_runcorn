@@ -33,6 +33,17 @@ class ArchivesSpaceService < Sinatra::Base
     attach_rap(DigitalRepresentation, params[:id], params[:rap])
   end
 
+  Endpoint.post('/raps/repositories/:repo_id/resources/:id/attach_and_apply')
+    .description("Attach and Apply a RAP")
+    .params(["repo_id", :repo_id],
+            ["id", :id],
+            ["rap", JSONModel(:rap), "The RAP record", :body =>true])
+    .permissions([])
+    .returns([200, :created]) \
+  do
+    attach_rap(Resource, params[:id], params[:rap])
+  end
+
   Endpoint.get('/raps/repositories/:repo_id/resources/:id/summary')
     .description("RAPs and Representation counts")
     .params(["repo_id", :repo_id],
@@ -43,7 +54,7 @@ class ArchivesSpaceService < Sinatra::Base
   do
     obj = Resource.get_or_die(params[:id])
     summary_json = obj.generate_rap_summary
-      json_response(resolve_references(summary_json, params[:resolve]))
+    json_response(resolve_references(summary_json, params[:resolve]))
   end
 
   Endpoint.get('/raps/repositories/:repo_id/raps/:id')
