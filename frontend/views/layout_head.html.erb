@@ -148,4 +148,17 @@
         new RuncornRAPs($container);
     });
   </script>
+
+  <script type="text/template" id="runcornRAPReparentNodesConfirmationTemplate">
+    <div>
+      <div class="modal-body">
+        <p>Please be aware that moving an archival object in the hierarchy may change the applied access notifications or RAPs.</p>
+        <p>Click 'Apply Move' to continue.</p>
+      </div>
+      <div class="modal-footer">
+        <button id="confirmRAPReparentButton" class="btn btn-primary">Apply Move</button>
+        <button class="btn btn-cancel btn-default" data-dismiss="modal"><%= I18n.t "actions.cancel" %></button>
+      </div>
+    </div>
+  </script>
 <% end %>

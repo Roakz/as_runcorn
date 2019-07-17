@@ -1,4 +1,4 @@
-(function() {
+(function(exports) {
     function RuncornRAPs($container) {
         $('.attach-rap-button', $container).each(function() {
             new RuncornRAPAttachWorkflow($(this));
@@ -6,6 +6,8 @@
         $('.edit-rap-button', $container).each(function() {
             new RuncornRAPEditWorkflow($(this));
         });
+
+        new RunctionRAPsTreeOverrides();
     }
 
     function RuncornRAPAttachWorkflow($button) {
@@ -140,8 +142,35 @@
         });
     };
 
-    window.RuncornRAPAttachWorkflow = RuncornRAPAttachWorkflow;
-    window.RuncornRAPEditWorkflow = RuncornRAPEditWorkflow;
-    window.RuncornRAPs = RuncornRAPs;
-    window.RAPSummary = RAPSummary;
-})();
+    function RunctionRAPsTreeOverrides() {
+        this.overrideLargeTreeReparentNodes();
+    };
+
+    RunctionRAPsTreeOverrides.prototype.overrideLargeTreeReparentNodes = function() {
+        var self = this;
+        exports.tree.large_tree.reparentNodes = function(new_parent, nodes, position) {
+            var $modal = self.showModal();
+            $modal.on('click', '#confirmRAPReparentButton', function() {
+                $modal.remove();
+                $.proxy(exports.LargeTree.prototype.reparentNodes, exports.tree.large_tree)(new_parent, nodes, position).done(function() {
+                    exports.tree.dragdrop.resetState();
+                });
+            });
+
+            return {
+                'done' : $.noop
+            };
+        }
+    };
+
+    RunctionRAPsTreeOverrides.prototype.showModal = function() {
+        var $content = $(AS.renderTemplate("runcornRAPReparentNodesConfirmationTemplate"));
+        return AS.openCustomModal("runcornRAPReparentNodesConfirmation", 'Confirm Move', $content.html(), 'large', {keyboard: false});
+    };
+
+    exports.RuncornRAPAttachWorkflow = RuncornRAPAttachWorkflow;
+    exports.RuncornRAPEditWorkflow = RuncornRAPEditWorkflow;
+    exports.RuncornRAPs = RuncornRAPs;
+    exports.RAPSummary = RAPSummary;
+    exports.RunctionRAPsTreeOverrides = RunctionRAPsTreeOverrides;
+})(window);
