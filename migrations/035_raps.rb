@@ -61,7 +61,7 @@ Sequel.migration do
     end
 
     create_enum('runcorn_rap_access_status', [
-      'Restricted Access',
+      'Restricted Access', # USED IN FRONTEND! BE CAREFUL WHEN CHANGING THIS VALUE
       'Open Access',
     ])
 

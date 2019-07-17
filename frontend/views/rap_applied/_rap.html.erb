@@ -25,6 +25,9 @@
     <div id="<%= section_id %>_rap_<%= index %>" class="panel-collapse collapse <% if rap['is_active'] %>in<% end %>">
       <div class="subrecord-form-container">
         <% if rap['ref'] === record['rap_applied']['uri'] %>
+          <% if rap['_resolved']['access_status'] == 'Restricted Access' %>
+            <div class="alert alert-info">Access to these records has been restricted by the agency. For permission to access these records please contact the agency.</div>
+          <% end %>
           <% if record['rap_expiration'] %>
             <% form.push('rap_expiration', record['rap_expiration']) do %>
               <% form.emit_template 'rap_expiration' %>

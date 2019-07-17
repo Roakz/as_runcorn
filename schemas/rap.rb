@@ -20,7 +20,6 @@
       "internal_reference" => {"type" => "string", "ifmissing" => "error"},
 
       "justification" => {"type" => "string"},
-      "access_procedures" => {"type" => "string", "readonly" => "true"},
 
       "display_string" => {"type" => "string", "readonly" => "true"},
 
