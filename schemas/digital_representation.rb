@@ -144,7 +144,9 @@
         "type" => "object",
         "readonly" => "true",
         "properties" => {
+          "existence_end_date" => {"type" => "date"},
           "expiry_date" => {"type" => "date"},
+          "expired" => {"type" => "boolean"},
         },
       },
 

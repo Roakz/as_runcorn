@@ -10,6 +10,7 @@ module RAPsApplied
       @rap_applied_by_representation_id = {}
       @active_raps_by_id = {}
       @expiry_date_by_representation_id = {}
+      @existence_end_date_by_representation_id = {}
 
       load!(objs)
     end
@@ -39,10 +40,12 @@ module RAPsApplied
     def rap_expiration_for_representation(representation_id)
       expiry_date = @expiry_date_by_representation_id.fetch(representation_id, nil)
 
-      return {} if expiry_date.nil?
+      return nil if expiry_date.nil?
 
       {
-        'expiry_date' => expiry_date.iso8601
+        'existence_end_date' => @existence_end_date_by_representation_id.fetch(representation_id, nil)&.iso8601,
+        'expiry_date' => expiry_date.iso8601,
+        'expired' => expiry_date < Date.today
       }
     end
 
@@ -88,7 +91,8 @@ module RAPsApplied
         end
 
         representation_objs.each do |representation_obj|
-          @expiry_date_by_representation_id[representation_obj.id] = calculate_expiry_date_for(representation_obj, ao_id_to_end_date.fetch(representation_obj[:archival_object_id]))
+          @existence_end_date_by_representation_id[representation_obj.id] = ao_id_to_end_date.fetch(representation_obj[:archival_object_id], nil)
+          @expiry_date_by_representation_id[representation_obj.id] = calculate_expiry_date_for(representation_obj, ao_id_to_end_date.fetch(representation_obj[:archival_object_id], Date.today))
         end
       end
     end

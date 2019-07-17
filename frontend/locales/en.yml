@@ -282,3 +282,8 @@ en:
 
   rap_summary:
     heading: Access Notification Summary
+
+  rap_expiration:
+    existence_end_date: Existence End Date
+    expiry_date: Expiry Date
+    expired: Expired?
