@@ -140,6 +140,12 @@ class Resource
             .filter(backlink_col => rows_to_insert.map {|row| row.fetch(backlink_col)})
             .update(:is_active => 0)
 
+          # Set applied_date on new rows
+          now = Time.now
+          rows_to_insert.each do |row|
+            row[:date_applied] = now
+          end
+
           # And our new RAPs are ready to go
           db[:rap_applied].multi_insert(rows_to_insert)
         end

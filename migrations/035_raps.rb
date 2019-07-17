@@ -22,8 +22,6 @@ Sequel.migration do
       String :internal_reference
       TextField :justification
 
-      # DateTime :date_applied, :null => false
-
       Integer :default_for_repo_id
 
       Integer :resource_id
@@ -51,6 +49,8 @@ Sequel.migration do
       Integer :rap_id, :null => false
       Integer :version, :null => false
       Integer :is_active, :null => false
+
+      DateTime :date_applied, :null => false
     end
 
     alter_table(:rap_applied) do
