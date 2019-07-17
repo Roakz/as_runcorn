@@ -140,6 +140,14 @@
         "readonly" => "true",
       },
 
+      "rap_expiration" => {
+        "type" => "object",
+        "readonly" => "true",
+        "properties" => {
+          "expiry_date" => {"type" => "date"},
+        },
+      },
+
       "rap_history" => {
         "readonly" => "true",
         "type" => "array",

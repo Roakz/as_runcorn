@@ -9,6 +9,7 @@ module RAPsApplied
     def initialize(objs)
       @rap_applied_by_representation_id = {}
       @active_raps_by_id = {}
+      @expiry_date_by_representation_id = {}
 
       load!(objs)
     end
@@ -17,6 +18,8 @@ module RAPsApplied
       active_rap = @rap_applied_by_representation_id.fetch(representation_id, []).find {|rap_applied| rap_applied[:is_active] == 1}
 
       raise "ASSERTION FAILED: No active rap for #{representation_id}" unless active_rap
+
+      active_rap['expiry_date']
 
       @active_raps_by_id.fetch(active_rap[:rap_id])
     end
@@ -30,6 +33,16 @@ module RAPsApplied
           'version' => rap_applied[:version],
           'is_active' => rap_applied[:is_active] == 1,
         }
+      }
+    end
+
+    def rap_expiration_for_representation(representation_id)
+      expiry_date = @expiry_date_by_representation_id.fetch(representation_id, nil)
+
+      return {} if expiry_date.nil?
+
+      {
+        'expiry_date' => expiry_date.iso8601
       }
     end
 
@@ -53,6 +66,62 @@ module RAPsApplied
         RAP.sequel_to_jsonmodel(RAP.filter(:id => active_rap_ids).all).each do |rap|
           @active_raps_by_id[rap.id] = rap
         end
+
+        date_existence_enum_id = db[:enumeration_value]
+                                  .join(:enumeration, Sequel.qualify(:enumeration, :id) => Sequel.qualify(:enumeration_value, :enumeration_id))
+                                  .filter(Sequel.qualify(:enumeration_value, :value) => 'existence')
+                                  .filter(Sequel.qualify(:enumeration, :name) => 'date_label')
+                                  .select(Sequel.qualify(:enumeration_value, :id))
+
+
+        containing_ao_ids = representation_objs.collect{|obj| obj[:archival_object_id]}
+        ao_id_to_end_date = {}
+
+        db[:date]
+          .filter(:archival_object_id => containing_ao_ids)
+          .filter(:label_id => date_existence_enum_id)
+          .order(:archival_object_id, :id)
+          .select(:archival_object_id,
+                  :end)
+          .each do |row|
+          ao_id_to_end_date[row[:archival_object_id]] ||= handle_fuzzy_date(row[:end])
+        end
+
+        representation_objs.each do |representation_obj|
+          @expiry_date_by_representation_id[representation_obj.id] = calculate_expiry_date_for(representation_obj, ao_id_to_end_date.fetch(representation_obj[:archival_object_id]))
+        end
+      end
+    end
+
+    def calculate_expiry_date_for(representation_obj, end_date)
+      rap_applied_row = @rap_applied_by_representation_id.fetch(representation_obj.id).find{|row| row[:is_active] == 1}
+      rap = @active_raps_by_id.fetch(rap_applied_row[:rap_id])
+
+      return nil if rap.years.nil?
+
+      rap_expiry_date = end_date.next_year(rap.years)
+
+      if rap.access_category == 'Cabinet matters'
+        if rap_expiry_date.month > 1
+          rap_expiry_date = Date.new(rap_expiry_date.year + 1, 1, 1)
+        end
+      end
+
+      rap_expiry_date
+    end
+
+    def handle_fuzzy_date(s)
+      return Date.today if s.nil?
+
+      default = [Date.today.year.to_s, '12', '31']
+      bits = s.split('-')
+
+      full_date = (0...3).map {|i| bits.fetch(i, default.fetch(i))}.join('-')
+
+      begin
+        Date.parse(full_date)
+      rescue
+        Date.today
       end
     end
   end
@@ -69,6 +138,7 @@ module RAPsApplied
         objs.zip(jsons).each do |obj, json|
           json['rap_applied'] = raps.rap_json_for_representation(obj.id)
           json['rap_history'] = raps.rap_history_for_representation(obj.id)
+          json['rap_expiration'] = raps.rap_expiration_for_representation(obj.id)
         end
 
         jsons

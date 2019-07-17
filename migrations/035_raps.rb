@@ -20,6 +20,9 @@ Sequel.migration do
       String :change_date
       String :approved_by
       String :internal_reference
+      TextField :justification
+
+      # DateTime :date_applied, :null => false
 
       Integer :default_for_repo_id
 
@@ -69,7 +72,7 @@ Sequel.migration do
       'Information whose disclosure would be found to be a breach of confidence',
       'National or State Security Information',
       'Law enforcement or public safety information',
-      'Cabinet matters',
+      'Cabinet matters', # USED IN CALCULATIONS! BE CAREFUL WHEN CHANGING THIS VALUE
       'Executive Council information and ministerial records',
       'Overriding Legislation',
       'Non-Publication Order',
