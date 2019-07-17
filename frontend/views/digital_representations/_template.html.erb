@@ -164,10 +164,11 @@
       <% end %>
 
       <% if form.readonly? %>
-        <%= show_plugins_for(JSONModel(:digital_representation).from_hash(form.obj, :trusted), form) %>
+        <%= show_plugins_for(JSONModel(:digital_representation).from_hash(form.obj, false, true), form) %>
       <% else %>
-        <%= form_plugins_for("digital_representation", form, JSONModel(:digital_representation).new._always_valid!) %>
+        <%= form_plugins_for("digital_representation", form, JSONModel(:digital_representation).from_hash(form.obj, false, true)) %>
       <% end %>
+
     </div>
   </div>
 <% end %>

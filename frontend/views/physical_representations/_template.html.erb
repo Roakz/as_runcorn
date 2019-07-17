@@ -20,7 +20,9 @@
 
     <%= form.label_and_select "access_category", form.possible_options_for("access_category", true) %>
     <%= form.hidden_input "current_location", "HOME" %>
-    <%= form.label_and_readonly "current_location" %>
+    <% if form.obj['current_location'] %>
+      <%= form.label_and_readonly "current_location" %>
+    <% end %>
     <%= form.hidden_input "normal_location", "HOME" %>
     <%= form.label_and_select "accessioned_status", form.possible_options_for("accessioned_status", true) %>
     <%= form.label_and_select "colour", form.possible_options_for("colour", true) %>
@@ -123,9 +125,9 @@
       <% end %>
 
       <% if form.readonly? %>
-        <%= show_plugins_for(JSONModel(:physical_representation).from_hash(form.obj, :trusted), form) %>
+        <%= show_plugins_for(JSONModel(:physical_representation).from_hash(form.obj, false, true), form) %>
       <% else %>
-        <%= form_plugins_for("physical_representation", form, JSONModel(:physical_representation).new._always_valid!) %>
+        <%= form_plugins_for("physical_representation", form, JSONModel(:physical_representation).from_hash(form.obj, false, true)) %>
       <% end %>
     </div>
   </div>

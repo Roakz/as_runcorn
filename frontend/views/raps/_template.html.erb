@@ -32,7 +32,11 @@
 <% end %>
 
 <% define_template "rap_expiration" do |form| %>
-  <%= form.label_and_textfield('existence_end_date') %>
-  <%= form.label_and_textfield('expiry_date') %>
-  <%= form.label_and_boolean('expired') %>
+  <% if form.obj['existence_end_date'] %>
+    <%= form.label_and_textfield('existence_end_date') %>
+    <%= form.label_and_textfield('expiry_date') %>
+    <%= form.label_and_boolean('expired') %>
+  <% else %>
+    <div class="alert alert-info">Expiration cannot be calculated as no end date set on record.</div>
+  <% end %>
 <% end %>

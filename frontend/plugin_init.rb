@@ -96,6 +96,19 @@ Rails.application.config.after_initialize do
       end
     end
 
+    def supports?(record, mode)
+      return false unless @jsonmodel_types.include?(record['jsonmodel_type'])
+      # don't show on forms for new records 
+      require 'pp'
+      pp mode
+      pp record
+      pp [record['uri'], record['existing_ref']]
+
+      return false if record['uri'].nil? && record['existing_ref'].nil?
+
+      super
+    end
+
     private
 
     def parse_opts(opts)
