@@ -279,6 +279,7 @@ en:
     approved_by: Approved By
     internal_reference: Internal Reference
     attached_to: Attached To
+    justification: Access Justification Note
 
   rap_summary:
     heading: Access Notification Summary
