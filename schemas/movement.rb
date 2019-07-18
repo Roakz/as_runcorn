@@ -34,9 +34,23 @@
         }
       },
 
-      "user" => {"type" => "string", "maxLength" => 255, "ifmissing" => "error"},
       "move_date" => {"type" => "date-time", "ifmissing" => "error"},
       "move_to_storage_permitted" => {"type" => "boolean", "readonly" => "true"},
+
+      "user" => {
+        "type" => "object",
+        "subtype" => "ref",
+        "properties" => {
+          "ref" => {
+            "type" => [{"type" => "JSONModel(:agent_person) uri"}],
+            "ifmissing" => "error"
+          },
+          "_resolved" => {
+            "type" => "object",
+            "readonly" => "true"
+          }
+        }
+      },
     },
   },
 }

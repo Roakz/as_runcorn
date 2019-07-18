@@ -4,6 +4,12 @@ class Movement < Sequel::Model(:movement)
 
   set_model_scope :global
 
+  define_relationship(:name => :movement_user,
+                      :json_property => 'user',
+                      :contains_references_to_types => proc {[AgentPerson]},
+                      :is_array => false)
+
+
   def self.sequel_to_jsonmodel(objs, opts = {})
     jsons = super
 

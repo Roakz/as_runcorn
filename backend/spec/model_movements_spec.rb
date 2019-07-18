@@ -2,6 +2,17 @@ require 'spec_helper'
 
 describe 'Runcorn Movements Mixin' do
 
+  let(:mover) {
+    u = make_test_user("mover")
+    JSONModel(:user).find(u.id)[:agent_record]['ref']
+  }
+
+  let(:test_monkey) {
+    u = make_test_user("test_monkey")
+    JSONModel(:user).find(u.id)[:agent_record]['ref']
+  }
+
+
   it "gives you a list of models using the mixin" do
     expect(Movements.models.empty?).to eq(false)
     Movements.models.map do |m|
@@ -29,7 +40,7 @@ describe 'Runcorn Movements Mixin' do
          [
           {
             "functional_location" => "CONS",
-            "user" => "admin",
+            "user" => { "ref" => mover },
             "move_context" => { "ref" => "/file_issues/1"},
             "move_date" => "2019-06-06"
           }
@@ -54,7 +65,7 @@ describe 'Runcorn Movements Mixin' do
       [
        {
          "functional_location" => "CONS",
-         "user" => "admin",
+         "user" => { "ref" => mover },
          "move_date" => "2019-06-06"
        }
       ]
@@ -75,7 +86,7 @@ describe 'Runcorn Movements Mixin' do
       [
        {
          "storage_location" => {"ref" => location.uri},
-         "user" => "admin",
+         "user" => { "ref" => mover },
          "move_date" => "2019-06-06"
        }
       ]
@@ -97,7 +108,7 @@ describe 'Runcorn Movements Mixin' do
        {
          "storage_location" => {"ref" => location.uri},
          "functional_location" => "CONS",
-         "user" => "admin",
+         "user" => { "ref" => mover },
          "move_date" => "2019-06-06"
        }
       ]
@@ -107,7 +118,7 @@ describe 'Runcorn Movements Mixin' do
     json.movements = 
       [
        {
-         "user" => "admin",
+         "user" => { "ref" => mover },
          "move_date" => "2019-06-06"
        }
       ]
@@ -134,29 +145,29 @@ describe 'Runcorn Movements Mixin' do
          [ # deliberately out of order - should be fixed on update
           {
             "functional_location" => "HOME",
-            "user" => "admin",
+            "user" => { "ref" => mover },
             "move_context" => { "ref" => "/file_issues/1"},
             "move_date" => "2019-05-05" # here and next have same date
           },
           {
             "functional_location" => "CONS",
-            "user" => "admin",
+            "user" => { "ref" => mover },
             "move_date" => "2019-05-05" # original order should break the tie
           },
           {
             "functional_location" => "PER", # with agency
-            "user" => "admin",
+            "user" => { "ref" => mover },
             "move_context" => { "ref" => "/file_issues/1"},
             "move_date" => "2019-04-04"
           },
           {
             "functional_location" => "HOME",
-            "user" => "admin",
+            "user" => { "ref" => mover },
             "move_date" => "2019-03-03"
           },
           {
             "functional_location" => "HOME",
-            "user" => "admin",
+            "user" => { "ref" => mover },
             "move_date" => "2019-01-01"
           },
          ]
@@ -192,7 +203,7 @@ describe 'Runcorn Movements Mixin' do
          [
           {
             "storage_location" => {"ref" => location.uri},
-            "user" => "admin",
+            "user" => { "ref" => mover },
             "move_date" => "2019-06-06"
           }
          ]
@@ -210,7 +221,7 @@ describe 'Runcorn Movements Mixin' do
     tc = TopContainer.create_from_json(json)
 
     mvmt = {
-      :user => 'test_monkey'
+      :user => { "ref" => test_monkey }
     }
 
     tc.move(mvmt)

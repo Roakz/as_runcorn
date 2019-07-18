@@ -1,5 +1,7 @@
 ArchivesSpace::Application.extend_aspace_routes(File.join(File.dirname(__FILE__), "routes.rb"))
 
+require_relative 'helpers/movements_helper'
+
 Rails.application.config.after_initialize do
   Plugins.register_plugin_section(
     Plugins::PluginSubRecord.new(
@@ -168,6 +170,7 @@ Rails.application.config.after_initialize do
                              'service_items',
                              'storage_location',
                              'move_context',
+                             'movements::user',
                              'rap_history',
                              'attached_to',
                              'rap_history::attached_to'])

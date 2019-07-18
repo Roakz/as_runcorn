@@ -20,7 +20,7 @@
             <strong><%= movements.length %></strong> <%= I18n.t("movement.#{many_mvmts ? '_plural' : '_singular'}") %>
           </div>
           <div class="col-md-9">
-            <%= many_mvmts ? 'Latest by' : 'By' %> <%= movements.last['user'] %> on <%= movements.last['move_date'] %>
+            <%= many_mvmts ? 'Latest by' : 'By' %> <%= movements.last['user']['_resolved']['title'] %> on <%= movements.last['move_date'] %>
           </div>
         </div>
       </div>
@@ -42,7 +42,7 @@
                     <%= movement['move_date'] %>
                   </div>
                   <div class="col-md-2">
-                    <%= movement['user'] %>
+                    <%= movement['user']['_resolved']['title'] %>
                   </div>
                   <div class="col-md-3">
                     <% if movement['functional_location'] %>
