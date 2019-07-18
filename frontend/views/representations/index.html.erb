@@ -16,7 +16,7 @@
     <div class="sidebar">
       <%= render_aspace_partial :partial => "search/filter" %>
 
-      <% unless Array(@search_data[:criteria]['filter_term[]']).find {|term| JSON.parse(term).keys[0] == 'rap_expiring_within'} %>
+      <% if @search_data.results? && !Array(@search_data[:criteria]['filter_term[]']).find {|term| JSON.parse(term).keys[0] == 'rap_expiring_within'} %>
         <h3>RAP expiring within</h3>
         <ul>
           <% [30, 60, 90, 180, 365, 730, 1825].each do |days| %>
