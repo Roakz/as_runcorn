@@ -177,6 +177,7 @@ en:
   representation:
     _singular: Representation
     _plural: Representations
+    rap_expiry_date: RAP expiry date
   container:
     _singular: Container
     _plural: Containers
@@ -288,3 +289,6 @@ en:
     existence_end_date: Existence End Date
     expiry_date: Expiry Date
     expired: Expired?
+
+  search_sorting:
+    rap_expiry_date_sort_u_ssortdate: RAP Expiry Date

@@ -2,6 +2,13 @@
 
 <%
   @show_multiselect_column = false
+
+  add_column(I18n.t("representation.rap_expiry_date"),
+             proc {|record|
+                   (record.fetch('rap_expiry_date_u_sstr', [])[0] +
+                    (record.fetch('rap_expired_u_sbool', [])[0] ? ' (expired)' : ''))
+             }, :sortable => true, :sort_by => 'rap_expiry_date_sort_u_ssortdate')
+
 %>
 
 <div class="row">

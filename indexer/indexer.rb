@@ -1,3 +1,13 @@
+class RuncornIndexing
+
+  def self.nullable_date_to_time(s)
+    return nil if s.nil?
+
+    "#{s}T00:00:00Z"
+  end
+
+end
+
 class IndexerCommon
   @@record_types << :physical_representation
   @@record_types << :digital_representation
@@ -19,7 +29,6 @@ class IndexerCommon
 
     result
   end
-
 
   add_indexer_initialize_hook do |indexer|
     require_relative '../common/qsa_id'
@@ -44,6 +53,15 @@ class IndexerCommon
         doc['file_issue_allowed_u_sbool'] = [record['record']['file_issue_allowed'] && !record['record']['deaccessioned']]
       end
     }
+
+    indexer.add_document_prepare_hook do |doc, record|
+      if record['record']['rap_expiration']
+        doc['rap_existence_end_date_u_sdate'] = RuncornIndexing.nullable_date_to_time(record['record']['rap_expiration']['existence_end_date'])
+        doc['rap_expiry_date_u_sstr'] = record['record']['rap_expiration']['expiry_date']
+        doc['rap_expiry_date_sort_u_ssortdate'] = RuncornIndexing.nullable_date_to_time(record['record']['rap_expiration']['expiry_date'])
+        doc['rap_expired_u_sbool'] = record['record']['rap_expiration']['expired']
+      end
+    end
 
     indexer.add_document_prepare_hook {|doc, record|
       if doc['primary_type'] == 'chargeable_item'
