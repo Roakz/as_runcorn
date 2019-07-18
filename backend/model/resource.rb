@@ -163,6 +163,9 @@ class Resource
             row[:date_applied] = now
           end
 
+          # Reindex the representations that were affected by these changes
+          representation_model.update_mtime_for_ids(rows_to_insert.map {|row| row.fetch(backlink_col)})
+
           # And our new RAPs are ready to go
           db[:rap_applied].multi_insert(rows_to_insert)
           update_count += rows_to_insert.length
