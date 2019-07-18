@@ -63,6 +63,26 @@ class IndexerCommon
       end
     end
 
+    indexer.add_document_prepare_hook do |doc, record|
+      if record['record']['rap_expiration']
+        doc['rap_existence_end_date_u_sdate'] = RuncornIndexing.nullable_date_to_time(record['record']['rap_expiration']['existence_end_date'])
+        doc['rap_expiry_date_u_sstr'] = record['record']['rap_expiration']['expiry_date']
+        doc['rap_expiry_date_sort_u_ssortdate'] = RuncornIndexing.nullable_date_to_time(record['record']['rap_expiration']['expiry_date'])
+        doc['rap_expired_u_sbool'] = record['record']['rap_expiration']['expired']
+      end
+
+      if record['record']['rap_applied']
+        applied = record['record']['rap_applied']
+
+        doc['rap_open_access_metadata_u_ssort'] = applied['open_access_metadata'] ? 'yes' : 'no'
+        doc['rap_access_status_u_ssort'] = applied['access_status']
+        doc['rap_access_category_u_ssort'] = applied['access_category']
+      end
+
+    end
+
+
+
     indexer.add_document_prepare_hook {|doc, record|
       if doc['primary_type'] == 'chargeable_item'
         doc['title'] = record['record']['name']

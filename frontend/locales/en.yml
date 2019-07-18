@@ -230,6 +230,10 @@ en:
     filter:
       agency_category_u_sstr: Agency Category
       representation_intended_use_u_sstr: Intended Use
+      rap_open_access_metadata_u_ssort: Open Metadata?
+      rap_access_status_u_ssort: Access Status
+      rap_access_category_u_ssort: Access Category
+      rap_expiring_within: RAP expiry days
 
   runcorn_agency:
     agency_category: Agency Category

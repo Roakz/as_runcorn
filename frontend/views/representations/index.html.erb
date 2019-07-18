@@ -15,17 +15,31 @@
   <div class="col-md-3">
     <div class="sidebar">
       <%= render_aspace_partial :partial => "search/filter" %>
+
+      <% unless Array(@search_data[:criteria]['filter_term[]']).find {|term| JSON.parse(term).keys[0] == 'rap_expiring_within'} %>
+        <h3>RAP expiring within</h3>
+        <ul>
+          <% [30, 60, 90, 180, 365, 730, 1825].each do |days| %>
+            <% if days.to_s == params[:expiring_within_days].to_s %>
+              <li><%= days %> days <%= link_to("(clear)", build_search_params({})) %></li>
+            <% else %>
+              <%
+              label = "#{days} days"
+
+              if (days / 365) == 1
+                label = "#{days / 365} year"
+              elsif (days / 365) > 1
+                label = "#{days / 365} years"
+              end
+              %>
+              <li><%= link_to(label, build_search_params({}).merge("filter_term[]" => {"rap_expiring_within" => days}.to_json)) %></li>
+            <% end %>
+          <% end %>
+        </ul>
+      <% end %>
     </div>
   </div>
   <div class="col-md-9">
-    <% if user_can?('update_accession_record') %>
-      <div class="record-toolbar">
-        <div class="btn-group pull-right">
-          <%= link_to I18n.t("actions.export_csv"), request.parameters.merge({ :format => :csv}), id: "searchExport",  class:  "btn btn-sm btn-info" %>
-        </div>
-        <br style="clear:both" />
-      </div>
-    <% end %>
     <div class="record-pane">
       <%= link_to_help :topic => "search" %>
 
