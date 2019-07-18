@@ -6,7 +6,8 @@ class ChargeableItemsController < ApplicationController
                       "view_repository" => [:index, :show]
 
   def index
-    @list = JSONModel::HTTP.get_json("/chargeable_items")
+    ids = JSONModel::HTTP.get_json('/chargeable_items', 'all_ids' => true)
+    @list = JSONModel::HTTP.get_json('/chargeable_items', 'id_set' => ids.join(","))
   end
 
   def new

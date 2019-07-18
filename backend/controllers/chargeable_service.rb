@@ -42,9 +42,10 @@ class ArchivesSpaceService < Sinatra::Base
   Endpoint.get('/chargeable_services')
     .description("Get a list of Chargeable Services")
     .params(["resolve", :resolve])
+    .paginated(true)
     .permissions([])
     .returns([200, "[(:chargeable_service)]"]) \
   do
-    handle_unlimited_listing(ChargeableService)
+    handle_listing(ChargeableService, params)
   end
 end

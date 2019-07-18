@@ -6,7 +6,10 @@ class ChargeableServicesController < ApplicationController
                       "view_repository" => [:index, :show]
 
   def index
-    @list = JSONModel::HTTP.get_json("/chargeable_services", 'resolve[]' => RESOLVES)
+    ids = JSONModel::HTTP.get_json('/chargeable_services', 'all_ids' => true)
+    @list = JSONModel::HTTP.get_json('/chargeable_services',
+                                     'id_set' => ids.join(","),
+                                     'resolve[]' => RESOLVES)
   end
 
 

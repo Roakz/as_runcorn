@@ -39,9 +39,10 @@ class ArchivesSpaceService < Sinatra::Base
   Endpoint.get('/chargeable_items')
     .description("Get a list of Chargeable Items")
     .params()
+    .paginated(true)
     .permissions([])
     .returns([200, "[(:chargeable_item)]"]) \
   do
-    handle_unlimited_listing(ChargeableItem)
+    handle_listing(ChargeableItem, params)
   end
 end
