@@ -51,10 +51,12 @@ class RapsController < ApplicationController
         flash[:success] = I18n.t("rap_attached.update_success_message")
       else
         flash.now[:error] = resp.body
+        rap_json['uri'] = rap_uri
         render_aspace_partial :partial => 'rap_attached/form', :locals => {form_action: :update, rap: rap_json, uri: params[:uri]}, :status => 500
       end
     else
       @exceptions = rap_json._exceptions
+      rap_json['uri'] = rap_uri
       render_aspace_partial :partial => 'rap_attached/form', :locals => {form_action: :update, rap: rap_json, uri: params[:uri]}, :status => 500
     end
   end
