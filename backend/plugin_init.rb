@@ -27,5 +27,18 @@ require_relative 'lib/byte_storage'
 # Config test!
 ByteStorage.get
 
+TreeReordering.add_after_reorder_hook do |target_class, child_class, target_id, child_ids, position|
+  if child_class == ArchivalObject
+    resource = if target_class == Resource
+                 Resource.get_or_die(target_id)
+               else
+                 ao = ArchivalObject.get_or_die(target_id)
+                 Resource.get_or_die(ao.root_record_id)
+               end
+
+    resource.propagate_raps!
+  end
+end
+
 require_relative 'lib/rap_provisioner'
 RapProvisioner.doit!

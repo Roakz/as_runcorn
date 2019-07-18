@@ -74,4 +74,50 @@ class RAP < Sequel::Model(:rap)
       end
     end
   end
+
+  def self.does_movement_affect_raps(parent_uri, node_uris, position)
+    changed = false
+
+    parent_ref = JSONModel.parse_reference(parent_uri)
+
+    target_class = if parent_ref.fetch(:type) == 'resource'
+                     Resource
+                   elsif parent_ref.fetch(:type) == 'archival_object'
+                     ArchivalObject
+                   else
+                     nil
+                   end
+
+    resource = if target_class == Resource
+                 Resource.get_or_die(parent_ref.fetch(:id))
+               else
+                 ao = ArchivalObject.get_or_die(parent_ref.fetch(:id))
+                 Resource.get_or_die(ao.root_record_id)
+               end
+
+    last_applied = resource.last_rap_applied_time
+
+    return false if target_class.nil?
+    return false if node_uris.empty?
+    return false if JSONModel.parse_reference(node_uris[0]).fetch(:type) != 'archival_object'
+
+    child_ids = node_uris.map {|uri| JSONModel.parse_reference(uri).fetch(:id)}
+
+    DB.open(true) do
+      begin
+        TreeReordering.new.reorder(target_class, ArchivalObject,
+                                   parent_ref.fetch(:id), child_ids,
+                                   position)
+
+        changed = resource.last_rap_applied_time != last_applied
+      rescue
+        Log.exception($!)
+        # Move process threw an exception
+      ensure
+        raise Sequel::Rollback
+      end
+    end
+
+    changed
+  end
 end

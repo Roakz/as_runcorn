@@ -146,17 +146,58 @@
         this.overrideLargeTreeReparentNodes();
     };
 
+    function checkWhetherMoveAffectsRAPs(new_parent, nodes, position, callback) {
+        var parent_uri = $(new_parent).data('uri');
+
+        var node_uris = nodes.map(function (node) {
+            return $(node).data('uri');
+        });
+
+        $.ajax({
+            url: APP_PATH + 'raps/check_tree_move',
+            data: {
+                parent_uri: parent_uri,
+                node_uris: node_uris,
+                position: position
+            },
+            type: 'POST',
+            dataType: 'json',
+            success: function (response) {
+                callback(response);
+            },
+            error: function () {
+                callback({
+                    status: false,
+                });
+            }
+        });
+    };
+
     RunctionRAPsTreeOverrides.prototype.overrideLargeTreeReparentNodes = function() {
         var self = this;
         exports.tree.large_tree.reparentNodes = function(new_parent, nodes, position) {
-            var $modal = self.showModal();
-            $modal.on('click', '#confirmRAPReparentButton', function() {
-                $modal.remove();
+            function callOriginal() {
                 $.proxy(exports.LargeTree.prototype.reparentNodes, exports.tree.large_tree)(new_parent, nodes, position).done(function() {
                     exports.tree.dragdrop.resetState();
                 });
-            });
+            }
 
+            checkWhetherMoveAffectsRAPs(new_parent, nodes, position,
+                                        function (changed) {
+                                            if (changed.status) {
+                                                var $modal = self.showModal();
+                                                $modal.on('click', '#confirmRAPReparentButton', function() {
+                                                    $modal.remove();
+                                                    callOriginal();
+                                                });
+
+                                                $modal.on('click', '.btn-cancel', function() {
+                                                    exports.tree.dragdrop.resetState();
+                                                });
+                                            } else {
+                                                callOriginal();
+                                            }
+                                        });
             return {
                 'done' : $.noop
             };

@@ -3,7 +3,6 @@ ArchivalObject.include(Representations)
 ArchivalObject.include(Deaccessions)
 ArchivalObject.include(RuncornDeaccession)
 ArchivalObject.include(RAPs)
-ArchivalObject.include(RAPTrees)
 
 class ArchivalObject
   define_relationship(:name => :representation_approved_by,

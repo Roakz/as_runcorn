@@ -78,6 +78,21 @@ class ArchivesSpaceService < Sinatra::Base
     handle_update(RAP, params[:id], params[:rap])
   end
 
+  Endpoint.post('/raps/repositories/:repo_id/check_tree_moves')
+    .description("Check whether a given tree move would change RAP assignments")
+    .permissions([])
+    .use_transaction(false)
+    .params(["repo_id", :repo_id],
+            ["parent_uri", String, "A resource or AO uri"],
+            ["node_uris", [String], "URIs of children"],
+            ["position", Integer, "new position"])
+    .returns([200, "Something helpful"]) \
+  do
+    raps_changed = RAP.does_movement_affect_raps(params[:parent_uri], params[:node_uris], params[:position])
+
+    json_response({:status => raps_changed})
+  end
+
   private
 
   def attach_rap(model_class, id, rap)

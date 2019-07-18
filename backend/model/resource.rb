@@ -29,9 +29,26 @@ class Resource
     self.children.each(&:deaccession!)
   end
 
+  def last_rap_applied_time
+    result = DB.open do |db|
+      [:physical_representation, :digital_representation].map {|representation_type|
+        db[:archival_object]
+          .join(representation_type, Sequel.qualify(representation_type, :archival_object_id) => Sequel.qualify(:archival_object, :id))
+          .join(:rap_applied, Sequel.qualify(:rap_applied, :"#{representation_type}_id") => Sequel.qualify(representation_type, :id))
+          .filter(Sequel.qualify(:archival_object, :root_record_id) => self.id)
+          .max(:date_applied)
+      }.compact.max
+    end
+
+    result || 0
+  end
+
   RAPPropagateState = Struct.new(:record_model, :record_id, :applicable_rap_id, :completed)
 
+  # Returns a count of inserted rows.
   def propagate_raps!
+    update_count = 0
+
     default_rap_id = RAP.get_default_id
 
     # Walk from the resource, breadth-first, all the way down the tree to its
@@ -148,9 +165,12 @@ class Resource
 
           # And our new RAPs are ready to go
           db[:rap_applied].multi_insert(rows_to_insert)
+          update_count += rows_to_insert.length
         end
       end
     end
+
+    update_count
   end
 
   def generate_rap_summary

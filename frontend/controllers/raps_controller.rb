@@ -1,6 +1,6 @@
 class RapsController < ApplicationController
 
-  set_access_control  "view_repository" => [:attach_and_apply, :attach_form, :summary, :edit, :update]
+  set_access_control  "view_repository" => [:attach_and_apply, :attach_form, :summary, :edit, :update, :check_tree_move]
 
   def attach_and_apply
     rap_data = cleanup_params_for_schema(params[:rap], JSONModel(:rap).schema)
@@ -57,6 +57,19 @@ class RapsController < ApplicationController
       @exceptions = rap_json._exceptions
       render_aspace_partial :partial => 'rap_attached/form', :locals => {form_action: :update, rap: rap_json, uri: params[:uri]}, :status => 500
     end
+  end
+
+  def check_tree_move
+    params[:parent_uri]
+    params[:node_uris]
+    params[:position]
+
+    response = JSONModel::HTTP.post_form("/raps/repositories/#{session[:repo_id]}/check_tree_moves",
+                                         'parent_uri' => params[:parent_uri],
+                                         'node_uris[]' => params[:node_uris],
+                                         'position' => params[:position])
+
+    render :json => response.body
   end
 
 end
