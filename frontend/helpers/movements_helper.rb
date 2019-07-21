@@ -8,7 +8,7 @@ module MovementsHelper
     return @agent_for_user_hash if user_uri == @agent_for_user_uri
 
     @agent_for_user_uri = user_uri
-    json = JSONModel::HTTP.get_json(user_uri)
+    json = JSONModel::HTTP.get_json('/users/current-user')
     @agent_for_user_hash = {'uri' => json['agent_record']['ref'], 'display_string' => json['name']}
   end
 end
