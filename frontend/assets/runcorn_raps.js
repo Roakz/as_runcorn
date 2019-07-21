@@ -143,7 +143,9 @@
     };
 
     function RunctionRAPsTreeOverrides() {
-        this.overrideLargeTreeReparentNodes();
+        if (exports.tree && exports.tree.large_tree) {
+            this.overrideLargeTreeReparentNodes();
+        }
     };
 
     function checkWhetherMoveAffectsRAPs(new_parent, nodes, position, callback) {
