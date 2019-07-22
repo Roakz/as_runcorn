@@ -1,7 +1,7 @@
 <% unless rap.nil? %>
   <div class="panel <% if rap['is_active'] %>panel-primary<% else %>panel-default<% end %>">
     <div class="panel-heading">
-      <div class="row accordion-toggle <% unless rap['is_active'] %>collapsed<% end %>"
+      <div class="row accordion-toggle collapsed"
            data-toggle="collapse"
            data-parent="#<%= section_id %>_accordion"
            href="#<%= section_id %>_rap_<%= index %>">
@@ -22,7 +22,7 @@
         </div>
       </div>
     </div>
-    <div id="<%= section_id %>_rap_<%= index %>" class="panel-collapse collapse <% if rap['is_active'] %>in<% end %>">
+    <div id="<%= section_id %>_rap_<%= index %>" class="panel-collapse collapse">
       <div class="subrecord-form-container">
         <% if rap['ref'] === record['rap_applied']['uri'] %>
           <% if rap['_resolved']['access_status'] == 'Restricted Access' %>
