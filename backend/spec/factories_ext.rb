@@ -69,4 +69,8 @@ FactoryBot.define do
     chargeable_item { {'ref' => create(:json_chargeable_item).uri} }
     quantity { generate(:runcorn_quote_line_quantity) }
   end
+
+  factory :json_conservation_request, class: JSONModel::JSONModel(:conservation_request) do
+  end
+
 end
