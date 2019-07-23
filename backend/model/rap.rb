@@ -9,7 +9,30 @@ class RAP < Sequel::Model(:rap)
 
     touch_attached_record_mtime
 
+    # When a RAP is edited, we should reapply it down the tree to ensure that
+    # everything gets reindexed and versioned.
+    DB.open do |db|
+      db[:rap_applied].filter(:rap_id => self.id).delete
+      self.attached_root_record.propagate_raps!
+    end
+
     result
+  end
+
+  def attached_root_record
+    if self[:resource_id]
+      Resource.get_or_die(self[:resource_id])
+    elsif self[:archival_object_id]
+      Resource.get_or_die(ArchivalObject.get_or_die(self[:archival_object_id]).root_record_id)
+    elsif self[:physical_representation_id]
+      archival_object_id = PhysicalRepresentation.get_or_die(self[:physical_representation_id]).archival_object_id
+      Resource.get_or_die(ArchivalObject.get_or_die(archival_object_id).root_record_id)
+    elsif self[:digital_representation_id]
+      archival_object_id = DigitalRepresentation.get_or_die(self[:digital_representation_id]).archival_object_id
+      Resource.get_or_die(ArchivalObject.get_or_die(archival_object_id).root_record_id)
+    else
+      raise "Can't determine root record for #{self}"
+    end
   end
 
   def self.sequel_to_jsonmodel(objs, opts = {})
@@ -71,6 +94,7 @@ class RAP < Sequel::Model(:rap)
     RAPs.supported_models.each do |model|
       if self[:"#{model.table_name}_id"]
         model.update_mtime_for_ids([self[:"#{model.table_name}_id"]])
+        model.filter(:id => self[:"#{model.table_name}_id"]).update(:lock_version => Sequel.expr(1) + :lock_version)
       end
     end
   end

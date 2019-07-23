@@ -166,6 +166,17 @@ class Resource
           # Reindex the representations that were affected by these changes
           representation_model.update_mtime_for_ids(rows_to_insert.map {|row| row.fetch(backlink_col)})
 
+          # Reindex their connected AOs too, and bump their lock versions to
+          # ensure we get a new history entry.
+          archival_object_ids = representation_model
+                                  .filter(:id => rows_to_insert.map {|row| row.fetch(backlink_col)})
+                                  .select(:archival_object_id)
+                                  .map {|row| row[:archival_object_id]}
+                                  .uniq
+
+          ArchivalObject.update_mtime_for_ids(archival_object_ids)
+          ArchivalObject.filter(:id => archival_object_ids).update(:lock_version => Sequel.expr(1) + :lock_version)
+
           # And our new RAPs are ready to go
           db[:rap_applied].multi_insert(rows_to_insert)
           update_count += rows_to_insert.length

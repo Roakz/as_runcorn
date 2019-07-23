@@ -111,19 +111,19 @@ describe 'Runcorn RAPs' do
     series = create(:json_resource)
 
     created_ao = create(:json_archival_object,
-                     :resource => {'ref' => series.uri},
-                     :rap_attached => {
-                       'open_access_metadata' => true,
-                       'access_status' => 'Open Access',
-                       'access_category' => 'N/A',
+                        :resource => {'ref' => series.uri},
+                        :rap_attached => {
+                          'open_access_metadata' => true,
+                          'access_status' => 'Open Access',
+                          'access_category' => 'N/A',
 
-                       'years' => 10,
-                       'change_description' => 'test',
-                       'authorised_by' => 'me',
-                       'change_date' => '2019-01-01',
-                       'approved_by' => 'you',
-                       'internal_reference' => '4a2b6588-11bb-4b98-a575-8109da2f44ea',
-                     })
+                          'years' => 10,
+                          'change_description' => 'test',
+                          'authorised_by' => 'me',
+                          'change_date' => '2019-01-01',
+                          'approved_by' => 'you',
+                          'internal_reference' => '4a2b6588-11bb-4b98-a575-8109da2f44ea',
+                        })
 
 
     json = ArchivalObject.to_jsonmodel(created_ao.id)
@@ -170,6 +170,47 @@ describe 'Runcorn RAPs' do
     ao = ArchivalObject.to_jsonmodel(child.id)
 
     expect(ao.physical_representations[0].fetch('rap_applied').fetch('internal_reference')).to eq('cc8f30cc-9534-4bbb-92e6-fb3a7732b480')
+  end
+
+  it "allows a RAP to be edited and bumps lock versions appropriately" do
+    series = create(:json_resource,
+                    :rap_attached => {
+                      'open_access_metadata' => true,
+                      'access_status' => 'Open Access',
+                      'access_category' => 'N/A',
+
+                      'years' => 11,
+                      'change_description' => 'test',
+                      'authorised_by' => 'me',
+                      'change_date' => '2019-01-01',
+                      'approved_by' => 'you',
+                      'internal_reference' => 'cc8f30cc-9534-4bbb-92e6-fb3a7732b480',
+                    })
+
+    child = create(:json_archival_object,
+                   :resource => {'ref' => series.uri},
+                   :physical_representations => [
+                     build(:json_physical_representation)
+                   ])
+
+    original_series_lock_version = Resource.get_or_die(series.id).lock_version
+    original_series_system_mtime = Resource.get_or_die(series.id).system_mtime
+
+    original_ao_lock_version = ArchivalObject.get_or_die(child.id).lock_version
+    original_ao_system_mtime = ArchivalObject.get_or_die(child.id).system_mtime
+
+    # Edit the RAP on the series
+    rap_uri = Resource.to_jsonmodel(series.id).rap_attached['uri']
+    rap = RAP.to_jsonmodel(JSONModel.parse_reference(rap_uri).fetch(:id))
+    rap.years = 100
+    RAP.get_or_die(rap.id).update_from_json(rap)
+
+    # The series should have updated, as should have the AO with the representation
+    expect(Resource.get_or_die(series.id).lock_version).to eq(original_series_lock_version + 1)
+    expect(Resource.get_or_die(series.id).system_mtime).to be > original_series_system_mtime
+
+    expect(ArchivalObject.get_or_die(child.id).lock_version).to eq(original_ao_lock_version + 1)
+    expect(ArchivalObject.get_or_die(child.id).system_mtime).to be > original_ao_system_mtime
   end
 
 
