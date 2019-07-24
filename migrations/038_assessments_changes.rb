@@ -20,16 +20,17 @@ Sequel.migration do
       add_foreign_key([:treatment_priority_id], :enumeration_value, :key => :id, :name => 'assessment_treatment_priority_fk')
     end
 
-    pos = self[:assessment_attribute_definition].max(:position) + 1
+    # reusing the 'format' type because it isn't required by qsa and it turns out
+    # adding a new type requires hacking around inside the Assessment model
+    self[:assessment_attribute_definition].filter(:type => 'format').delete
 
     [
      'A good wash',
      'Try blowing on it',
      'Drink glass of water upsidedown',
     ].each_with_index do |treatment, ix|
-      self[:assessment_attribute_definition].insert(:repo_id => 1, :label => treatment, :type => 'proposed_treatment', :position => pos + ix)
+      self[:assessment_attribute_definition].insert(:repo_id => 1, :label => treatment, :type => 'format', :position => ix)
     end
-
   end
 
   down do
