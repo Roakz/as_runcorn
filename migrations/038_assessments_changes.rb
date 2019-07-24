@@ -22,6 +22,8 @@ Sequel.migration do
 
     # reusing the 'format' type because it isn't required by qsa and it turns out
     # adding a new type requires hacking around inside the Assessment model
+    format_ids = self[:assessment_attribute_definition].filter(:type => 'format').select(:id)
+    self[:assessment_attribute].filter(:assessment_attribute_definition_id => format_ids).delete
     self[:assessment_attribute_definition].filter(:type => 'format').delete
 
     [
