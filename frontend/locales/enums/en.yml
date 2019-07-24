@@ -233,7 +233,10 @@ en:
       record: Record
       page: Page
       qtr_hour: 15 mins
-
+    runcorn_treatment_priority:
+      LOW: Low
+      MEDIUM: Medium
+      HIGH: High
   enumeration_names:
     runcorn_access_category: Runcorn Plugin - Access Category
     runcorn_access_clearance_procedure: Runcorn Plugin - Runcorn Access Clearance Procedure
@@ -248,3 +251,4 @@ en:
     runcorn_preservation_priority_rating: Runcorn Plugin - Runcorn Preservation Priority Rating
     runcorn_salvage_priority_code: Runcorn Plugin - Runcorn Salvage Priority Code
     runcorn_charge_quantity_unit: Runcorn Plugin - Runcorn Charge Quantity Unit
+    runcorn_treatment_priority: Runcorn Plugin - Runcorn Treatment Priority

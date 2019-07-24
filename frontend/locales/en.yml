@@ -54,6 +54,13 @@ en:
   group:
     permission_types:
       manage_agency_registration: manage agency registration workflow
+  assessment:
+    conservation_note: Condition Rating
+    treatment_priority: Treatment Priority
+    _frontend:
+      section:
+        format_attributes: Proposed Treatments
+        format_attributes_additional: Additional Proposed Treatments
   validation_errors:
     unable_to_publish_when_in_draft: Draft agencies cannot be published
     is_required_unless_a_begin_date_is_given: Property is required if no end date is set
