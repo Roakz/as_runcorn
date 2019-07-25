@@ -4,6 +4,8 @@ class ConservationRequest < Sequel::Model(:conservation_request)
 
   set_model_scope :repository
 
+  ## Representations
+
   def add_representations(representation_model, *ids)
     ids = ids.uniq
     backlink_col = :"#{representation_model.table_name}_id"
@@ -15,8 +17,19 @@ class ConservationRequest < Sequel::Model(:conservation_request)
     end
   end
 
-  def add_archival_objects(*archival_object_ids)
-    representation_ids = {
+  def remove_representations(representation_model, *ids)
+    ids = ids.uniq
+    backlink_col = :"#{representation_model.table_name}_id"
+
+    db[:conservation_request_representations].filter(backlink_col => ids, :conservation_request_id => self.id).delete
+  end
+
+
+  ## Archival objects
+
+  # {PhysicalRepresentation => [id1, id2, id3], DigitalRepresentation => [id1, id2, id3]}
+  def linked_representations(archival_object_ids)
+    result = {
       PhysicalRepresentation => [],
       DigitalRepresentation => [],
     }
@@ -26,9 +39,9 @@ class ConservationRequest < Sequel::Model(:conservation_request)
 
       while !queue.empty?
         # For this set of IDs, find any attached representations
-        representation_ids.keys.each do |representation_type|
+        result.keys.each do |representation_type|
           representation_type.filter(:archival_object_id => queue).select(:id).each do |row|
-            representation_ids.fetch(representation_type) << row[:id]
+            result.fetch(representation_type) << row[:id]
           end
         end
 
@@ -37,26 +50,53 @@ class ConservationRequest < Sequel::Model(:conservation_request)
       end
     end
 
-    representation_ids.each do |representation_model, ids|
+    result
+  end
+
+
+  def add_archival_objects(*archival_object_ids)
+    linked_representations(archival_object_ids).each do |representation_model, ids|
       self.add_representations(representation_model, *ids)
     end
   end
 
-  def add_resources(*resource_ids)
-    top_level_ao_ids = ArchivalObject
-                         .filter(:parent_id => nil, :root_record_id => Resource.filter(:id => resource_ids).select(:id))
-                         .select(:id).map {|row| row[:id]}
+  def remove_archival_objects(*archival_object_ids)
+    linked_representations(archival_object_ids).each do |representation_model, ids|
+      self.remove_representations(representation_model, *ids)
+    end
+  end
 
-    self.add_archival_objects(*top_level_ao_ids)
+
+  ## Resources
+  def toplevel_aos_for_resources(resource_ids)
+    ArchivalObject
+      .filter(:parent_id => nil, :root_record_id => Resource.filter(:id => resource_ids).select(:id))
+      .select(:id).map {|row| row[:id]}
+  end
+
+  def add_resources(*resource_ids)
+    self.add_archival_objects(*toplevel_aos_for_resources(resource_ids))
+  end
+
+  def remove_resources(*resource_ids)
+    self.remove_archival_objects(*toplevel_aos_for_resources(resource_ids))
+  end
+
+
+  ## Top containers
+  def physical_representations_for_top_containers(top_container_ids)
+    PhysicalRepresentation
+      .find_relationship(:representation_container)
+      .find_by_participant_ids(TopContainer, top_container_ids)
+      .map {|relationship| relationship[:physical_representation_id]}
   end
 
   def add_top_containers(*top_container_ids)
-    representation_ids = PhysicalRepresentation
-                           .find_relationship(:representation_container)
-                           .find_by_participant_ids(TopContainer, top_container_ids)
-                           .map {|relationship| relationship[:physical_representation_id]}
+    self.add_representations(PhysicalRepresentation, *physical_representations_for_top_containers(top_container_ids))
+  end
 
-    self.add_representations(PhysicalRepresentation, *representation_ids)
+  def remove_top_containers(*top_container_ids)
+    self.remove_representations(PhysicalRepresentation, *physical_representations_for_top_containers(top_container_ids))
   end
 
 end
