@@ -1,0 +1,7 @@
+<%= render(:layout => '/shared/sidebar',
+           :locals => {
+               :record_type => 'conservation_request',
+               :record => @conservation_request,
+           }) do |sidebar| %>
+      <%= sidebar.render_for_view_only(:subrecord_type => 'representations_requested', :property => :none) %>
+<% end %>

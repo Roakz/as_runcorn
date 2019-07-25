@@ -1,0 +1,27 @@
+<div class="record-toolbar">
+  <% if ['new', 'create', 'edit', 'update'].include?(controller.action_name) %>
+    <div class="pull-left save-changes">
+      <button type="submit" class="btn btn-primary btn-sm"><%= I18n.t("actions.save_prefix") %></button>
+    </div>
+  <% else %>
+    <div class="btn-group pull-left">
+      <%= link_to I18n.t("actions.edit"), {:controller => :conservation_requests, :action => :edit, :id => @conservation_request.id}, :class => "btn btn-sm btn-primary" %>
+    </div>
+  <% end %>
+
+  <% if ['edit', 'update'].include?(controller.action_name) %>
+    <div class="pull-left revert-changes">
+      <%= link_to I18n.t("actions.revert"), {:controller => :conservation_requests, :action => :edit, :id => @conservation_request.id}, :class => "btn btn-sm btn-default" %>
+      <%= I18n.t("actions.toolbar_disabled_message") %>
+    </div>
+  <% end %>
+
+  <div class="btn-group btn-toolbar pull-right">
+    <% if user_can?('delete_conservation_request_record') %>
+      <div class="btn btn-inline-form">
+        <%= button_delete_action url_for(:controller => :conservation_requests, :action => :delete, :id => @conservation_request.id), { :"data-title" => I18n.t("actions.delete_confirm_title", :title => @conservation_request.display_string) } %>
+      </div>
+    <% end %>
+  </div>
+  <div class="clearfix"></div>
+</div>

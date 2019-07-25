@@ -30,6 +30,14 @@
   <li><%= link_to I18n.t("representation._plural"), {:controller => :representations, :action => :index} %></li>
 </script>
 
+<script type="text/template" id="browseConservationRequestTemplate">
+  <li><%= link_to I18n.t("conservation_request._plural"), {:controller => :conservation_requests, :action => :index} %></li>
+</script>
+
+<script type="text/template" id="createConservationRequestTemplate">
+  <li><%= link_to I18n.t("conservation_request._singular"), {:controller => :conservation_requests, :action => :new} %></li>
+</script>
+
 <script>
     // put link in the System menu
     $(function() {
@@ -48,6 +56,10 @@
 
       // Put representation browse in Repo menu
       $('.repository-header .navbar-nav .browse-container .dropdown-menu .divider:first').before(AS.renderTemplate("browseRepresentationsTemplate"))
+
+      // Conservation requests sit before assessments
+      $('.repository-header .navbar-nav .browse-container .dropdown-menu a[href="/assessments"]').parent().before(AS.renderTemplate("browseConservationRequestTemplate"))
+      $('.repository-header .navbar-nav .create-container .dropdown-menu a[href="/assessments/new"]').parent().before(AS.renderTemplate("createConservationRequestTemplate"))
     });
 </script>
 

@@ -179,11 +179,13 @@ Rails.application.config.after_initialize do
   Plugins.add_facet_group_i18n("agency_category_u_sstr",
                                proc {|facet| "enumerations.agency_category.#{facet}" })
 
-  # Force load
-  JSONModel(:physical_representation)
-  JSONModel(:digital_representation)
-  JSONModel(:chargeable_item)
-  JSONModel(:chargeable_service)
+  # Eager load all JSON schemas
+  Dir.glob(File.join(File.dirname(__FILE__), "..", "schemas", "*.rb")).each do |schema|
+    next if schema.end_with?('_ext.rb')
+    JSONModel(File.basename(schema, ".rb").intern)
+  end
+
+
   SearchHelper
 
   # register qsa_id models

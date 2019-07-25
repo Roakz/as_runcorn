@@ -303,3 +303,23 @@ en:
 
   search_sorting:
     rap_expiry_date_sort_u_ssortdate: RAP Expiry Date
+
+  conservation_request:
+    _singular: Conservation Request
+    _plural: Conservation Requests
+    date_of_request: Date of Request
+    requested_by: Requested By
+    reason_requested: Reason Requested
+    reason_requested_comments: Reason for Request Comments
+    date_required_by: Date Conservation Required By
+    _frontend:
+      messages:
+        created: Conservation Request created
+        updated: Conservation Request updated
+      action:
+        save: Save
+      section:
+        basic_information: Basic Information
+
+  representations_requested:
+    _plural: Representations Requested

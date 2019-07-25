@@ -27,6 +27,7 @@ module Movements
       'move_date' => opts.fetch(:date, Time.now.getlocal.iso8601),
     }
 
+
     mvmt['move_context'] = {'ref' => opts[:context]} if opts[:context]
 
     if (opts[:location])

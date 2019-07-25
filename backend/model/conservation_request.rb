@@ -99,4 +99,15 @@ class ConservationRequest < Sequel::Model(:conservation_request)
     self.remove_representations(PhysicalRepresentation, *physical_representations_for_top_containers(top_container_ids))
   end
 
+  def self.sequel_to_jsonmodel(objs, opts = {})
+    jsons = super
+
+    objs.zip(jsons).each do |obj, json|
+      json['display_string'] = "CR#{obj.id}"
+    end
+
+    jsons
+  end
+
+
 end

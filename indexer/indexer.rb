@@ -13,6 +13,7 @@ class IndexerCommon
   @@record_types << :digital_representation
   @@record_types << :chargeable_service
   @@record_types << :chargeable_item
+  @@record_types << :conservation_request
 
   def self.build_recent_agency_filter(recent_agencies)
     result = []
@@ -88,6 +89,19 @@ class IndexerCommon
         doc['title'] = record['record']['name']
       end
     }
+
+    indexer.add_document_prepare_hook do |doc, record|
+      if doc['primary_type'] == 'conservation_request'
+        doc['title'] = record['record']['display_string']
+      end
+
+      # Representations will have the URI of the conservation request(s) they're
+      # attached to
+      if record['record']['conservation_requests']
+        doc['conservation_request_attached_u_sstr'] = record['record']['conservation_requests'].map {|ref| ref['ref']}
+      end
+
+    end
 
     indexer.add_document_prepare_hook do |doc, record|
       if record['record'].has_key?('qsa_id')

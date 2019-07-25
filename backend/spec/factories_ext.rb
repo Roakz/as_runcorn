@@ -71,6 +71,11 @@ FactoryBot.define do
   end
 
   factory :json_conservation_request, class: JSONModel::JSONModel(:conservation_request) do
+    date_of_request { Date.today.iso8601 }
+    date_required_by { (Date.today + 30).iso8601 }
+    requested_by { "conservation_request_user" }
+    reason_requested { "nefarious schemes" }
+    reason_requested_comments { "have a nice day" }
   end
 
 end

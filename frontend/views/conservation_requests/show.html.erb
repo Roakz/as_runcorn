@@ -1,0 +1,33 @@
+<%= setup_context :object => @conservation_request, :title => @conservation_request.display_string %>
+
+<div class="row">
+  <div class="col-md-3">
+    <%= render_aspace_partial :partial => "sidebar" %>
+  </div>
+  <div class="col-md-9">
+    <%= render_aspace_partial :partial => "toolbar" %>
+    <div class="record-pane">
+      <%= readonly_context :conservation_request, @conservation_request do |readonly| %>
+        <h2><%= @conservation_request.display_string %>  <span class="label label-info"><%= I18n.t("conservation_request._singular") %></span></h2>
+        <%= render_aspace_partial :partial => "form", :locals => { :form => readonly } %>
+
+        <%
+        ajax_search_url = url_for({:controller => :conservation_requests, :action => :linked_representations, :id => @conservation_request.id, :format => :js, :listing_only => true})
+        %>
+
+        <section id="representations_requested" class="subrecord-form-dummy">
+          <h3><%= I18n.t('representations_requested._plural') %></h3>
+          <div class="subrecord-form-container">
+            <div class="subrecord-form-fields embedded-search" data-url="<%= ajax_search_url %>">
+              <div class="alert alert-info">Loading...</div>
+            </div>
+          </div>
+
+        </section>
+
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<%= javascript_include_tag("embedded_search.js") %>
