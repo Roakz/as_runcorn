@@ -1,6 +1,7 @@
 ArchivesSpace::Application.extend_aspace_routes(File.join(File.dirname(__FILE__), "routes.rb"))
 
 require_relative 'helpers/movements_helper'
+require_relative 'helpers/qsa_id_helper'
 
 Rails.application.config.after_initialize do
   Plugins.register_plugin_section(
@@ -199,11 +200,11 @@ Rails.application.config.after_initialize do
 
     def identifier_for_search_result(result)
       if QSAId.models.include?(result["primary_type"].intern)
-        if result.has_key? 'qsa_id__u_sint'
-          identifier = result['qsa_id__u_sint'].first
+        if result.has_key? 'qsa_id_u_ssort'
+          identifier = result['qsa_id_u_ssort']
         else
           json       = ASUtils.json_parse(result["json"])
-          identifier = json.fetch('qsa_id', "")
+          identifier = json.fetch('qsa_id_prefixed', "")
         end
         identifier.to_s.html_safe
       else

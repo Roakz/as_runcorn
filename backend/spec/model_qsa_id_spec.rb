@@ -11,6 +11,20 @@ describe 'Runcorn QSA Id model' do
   end
 
   QSAId.models.each do |model|
+    it "provides a prefixed qsa id for #{model}" do
+      prefix = QSAId.prefix_for(model)
+      obj = model.create_from_json(build("json_#{model.my_jsonmodel.record_type}".intern))
+      expect(obj.qsa_id_prefixed).to start_with(prefix)
+
+      # skip Representation models coz ya just can't json em up like that
+      unless model.name.end_with?('Representation')
+        json = model.to_jsonmodel(obj.id)
+        expect(json.qsa_id_prefixed).to start_with(prefix)
+      end
+    end
+  end
+
+  QSAId.models.each do |model|
     if existing_id = QSAId.existing_id_for(model)
       it "copies the generated qsa id into an #{model} existing id (#{existing_id}) field if asked to" do
         obj = model.create_from_json(build("json_#{model.my_jsonmodel.record_type}".intern))

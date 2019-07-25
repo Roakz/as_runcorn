@@ -1,8 +1,12 @@
 <% define_template "as_runcorn", jsonmodel_definition(model) do |form| %>
-    <%= form.label_and_readonly "qsa_id",
-                                "<em>#{I18n.t("as_runcorn.qsa_id_auto_generation_message")}</em>",
-                                :control_class => 'as-runcorn-qsa-id',
-                                :label_opts => { :contextual => model } %>
+  <div class="form-group">
+    <label class="col-sm-2 control-label" for="<%= model %>_qsa_id_prefixed_" plugin="">
+      <%= I18n.t('as_runcorn.qsa_id') %>
+    </label>
+    <div class="col-sm-9 label-only">
+      <%= QSAIdHelper.id(form.obj['qsa_id_prefixed']) %>
+    </div>
+  </div>
 <% end %>
 
 <% form.emit_template("as_runcorn") %>

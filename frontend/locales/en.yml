@@ -1,14 +1,10 @@
 en:
   as_runcorn:
     qsa_id_auto_generation_message: "-- auto-generated upon save --"
-  agent_corporate_entity:
-    as_runcorn:
-      qsa_id: Agency Id
+    qsa_id: Identifier
   agent:
     agency_note: Note
   resource:
-    as_runcorn:
-      qsa_id: Series Id
     approval_date: Approval Date
     approved_by: Approved By
     disposal_class: Disposal Class
@@ -21,8 +17,6 @@ en:
     disposal_class: Disposal Class
     sensitivity_label: Sensitivity Label
     transfer: Transfer
-    as_runcorn:
-      qsa_id: Record Id
     approval_date: Approval Date
     approved_by: Approved By
     deaccessioned: This record has been deaccessioned
@@ -30,15 +24,6 @@ en:
     _frontend:
       action:
         add_sibling_from_clone: Clone to Sibling
-  function:
-    as_runcorn:
-      qsa_id: Function Id
-  mandate:
-    as_runcorn:
-      qsa_id: Mandate Id
-  accession:
-    as_runcorn:
-      qsa_id: Transfer Id
   top_container:
       current_location: Current location
       storage_location: Home Location
@@ -142,9 +127,6 @@ en:
     _frontend:
       action:
         add: Add Physical Representation
-    as_runcorn:
-      qsa_id: Physical Representation Id
-
   digital_representation:
     access_category: Access Status
     normal_location: Normal Location
@@ -174,8 +156,6 @@ en:
     salvage_priority_code: Salvage Priority Code
     title: Title
     deaccessioned: This record has been deaccessioned
-    as_runcorn:
-      qsa_id: Digital Representation Id
     _plural: Digital Representations
     _singular: Digital Representation
     _frontend:

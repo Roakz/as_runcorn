@@ -11,7 +11,12 @@ class QSAId
 
 
   def self.existing_id_for(model)
-    models_hash[model]
+    models_hash[model][:existing_id_field]
+  end
+
+
+  def self.prefix_for(model)
+    models_hash[model][:prefix]
   end
 
 
@@ -27,10 +32,14 @@ class QSAId
   end
 
 
-  def self.register(model, existing_id_field = false)
+  def self.register(model, opts = {})
+    existing_id_field = opts.fetch(:existing_id_field, false)
+    prefix = opts.fetch(:prefix, '')
+
     asmodel = ASModel.all_models.select{|m| m.has_jsonmodel? && m.my_jsonmodel.record_type == model.to_s}.first if QSAId.backend?
 
     if QSAId.backend?
+      asmodel.include(QSAIdPrefixer)
       asmodel.include(AutoGenerator)
 
       asmodel.auto_generate :property => :qsa_id,
@@ -53,9 +62,15 @@ class QSAId
       "readonly" => true
     }
 
-    JSONModel::JSONModel(model).define_accessors(['qsa_id'])
+    JSONModel::JSONModel(model).schema['properties']['qsa_id_prefixed'] = {
+      "type" => "string",
+      "readonly" => true
+    }
 
-    models_hash[QSAId.backend? ? asmodel : model] = existing_id_field
+    JSONModel::JSONModel(model).define_accessors(['qsa_id'])
+    JSONModel::JSONModel(model).define_accessors(['qsa_id_prefixed'])
+
+    models_hash[QSAId.backend? ? asmodel : model] = {:existing_id_field => existing_id_field, :prefix => prefix}
   end
 
 end

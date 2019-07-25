@@ -14,7 +14,7 @@
               <span class="glyphicon"></span>
             </div>
             <div class="col-md-1">
-              PR<%= physical_representation['qsa_id'] %>
+              <%= QSAIdHelper.id(physical_representation['qsa_id_prefixed']) %>
             </div>
             <div class="col-md-5">
               <%= physical_representation['title'] %>

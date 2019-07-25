@@ -14,7 +14,7 @@
               <span class="glyphicon"></span>
             </div>
             <div class="col-md-1">
-              DR<%= digital_representation['qsa_id'] %>
+              <%= QSAIdHelper.id(digital_representation['qsa_id_prefixed']) %>
             </div>
             <div class="col-md-5">
               <%= digital_representation['title'] %>
