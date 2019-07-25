@@ -82,7 +82,7 @@ class ConservationRequestsController < ApplicationController
                                                       )
 
         @search_data = Search.all(session[:repo_id], search_query)
-        @display_identifier = false
+        @display_identifier = true
 
         render_aspace_partial :partial => "conservation_requests/linked_representations_listing", locals: { filter_property: params[:filter_property], filter_value: params[:filter_value] }
       }
