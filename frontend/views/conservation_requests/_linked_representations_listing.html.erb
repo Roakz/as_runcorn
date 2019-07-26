@@ -12,7 +12,7 @@
     </thead>
     <tbody>
       <% @search_data['results'].each do |result| %>
-        <tr>
+        <tr data-resolved-record="<%= result['json'] %>">
           <td>
             <%= [result.dig('qsa_id__u_sint', 0), ''].compact.join(':') %> <%= result['title'] %>
           </td>
@@ -33,3 +33,9 @@
     <%= I18n.t("search_results.no_results") %>
   </p>
 <% end %>
+
+<script>
+ if (window.assign_records_form) {
+   window.assign_records_form.addJSWonderment();
+ }
+</script>

@@ -24,7 +24,7 @@
                             <div class="form-group required">
                                 <div class="input-group linker-wrapper">
                                     <input type="text" class="linker"
-                                           id="conservation_request_linker"
+                                           id="conservation_request_adds_linker"
                                            data-label="Context"
                                            data-label_plural="Context"
                                            data-path="conservation_request_adds"
@@ -58,7 +58,7 @@
                             <div class="form-group required">
                                 <div class="input-group linker-wrapper">
                                     <input type="text" class="linker"
-                                           id="conservation_request_linker"
+                                           id="conservation_request_removes_linker"
                                            data-label="Context"
                                            data-label_plural="Context"
                                            data-path="conservation_request_removes"
@@ -97,6 +97,7 @@
     </div>
 </div>
 
+<%= javascript_include_tag("conservation_request_assign_records.js") %>
 
 <script>
  $(function () {
