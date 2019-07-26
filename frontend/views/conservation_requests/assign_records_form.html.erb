@@ -1,7 +1,7 @@
 <%= setup_context :object => @conservation_request, :title => @conservation_request.display_string %>
 
 <div class="row">
-    <div class="record-pane">
+    <div class="record-pane conservation_request_assign_records">
         <div class="pull-right">
             <%= form_tag(:controller => :conservation_requests, :action => :clear_assigned_records) do |f| %>
                 <button class="btn btn-danger">Clear Request</button>
