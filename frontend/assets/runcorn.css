@@ -2,3 +2,7 @@
     display: inline-block;
     margin-right: 2em;
 }
+
+#conservation_request_linker_modal .modal-dialog {
+    width: 95%;
+}
