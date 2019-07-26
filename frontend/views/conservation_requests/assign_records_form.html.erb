@@ -1,0 +1,105 @@
+<%= setup_context :object => @conservation_request, :title => @conservation_request.display_string %>
+
+<div class="row">
+    <div class="record-pane">
+        <%= form_tag(:controller => :conservation_requests, :action => :assign_records) do |f| %>
+            <h2>Assign records to <%= @conservation_request.display_string %></h2>
+
+            <p>You can add and remove records from this conservation request using the forms below.</p>
+
+            <p>The following record types are available:</p>
+            <ul>
+                <li><b>Physical Representation</b> &mdash; adds/removes a single representation</li>
+                <li><b>Series</b> &mdash; adds/removes all representations within a series</li>
+                <li><b>Archival Object</b> &mdash; adds/removes all representations under an Archival Object (including child records)</li>
+                <li><b>Top Container</b> &mdash; adds/removes all representations held within a given Top Container</li>
+            </ul>
+
+
+            <section id="representations_add" class="subrecord-form-dummy">
+                <h3>Add Representations</h3>
+                <div class="subrecord-form-container">
+                    <div class="form-group">
+                        <div class="col-sm-9">
+                            <div class="form-group required">
+                                <div class="input-group linker-wrapper">
+                                    <input type="text" class="linker"
+                                           id="conservation_request_linker"
+                                           data-label="Context"
+                                           data-label_plural="Context"
+                                           data-path="conservation_request_adds"
+                                           data-name="ref"
+                                           data-url="<%= url_for :controller => :search, :action => :do_search, :format => :json %>"
+                                           data-browse-url="<%= url_for :controller => :search, :action => :do_search, :format => :js, :facets => [], :display_identifier => true %>"
+                                           data-format_property="display_string"
+                                           data-multiplicity="many"
+                                           data-types='["physical_representation", "top_container", "archival_object", "resource"]'
+                                    />
+                                    <div class="input-group-btn">
+                                        <a class="btn btn-default dropdown-toggle last" data-toggle="dropdown" href="javascript:void(0);"><span class="caret"></span></a>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="javascript:void(0);" class="linker-browse-btn"><%= I18n.t("actions.browse") %></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <br>
+            </section>
+
+            <section id="representations_add" class="subrecord-form-dummy">
+                <h3>Remove Representations</h3>
+                <div class="subrecord-form-container">
+                    <div class="form-group">
+                        <div class="col-sm-9">
+                            <div class="form-group required">
+                                <div class="input-group linker-wrapper">
+                                    <input type="text" class="linker"
+                                           id="conservation_request_linker"
+                                           data-label="Context"
+                                           data-label_plural="Context"
+                                           data-path="conservation_request_removes"
+                                           data-name="ref"
+                                           data-url="<%= url_for :controller => :search, :action => :do_search, :format => :json %>"
+                                           data-browse-url="<%= url_for :controller => :search, :action => :do_search, :format => :js, :facets => [], :display_identifier => true %>"
+                                           data-format_property="display_string"
+                                           data-multiplicity="many"
+                                           data-types='["physical_representation", "top_container", "archival_object", "resource"]'
+                                    />
+                                    <div class="input-group-btn">
+                                        <a class="btn btn-default dropdown-toggle last" data-toggle="dropdown" href="javascript:void(0);"><span class="caret"></span></a>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="javascript:void(0);" class="linker-browse-btn"><%= I18n.t("actions.browse") %></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <br>
+            </section>
+
+            <section id="representations_linked" class="subrecord-form-dummy">
+                <%= render_aspace_partial :partial => "conservation_requests/linked_records", :locals => { :id => @conservation_request.id } %>
+            </section>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Assign Representations</button>
+                <%= link_to I18n.t("actions.cancel"), :back, :class => "btn btn-cancel btn-default" %>
+            </div>
+        <% end %>
+
+    </div>
+</div>
+
+
+<script>
+ $(function () {
+     $(".linker:not(.initialised)").linker();
+ });
+</script>

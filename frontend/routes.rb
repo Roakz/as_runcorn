@@ -27,6 +27,8 @@ ArchivesSpace::Application.routes.draw do
       match('raps/check_tree_move' => 'raps#check_tree_move', :via => [:post])
 
       resources :conservation_requests
+      match('conservation_requests/:id/assign_records_form' => 'conservation_requests#assign_records_form', :via => [:get])
+      match('conservation_requests/:id/assign_records' => 'conservation_requests#assign_records', :via => [:post])
       match('conservation_requests/:id/linked_representations' => 'conservation_requests#linked_representations', :via => [:get])
       match('conservation_requests/:id' => 'conservation_requests#update', :via => [:post])
     end

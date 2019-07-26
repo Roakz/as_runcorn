@@ -7,6 +7,10 @@
     <div class="btn-group pull-left">
       <%= link_to I18n.t("actions.edit"), {:controller => :conservation_requests, :action => :edit, :id => @conservation_request.id}, :class => "btn btn-sm btn-primary" %>
     </div>
+    <div class="btn-group pull-right">
+      <%= link_to "Assign records", {:controller => :conservation_requests, :action => :assign_records_form, :id => @conservation_request.id}, :class => "btn btn-sm btn-primary" %>
+    </div>
+
   <% end %>
 
   <% if ['edit', 'update'].include?(controller.action_name) %>

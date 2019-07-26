@@ -20,7 +20,7 @@ module ConservationRequests
 
       objs.zip(jsons).each do |obj, json|
         json[:conservation_requests] = representation_to_conservation_request.fetch(obj.id, []).map {|conservation_request_id|
-          {'ref' => JSONModel(:conservation_request).uri_for(conservation_request_id)}
+          {'ref' => JSONModel(:conservation_request).uri_for(conservation_request_id, :repo_id => RequestContext.get(:repo_id))}
         }
       end
 

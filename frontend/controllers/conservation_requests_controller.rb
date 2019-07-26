@@ -4,7 +4,7 @@ class ConservationRequestsController < ApplicationController
 
   # FIXME: Who should be able to create/edit conservation requests?  Assuming
   # any logged in user here.
-  set_access_control "view_repository" => [:new, :edit, :create, :update, :index, :show, :linked_representations]
+  set_access_control "view_repository" => [:new, :edit, :create, :update, :index, :show, :linked_representations, :assign_records_form, :assign_records]
 
   def index
     @search_data = Search.for_type(
@@ -25,6 +25,18 @@ class ConservationRequestsController < ApplicationController
     @conservation_request = JSONModel(:conservation_request).find(params[:id], find_opts)
   end
 
+  def assign_records_form
+    @conservation_request = JSONModel(:conservation_request).find(params[:id], find_opts)
+  end
+
+  def assign_records
+    JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/conservation_requests/#{params[:id]}/assign_records",
+                              'adds[]' => Array(params.dig(:conservation_request_adds, 'ref')),
+                              'removes[]' => Array(params.dig(:conservation_request_removes, 'ref')))
+
+    return redirect_to :controller => :conservation_requests, :action => :show
+  end
+
   def edit
     show
   end
@@ -38,7 +50,7 @@ class ConservationRequestsController < ApplicationController
                 :on_valid => ->(id){
                   flash[:success] = I18n.t("conservation_request._frontend.messages.created")
                   return redirect_to :controller => :conservation_requests, :action => :new if params.has_key?(:plus_one)
-                  redirect_to :controller => :conservation_requests, :action => :edit, :id => id
+                  redirect_to :controller => :conservation_requests, :action => :show, :id => id
                 })
   end
 
@@ -49,7 +61,7 @@ class ConservationRequestsController < ApplicationController
                 :on_invalid => ->(){ return render :action => :edit },
                 :on_valid => ->(id){
                   flash[:success] = I18n.t("conservation_request._frontend.messages.updated")
-                  redirect_to :controller => :conservation_requests, :action => :edit, :id => id
+                  redirect_to :controller => :conservation_requests, :action => :show, :id => id
                 })
   end
 

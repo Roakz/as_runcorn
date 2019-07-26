@@ -14,6 +14,8 @@ class ConservationRequest < Sequel::Model(:conservation_request)
       # Clear any existing entries so we don't end up with duplicates
       db[:conservation_request_representations].filter(backlink_col => ids, :conservation_request_id => self.id).delete
       db[:conservation_request_representations].multi_insert(ids.map {|id| {backlink_col => id, :conservation_request_id => self.id}})
+
+      representation_model.update_mtime_for_ids(ids)
     end
   end
 
@@ -21,7 +23,11 @@ class ConservationRequest < Sequel::Model(:conservation_request)
     ids = ids.uniq
     backlink_col = :"#{representation_model.table_name}_id"
 
-    db[:conservation_request_representations].filter(backlink_col => ids, :conservation_request_id => self.id).delete
+    DB.open do |db|
+      db[:conservation_request_representations].filter(backlink_col => ids, :conservation_request_id => self.id).delete
+
+      representation_model.update_mtime_for_ids(ids)
+    end
   end
 
 
@@ -107,6 +113,48 @@ class ConservationRequest < Sequel::Model(:conservation_request)
     end
 
     jsons
+  end
+
+  def add_by_ref(*refs)
+    refs.map {|ref| JSONModel.parse_reference(ref)}
+      .group_by {|parsed| parsed.fetch(:type)}
+      .each do |type, type_refs|
+
+      record_ids = type_refs.map {|ref| ref.fetch(:id)}
+      case type
+          when 'physical_representation'
+            self.add_representations(PhysicalRepresentation, *record_ids)
+          when 'resource'
+            self.add_resources(*record_ids)
+          when 'archival_object'
+            self.add_archival_objects(*record_ids)
+          when 'top_container'
+            self.add_top_containers(*record_ids)
+          else
+            raise "Can't handle refs of type: #{type.inspect}"
+      end
+    end
+  end
+
+  def remove_by_ref(*refs)
+    refs.map {|ref| JSONModel.parse_reference(ref)}
+      .group_by {|parsed| parsed.fetch(:type)}
+      .each do |type, type_refs|
+
+      record_ids = type_refs.map {|ref| ref.fetch(:id)}
+      case type
+      when 'physical_representation'
+        self.remove_representations(PhysicalRepresentation, *record_ids)
+      when 'resource'
+        self.remove_resources(*record_ids)
+      when 'archival_object'
+        self.remove_archival_objects(*record_ids)
+      when 'top_container'
+        self.remove_top_containers(*record_ids)
+      else
+        raise "Can't handle refs of type: #{type.inspect}"
+      end
+    end
   end
 
 
