@@ -80,23 +80,18 @@ class ConservationRequestsController < ApplicationController
       format.js {
         raise "Not supported" unless params[:listing_only]
 
-        this_conservation_request_filter = {
-          'query' => {
-            'jsonmodel_type' => 'field_query',
-            'field' => 'conservation_request_attached_u_sstr',
-            'value' => JSONModel(:conservation_request).uri_for(params[:id]),
-            'literal' => true,
-          }
-        }
+        criteria = params_for_backend_search
 
-        search_query = params_for_backend_search.merge('type[]' => ['physical_representation'],
-                                                       'filter' => JSONModel(:advanced_query).from_hash(this_conservation_request_filter).to_json
-                                                      )
+        response = JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/conservation_requests/#{params[:id]}/search_assigned_records",
+                                             criteria)
 
-        @search_data = Search.all(session[:repo_id], search_query)
-        @display_identifier = true
+        @search_data = SearchResultData.new(ASUtils.json_parse(response.body).merge(:criteria => criteria))
 
-        render_aspace_partial :partial => "conservation_requests/linked_representations_listing", locals: { filter_property: params[:filter_property], filter_value: params[:filter_value] }
+        render_aspace_partial(:partial => "conservation_requests/linked_representations_listing",
+                              locals: {
+                                filter_property: params[:filter_property],
+                                filter_value: params[:filter_value]
+                              })
       }
     end
   end

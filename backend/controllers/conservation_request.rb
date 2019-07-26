@@ -71,4 +71,57 @@ class ArchivesSpaceService < Sinatra::Base
     json_response("status" => "OK")
   end
 
+  Endpoint.post('/repositories/:repo_id/conservation_requests/:id/search_assigned_records')
+    .description("Search within assigned records")
+    .params(["repo_id", :repo_id],
+            ["id", :id],
+            *ArchivesSpaceService::BASE_SEARCH_PARAMS)
+    .paginated(true)
+    .permissions([])
+    .returns([200, :updated]) \
+  do
+    # This endpoint is here to show the user the (potentially many thousand)
+    # records that have been attached to their conservation request.
+    #
+    # We want to hit Solr to get the benefit of its performance, sorting and
+    # pagination, but we can't rely on the representations we want having been
+    # reindexed in time.  The use case here is:
+    #
+    #  * User adds a few thousand representations to a conservation request
+    #
+    #  * User immediately reloads the conservation request browse screen, which
+    #    fires this search; and
+    #
+    #  * User expects to see the records they just added in the results
+    #
+    # Realtime indexing isn't *quite* realtime enough here, and we don't want to
+    # make the user wait for the indexer to catch up.
+    #
+    # So, my goofy plan is: hit the DB to get the list of representation IDs
+    # attached to the conservation request, then use Solr's TermsQueryParser to
+    # search by the ID set.
+    # (https://lucene.apache.org/solr/guide/6_6/other-parsers.html#OtherParsers-TermsQueryParser)
+
+    DB.open do |db|
+      physical_representation_ids = db[:conservation_request_representations]
+        .filter(:conservation_request_id => params[:id])
+        .select(:physical_representation_id)
+        .map {|row| row[:physical_representation_id]}
+
+      # This endpoint supports all the usual search parameters, so we can set
+      # the "q" parameter to build our magic query here.
+      query = "{!terms f=id}"
+
+      repo_id = params[:repo_id]
+      physical_representation_ids.each_with_index do |id, idx|
+        query << "," if idx > 0
+        query << JSONModel(:physical_representation).uri_for(id, :repo_id => repo_id)
+      end
+
+      params[:q] = query
+
+      json_response(Search.search(params, repo_id))
+    end
+  end
+
 end
