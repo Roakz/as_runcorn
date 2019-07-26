@@ -30,6 +30,7 @@ ArchivesSpace::Application.routes.draw do
       match('conservation_requests/:id/assign_records_form' => 'conservation_requests#assign_records_form', :via => [:get])
       match('conservation_requests/:id/assign_records' => 'conservation_requests#assign_records', :via => [:post])
       match('conservation_requests/:id/linked_representations' => 'conservation_requests#linked_representations', :via => [:get])
+      match('conservation_requests/:id/clear_assigned_records' => 'conservation_requests#clear_assigned_records', :via => [:post])
       match('conservation_requests/:id' => 'conservation_requests#update', :via => [:post])
     end
   end

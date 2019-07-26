@@ -4,7 +4,10 @@ class ConservationRequestsController < ApplicationController
 
   # FIXME: Who should be able to create/edit conservation requests?  Assuming
   # any logged in user here.
-  set_access_control "view_repository" => [:new, :edit, :create, :update, :index, :show, :linked_representations, :assign_records_form, :assign_records]
+  set_access_control "view_repository" => [:new, :edit, :create, :update,
+                                           :index, :show, :linked_representations,
+                                           :assign_records_form, :assign_records,
+                                           :clear_assigned_records]
 
   def index
     @search_data = Search.for_type(
@@ -94,6 +97,12 @@ class ConservationRequestsController < ApplicationController
                               })
       }
     end
+  end
+
+  def clear_assigned_records
+    JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/conservation_requests/#{params[:id]}/clear_assigned_records")
+
+    redirect_to(:controller => :conservation_requests, :action => :assign_records_form)
   end
 
 

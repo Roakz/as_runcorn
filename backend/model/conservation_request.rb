@@ -30,6 +30,24 @@ class ConservationRequest < Sequel::Model(:conservation_request)
     end
   end
 
+  def clear_assigned_records(representation_model)
+    backlink_col = :"#{representation_model.table_name}_id"
+
+    DB.open do |db|
+      ids = db[:conservation_request_representations]
+              .filter(:conservation_request_id => self.id)
+              .select(backlink_col)
+              .map {|row| row[backlink_col]}
+
+      db[:conservation_request_representations]
+        .filter(backlink_col => ids,
+                :conservation_request_id => self.id)
+        .delete
+
+      representation_model.update_mtime_for_ids(ids)
+    end
+  end
+
 
   ## Archival objects
 
@@ -156,6 +174,5 @@ class ConservationRequest < Sequel::Model(:conservation_request)
       end
     end
   end
-
 
 end

@@ -124,4 +124,15 @@ class ArchivesSpaceService < Sinatra::Base
     end
   end
 
+  Endpoint.post('/repositories/:repo_id/conservation_requests/:id/clear_assigned_records')
+    .description("Clear all records assigned to a conservation request")
+    .params(["repo_id", :repo_id],
+            ["id", :id])
+    .permissions([])
+    .returns([200, :updated]) \
+  do
+    conservation_request = ConservationRequest.get_or_die(params[:id])
+    conservation_request.clear_assigned_records(PhysicalRepresentation)
+  end
+
 end
