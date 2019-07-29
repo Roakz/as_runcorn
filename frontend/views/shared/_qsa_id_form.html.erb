@@ -4,7 +4,11 @@
       <%= I18n.t('as_runcorn.qsa_id') %>
     </label>
     <div class="col-sm-9 label-only">
-      <%= QSAIdHelper.id(form.obj['qsa_id_prefixed']) %>
+      <% if form.obj['qsa_id_prefixed'] %>
+        <%= QSAIdHelper.id(form.obj['qsa_id_prefixed']) %>
+      <% else %>
+        <span class="text-muted">-- auto-generated upon save --</span>
+      <% end %>
     </div>
   </div>
 <% end %>
