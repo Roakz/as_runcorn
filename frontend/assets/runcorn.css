@@ -3,6 +3,8 @@
     margin-right: 2em;
 }
 
-#conservation_request_adds_linker_modal .modal-dialog, #conservation_request_removes_linker_modal .modal-dialog {
+#assessment_records__modal .modal-dialog,
+#conservation_request_adds_linker_modal .modal-dialog,
+#conservation_request_removes_linker_modal .modal-dialog {
     width: 95%;
 }
