@@ -1,10 +1,23 @@
 <%= setup_context :object => @conservation_request, :title => @conservation_request.display_string %>
 
+<div id="clear_request_modal_template" data-title="Clear This Request?"><!--
+   <div class="modal-body">
+     <p>This will remove all representations currently linked to this Conservation Request.</p>
+     <p>Really clear this request?</p>
+   </div>
+   <div class="modal-footer">
+      <button id="confirmButton" class="btn btn-primary">Clear Request</button>
+      <button class="btn btn-cancel btn-default" data-dismiss="modal"><%= I18n.t "actions.cancel" %></button>
+   </div>
+--></div>
+
+
 <div class="row">
     <div class="record-pane conservation_request_assign_records">
         <div class="pull-right">
-            <%= form_tag(:controller => :conservation_requests, :action => :clear_assigned_records) do |f| %>
-                <button class="btn btn-danger">Clear Request</button>
+            <%= form_tag({:controller => :conservation_requests, :action => :clear_assigned_records},
+                         {:id => "clear-request-form"}) do |f| %>
+                <button id="clear-request-btn" class="btn btn-danger">Clear Request</button>
             <% end %>
         </div>
         <%= form_tag(:controller => :conservation_requests, :action => :assign_records) do |f| %>

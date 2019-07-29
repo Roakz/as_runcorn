@@ -30,6 +30,23 @@ ConservationRequestAssignRecords.prototype.setupBinds = function() {
 
         return false;
     });
+
+    $('#clear-request-form').on('submit', function () {
+        if ($(this).data('confirmation_received')) {
+            return true;
+        } else {
+            var self = $(this);
+
+            AS.openCustomModal("clearRequestModal", $("#clear_request_modal_template").data("title"), AS.renderTemplate("clear_request_modal_template"), null, {}, self.find('#clear-request-btn'));
+            $("#confirmButton", "#clearRequestModal").click(function() {
+                $(".btn", "#clearRequestModal").attr("disabled", "disabled");
+                self.data('confirmation_received', true).submit();
+            });
+
+            return false;
+        }
+
+    });
 }
 
 window.assign_records_form = new ConservationRequestAssignRecords();
