@@ -18,8 +18,14 @@ Sequel.migration do
       String :date_required_by, :null => true
       String :requested_by, :null => false
 
+      DynamicEnum :requested_for_id, :null => false
       DynamicEnum :reason_requested_id, :null => false
+      DynamicEnum :client_type_id, :null => false
+
       String :reason_requested_comments, :null => true
+
+      String :client_name, :null => true
+      String :client_id, :null => true
     end
 
     create_table(:conservation_request_representations) do
@@ -37,9 +43,38 @@ Sequel.migration do
       add_foreign_key([:physical_representation_id], :physical_representation, :key => :id)
     end
 
+    create_editable_enum('conservation_request_requested_for',
+                         [
+                           'Public Access',
+                           'Agency Access',
+                           'Exhibition',
+                           'Loan',
+                           'Digitisation',
+                           'Transfer',
+                           'Storage',
+                           'Significance',
+                           'Preservation Project',
+                           'Other',
+                         ])
+
+
     create_editable_enum('conservation_request_reason',
                          [
-                           'nefarious schemes',
+                           'Condition',
+                           'Mold',
+                           'WH&S',
+                           'Separation',
+                           'Copy Press',
+                           'Pest Damage',
+                           'Rehousing',
+                           'Other',
                          ])
+
+    create_editable_enum('conservation_request_client_type',
+                         [
+                           'Internal',
+                           'External',
+                         ])
+
   end
 end

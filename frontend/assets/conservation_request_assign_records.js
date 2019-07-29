@@ -17,7 +17,7 @@ ConservationRequestAssignRecords.prototype.setupBinds = function() {
 
         var existing_entries = linker.tokenInput('get');
 
-        if (existing_entries.map(function (entry) { return entry.id} ).indexOf(json.uri) >= 0) {
+        if (existing_entries.map(function (entry) { return entry.id } ).indexOf(json.uri) >= 0) {
             return false;
         }
 

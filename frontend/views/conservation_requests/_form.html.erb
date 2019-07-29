@@ -17,8 +17,13 @@
 
       <%= form.label_and_date "date_of_request", :default => Date.today.iso8601 %>
       <%= form.label_and_textfield "requested_by" %>
+      <%= form.label_and_select "requested_for", form.possible_options_for("requested_for", true) %>
       <%= form.label_and_select "reason_requested", form.possible_options_for("reason_requested", true) %>
       <%= form.label_and_textfield "reason_requested_comments" %>
+
+      <%= form.label_and_select "client_type", form.possible_options_for("client_type", true) %>
+      <%= form.label_and_textfield "client_name" %>
+      <%= form.label_and_textfield "client_id" %>
 
       <%= form.label_and_date "date_required_by" %>
     </section>

@@ -16,7 +16,24 @@
         "ifmissing" => "error",
         "dynamic_enum" => "conservation_request_reason"
       },
+
       "reason_requested_comments" => {"type" => "string"},
+
+      "requested_for" => {
+        "type" => "string",
+        "ifmissing" => "error",
+        "dynamic_enum" => "conservation_request_requested_for"
+      },
+
+      "client_type" => {
+        "type" => "string",
+        "ifmissing" => "error",
+        "dynamic_enum" => "conservation_request_client_type"
+      },
+
+      "client_name" => {"type" => "string"},
+      "client_id" => {"type" => "string"},
+
 
       "display_string" => {
         "type" => "string",
