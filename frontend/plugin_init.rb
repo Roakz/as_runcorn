@@ -80,6 +80,19 @@ Rails.application.config.after_initialize do
     )
   )
 
+  Plugins.register_plugin_section(
+    Plugins::PluginSubRecord.new(
+      'as_runcorn',
+      'conservation_treatments',
+      ['physical_representation'],
+      {
+        template_name: 'conservation_treatment',
+        js_edit_template_name: 'template_conservation_treatment',
+        heading_text:  I18n.t('conservation_treatments._plural'),
+      }
+    )
+  )
+
   class RAPSection < Plugins::AbstractPluginSection
     def render_readonly(view_context, record, form_context)
       view_context.render_aspace_partial(
@@ -169,7 +182,8 @@ Rails.application.config.after_initialize do
                              'movements::user',
                              'rap_history',
                              'attached_to',
-                             'rap_history::attached_to'])
+                             'rap_history::attached_to',
+                             'user'])
 
   Plugins.add_facet_group_i18n("representation_intended_use_u_sstr",
                                proc {|facet| "enumerations.runcorn_intended_use.#{facet}" })

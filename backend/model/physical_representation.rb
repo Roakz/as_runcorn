@@ -16,6 +16,7 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
   include RAPsApplied
 
   include ConservationRequests
+  include ConservationTreatments
 
   define_relationship(:name => :representation_approved_by,
                       :json_property => 'approved_by',

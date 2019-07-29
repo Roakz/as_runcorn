@@ -1,0 +1,37 @@
+<% render_aspace_partial :partial => "conservation_treatments/template" %>
+
+<%
+   section_id = "conservation_treatments" if section_id.blank?
+%>
+
+<section id="<%= section_id %>" class="subrecord-form-dummy">
+  <h3><%= I18n.t("conservation_treatment._plural") %></h3>
+  <div class="subrecord-form-container">
+    <div class="panel-group details" id="<%= section_id %>_accordion">
+      <% conservation_treatments.each_with_index do | conservation_treatment, index | %>
+        <div class="panel panel-<% if conservation_treatment['status'] == 'awaiting_treatment' %>default<% elsif conservation_treatment['status'] == 'in_progress'%>warning<% else %>success<% end %>">
+          <div class="panel-heading">
+            <div class="row accordion-toggle collapsed" data-toggle="collapse" data-parent="#<%= section_id %>_accordion" href="#<%= section_id %>_conservation_treatment_<%= index %>">
+              <div class="col-md-12">
+                <span class="glyphicon"></span>
+                <div class="badge badge-info"><%= I18n.t("conservation_treatment._status.#{conservation_treatment['status']}", :default => conservation_treatment['status']) %></div>
+                <div class="pull-right">
+                  <% if conservation_treatment['start_date'] || conservation_treatment['end_date'] %>
+                    <%= conservation_treatment['start_date'] %> - <%= conservation_treatment['end_date'] %>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="<%= section_id %>_conservation_treatment_<%= index %>" class="panel-collapse collapse">
+            <div class="subrecord-form-container">
+              <% context.push("conservation_treatment", conservation_treatment) do %>
+                <% context.emit_template('conservation_treatment') %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>

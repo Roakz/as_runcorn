@@ -1,0 +1,65 @@
+<% define_template "conservation_treatment", jsonmodel_definition(:conservation_treatment) do |form| %>
+  <div class="subrecord-form-fields">
+    <div class="form-group">
+      <%= form.label('status', {}, ['col-sm-2']) %>
+      <div class="col-sm-9 label-only">
+        <% if form.obj['status'] %>
+          <%= I18n.t("conservation_treatment._status.#{form.obj['status']}", :default => form.obj['status']) %>
+        <% else %>
+          <span class="text-muted">-- auto-generated upon save --</span>
+        <% end %>
+      </div>
+    </div>
+
+    <%= form.label_and_textarea "treatment_process", {:field_opts => {:clean => true, :escape => false}} %>
+
+    <%= form.label_and_date "start_date" %>
+    <%= form.label_and_date "end_date" %>
+
+    <%= form.label_and_textarea "materials_used_consumables", {:field_opts => {:clean => true, :escape => false}} %>
+    <%= form.label_and_textarea "materials_used_staff_time", {:field_opts => {:clean => true, :escape => false}} %>
+    <%= form.label_and_textfield "external_reference" %>
+
+    <% if form.readonly? %>
+      <% if form.obj["user"] %>
+        <% token = render_token :object => form.obj["user"]['_resolved'],
+                                :label => form.obj["user"]['_resolved']['title'],
+                                :type => "agent_person",
+                                :uri => form.obj["ref"],
+                                :placement => "top" %>
+        <%= form.label_with_field "user", token, :control_class => 'token-list' %>
+      <% end %>
+    <% else %>
+      <% form.push("user", form.obj["user"] || {}) do %>
+        <div class="form-group">
+          <%= form.label('user', {:for => form.current_id}, ['col-sm-2']) %>
+          <div class="col-sm-9">
+            <div class="form-group">
+              <div class="input-group linker-wrapper">
+                <input type="text" class="linker"
+                       id="<%= form.current_id %>"
+                       data-label="<%= I18n.t("conservation_treatment.user") %>"
+                       data-label_plural="<%= I18n.t("conservation_treatment.user") %>"
+                       data-path="<%= form.path %>"
+                       data-name="ref"
+                       data-url="<%= url_for :controller => :search, :action => :do_search, :format => :json %>"
+                       data-browse-url="<%= url_for :controller => :search, :action => :do_search, :format => :js, :facets => [], :display_identifier => true %>"
+                       data-selected="<%= ASUtils.to_json(form.obj['_resolved']) %>"
+                       data-format_property="display_string"
+                       data-multiplicity="one"
+                       data-types='["agent_with_user"]'
+                  />
+                <div class="input-group-btn">
+                  <a class="btn btn-default dropdown-toggle last" data-toggle="dropdown" href="javascript:void(0);"><span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="javascript:void(0);" class="linker-browse-btn"><%= I18n.t("actions.browse") %></a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

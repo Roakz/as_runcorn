@@ -78,4 +78,13 @@ FactoryBot.define do
     reason_requested_comments { "have a nice day" }
   end
 
+  factory :json_conservation_treatment, class: JSONModel::JSONModel(:conservation_treatment) do
+    start_date { Date.today.iso8601 }
+    end_date { (Date.today + 30).iso8601 }
+    treatment_process { generate(:generic_description) }
+    materials_used_consumables { generate(:generic_description) }
+    materials_used_staff_time { "10 hours" }
+    external_reference { "ark:://location/goes/here" }
+  end
+
 end

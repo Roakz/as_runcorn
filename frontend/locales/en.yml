@@ -313,3 +313,22 @@ en:
 
   representations_requested:
     _plural: Representations Requested
+
+  conservation_treatment:
+    status: Status
+    start_date: Date Commenced
+    end_date: Date Completed
+    treatment_process: Treatment Process
+    materials_used_consumables: Materials Used - Consumables
+    materials_used_staff_time: Materials Used - Staff Time
+    external_reference: External Reference
+    user: Created By
+    _plural: Conservation Treatments
+    _singular: Conservation Treatment
+    _frontend:
+      action:
+        add: Add Conservation Treatment
+    _status:
+      awaiting_treatment: Awaiting treatment
+      in_progress: In progress
+      completed: Completed

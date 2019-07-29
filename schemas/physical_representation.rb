@@ -210,6 +210,13 @@
         }
       },
 
+      "conservation_treatments" => {
+        "type" => "array",
+        "items" => {
+          "type" => "JSONModel(:conservation_treatment) object",
+        },
+      },
+
     },
   },
 }
