@@ -251,4 +251,12 @@ Rails.application.config.after_initialize do
     # never mind
   end
 
+
+  ActiveSupport::Reloader.to_complete do
+    # Make sure our extensions get loaded *after* other files get reloaded
+    Dir.glob(File.join(File.expand_path(File.dirname(__FILE__)), 'controllers/*_ext.rb')).each do |controller_extension|
+      load controller_extension
+    end
+
+  end
 end

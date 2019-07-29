@@ -1,8 +1,8 @@
-class ArchivalObjectsController
-
+ArchivalObjectsController.class_eval do
   # Support 'clone_from_uri' when creating a new archival object
   # and ensure that all readonly properties (and ref_id) are dropped
   # from the source JSONModel.
+
   alias :new_pre_as_runcorn :new
   def new
     if inline? && params[:clone_from_uri]
@@ -16,17 +16,17 @@ class ArchivalObjectsController
 
       hash = source.to_hash(:trusted)
       sanitised_hash = JSONSchemaUtils.map_hash_with_schema(hash, JSONModel(:archival_object).schema,
-                                           [proc { |hash, schema|
-                                             hash = hash.clone
-                                             schema['properties'].each do |name, properties|
-                                               if name == 'ref_id'
-                                                 hash.delete(name)
-                                               elsif properties['readonly'] && name != '_resolved'
-                                                 hash.delete(name)
-                                               end
-                                             end
-                                             hash
-                                           }])
+                                                            [proc { |hash, schema|
+                                                               hash = hash.clone
+                                                               schema['properties'].each do |name, properties|
+                                                                 if name == 'ref_id'
+                                                                   hash.delete(name)
+                                                                 elsif properties['readonly'] && name != '_resolved'
+                                                                   hash.delete(name)
+                                                                 end
+                                                               end
+                                                               hash
+                                                             }])
 
       @archival_object = JSONModel(:archival_object).from_hash(sanitised_hash, false, true)
 
