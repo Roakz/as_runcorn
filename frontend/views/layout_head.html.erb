@@ -31,10 +31,12 @@
 </script>
 
 <script type="text/template" id="browseConservationRequestTemplate">
+  <li class="divider"></li>
   <li><%= link_to I18n.t("conservation_request._plural"), {:controller => :conservation_requests, :action => :index} %></li>
 </script>
 
 <script type="text/template" id="createConservationRequestTemplate">
+  <li class="divider"></li>
   <li><%= link_to I18n.t("conservation_request._singular"), {:controller => :conservation_requests, :action => :new} %></li>
 </script>
 
