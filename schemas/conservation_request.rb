@@ -19,6 +19,14 @@
 
       "reason_requested_comments" => {"type" => "string"},
 
+      "status" => {
+        "type" => "string",
+        "ifmissing" => "error",
+        "dynamic_enum" => "conservation_request_status",
+        "default" => "Draft",
+      },
+
+
       "requested_for" => {
         "type" => "string",
         "ifmissing" => "error",

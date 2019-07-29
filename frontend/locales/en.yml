@@ -213,8 +213,16 @@ en:
   enumeration_names:
     agency_category: Agency Category
 
+  search_sorting: &search_sorting
+    rap_expiry_date_sort_u_ssortdate: RAP Expiry Date
+    conservation_request_status_u_sstr: Status
+    conservation_request_reason_requested_u_sstr: Reason Requested
+    conservation_request_date_of_request_u_ssortdate: Date Of Request
+    conservation_request_required_by_u_ssortdate: Date Required By
+
   search_results:
     filter:
+      << : *search_sorting
       agency_category_u_sstr: Agency Category
       representation_intended_use_u_sstr: Intended Use
       rap_open_access_metadata_u_ssort: Open Metadata?
@@ -281,9 +289,6 @@ en:
     expiry_date: Expiry Date
     expired: Expired?
 
-  search_sorting:
-    rap_expiry_date_sort_u_ssortdate: RAP Expiry Date
-
   conservation_request:
     _singular: Conservation Request
     _plural: Conservation Requests
@@ -296,6 +301,7 @@ en:
     client_type: Client Type
     client_name: Client Name
     client_id: Client ID
+    status: Status
     _frontend:
       messages:
         created: Conservation Request created

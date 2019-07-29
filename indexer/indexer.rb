@@ -93,6 +93,14 @@ class IndexerCommon
     indexer.add_document_prepare_hook do |doc, record|
       if doc['primary_type'] == 'conservation_request'
         doc['title'] = record['record']['display_string']
+        doc['conservation_request_status_u_sstr'] = record['record']['status']
+        doc['conservation_request_reason_requested_u_sstr'] = record['record']['reason_requested']
+
+        doc['conservation_request_date_of_request_u_sstr'] = record['record']['date_of_request']
+        doc['conservation_request_date_of_request_u_ssortdate'] = RuncornIndexing.nullable_date_to_time(record['record']['date_of_request'])
+
+        doc['conservation_request_date_required_by_u_sstr'] = record['record']['date_required_by']
+        doc['conservation_request_date_required_by_u_ssortdate'] = RuncornIndexing.nullable_date_to_time(record['record']['date_required_by'])
       end
 
       # Representations will have the URI of the conservation request(s) they're

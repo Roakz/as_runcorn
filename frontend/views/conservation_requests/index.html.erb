@@ -1,5 +1,23 @@
 <%= setup_context(:title => I18n.t("conservation_request._plural")) %>
 
+<%
+add_column(I18n.t("conservation_request.status"),
+           proc {|record| record.fetch('conservation_request_status_u_sstr')[0]},
+           :sortable => true, :sort_by => 'conservation_request_status_u_sstr')
+
+add_column(I18n.t("conservation_request.reason_requested"),
+           proc {|record| record.fetch('conservation_request_reason_requested_u_sstr')[0]},
+           :sortable => true, :sort_by => 'conservation_request_reason_requested_u_sstr')
+
+add_column(I18n.t("conservation_request.date_of_request"),
+           proc {|record| record.fetch('conservation_request_date_of_request_u_sstr')[0]},
+           :sortable => true, :sort_by => 'conservation_request_date_of_request_u_ssortdate')
+
+add_column(I18n.t("conservation_request.date_required_by"),
+           proc {|record| record.fetch('conservation_request_date_required_by_u_sstr', [])[0]},
+           :sortable => true, :sort_by => 'conservation_request_date_required_by_u_ssortdate')
+%>
+
 <div class="row">
   <div class="col-md-3">
     <div class="sidebar">

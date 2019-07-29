@@ -21,6 +21,7 @@ Sequel.migration do
       DynamicEnum :requested_for_id, :null => false
       DynamicEnum :reason_requested_id, :null => false
       DynamicEnum :client_type_id, :null => false
+      DynamicEnum :status_id, :null => false
 
       String :reason_requested_comments, :null => true
 
@@ -61,7 +62,7 @@ Sequel.migration do
     create_editable_enum('conservation_request_reason',
                          [
                            'Condition',
-                           'Mold',
+                           'Mould',
                            'WH&S',
                            'Separation',
                            'Copy Press',
@@ -75,6 +76,14 @@ Sequel.migration do
                            'Internal',
                            'External',
                          ])
+
+    create_enum('conservation_request_status',
+                [
+                  'Draft',
+                  'Ready For Review',
+                  'Cancelled',
+                  'Assessment Created',
+                ])
 
   end
 end

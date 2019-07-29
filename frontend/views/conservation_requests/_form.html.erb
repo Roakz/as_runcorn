@@ -15,6 +15,10 @@
 
       <% form.obj['requested_by'] ||= current_user %>
 
+      <% if form.readonly? %>
+      <%= form.label_and_textfield "status" %>
+      <% end %>
+
       <%= form.label_and_date "date_of_request", :default => Date.today.iso8601 %>
       <%= form.label_and_textfield "requested_by" %>
       <%= form.label_and_select "requested_for", form.possible_options_for("requested_for", true) %>

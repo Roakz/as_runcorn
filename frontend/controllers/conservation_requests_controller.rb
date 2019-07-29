@@ -15,7 +15,10 @@ class ConservationRequestsController < ApplicationController
       "conservation_request",
       {
         "sort" => "title_sort asc",
-        "facet[]" => Plugins.search_facets_for_type(:conservation_request)
+        "facet[]" => Plugins.search_facets_for_type(:conservation_request) + [
+          'conservation_request_status_u_sstr',
+          'conservation_request_reason_requested_u_sstr',
+        ],
       }.merge(params_for_backend_search)
     )
   end
