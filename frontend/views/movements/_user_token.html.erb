@@ -1,0 +1,5 @@
+<%= render_token :object => user['_resolved'],
+                 :label => user['_resolved']['title'] || user['_resolved']['display_string'],
+                 :type => user['_resolved']['jsonmodel_type'],
+                 :uri => user['ref'],
+                 :placement => "top" %>

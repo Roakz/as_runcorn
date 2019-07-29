@@ -9,6 +9,6 @@ module MovementsHelper
 
     @agent_for_user_uri = user_uri
     json = JSONModel::HTTP.get_json('/users/current-user')
-    @agent_for_user_hash = {'uri' => json['agent_record']['ref'], 'display_string' => json['name']}
+    @agent_for_user_hash = {'uri' => json['agent_record']['ref'], 'display_string' => json['name'], 'jsonmodel_type' => 'agent_person'}
   end
 end
