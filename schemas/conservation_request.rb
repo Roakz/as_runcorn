@@ -47,6 +47,11 @@
         "type" => "string",
         "readonly" => "true",
       },
+
+      "linked_representation_count" => {
+        "type" => "non_negative_integer",
+        "readonly" => "true",
+      },
     },
   },
 }

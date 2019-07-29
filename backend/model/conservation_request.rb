@@ -126,8 +126,18 @@ class ConservationRequest < Sequel::Model(:conservation_request)
   def self.sequel_to_jsonmodel(objs, opts = {})
     jsons = super
 
+    # Produce counts of linked representations
+    linked_representation_counts = self
+      .join(:conservation_request_representations,
+            Sequel.qualify(:conservation_request, :id) => Sequel.qualify(:conservation_request_representations, :conservation_request_id))
+      .filter(Sequel.qualify(:conservation_request, :id) => objs.map(&:id))
+      .group_and_count(Sequel.qualify(:conservation_request_representations, :conservation_request_id))
+      .map {|row| [row[:conservation_request_id], row[:count]]}
+      .to_h
+
     objs.zip(jsons).each do |obj, json|
       json['display_string'] = "CR#{obj.id}"
+      json['linked_representation_count'] = linked_representation_counts.fetch(obj.id, 0)
     end
 
     jsons
