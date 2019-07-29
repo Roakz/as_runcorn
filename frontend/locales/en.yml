@@ -308,6 +308,7 @@ en:
         updated: Conservation Request updated
       action:
         save: Save
+        spawn_assessment: Generate Assessment
       section:
         basic_information: Basic Information
 

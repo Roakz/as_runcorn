@@ -43,94 +43,75 @@
 %>
 
 <% define_template("assessment", jsonmodel_definition(:assessment)) do |form| %>
+  <%= form.hidden_input('conservation_request_id') %>
+
+  <% if form.obj['conservation_request_id'] %>
+    <%= render_aspace_partial :partial => "conservation_requests/linked_records", :locals => { :id => form.obj['conservation_request_id'] } %>
+  <% elsif params[:id] %>
+    <%= render_aspace_partial :partial => "assessments/linked_records", :locals => { :id => params[:id] } %>
+  <% end %>
+
   <section id="basic_information">
     <h3>
       <%= I18n.t "assessment._frontend.section.basic_information" %>
       <%= link_to_help :topic => "assessment_basic_information" %>
     </h3>
-    <fieldset>
-      <% if form.readonly? %>
-        <div class="form-group">
-          <div class="control-label col-sm-2"><%= I18n.t("assessment.records") %></div>
-          <div class="controls token-list col-sm-10">
-            <% form['records'].each do |record| %>
-              <%= render_token :object => record['_resolved'],
-              :label => record['_resolved']['title'] || record['_resolved']['display_string'],
-              :type => record['_resolved']['jsonmodel_type'],
-              :uri => record['ref'],
-              :placement => "top" %>
-            <% end %>
+    <% if form.readonly? %>
+      <div class="form-group">
+        <div class="control-label col-sm-2"><%= I18n.t("assessment.surveyed_by") %></div>
+        <div class="controls token-list col-sm-10">
+          <% form['surveyed_by'].each do |surveyed_by| %>
+            <%= render_token :object => surveyed_by['_resolved'],
+             :label => surveyed_by['_resolved']['title'],
+             :type => surveyed_by['_resolved']['jsonmodel_type'],
+             :uri => surveyed_by['ref'],
+             :placement => "top" %>
+          <% end %>
+        </div>
+      </div>
+    <% else %>
+      <% form.push("surveyed_by", form.obj["surveyed_by"] || []) do %>
+        <div class="form-group required">
+          <%= form.label('surveyed_by', {:for => 'token-input-assessment_surveyed_by_'}, ['col-sm-2']) %>
+          <div class="col-sm-9">
+            <%= render_aspace_partial :partial => "assessments/agent_linker", :locals => {:form => form, :linker_id => 'assessment_surveyed_by_'} %>
           </div>
         </div>
-      <% else %>
-        <% form.push("records", form.obj["records"] || []) do %>
-          <div class="form-group required">
-            <%= form.label('records', {:for => 'token-input-assessment_records_'}, ['col-sm-2']) %>
-            <div class="col-sm-9">
-              <%= render_aspace_partial :partial => "assessments/records_linker", :locals => {:form => form} %>
-            </div>
-          </div>
-        <% end %>
       <% end %>
+    <% end %>
+    <%= form.label_and_date 'survey_begin' %>
+    <%= form.label_and_date 'survey_end' %>
+    <%= form.label_and_textfield 'surveyed_duration' %>
 
-      <hr>
+    <hr>
 
-      <% if form.readonly? %>
+    <%= form.label_and_select 'treatment_priority', form.possible_options_for("treatment_priority", true) %>
+
+    <%= form.label_and_boolean 'review_required' %>
+    <% if form.readonly? %>
+      <div class="form-group">
+        <div class="control-label col-sm-2"><%= I18n.t("assessment.reviewer") %></div>
+        <div class="controls token-list col-sm-10">
+          <% form['reviewer'].each do |reviewer| %>
+            <%= render_token :object => reviewer['_resolved'],
+             :label => reviewer['_resolved']['title'],
+             :type => reviewer['_resolved']['jsonmodel_type'],
+             :uri => reviewer['ref'],
+             :placement => "top" %>
+          <% end %>
+        </div>
+      </div>
+    <% else %>
+      <% form.push("reviewer", form.obj["reviewer"] || []) do %>
         <div class="form-group">
-          <div class="control-label col-sm-2"><%= I18n.t("assessment.surveyed_by") %></div>
-          <div class="controls token-list col-sm-10">
-            <% form['surveyed_by'].each do |surveyed_by| %>
-              <%= render_token :object => surveyed_by['_resolved'],
-              :label => surveyed_by['_resolved']['title'],
-              :type => surveyed_by['_resolved']['jsonmodel_type'],
-              :uri => surveyed_by['ref'],
-              :placement => "top" %>
-            <% end %>
+          <%= form.label('reviewer', {:for => 'token-input-assessment_reviewer_'}, ['col-sm-2']) %>
+          <div class="col-sm-9">
+            <%= render_aspace_partial :partial => "assessments/agent_linker", :locals => {:form => form, :label => I18n.t('assessment._frontend.browse_reviewers'), :linker_id => 'assessment_reviewer_'} %>
           </div>
         </div>
-      <% else %>
-        <% form.push("surveyed_by", form.obj["surveyed_by"] || []) do %>
-          <div class="form-group required">
-            <%= form.label('surveyed_by', {:for => 'token-input-assessment_surveyed_by_'}, ['col-sm-2']) %>
-            <div class="col-sm-9">
-              <%= render_aspace_partial :partial => "assessments/agent_linker", :locals => {:form => form, :linker_id => 'assessment_surveyed_by_'} %>
-            </div>
-          </div>
-        <% end %>
       <% end %>
-      <%= form.label_and_date 'survey_begin' %>
-      <%= form.label_and_date 'survey_end' %>
-      <%= form.label_and_textfield 'surveyed_duration' %>
-
-      <hr>
-
-      <%= form.label_and_select 'treatment_priority', form.possible_options_for("treatment_priority", true) %>
-
-      <%= form.label_and_boolean 'review_required' %>
-      <% if form.readonly? %>
-        <div class="form-group">
-          <div class="control-label col-sm-2"><%= I18n.t("assessment.reviewer") %></div>
-          <div class="controls token-list col-sm-10">
-            <% form['reviewer'].each do |reviewer| %>
-              <%= render_token :object => reviewer['_resolved'],
-              :label => reviewer['_resolved']['title'],
-              :type => reviewer['_resolved']['jsonmodel_type'],
-              :uri => reviewer['ref'],
-              :placement => "top" %>
-            <% end %>
-          </div>
-        </div>
-      <% else %>
-        <% form.push("reviewer", form.obj["reviewer"] || []) do %>
-          <div class="form-group">
-            <%= form.label('reviewer', {:for => 'token-input-assessment_reviewer_'}, ['col-sm-2']) %>
-            <div class="col-sm-9">
-              <%= render_aspace_partial :partial => "assessments/agent_linker", :locals => {:form => form, :label => I18n.t('assessment._frontend.browse_reviewers'), :linker_id => 'assessment_reviewer_'} %>
-            </div>
-          </div>
-        <% end %>
-      <% end %>
-      <%= form.label_and_textarea 'review_note' %>
+    <% end %>
+    <%= form.label_and_textarea 'review_note' %>
 
     </fieldset>
 
@@ -544,3 +525,10 @@
 <% form.emit_template("assessment") %>
 
 <%= form_plugins_for("assessment", form) %>
+
+<script>
+ $(function () {
+   $(".linker:not(.initialised)").linker();
+ });
+</script>
+

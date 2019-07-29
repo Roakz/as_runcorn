@@ -30,6 +30,26 @@ class ConservationRequest < Sequel::Model(:conservation_request)
     end
   end
 
+  # List the refs of all representations attached to this conservation request
+  def assigned_representation_refs
+    refs = []
+    # FIXME: DigitalRepresentation left out for now
+    [PhysicalRepresentation].each do |representation_model|
+      backlink_col = :"#{representation_model.table_name}_id"
+
+      DB.open do |db|
+        refs.concat(db[:conservation_request_representations]
+                      .filter(:conservation_request_id => self.id)
+                      .filter(Sequel.~(backlink_col => nil))
+                      .select(backlink_col)
+                      .map {|row|
+                      representation_model.my_jsonmodel.uri_for(row[backlink_col], :repo_id => RequestContext.get(:repo_id)) })
+      end
+    end
+
+    refs
+  end
+
   def clear_assigned_records(representation_model)
     backlink_col = :"#{representation_model.table_name}_id"
 

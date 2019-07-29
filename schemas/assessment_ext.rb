@@ -2,7 +2,7 @@
   "records" => {
     "type" => "array",
     "ifmissing" => "error",
-    "minItems" => 1,
+    "minItems" => 0,
     "items" => {
       "type" => "object",
       "subtype" => "ref",
@@ -20,4 +20,5 @@
   },
   "external_ids" => {"type" => "array", "items" => {"type" => "JSONModel(:external_id) object"}},
   "treatment_priority" => {"type" => "string", "dynamic_enum" => "runcorn_treatment_priority"},
+  "conservation_request_id" => {"type" => "non_negative_integer"},
 }

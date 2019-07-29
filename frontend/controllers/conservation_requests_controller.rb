@@ -7,7 +7,8 @@ class ConservationRequestsController < ApplicationController
   set_access_control "view_repository" => [:new, :edit, :create, :update,
                                            :index, :show, :linked_representations,
                                            :assign_records_form, :assign_records,
-                                           :clear_assigned_records]
+                                           :clear_assigned_records,
+                                           :spawn_assessment]
 
   def index
     @search_data = Search.for_type(
@@ -80,6 +81,10 @@ class ConservationRequestsController < ApplicationController
     redirect_to(:controller => :conservation_requests, :action => :index, :deleted_uri => conservation_request.uri)
   end
 
+  def spawn_assessment
+    conservation_request = JSONModel(:conservation_request).find(params[:id])
+    redirect_to(:controller => :assessments, :action => :new, :conservation_request_uri => conservation_request.uri)
+  end
 
   def linked_representations
     respond_to do |format|
