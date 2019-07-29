@@ -45,9 +45,24 @@
 <% define_template("assessment", jsonmodel_definition(:assessment)) do |form| %>
   <%= form.hidden_input('conservation_request_id') %>
 
-  <% if form.obj['conservation_request_id'] %>
-    <%= render_aspace_partial :partial => "conservation_requests/linked_records", :locals => { :id => form.obj['conservation_request_id'] } %>
-  <% elsif params[:id] %>
+  <% if controller.action_name == 'new' %>
+    <% if form.obj['conservation_request_id'] %>
+      <%# We are creating an assessment from a conservation request.  Acquire its records %>
+      <%= render_aspace_partial :partial => "conservation_requests/linked_records", :locals => { :id => form.obj['conservation_request_id'] } %>
+    <% else %>
+      <%# Manually filling out this assessment, as before %>
+      <% form.push("records", form.obj["records"] || []) do %>
+        <div class="form-group required">
+          <%= form.label('records', {:for => 'token-input-assessment_records_'}, ['col-sm-2']) %>
+          <div class="col-sm-9">
+            <%= render_aspace_partial :partial => "assessments/records_linker", :locals => {:form => form} %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+
+    <hr>
+  <% else %>
     <%= render_aspace_partial :partial => "assessments/linked_records", :locals => { :id => params[:id] } %>
   <% end %>
 

@@ -6,13 +6,21 @@ module AssessmentFromConservationRequest
 
   module ClassMethods
     def create_from_json(json, opts = {})
-      # Get refs for our linked records and load them all in
-      conservation_request = ConservationRequest.get_or_die(json['conservation_request_id'])
-      json['records'] = conservation_request.assigned_representation_refs.map {|uri|
-        {'ref' => uri}
-      }
+      # If we're creating from a conservation request...
+      if json['conservation_request_id']
+        # Get refs for our linked records and load them all in
+        conservation_request = ConservationRequest.get_or_die(json['conservation_request_id'])
+        json['records'] = conservation_request.assigned_representation_refs.map {|uri|
+          {'ref' => uri}
+        }
+      end
 
       obj = super
+    end
+
+    def sequel_to_jsonmodel(objs, opts = {})
+      # Don't return bajillions of records
+      super(objs, opts.merge(:skip_relationships => [:assessment]))
     end
   end
 

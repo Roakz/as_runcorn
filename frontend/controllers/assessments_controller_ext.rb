@@ -9,7 +9,9 @@ AssessmentsController.class_eval do
     @assessment.survey_begin ||= Date.today.strftime('%Y-%m-%d')
     @assessment_attribute_definitions = AssessmentAttributeDefinitions.find(nil)
 
-    @assessment.conservation_request_id = JSONModel.parse_reference(params[:conservation_request_uri]).fetch(:id)
+    if params[:conservation_request_uri]
+      @assessment.conservation_request_id = JSONModel.parse_reference(params[:conservation_request_uri]).fetch(:id)
+    end
   end
 
   def linked_representations
