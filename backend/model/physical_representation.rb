@@ -112,4 +112,23 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
     ArchivalObject[self.archival_object_id].deaccessioned?
   end
 
+  def self.generate_treatments!(qsa_ids)
+    user = User[:username => RequestContext.get(:current_username)]
+    agent_uri = JSONModel(:agent_person).uri_for(user[:agent_record_id])
+
+    self
+      .filter(:qsa_id => qsa_ids)
+      .select(:id)
+      .each do |row|
+      obj = PhysicalRepresentation[row[:id]]
+      json = PhysicalRepresentation.to_jsonmodel(obj)
+      json['conservation_treatments'] << {
+        'user' => {
+          'ref' => agent_uri
+        }
+      }
+      obj.update_from_json(json)
+    end
+  end
+
 end

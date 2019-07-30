@@ -3,6 +3,8 @@ AssessmentsController.class_eval do
   @permission_mappings.fetch("update_assessment_record") << :from_conservation_request
   @permission_mappings.fetch("update_assessment_record") << :linked_representations
   @permission_mappings.fetch("update_assessment_record") << :csv
+  @permission_mappings["update_resource_record"] ||= []
+  @permission_mappings.fetch("update_resource_record") << :generate_treatments
   set_access_control(@permission_mappings)
 
   def new
@@ -51,4 +53,30 @@ AssessmentsController.class_eval do
     end
   end
 
+  def generate_treatments
+    @assessment = JSONModel(:assessment).find(params[:id])
+    @representation_ids = params[:ids] || ""
+
+    if request.post?
+      if params[:ids].blank?
+        @errors = ['Representation IDs is required']
+      else
+        begin
+          representation_ids = params[:ids].lines.map{|l| l.strip.gsub(/^[a-zA-Z]+/, '')}.reject(&:empty?).map{|id| Integer(id)}
+          response = JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/assessments/#{params[:id]}/generate_treatments",
+                                               {'representation_id[]' => representation_ids})
+          result = ASUtils.json_parse(response.body)
+
+          if result['errors'].blank?
+            flash[:success] = "Treatments successfully created"
+            redirect_to :controller => :assessments, :action => :show, :id => params[:id]
+          else
+            @errors = result['errors']
+          end
+        rescue ArgumentError
+          @errors = ['Representation IDs must be numbers']
+        end
+      end
+    end
+  end
 end
