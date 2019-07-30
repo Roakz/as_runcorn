@@ -237,6 +237,11 @@ en:
       LOW: Low
       MEDIUM: Medium
       HIGH: High
+    runcorn_significance:
+      standard: Standard
+      high: High
+      iconic: Iconic
+      memory_of_the_world: Memory of the World
   enumeration_names:
     runcorn_access_category: Runcorn Plugin - Access Category
     runcorn_access_clearance_procedure: Runcorn Plugin - Runcorn Access Clearance Procedure
@@ -252,3 +257,4 @@ en:
     runcorn_salvage_priority_code: Runcorn Plugin - Runcorn Salvage Priority Code
     runcorn_charge_quantity_unit: Runcorn Plugin - Runcorn Charge Quantity Unit
     runcorn_treatment_priority: Runcorn Plugin - Runcorn Treatment Priority
+    runcorn_significance: Runcorn Plugin - Runcorn Significance

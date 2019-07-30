@@ -56,6 +56,8 @@
 
 <%= form.label_and_textfield "agency_assigned_id" %>
 
+<%= form.label_and_select "significance", form.possible_options_for("significance", true) %>
+
 <% if form.readonly? %>
   <% if form['transfer'] %>
     <% tfr = form['transfer'] %>

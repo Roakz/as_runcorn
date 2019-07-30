@@ -77,7 +77,7 @@
 
       "remarks" => {"type" => "string"},
 
-      "salvage_priority_code" => {"type" => "string", "dynamic_enum" => "runcorn_salvage_priority_code"},
+      "significance" => {"type" => "string", "dynamic_enum" => "runcorn_significance"},
 
       "title" => {"type" => "string", "ifmissing" => "error"},
 

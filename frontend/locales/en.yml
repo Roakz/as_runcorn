@@ -16,6 +16,7 @@ en:
     access_clearance_procedure: Access Clearance Procedure
     disposal_class: Disposal Class
     sensitivity_label: Sensitivity Label
+    significance: Significance
     transfer: Transfer
     approval_date: Approval Date
     approved_by: Approved By
@@ -119,7 +120,7 @@ en:
     physical_description_type: Physical Description Type
     publish: Publish
     remarks: Remarks
-    salvage_priority_code: Salvage Priority Code
+    significance: Significance
     sterilised_status: Sterilised Status
     title: Title
     deaccessioned: This record has been deaccessioned
@@ -156,7 +157,7 @@ en:
     processing_handling_notes: Processing/Handling Notes
     publish: Publish
     remarks: Remarks
-    salvage_priority_code: Salvage Priority Code
+    significance: Significance
     title: Title
     deaccessioned: This record has been deaccessioned
     _plural: Digital Representations
