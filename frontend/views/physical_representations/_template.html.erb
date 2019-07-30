@@ -45,6 +45,9 @@
     <%= form.label_and_boolean "sterilised_status" %>
     <%= form.label_and_boolean "publish" %>
 
+    <%= form.label_and_textfield "monetary_value" %>
+    <%= form.label_and_textarea "monetary_value_note" %>
+
     <%= form.label_and_date "approval_date" %>
     <% if form.readonly? %>
       <% if form['approved_by']  %>

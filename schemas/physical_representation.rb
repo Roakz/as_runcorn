@@ -100,6 +100,9 @@
 
       "title" => {"type" => "string", "ifmissing" => "error"},
 
+      "monetary_value" => {"type" => "string"},
+      "monetary_value_note" => {"type" => "string"},
+
       "controlling_record" => {
         "type" => "object",
         "subtype" => "ref",

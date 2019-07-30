@@ -123,6 +123,8 @@ en:
     sterilised_status: Sterilised Status
     title: Title
     deaccessioned: This record has been deaccessioned
+    monetary_value: Monetary Value
+    monetary_value_note: Monetary Value Note
     _plural: Physical Representations
     _singular: Physical Representation
     _frontend:
