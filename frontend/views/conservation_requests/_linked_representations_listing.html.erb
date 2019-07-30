@@ -4,6 +4,15 @@
   <table id="tabledSearchResults" class="table table-striped table-bordered table-condensed table-hover table-sortable table-search-results">
     <thead>
       <tr>
+        <th class="col sortable <% if @search_data.sorted_by === "controlling_record_series_qsa_id_u_sort"%>sort-<%= @search_data.current_sort_direction %><% end %>">
+          <%= link_to 'Series ID', build_search_params("sort" => @search_data.sort_filter_for("controlling_record_series_qsa_id_u_sort")) %>
+        </th>
+        <th class="col sortable <% if @search_data.sorted_by === "controlling_record_qsa_id_u_sort"%>sort-<%= @search_data.current_sort_direction %><% end %>">
+          <%= link_to 'Record ID', build_search_params("sort" => @search_data.sort_filter_for("controlling_record_qsa_id_u_sort")) %>
+        </th>
+        <th class="col sortable <% if @search_data.sorted_by === "qsa_id_u_sort"%>sort-<%= @search_data.current_sort_direction %><% end %>">
+          <%= link_to 'Representation ID', build_search_params("sort" => @search_data.sort_filter_for("qsa_id_u_sort")) %>
+        </th>
         <th class="col title sortable <% if @search_data.sorted_by === "title_sort"%>sort-<%= @search_data.current_sort_direction %><% end %>">
           <%= link_to title_column_header_label, build_search_params("sort" => @search_data.sort_filter_for("title_sort")) %>
         </th>
@@ -14,7 +23,16 @@
       <% @search_data['results'].each do |result| %>
         <tr data-resolved-record="<%= result['json'] %>">
           <td>
-            <%= [result.dig('qsa_id__u_sint', 0), ''].compact.join(':') %> <%= result['title'] %>
+            <%= result['controlling_record_series_qsa_id_u_ssort'] %>
+          </td>
+          <td>
+            <%= result['controlling_record_qsa_id_u_ssort'] %>
+          </td>
+          <td>
+            <%= result['qsa_id_u_ssort'] %>
+          </td>
+          <td>
+            <%= result['title'] %>
           </td>
           <td class="table-record-actions">
             <div class="btn-group">
