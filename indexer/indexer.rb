@@ -42,6 +42,8 @@ class IndexerCommon
         doc['representation_intended_use_u_sstr'] = record['record']['intended_use']
         doc['top_container_uri_u_sstr'] = record['record'].fetch('container', {}).fetch('ref', nil)
         doc['controlling_record_u_sstr'] = record['record']['controlling_record']['ref']
+        doc['responsible_agency_u_sstr'] = record['record']['responsible_agency']['ref']
+        doc['frequency_of_use_u_sint'] = record['record']['frequency_of_use']
         doc['file_issue_allowed_u_sbool'] = [record['record']['file_issue_allowed'] && !record['record']['deaccessioned']]
       end
     }

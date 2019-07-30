@@ -217,6 +217,10 @@
         },
       },
 
+      "frequency_of_use" => {
+        "type" => "non_negative_integer",
+        "readonly" => "true",
+      },
     },
   },
 }

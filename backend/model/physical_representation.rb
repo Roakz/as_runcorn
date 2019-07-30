@@ -65,6 +65,19 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
   def self.sequel_to_jsonmodel(objs, opts = {})
     jsons = super
 
+    # FUTURE NOTE: Public Access Requests and Exhibitions should be added to the
+    # list of included context_uris once they're implemented.
+    Log.warn("HEY: Currently this query only supports file issues because Public Access Requests and Exhibitions haven't been implemented yet.  Once they exist, find this message and await further instructions.")
+
+    frequency_of_use = Movement
+                         .filter(:physical_representation_id => objs.map(&:id))
+                         .filter(Sequel.|(
+                                   Sequel.like(:context_uri, '/file_issues/%'))
+                                )
+                         .group_and_count(:physical_representation_id)
+                         .map {|row| [row[:physical_representation_id], row[:count]]}
+                         .to_h
+
     controlling_records_by_representation_id = self.build_controlling_record_map(objs)
 
     objs.zip(jsons).each do |obj, json|
@@ -77,6 +90,8 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
       json['recent_responsible_agencies'] = controlling_record.recent_responsible_agencies
 
       json['deaccessioned'] = !json['deaccessions'].empty? || controlling_record.deaccessioned?
+
+      json['frequency_of_use'] = frequency_of_use.fetch(obj.id, 0)
     end
 
     jsons
