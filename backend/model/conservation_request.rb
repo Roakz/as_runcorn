@@ -6,87 +6,70 @@ class ConservationRequest < Sequel::Model(:conservation_request)
 
   ## Representations
 
-  def add_representations(representation_model, *ids)
+  def add_physical_representations(*ids)
     ids = ids.uniq
-    backlink_col = :"#{representation_model.table_name}_id"
 
     DB.open do |db|
       # Clear any existing entries so we don't end up with duplicates
-      db[:conservation_request_representations].filter(backlink_col => ids, :conservation_request_id => self.id).delete
-      db[:conservation_request_representations].multi_insert(ids.map {|id| {backlink_col => id, :conservation_request_id => self.id}})
+      db[:conservation_request_representations].filter(:physical_representation_id => ids, :conservation_request_id => self.id).delete
+      db[:conservation_request_representations].multi_insert(ids.map {|id| {:physical_representation_id => id, :conservation_request_id => self.id}})
 
-      representation_model.update_mtime_for_ids(ids)
+      PhysicalRepresentation.update_mtime_for_ids(ids)
     end
   end
 
-  def remove_representations(representation_model, *ids)
+  def remove_physical_representations(*ids)
     ids = ids.uniq
-    backlink_col = :"#{representation_model.table_name}_id"
 
     DB.open do |db|
-      db[:conservation_request_representations].filter(backlink_col => ids, :conservation_request_id => self.id).delete
+      db[:conservation_request_representations].filter(:physical_representation_id => ids, :conservation_request_id => self.id).delete
 
-      representation_model.update_mtime_for_ids(ids)
+      PhysicalRepresentation.update_mtime_for_ids(ids)
     end
   end
 
   # List the refs of all representations attached to this conservation request
   def assigned_representation_refs
-    refs = []
-    # FIXME: DigitalRepresentation left out for now
-    [PhysicalRepresentation].each do |representation_model|
-      backlink_col = :"#{representation_model.table_name}_id"
-
-      DB.open do |db|
-        refs.concat(db[:conservation_request_representations]
-                      .filter(:conservation_request_id => self.id)
-                      .filter(Sequel.~(backlink_col => nil))
-                      .select(backlink_col)
-                      .map {|row|
-                      representation_model.my_jsonmodel.uri_for(row[backlink_col], :repo_id => RequestContext.get(:repo_id)) })
-      end
+    DB.open do |db|
+      db[:conservation_request_representations]
+        .filter(:conservation_request_id => self.id)
+        .filter(Sequel.~(:physical_representation_id => nil))
+        .select(:physical_representation_id)
+        .map {|row| PhysicalRepresentation.my_jsonmodel.uri_for(row[:physical_representation_id],
+                                                                :repo_id => RequestContext.get(:repo_id))}
     end
-
-    refs
   end
 
-  def clear_assigned_records(representation_model)
-    backlink_col = :"#{representation_model.table_name}_id"
-
+  def clear_assigned_records
     DB.open do |db|
       ids = db[:conservation_request_representations]
               .filter(:conservation_request_id => self.id)
-              .select(backlink_col)
-              .map {|row| row[backlink_col]}
+              .select(:physical_representation_id)
+              .map {|row| row[:physical_representation_id]}
 
       db[:conservation_request_representations]
-        .filter(backlink_col => ids,
+        .filter(:physical_representation_id => ids,
                 :conservation_request_id => self.id)
         .delete
 
-      representation_model.update_mtime_for_ids(ids)
+      PhysicalRepresentation.update_mtime_for_ids(ids)
     end
   end
 
 
   ## Archival objects
 
-  # {PhysicalRepresentation => [id1, id2, id3], DigitalRepresentation => [id1, id2, id3]}
-  def linked_representations(archival_object_ids)
-    result = {
-      PhysicalRepresentation => [],
-      DigitalRepresentation => [],
-    }
+  # Returns a set of physical representation IDs
+  def linked_physical_representations(archival_object_ids)
+    result = []
 
     DB.open do |db|
       queue = archival_object_ids.clone
 
       while !queue.empty?
-        # For this set of IDs, find any attached representations
-        result.keys.each do |representation_type|
-          representation_type.filter(:archival_object_id => queue).select(:id).each do |row|
-            result.fetch(representation_type) << row[:id]
-          end
+        # For this set of IDs, find any attached physical representations
+        PhysicalRepresentation.filter(:archival_object_id => queue).select(:id).each do |row|
+          result << row[:id]
         end
 
         # And continue the search with any children of our AO set
@@ -99,15 +82,11 @@ class ConservationRequest < Sequel::Model(:conservation_request)
 
 
   def add_archival_objects(*archival_object_ids)
-    linked_representations(archival_object_ids).each do |representation_model, ids|
-      self.add_representations(representation_model, *ids)
-    end
+    self.add_physical_representations(*linked_physical_representations(archival_object_ids))
   end
 
   def remove_archival_objects(*archival_object_ids)
-    linked_representations(archival_object_ids).each do |representation_model, ids|
-      self.remove_representations(representation_model, *ids)
-    end
+    self.remove_physical_representations(*linked_physical_representations(archival_object_ids))
   end
 
 
@@ -136,11 +115,11 @@ class ConservationRequest < Sequel::Model(:conservation_request)
   end
 
   def add_top_containers(*top_container_ids)
-    self.add_representations(PhysicalRepresentation, *physical_representations_for_top_containers(top_container_ids))
+    self.add_physical_representations(*physical_representations_for_top_containers(top_container_ids))
   end
 
   def remove_top_containers(*top_container_ids)
-    self.remove_representations(PhysicalRepresentation, *physical_representations_for_top_containers(top_container_ids))
+    self.remove_physical_representations(*physical_representations_for_top_containers(top_container_ids))
   end
 
   def self.sequel_to_jsonmodel(objs, opts = {})
@@ -171,7 +150,7 @@ class ConservationRequest < Sequel::Model(:conservation_request)
       record_ids = type_refs.map {|ref| ref.fetch(:id)}
       case type
           when 'physical_representation'
-            self.add_representations(PhysicalRepresentation, *record_ids)
+            self.add_physical_representations(*record_ids)
           when 'resource'
             self.add_resources(*record_ids)
           when 'archival_object'
@@ -192,7 +171,7 @@ class ConservationRequest < Sequel::Model(:conservation_request)
       record_ids = type_refs.map {|ref| ref.fetch(:id)}
       case type
       when 'physical_representation'
-        self.remove_representations(PhysicalRepresentation, *record_ids)
+        self.remove_physical_representations(*record_ids)
       when 'resource'
         self.remove_resources(*record_ids)
       when 'archival_object'

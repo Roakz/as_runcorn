@@ -170,26 +170,6 @@
           }
         }
       },
-
-      "conservation_requests" => {
-        "readonly" => "true",
-        "type" => "array",
-        "items" => {
-          "type" => "object",
-          "subtype" => "ref",
-          "properties" => {
-            "ref" => {
-              "type" => [{"type" => "JSONModel(:conservation_request) uri"}],
-              "readonly" => "true"
-            },
-            "_resolved" => {
-              "type" => "object",
-              "readonly" => "true"
-            }
-          }
-        }
-      },
-
     },
   },
 }

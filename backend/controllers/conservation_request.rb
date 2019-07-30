@@ -132,7 +132,7 @@ class ArchivesSpaceService < Sinatra::Base
     .returns([200, :updated]) \
   do
     conservation_request = ConservationRequest.get_or_die(params[:id])
-    conservation_request.clear_assigned_records(PhysicalRepresentation)
+    conservation_request.clear_assigned_records
   end
 
 end

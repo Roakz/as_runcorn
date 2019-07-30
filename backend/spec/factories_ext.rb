@@ -74,8 +74,10 @@ FactoryBot.define do
     date_of_request { Date.today.iso8601 }
     date_required_by { (Date.today + 30).iso8601 }
     requested_by { "conservation_request_user" }
-    reason_requested { "nefarious schemes" }
+    reason_requested { "Pest Damage" }
     reason_requested_comments { "have a nice day" }
+    requested_for { "Public Access" }
+    client_type { "Internal" }
   end
 
   factory :json_conservation_treatment, class: JSONModel::JSONModel(:conservation_treatment) do

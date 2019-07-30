@@ -57,16 +57,13 @@ describe 'Runcorn Conservation Requests' do
     ao = ArchivalObject.to_jsonmodel(ao_with_representations.id)
 
     physical_representation = ao.physical_representations.fetch(0)
-    digital_representation = ao.digital_representations.fetch(0)
 
-    conservation_request.add_representations(PhysicalRepresentation, JSONModel.parse_reference(physical_representation.fetch('uri')).fetch(:id))
-    conservation_request.add_representations(DigitalRepresentation, JSONModel.parse_reference(digital_representation.fetch('uri')).fetch(:id))
+    conservation_request.add_physical_representations(JSONModel.parse_reference(physical_representation.fetch('uri')).fetch(:id))
 
     # And now I can see the conservation request on the representations in question
     ao = ArchivalObject.to_jsonmodel(ao_with_representations.id)
 
     expect(ao.physical_representations.dig(0, 'conservation_requests', 0, 'ref')).to eq(conservation_request.uri)
-    expect(ao.digital_representations.dig(0, 'conservation_requests', 0, 'ref')).to eq(conservation_request.uri)
   end
 
   it "accepts all representations under an AO" do
@@ -77,7 +74,6 @@ describe 'Runcorn Conservation Requests' do
     ao = ArchivalObject.to_jsonmodel(ao_with_representations.id)
 
     expect(ao.physical_representations.dig(0, 'conservation_requests', 0, 'ref')).to eq(conservation_request.uri)
-    expect(ao.digital_representations.dig(0, 'conservation_requests', 0, 'ref')).to eq(conservation_request.uri)
   end
 
   it "accepts all representations under a series" do
@@ -87,7 +83,6 @@ describe 'Runcorn Conservation Requests' do
     # conservation request.
     ArchivalObject.to_jsonmodel(ao_with_representations.id).tap do |ao|
       expect(ao.physical_representations.dig(0, 'conservation_requests', 0, 'ref')).to eq(conservation_request.uri)
-      expect(ao.digital_representations.dig(0, 'conservation_requests', 0, 'ref')).to eq(conservation_request.uri)
     end
 
     # And the other top-level AO's representations got them too
@@ -102,10 +97,6 @@ describe 'Runcorn Conservation Requests' do
     ao = ArchivalObject.to_jsonmodel(ao_with_representations.id)
 
     expect(ao.physical_representations.dig(0, 'conservation_requests', 0, 'ref')).to eq(conservation_request.uri)
-
-    # Digital representations aren't in top containers, so this one gets skipped
-    # over.
-    expect(ao.digital_representations.dig(0, 'conservation_requests')).to eq([])
   end
 
   it "lets you remove a series from a conservation request" do
@@ -123,7 +114,6 @@ describe 'Runcorn Conservation Requests' do
     # The representations under the removed AO are no longer linked
     ArchivalObject.to_jsonmodel(ao_with_representations.id).tap do |ao|
       expect(ao.physical_representations.dig(0, 'conservation_requests')).to eq([])
-      expect(ao.digital_representations.dig(0, 'conservation_requests')).to eq([])
     end
 
     # But the top-level AO's representations are right as rain
@@ -137,14 +127,11 @@ describe 'Runcorn Conservation Requests' do
 
     ao = ArchivalObject.to_jsonmodel(ao_with_representations.id)
     physical_representation = ao.physical_representations.fetch(0)
-    conservation_request.remove_representations(PhysicalRepresentation, JSONModel.parse_reference(physical_representation.fetch('uri')).fetch(:id))
+    conservation_request.remove_physical_representations(JSONModel.parse_reference(physical_representation.fetch('uri')).fetch(:id))
 
     ArchivalObject.to_jsonmodel(ao_with_representations.id).tap do |ao|
       # Physical representation gone
       expect(ao.physical_representations.dig(0, 'conservation_requests')).to eq([])
-
-      # But our digital representation is still at large
-      expect(ao.digital_representations.dig(0, 'conservation_requests', 0, 'ref')).to eq(conservation_request.uri)
     end
   end
 
@@ -157,9 +144,5 @@ describe 'Runcorn Conservation Requests' do
     # The physical representation is gone because it was in the removed top
     # container
     expect(ao.physical_representations.dig(0, 'conservation_requests')).to eq([])
-
-    # The digital representation is still there because it wasn't in the
-    # container.
-    expect(ao.digital_representations.dig(0, 'conservation_requests', 0, 'ref')).to eq(conservation_request.uri)
   end
 end
