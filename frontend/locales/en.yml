@@ -309,6 +309,7 @@ en:
       action:
         save: Save
         spawn_assessment: Generate Assessment
+        assign_records: Assign Records
       section:
         basic_information: Basic Information
 

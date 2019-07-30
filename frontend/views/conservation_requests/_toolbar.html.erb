@@ -9,7 +9,7 @@
     </div>
     <div class="pull-right">
       <div class="btn-group">
-        <%= link_to "Assign records", {:controller => :conservation_requests, :action => :assign_records_form, :id => @conservation_request.id}, :class => "btn btn-sm btn-primary" %>
+        <%= link_to I18n.t("conservation_request._frontend.action.assign_records"), {:controller => :conservation_requests, :action => :assign_records_form, :id => @conservation_request.id}, :class => "btn btn-sm btn-primary" %>
       </div>
 
       <% if @conservation_request.linked_representation_count > 0 %>
