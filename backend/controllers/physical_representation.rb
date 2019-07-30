@@ -10,19 +10,6 @@ class ArchivesSpaceService < Sinatra::Base
     handle_listing(PhysicalRepresentation, params)
   end
 
-  Endpoint.get('/repositories/:repo_id/physical_representations/:id')
-    .description("Get an Accession by ID")
-    .params(["id", :id],
-            ["repo_id", :repo_id],
-            ["resolve", :resolve])
-    .permissions([:view_repository])
-    .returns([200, "(:accession)"]) \
-  do
-    json = PhysicalRepresentation.to_jsonmodel(params[:id])
-
-    json_response(resolve_references(json, params[:resolve]))
-  end
-
   Endpoint.get('/repositories/:repo_id/physical_representations/backlink_uri/:physical_representation_id')
     .description("Get a ref for the record containing a given physical representation")
     .params(["repo_id", :repo_id],
