@@ -113,6 +113,20 @@
         }
       },
 
+      "controlling_record_series" => {
+        "type" => "object",
+        "subtype" => "ref",
+        "readonly" => "true",
+        "properties" => {
+          "ref" => {"type" => [{"type" => "JSONModel(:resource) uri"}],
+                    "ifmissing" => "error"},
+          "_resolved" => {
+            "type" => "object",
+            "readonly" => "true"
+          }
+        }
+      },
+
       "responsible_agency" => {
         "type" => "object",
         "subtype" => "ref",

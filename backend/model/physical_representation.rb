@@ -86,6 +86,7 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
 
       controlling_record = controlling_records_by_representation_id.fetch(obj.id)
       json['controlling_record'] = { 'ref' => controlling_record.uri }
+      json['controlling_record_series'] = { 'ref' => JSONModel(:resource).uri_for(controlling_record.root_record_id, :repo_id => controlling_record.repo_id) }
       json['responsible_agency'] = { 'ref' => controlling_record.responsible_agency }
       json['recent_responsible_agencies'] = controlling_record.recent_responsible_agencies
 
