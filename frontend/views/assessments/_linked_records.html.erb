@@ -2,7 +2,13 @@
 
 <section id="representations_requested" class="subrecord-form-dummy">
     <h3><%= I18n.t('representations_requested._plural') %></h3>
+    <div>
     <div class="subrecord-form-container">
+        <div class="pull-right">
+            <%= link_to I18n.t("conservation_request._frontend.action.csv_download"), {:controller => :assessments, :action => :csv, :id => params[:id]}, :class => "btn btn-sm btn-default" %>
+        </div>
+        <div class="clearfix"></div>
+
         <div class="subrecord-form-fields embedded-search" data-url="<%= ajax_search_url %>">
             <div class="alert alert-info">Loading...</div>
         </div>

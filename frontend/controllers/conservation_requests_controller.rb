@@ -8,7 +8,7 @@ class ConservationRequestsController < ApplicationController
                                            :index, :show, :linked_representations,
                                            :assign_records_form, :assign_records,
                                            :clear_assigned_records,
-                                           :spawn_assessment]
+                                           :spawn_assessment, :csv]
 
   def index
     @search_data = Search.for_type(
@@ -111,6 +111,21 @@ class ConservationRequestsController < ApplicationController
     JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/conservation_requests/#{params[:id]}/clear_assigned_records")
 
     redirect_to(:controller => :conservation_requests, :action => :assign_records_form)
+  end
+
+
+  def csv
+    self.response.headers['Content-Type'] = 'text/csv'
+    self.response.headers['Content-Disposition'] = "attachment; filename=cr#{params[:id]}.csv"
+    self.response.headers['Last-Modified'] = Time.now.ctime
+
+    self.response_body = Enumerator.new do |stream|
+      JSONModel::HTTP.stream("/repositories/#{session[:repo_id]}/conservation_requests/#{params[:id]}/csv") do |response|
+        response.read_body do |chunk|
+          stream << chunk
+        end
+      end
+    end
   end
 
 

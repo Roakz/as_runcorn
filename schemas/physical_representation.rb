@@ -46,12 +46,12 @@
         "subtype" => "ref",
         "properties" => {
           "ref" => {"type" => "JSONModel(:top_container) uri",
-                    "ifmissing" => "error",},
-        },
-        "_resolved" => {
+                    "ifmissing" => "error"},
+          "_resolved" => {
             "type" => "object",
             "readonly" => "true",
           }
+        }
       },
 
       "deaccessions" => {"type" => "array", "items" => {"type" => "JSONModel(:deaccession) object"}},

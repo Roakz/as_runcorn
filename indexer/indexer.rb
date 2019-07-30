@@ -15,6 +15,7 @@ class IndexerCommon
   @@record_types << :chargeable_item
   @@record_types << :conservation_request
 
+  add_attribute_to_resolve('container')
   add_attribute_to_resolve('controlling_record')
   add_attribute_to_resolve('controlling_record_series')
   add_attribute_to_resolve('responsible_agency')
@@ -44,14 +45,19 @@ class IndexerCommon
       if doc['primary_type'] == 'physical_representation'
         doc['title'] = record['record']['display_string']
         doc['representation_intended_use_u_sstr'] = record['record']['intended_use']
+
         doc['top_container_uri_u_sstr'] = record['record'].fetch('container', {}).fetch('ref', nil)
+
+        doc['top_container_title_u_sstr'] = record.dig('record', 'container', '_resolved', 'display_string')
+        doc['top_container_location_u_sstr'] = record.dig('record', 'container', '_resolved', 'current_location')
+
         doc['controlling_record_u_sstr'] = record['record']['controlling_record']['ref']
         doc['responsible_agency_u_sstr'] = record['record']['responsible_agency']['ref']
         doc['frequency_of_use_u_sint'] = record['record']['frequency_of_use']
         doc['file_issue_allowed_u_sbool'] = [record['record']['file_issue_allowed'] && !record['record']['deaccessioned']]
 
         doc['responsible_agency_title_u_sstr'] = record.dig('record', 'responsible_agency', '_resolved', 'display_name', 'sort_name')
-        doc['responsible_agency_qsa_id_u_sstr'] = record.dig('record', 'responsible_agency', '_resolved', 'qsa_id')
+        doc['responsible_agency_qsa_id_u_sstr'] = record.dig('record', 'responsible_agency', '_resolved', 'qsa_id_prefixed')
 
         doc['controlling_record_qsa_id_u_sint'] = record['record']['controlling_record']['_resolved']['qsa_id']
         doc['controlling_record_qsa_id_u_sort'] = record['record']['controlling_record']['_resolved']['qsa_id'].to_s.rjust(9, '0')

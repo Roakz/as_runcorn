@@ -16,6 +16,10 @@
         <div class="btn-group">
           <%= link_to I18n.t("conservation_request._frontend.action.spawn_assessment"), {:controller => :conservation_requests, :action => :spawn_assessment, :id => @conservation_request.id}, :class => "btn btn-sm btn-primary" %>
         </div>
+
+        <div class="btn-group">
+          <%= link_to I18n.t("conservation_request._frontend.action.csv_download"), {:controller => :conservation_requests, :action => :csv, :id => @conservation_request.id}, :class => "btn btn-sm btn-default" %>
+        </div>
       <% end %>
     </div>
 

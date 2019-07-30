@@ -135,4 +135,21 @@ class ArchivesSpaceService < Sinatra::Base
     conservation_request.clear_assigned_records
   end
 
+
+  Endpoint.get('/repositories/:repo_id/conservation_requests/:id/csv')
+    .description("Download conservation request as a CSV document")
+    .params(["repo_id", :repo_id],
+            ["id", :id])
+    .permissions([])
+    .returns([200, "(csv)"]) \
+  do
+    conservation_request = ConservationRequest.get_or_die(params[:id])
+
+    [
+      200,
+      {"Content-Type" => "text/csv"},
+      ConservationCSV.for_refs(conservation_request.assigned_representation_refs).to_enum(:each_chunk)
+    ]
+  end
+
 end

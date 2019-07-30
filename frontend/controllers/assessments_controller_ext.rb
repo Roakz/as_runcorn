@@ -2,6 +2,7 @@ AssessmentsController.class_eval do
 
   @permission_mappings.fetch("update_assessment_record") << :from_conservation_request
   @permission_mappings.fetch("update_assessment_record") << :linked_representations
+  @permission_mappings.fetch("update_assessment_record") << :csv
   set_access_control(@permission_mappings)
 
   def new
@@ -36,5 +37,18 @@ AssessmentsController.class_eval do
     end
   end
 
+  def csv
+    self.response.headers['Content-Type'] = 'text/csv'
+    self.response.headers['Content-Disposition'] = "attachment; filename=assessment_#{params[:id]}.csv"
+    self.response.headers['Last-Modified'] = Time.now.ctime
+
+    self.response_body = Enumerator.new do |stream|
+      JSONModel::HTTP.stream("/repositories/#{session[:repo_id]}/assessments/#{params[:id]}/csv") do |response|
+        response.read_body do |chunk|
+          stream << chunk
+        end
+      end
+    end
+  end
 
 end

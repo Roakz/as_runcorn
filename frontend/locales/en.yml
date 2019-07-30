@@ -314,6 +314,7 @@ en:
         save: Save
         spawn_assessment: Generate Assessment
         assign_records: Assign Records
+        csv_download: Download CSV
       section:
         basic_information: Basic Information
 
