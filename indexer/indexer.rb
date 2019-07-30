@@ -17,6 +17,7 @@ class IndexerCommon
 
   add_attribute_to_resolve('controlling_record')
   add_attribute_to_resolve('controlling_record_series')
+  add_attribute_to_resolve('responsible_agency')
 
   def self.build_recent_agency_filter(recent_agencies)
     result = []
@@ -49,10 +50,16 @@ class IndexerCommon
         doc['frequency_of_use_u_sint'] = record['record']['frequency_of_use']
         doc['file_issue_allowed_u_sbool'] = [record['record']['file_issue_allowed'] && !record['record']['deaccessioned']]
 
+        doc['responsible_agency_title_u_sstr'] = record.dig('record', 'responsible_agency', '_resolved', 'display_name', 'sort_name')
+        doc['responsible_agency_qsa_id_u_sstr'] = record.dig('record', 'responsible_agency', '_resolved', 'qsa_id')
+
         doc['controlling_record_qsa_id_u_sint'] = record['record']['controlling_record']['_resolved']['qsa_id']
         doc['controlling_record_qsa_id_u_sort'] = record['record']['controlling_record']['_resolved']['qsa_id'].to_s.rjust(9, '0')
         doc['controlling_record_qsa_id_u_ssort'] = record['record']['controlling_record']['_resolved']['qsa_id_prefixed']
         doc['controlling_record_display_string_u_ssort'] = record['record']['controlling_record']['_resolved']['display_string']
+
+        doc['controlling_record_begin_date_u_ssort'] = record.dig('record', 'controlling_record', '_resolved', 'dates', 0, 'begin')
+        doc['controlling_record_end_date_u_ssort'] = record.dig('record', 'controlling_record', '_resolved', 'dates', 0, 'end')
 
         doc['controlling_record_series_qsa_id_u_sint'] = record['record']['controlling_record_series']['_resolved']['qsa_id']
         doc['controlling_record_series_qsa_id_u_sort'] = record['record']['controlling_record_series']['_resolved']['qsa_id'].to_s.rjust(9, '0')
