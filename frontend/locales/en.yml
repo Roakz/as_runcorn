@@ -332,6 +332,7 @@ en:
     materials_used_staff_time: Materials Used - Staff Time
     external_reference: External Reference
     user: Created By
+    assessment: Assessment
     _plural: Conservation Treatments
     _singular: Conservation Treatment
     _frontend:

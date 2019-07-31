@@ -13,6 +13,11 @@ class ConservationTreatment < Sequel::Model(:conservation_treatment)
                       :contains_references_to_types => proc {[AgentPerson]},
                       :is_array => false)
 
+  define_relationship(:name => :conservation_treatment_assessment,
+                      :json_property => 'assessment',
+                      :contains_references_to_types => proc {[Assessment]},
+                      :is_array => false)
+
   def self.create_from_json(json, opts = {})
     super(json, opts.merge(:status => calculate_status(json)))
   end

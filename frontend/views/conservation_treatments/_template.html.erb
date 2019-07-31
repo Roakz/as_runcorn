@@ -25,7 +25,7 @@
         <% token = render_token :object => form.obj["user"]['_resolved'],
                                 :label => form.obj["user"]['_resolved']['title'],
                                 :type => "agent_person",
-                                :uri => form.obj["ref"],
+                                :uri => form.obj["user"]["ref"],
                                 :placement => "top" %>
         <%= form.label_with_field "user", token, :control_class => 'token-list' %>
       <% end %>
@@ -48,6 +48,48 @@
                        data-format_property="display_string"
                        data-multiplicity="one"
                        data-types='["agent_with_user"]'
+                  />
+                <div class="input-group-btn">
+                  <a class="btn btn-default dropdown-toggle last" data-toggle="dropdown" href="javascript:void(0);"><span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="javascript:void(0);" class="linker-browse-btn"><%= I18n.t("actions.browse") %></a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+
+    <% if form.readonly? %>
+      <% if form.obj["assessment"] %>
+        <% token = render_token :object => form.obj["assessment"]['_resolved'],
+                                :label => form.obj["assessment"]['_resolved']['display_string'],
+                                :type => "assessment",
+                                :uri => form.obj["assessment"]["ref"],
+                                :placement => "top" %>
+        <%= form.label_with_field "assessment", token, :control_class => 'token-list' %>
+      <% end %>
+    <% else %>
+      <% form.push("assessment", form.obj["assessment"] || {}) do %>
+        <div class="form-group">
+          <%= form.label('assessment', {:for => form.current_id}, ['col-sm-2']) %>
+          <div class="col-sm-9">
+            <div class="form-group">
+              <div class="input-group linker-wrapper">
+                <input type="text" class="linker"
+                       id="<%= form.current_id %>"
+                       data-label="<%= I18n.t("conservation_treatment.assessment") %>"
+                       data-label_plural="<%= I18n.t("conservation_treatment.assessment") %>"
+                       data-path="<%= form.path %>"
+                       data-name="ref"
+                       data-url="<%= url_for :controller => :search, :action => :do_search, :format => :json %>"
+                       data-browse-url="<%= url_for :controller => :search, :action => :do_search, :format => :js, :facets => [], :display_identifier => true %>"
+                       data-selected="<%= ASUtils.to_json(form.obj['_resolved']) %>"
+                       data-format_property="display_string"
+                       data-multiplicity="one"
+                       data-types='["assessment"]'
                   />
                 <div class="input-group-btn">
                   <a class="btn btn-default dropdown-toggle last" data-toggle="dropdown" href="javascript:void(0);"><span class="caret"></span></a>

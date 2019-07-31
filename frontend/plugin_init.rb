@@ -183,7 +183,8 @@ Rails.application.config.after_initialize do
                              'rap_history',
                              'attached_to',
                              'rap_history::attached_to',
-                             'user'])
+                             'user',
+                             'assessment'])
 
   Plugins.add_facet_group_i18n("representation_intended_use_u_sstr",
                                proc {|facet| "enumerations.runcorn_intended_use.#{facet}" })

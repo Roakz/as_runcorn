@@ -29,6 +29,21 @@
           }
         }
       },
+
+      "assessment" => {
+        "type" => "object",
+        "subtype" => "ref",
+        "properties" => {
+          "ref" => {
+            "type" => [{"type" => "JSONModel(:assessment) uri"}],
+            "ifmissing" => "error"
+          },
+          "_resolved" => {
+            "type" => "object",
+            "readonly" => "true"
+          }
+        }
+      },
     },
   },
 }
