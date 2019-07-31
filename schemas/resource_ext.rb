@@ -21,6 +21,8 @@
   "physical_representations_count" => {"type"=> "number", "readonly" => "true"},
   "digital_representations_count" => {"type"=> "number", "readonly" => "true"},
 
+  "significant_representations_counts" => {"type"=> "object", "readonly" => "true"},
+
   "all_existence_dates_range" => {"type"=> "string", "readonly" => "true"},
 
   "deaccessioned" => {"type" => "boolean", "readonly" => "true"},
