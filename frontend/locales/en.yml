@@ -299,6 +299,7 @@ en:
   conservation_request:
     _singular: Conservation Request
     _plural: Conservation Requests
+    assessment: Assessment
     date_of_request: Date of Request
     requested_by: Requested By
     reason_requested: Reason Requested
@@ -313,9 +314,12 @@ en:
       messages:
         created: Conservation Request created
         updated: Conservation Request updated
+        deleted: Conservation Request deleted
       action:
         save: Save
         spawn_assessment: Generate Assessment
+        submit_for_review: Submit For Review
+        revert_to_draft: Revert To Draft
         assign_records: Assign Records
         csv_download: Download CSV
       section:

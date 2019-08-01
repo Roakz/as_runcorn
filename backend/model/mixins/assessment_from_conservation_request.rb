@@ -2,6 +2,10 @@ module AssessmentFromConservationRequest
 
   def self.included(base)
     base.extend(ClassMethods)
+
+    base.define_relationship(:name => :conservation_request_assessment,
+                             :contains_references_to_types => proc {[ConservationRequest]},
+                             :is_array => false)
   end
 
   module ClassMethods
@@ -16,6 +20,16 @@ module AssessmentFromConservationRequest
       end
 
       obj = super
+
+      if json['conservation_request_id']
+        # Set the status of the conservation request
+        conservation_request_json = ConservationRequest.to_jsonmodel(conservation_request)
+        conservation_request_json.status = 'Assessment Created'
+        conservation_request_json.assessment = {'ref' => obj.uri}
+        conservation_request.update_from_json(conservation_request_json)
+      end
+
+      obj
     end
 
     def sequel_to_jsonmodel(objs, opts = {})

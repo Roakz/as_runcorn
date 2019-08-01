@@ -42,6 +42,25 @@ Sequel.migration do
       add_foreign_key([:physical_representation_id], :physical_representation, :key => :id)
     end
 
+
+    create_table(:conservation_request_assessment_rlshp) do
+      primary_key :id
+
+      Integer :conservation_request_id
+      Integer :assessment_id
+
+      Integer :suppressed, :default => 0
+      Integer :aspace_relationship_position
+
+      apply_mtime_columns(false)
+    end
+
+    alter_table(:conservation_request_assessment_rlshp) do
+      add_foreign_key([:conservation_request_id], :conservation_request, :key => :id)
+      add_foreign_key([:assessment_id], :assessment, :key => :id)
+    end
+
+
     create_editable_enum('conservation_request_requested_for',
                          [
                            'Public Access',

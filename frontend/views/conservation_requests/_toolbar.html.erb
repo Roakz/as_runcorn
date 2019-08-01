@@ -8,17 +8,43 @@
       <%= link_to I18n.t("actions.edit"), {:controller => :conservation_requests, :action => :edit, :id => @conservation_request.id}, :class => "btn btn-sm btn-primary" %>
     </div>
     <div class="pull-right">
-      <div class="btn-group">
-        <%= link_to I18n.t("conservation_request._frontend.action.assign_records"), {:controller => :conservation_requests, :action => :assign_records_form, :id => @conservation_request.id}, :class => "btn btn-sm btn-primary" %>
-      </div>
+      <%# Drafts with records can be submitted for review %>
+      <% if @conservation_request.status == 'Draft' && @conservation_request.linked_representation_count > 0 %>
+        <div class="btn-group">
+          <%= form_tag({:controller => :conservation_requests, :action => :submit_for_review}) do |f| %>
+            <button class="btn btn-sm btn-primary"><%= I18n.t("conservation_request._frontend.action.submit_for_review") %></button>
+          <% end %>
+        </div>
+      <% end %>
 
-      <% if @conservation_request.linked_representation_count > 0 %>
+      <%# Ready for review requests can have assessments created %>
+      <% if @conservation_request.status == 'Ready For Review' %>
         <div class="btn-group">
           <%= link_to I18n.t("conservation_request._frontend.action.spawn_assessment"), {:controller => :conservation_requests, :action => :spawn_assessment, :id => @conservation_request.id}, :class => "btn btn-sm btn-primary" %>
         </div>
 
         <div class="btn-group">
+          <%= form_tag({:controller => :conservation_requests, :action => :revert_to_draft}) do |f| %>
+            <button class="btn btn-sm btn-primary"><%= I18n.t("conservation_request._frontend.action.revert_to_draft") %></button>
+          <% end %>
+        </div>
+
+      <% end %>
+
+      <% if @conservation_request.linked_representation_count > 0 %>
+        <div class="btn-group">
           <%= link_to I18n.t("conservation_request._frontend.action.csv_download"), {:controller => :conservation_requests, :action => :csv, :id => @conservation_request.id}, :class => "btn btn-sm btn-default" %>
+        </div>
+      <% end %>
+
+    <%# Drafts can have records assigned or be deleted %>
+      <% if @conservation_request.status == 'Draft' %>
+        <div class="btn-group">
+          <%= link_to I18n.t("conservation_request._frontend.action.assign_records"), {:controller => :conservation_requests, :action => :assign_records_form, :id => @conservation_request.id}, :class => "btn btn-sm btn-primary" %>
+        </div>
+
+        <div class="btn-group">
+          <%= button_delete_action url_for(:controller => :conservation_requests, :action => :delete, :id => @conservation_request.id), { :"data-title" => I18n.t("actions.delete_confirm_title", :title => @conservation_request.display_string) } %>
         </div>
       <% end %>
     </div>
@@ -32,12 +58,5 @@
     </div>
   <% end %>
 
-  <div class="btn-group btn-toolbar pull-right">
-    <% if user_can?('delete_conservation_request_record') %>
-      <div class="btn btn-inline-form">
-        <%= button_delete_action url_for(:controller => :conservation_requests, :action => :delete, :id => @conservation_request.id), { :"data-title" => I18n.t("actions.delete_confirm_title", :title => @conservation_request.display_string) } %>
-      </div>
-    <% end %>
-  </div>
   <div class="clearfix"></div>
 </div>

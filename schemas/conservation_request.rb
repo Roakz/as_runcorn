@@ -26,6 +26,19 @@
         "default" => "Draft",
       },
 
+      "assessment" => {
+        "type" => "object",
+        "subtype" => "ref",
+        "properties" => {
+          "ref" => {
+            "type" => [{"type" => "JSONModel(:assessment) uri"}],
+          },
+          "_resolved" => {
+            "type" => "object",
+            "readonly" => "true"
+          }
+        }
+      },
 
       "requested_for" => {
         "type" => "string",

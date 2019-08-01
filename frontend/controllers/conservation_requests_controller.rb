@@ -4,11 +4,14 @@ class ConservationRequestsController < ApplicationController
 
   # FIXME: Who should be able to create/edit conservation requests?  Assuming
   # any logged in user here.
-  set_access_control "view_repository" => [:new, :edit, :create, :update,
+  set_access_control "view_repository" => [:new, :edit, :create, :update, :delete,
                                            :index, :show, :linked_representations,
                                            :assign_records_form, :assign_records,
                                            :clear_assigned_records,
-                                           :spawn_assessment, :csv]
+                                           :submit_for_review,
+                                           :revert_to_draft,
+                                           :spawn_assessment,
+                                           :csv]
 
   def index
     @search_data = Search.for_type(
@@ -62,9 +65,15 @@ class ConservationRequestsController < ApplicationController
   end
 
   def update
+    obj = JSONModel(:conservation_request).find(params[:id])
+
+    # No updating status or linked assessment from the edit form
+    params[:conservation_request]['status'] = obj.status
+    params[:conservation_request]['assessment'] = obj.assessment
+
     handle_crud(:instance => :conservation_request,
                 :model => JSONModel(:conservation_request),
-                :obj => JSONModel(:conservation_request).find(params[:id]),
+                :obj => obj,
                 :on_invalid => ->(){ return render :action => :edit },
                 :on_valid => ->(id){
                   flash[:success] = I18n.t("conservation_request._frontend.messages.updated")
@@ -85,6 +94,24 @@ class ConservationRequestsController < ApplicationController
     conservation_request = JSONModel(:conservation_request).find(params[:id])
     redirect_to(:controller => :assessments, :action => :new, :conservation_request_uri => conservation_request.uri)
   end
+
+  def submit_for_review
+    conservation_request = JSONModel(:conservation_request).find(params[:id])
+    conservation_request.status = 'Ready For Review'
+    conservation_request.save
+
+    redirect_to(:controller => :conservation_requests, :action => :show, :id => params[:id])
+  end
+
+  def revert_to_draft
+    conservation_request = JSONModel(:conservation_request).find(params[:id])
+    conservation_request.status = 'Draft'
+    conservation_request.save
+
+    redirect_to(:controller => :conservation_requests, :action => :show, :id => params[:id])
+  end
+
+
 
   def linked_representations
     respond_to do |format|

@@ -16,7 +16,20 @@
       <% form.obj['requested_by'] ||= current_user %>
 
       <% if form.readonly? %>
-      <%= form.label_and_textfield "status" %>
+        <%= form.label_and_textfield "status" %>
+
+        <% if form.obj['assessment'] %>
+          <div class="token-list">
+            <% token = render_token(:object => form.obj['assessment']['_resolved'],
+                                    :label => "Assessment #{form.obj['assessment']['_resolved']['display_string']}",
+                                    :type => 'assessment',
+                                    :uri => form.obj['assessment']['ref'],
+                                    :placement => "top",
+                                    :inside_linker_browse => true) %>
+
+            <%= form.label_with_field "assessment", token %>
+        <% end %>
+
       <% end %>
 
       <%= form.label_and_date "date_of_request", :default => Date.today.iso8601 %>

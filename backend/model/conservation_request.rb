@@ -4,6 +4,11 @@ class ConservationRequest < Sequel::Model(:conservation_request)
 
   set_model_scope :repository
 
+  define_relationship(:name => :conservation_request_assessment,
+                      :json_property => 'assessment',
+                      :contains_references_to_types => proc {[Assessment]},
+                      :is_array => false)
+
   ## Representations
 
   def add_physical_representations(*ids)
@@ -56,6 +61,14 @@ class ConservationRequest < Sequel::Model(:conservation_request)
     end
   end
 
+
+  def self.handle_delete(ids_to_delete)
+    DB.open do |db|
+      db[:conservation_request_representations].filter(:conservation_request_id => ids_to_delete).delete
+    end
+
+    super
+  end
 
   ## Archival objects
 
@@ -124,6 +137,14 @@ class ConservationRequest < Sequel::Model(:conservation_request)
 
   def self.sequel_to_jsonmodel(objs, opts = {})
     jsons = super
+
+    # Fun edge case: if a linked assessment is deleted, then force our status
+    # back to Ready For Review
+    jsons.each do |json|
+      if json.status == 'Assessment Created' && !json.assessment
+        json.status = 'Ready For Review'
+      end
+    end
 
     # Produce counts of linked representations
     linked_representation_counts = self
