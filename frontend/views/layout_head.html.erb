@@ -177,3 +177,23 @@
     </div>
   </script>
 <% end %>
+
+<% if controller_supports_current_record? && current_record && current_record.jsonmodel_type == 'assessment' %>
+  <%= javascript_include_tag 'runcorn_assessments' %>
+  <script type="text/template" id="runcornAssessmentGenerateTreatmentsWorkflowTemplate">
+    <div>
+      <div class="modal-body">
+        Loading...
+      </div>
+      <div class="modal-footer">
+        <button id="confirmGenerateTreatmentsButton" class="btn btn-primary" disabled>Generate Treatments</button>
+        <button class="btn btn-cancel btn-default" data-dismiss="modal"><%= I18n.t "actions.cancel" %></button>
+      </div>
+    </div>
+  </script>
+  <script>
+      $(document).on('loadedrecordform.aspace', function(event, $container) {
+          new RuncornRAPs($container);
+      });
+  </script>
+<% end %>

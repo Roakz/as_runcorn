@@ -56,27 +56,56 @@ AssessmentsController.class_eval do
   def generate_treatments
     @assessment = JSONModel(:assessment).find(params[:id])
     @representation_ids = params[:ids] || ""
+    @errors = []
 
     if request.post?
       if params[:ids].blank?
-        @errors = ['Representation IDs is required']
+        @errors = ['Representation IDs are required']
       else
-        begin
-          representation_ids = params[:ids].lines.map{|l| l.strip.gsub(/^[a-zA-Z]+/, '')}.reject(&:empty?).map{|id| Integer(id)}
+        representation_ids = []
+        invalid_ids = []
+        params[:ids].lines.each do |line|
+          stripped = line.strip
+          next if stripped.empty?
+          begin
+           representation_ids << parse_representation_id(stripped)
+          rescue
+            invalid_ids << stripped
+          end
+        end
+
+        if invalid_ids.length > 0
+          @errors = ["Please provide valid Representation IDs - invalid IDs found: #{invalid_ids.join(', ')}"]
+        elsif representation_ids.empty?
+          @errors = ['Representation IDs are required']
+        else
           response = JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/assessments/#{params[:id]}/generate_treatments",
                                                {'representation_id[]' => representation_ids})
           result = ASUtils.json_parse(response.body)
 
-          if result['errors'].blank?
-            flash[:success] = "Treatments successfully created"
-            redirect_to :controller => :assessments, :action => :show, :id => params[:id]
-          else
+          unless result['errors'].blank?
             @errors = result['errors']
           end
-        rescue ArgumentError
-          @errors = ['Representation IDs must be numbers']
         end
       end
+
+      if @errors.empty?
+        render :text => "Successfully generated treatments for provided representations"
+      else
+        render_aspace_partial(:partial => 'assessments/generate_treatments', :status => 500)
+      end
+    else
+      render_aspace_partial(:partial => 'assessments/generate_treatments')
     end
+  end
+
+  private
+
+  def parse_representation_id(s)
+    if s =~ /^[a-zA-Z]+/ && !s.start_with?('PR') || s.gsub(/^[a-zA-Z]+/, '').empty?
+      raise 'Not a representation ID'
+    end
+
+    Integer(s.gsub(/^[a-zA-Z]+/, ''))
   end
 end

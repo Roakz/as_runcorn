@@ -1,12 +1,7 @@
-<%= setup_context :object => @assessment, :title => @assessment.display_string %>
-
 <%= form_for @assessment, :as => "assessment", :url => {:action => :generate_treatments}, :html => {:class => 'form-horizontal aspace-record-form'} do |f| %>
   <%= form_context :assessment, @assessment do |form| %>
     <div class="row">
       <div class="col-sm-12">
-        <div class="record-pane">
-          <h2>Assessment <%= @assessment.id %> - Generate Treatments</h2>
-
           <% if defined?(@errors) && !@errors.empty? %>
             <div class="alert alert-danger">
               <% @errors.each do |error| %>
@@ -17,7 +12,7 @@
 
           <div class="form-group">
             <div class="col-sml-12">
-              <label for="representation_ids">Representation IDs (new line separated)</label>
+              <label for="representation_ids">Representation IDs (one per line)</label>
             </div>
             <div class="col-sml-12">
               <textarea id="representation_ids"
@@ -26,11 +21,6 @@
                         rows="10"><%== @representation_ids %></textarea>
             </div>
           </div>
-          <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Generate Treatments</button>
-            <%= link_to I18n.t("actions.cancel"), :back, :class => "btn btn-cancel btn-default" %>
-          </div>
-        </div>
       </div>
     </div>
   <% end %>

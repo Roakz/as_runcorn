@@ -7,6 +7,11 @@
         <div class="pull-right">
             <%= link_to I18n.t("conservation_request._frontend.action.csv_download"), {:controller => :assessments, :action => :csv, :id => params[:id]}, :class => "btn btn-sm btn-default" %>
         </div>
+        <% if user_can?('update_resource_record') %>
+          <div class="pull-right">
+            <%= link_to I18n.t("assessment._frontend.action.generate_treatments"), 'javascript:void(0);', :class => "btn btn-sm btn-default", :id => 'runcornGenerateTreatmentsButton', :style=> 'margin-right: 10px;', :'data-assessmentId' => id %>
+          </div>
+        <% end %>
         <div class="clearfix"></div>
 
         <div class="subrecord-form-fields embedded-search" data-url="<%= ajax_search_url %>">
