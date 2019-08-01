@@ -2,6 +2,7 @@ ArchivesSpace::Application.extend_aspace_routes(File.join(File.dirname(__FILE__)
 
 require_relative 'helpers/movements_helper'
 require_relative 'helpers/qsa_id_helper'
+require_relative 'helpers/significance_helper'
 
 Rails.application.config.after_initialize do
   Plugins.register_plugin_section(

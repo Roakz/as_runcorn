@@ -44,7 +44,16 @@
     <%= form.label_and_boolean "sterilised_status" %>
     <%= form.label_and_boolean "publish" %>
 
-    <%= form.label_and_select "significance", form.possible_options_for("significance", true) %>
+    <% if form.readonly? %>
+      <div class="form-group">
+        <div class="control-label col-sm-2"><%= I18n.t("archival_object.significance") %></div>
+        <div class="controls col-sm-10">
+          <%= SignificanceHelper.display(form.obj['significance']) %>
+        </div>
+      </div>
+    <% else %>
+      <%= form.label_and_select "significance", form.possible_options_for("significance", true) %>
+    <% end %>
 
     <%= form.label_and_textfield "monetary_value" %>
     <%= form.label_and_textarea "monetary_value_note" %>
