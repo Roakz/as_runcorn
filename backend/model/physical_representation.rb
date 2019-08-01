@@ -112,31 +112,65 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
     ArchivalObject[self.archival_object_id].deaccessioned?
   end
 
-  def self.generate_treatments!(qsa_ids, assessment_uri = nil)
-    user = User[:username => RequestContext.get(:current_username)]
-    agent_uri = JSONModel(:agent_person).uri_for(user[:agent_record_id])
+  def self.generate_treatments!(qsa_ids, assessment_id = nil)
+    username = RequestContext.get(:current_username)
+    user_agent_id = User[:username => username][:agent_record_id]
 
-    treatment_json = {
-      'user' => {
-        'ref' => agent_uri
-      },
+    now = Time.now
+
+    treatment_row = {
+      :physical_representation_id => 'SETME',
+      :status => 'awaiting_treatment',
+      :json_schema_version => 1,
+      :lock_version => 0,
+      :created_by => username,
+      :last_modified_by => username,
+      :create_time => now,
+      :system_mtime => now,
+      :user_mtime => now,
     }
 
-    if assessment_uri
-      treatment_json['assessment'] = {
-        'ref' => assessment_uri
-      }
-    end
+    user_rlshp_row = {
+      :conservation_treatment_id => 'SETME',
+      :agent_person_id => user_agent_id,
+      :aspace_relationship_position => 0,
+      :created_by => username,
+      :last_modified_by => username,
+      :system_mtime => now,
+      :user_mtime => now,
+    }
+
+    assessment_rlshp_row = {
+      :conservation_treatment_id => 'SETME',
+      :assessment_id => assessment_id,
+      :aspace_relationship_position => 0,
+      :created_by => username,
+      :last_modified_by => username,
+      :system_mtime => now,
+      :user_mtime => now,
+    }
 
     self
       .filter(:qsa_id => qsa_ids)
       .select(:id)
       .each do |row|
-      obj = PhysicalRepresentation[row[:id]]
-      json = PhysicalRepresentation.to_jsonmodel(obj)
-      json['conservation_treatments'] << treatment_json
-      obj.update_from_json(json)
+      representation_id = row[:id]
+
+      treatment_row[:physical_representation_id] = representation_id
+      treatment_id = db[:conservation_treatment].insert(treatment_row)
+
+      user_rlshp_row[:conservation_treatment_id] = treatment_id
+      db[:conservation_treatment_user_rlshp].insert(user_rlshp_row)
+
+      if assessment_id
+        assessment_rlshp_row[:conservation_treatment_id] = treatment_id
+        db[:conservation_treatment_assessment_rlshp].insert(assessment_rlshp_row)
+      end
     end
+
+    self
+      .filter(:qsa_id => qsa_ids)
+      .update(:system_mtime => now)
   end
 
 end

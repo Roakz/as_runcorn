@@ -52,7 +52,7 @@ class ArchivesSpaceService < Sinatra::Base
 
     if assessment.check_if_assessed?(params[:representation_id])
       begin
-        PhysicalRepresentation.generate_treatments!(params[:representation_id], assessment.uri)
+        PhysicalRepresentation.generate_treatments!(params[:representation_id], assessment.id)
         json_response({:status => 'success', :errors => []})
       rescue
         json_response({:status => 'error', :errors => ["Error generating treatments: #{$!}"]})
