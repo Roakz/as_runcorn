@@ -4,6 +4,7 @@
   "disposal_class" => {"type" => "string"},
   "sensitivity_label" => {"type" => "string", "dynamic_enum" => "runcorn_sensitivity_label"},
   "significance" => {"type" => "string", "dynamic_enum" => "runcorn_significance"},
+  "significance_is_sticky" => {"type" => "boolean", "default" => false},
 
   "approval_date" => {"type" => "string"},
   "approved_by" => {

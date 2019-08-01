@@ -2,6 +2,7 @@ en:
   as_runcorn:
     qsa_id_auto_generation_message: "-- auto-generated upon save --"
     qsa_id: Identifier
+    sticky_significance_message: "(not inheriting)"
   agent:
     agency_note: Note
   resource:
@@ -18,6 +19,7 @@ en:
     disposal_class: Disposal Class
     sensitivity_label: Sensitivity Label
     significance: Significance
+    significance_is_sticky: Don't inherit Significance changes
     transfer: Transfer
     approval_date: Approval Date
     approved_by: Approved By
@@ -124,6 +126,7 @@ en:
     publish: Publish
     remarks: Remarks
     significance: Significance
+    significance_is_sticky: Don't inherit Significance changes
     sterilised_status: Sterilised Status
     title: Title
     deaccessioned: This record has been deaccessioned

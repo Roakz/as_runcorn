@@ -19,12 +19,12 @@ module Significance
 
 
   def apply_significance!(sig_id)
-    # CHECKME: might need to add a stickiness check
     PhysicalRepresentation.filter(:archival_object_id => self.id)
                           .filter(Sequel.~(:significance_id => sig_id))
+                          .filter(:significance_is_sticky => 0)
                           .update(:significance_id => sig_id, :system_mtime => Time.now)
 
-    changing_children = self.children.filter(Sequel.~(:significance_id => sig_id))
+    changing_children = self.children.filter(Sequel.~(:significance_id => sig_id)).filter(:significance_is_sticky => 0)
 
     changing_ids = changing_children.select(:id).all.map{|r| r[:id]}
 

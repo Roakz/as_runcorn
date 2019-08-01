@@ -95,6 +95,7 @@
       "remarks" => {"type" => "string"},
 
       "significance" => {"type" => "string", "dynamic_enum" => "runcorn_significance"},
+      "significance_is_sticky" => {"type" => "boolean", "default" => false},
 
       "sterilised_status" => {"type" => "boolean"},
 
