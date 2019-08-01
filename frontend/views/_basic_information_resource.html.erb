@@ -14,6 +14,21 @@
       </div>
     </div>
   <% end %>
+
+  <% unless form['significant_representations_counts'].empty? %>
+    <div class="form-group">
+      <div class="control-label col-sm-2"><%= I18n.t("resource.significant_representations_counts") %></div>
+      <div class="col-sm-9 label-only">
+        <% form['significant_representations_counts'].each do |sig, count| %>
+          <% label_type = sig == 'memory_of_the_world' ? 'danger' : sig == 'iconic' ? 'warning' : 'info' %>
+          <span class="label label-<%= label_type %>" style="font-size:small;margin-right:10px;">
+            <%= I18n.t("enumerations.runcorn_significance.#{sig}") %>: <%= count %>
+          </span>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
 <% else %>
   <% form.push("approved_by", form.obj["approved_by"] || {}) do %>
     <div class="form-group">
