@@ -45,7 +45,7 @@
 <% define_template("assessment", jsonmodel_definition(:assessment)) do |form| %>
   <%= form.hidden_input('conservation_request_id') %>
 
-  <% if controller.action_name == 'new' %>
+  <% if ['new', 'create'].include?(controller.action_name) %>
     <% if form.obj['conservation_request_id'] %>
       <%# We are creating an assessment from a conservation request.  Acquire its records %>
       <%= render_aspace_partial :partial => "conservation_requests/linked_records", :locals => { :id => form.obj['conservation_request_id'] } %>
