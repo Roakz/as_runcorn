@@ -8,6 +8,8 @@ class RepresentationsController < ApplicationController
     'rap_open_access_metadata_u_ssort',
     'rap_access_status_u_ssort',
     'rap_access_category_u_ssort',
+    'conservation_awaiting_treatment_u_sbool',
+    'conservation_treatment_in_progress_u_sbool',
   ] + Plugins.search_facets_for_type(:digital_representation) + Plugins.search_facets_for_type(:physical_representation)
 
   def index

@@ -239,6 +239,8 @@ en:
       rap_access_status_u_ssort: Access Status
       rap_access_category_u_ssort: Access Category
       rap_expiring_within: RAP expiry days
+      conservation_awaiting_treatment_u_sbool: Awaiting Treatment?
+      conservation_treatment_in_progress_u_sbool: Treatment In Progress?
 
   runcorn_agency:
     agency_category: Agency Category

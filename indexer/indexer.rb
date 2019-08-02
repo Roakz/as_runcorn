@@ -71,6 +71,9 @@ class IndexerCommon
         doc['controlling_record_series_qsa_id_u_sort'] = record['record']['controlling_record_series']['_resolved']['qsa_id'].to_s.rjust(9, '0')
         doc['controlling_record_series_qsa_id_u_ssort'] = record['record']['controlling_record_series']['_resolved']['qsa_id_prefixed']
         doc['controlling_record_series_display_string_u_ssort'] = record['record']['controlling_record_series']['_resolved']['title']
+
+        doc['conservation_awaiting_treatment_u_sbool'] = Array(record['record']['conservation_treatments']).any?{|t| t['status'] == 'awaiting_treatment'}
+        doc['conservation_treatment_in_progress_u_sbool'] = Array(record['record']['conservation_treatments']).any?{|t| t['status'] == 'in_progress'}
       end
     }
 
