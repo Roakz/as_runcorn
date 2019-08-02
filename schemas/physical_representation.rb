@@ -239,6 +239,25 @@
         "type" => "non_negative_integer",
         "readonly" => "true",
       },
+
+      "assessments" => {
+        "readonly" => "true",
+        "type" => "array",
+        "items" => {
+          "type" => "object",
+          "subtype" => "ref",
+          "properties" => {
+            "ref" => {
+              "type" => [{"type" => "JSONModel(:assessment) uri"}],
+              "readonly" => "true"
+            },
+            "_resolved" => {
+              "type" => "object",
+              "readonly" => "true"
+            }
+          },
+        },
+      },
     },
   },
 }

@@ -32,6 +32,10 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
   TopContainer.define_relationship(:name => :representation_container,
                                    :contains_references_to_types => proc {[PhysicalRepresentation]})
 
+  # Apply reverse relationship to assessments
+  define_relationship(:name => :assessment,
+                      :contains_references_to_types => proc{[Assessment]})
+
 
   set_model_scope :repository
 
@@ -80,6 +84,8 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
 
     controlling_records_by_representation_id = self.build_controlling_record_map(objs)
 
+    assessments_map = build_assessments_map(objs)
+
     objs.zip(jsons).each do |obj, json|
       json['existing_ref'] = obj.uri
       json['display_string'] = build_display_string(json)
@@ -93,6 +99,8 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
       json['deaccessioned'] = !json['deaccessions'].empty? || controlling_record.deaccessioned?
 
       json['frequency_of_use'] = frequency_of_use.fetch(obj.id, 0)
+
+      json['assessments'] = assessments_map.fetch(obj.id, []).map{|uri| { 'ref' => uri }}
     end
 
     jsons
@@ -179,4 +187,20 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
     ArchivalObject.filter(:id => linked_ao_ids).update(:lock_version => Sequel.expr(1) + :lock_version, :system_mtime => now)
   end
 
+
+  private
+
+  def self.build_assessments_map(objs)
+    result = {}
+
+    Assessment.find_relationship(:assessment)
+      .find_by_participant_ids(self, objs.map(&:id))
+      .each do |relationship|
+        assessment_id = relationship[:assessment_id]
+        result[relationship[:physical_representation_id]] ||= []
+        result[relationship[:physical_representation_id]] << JSONModel(:assessment).uri_for(assessment_id, :repo_id => RequestContext.get(:repo_id))
+    end
+
+    result
+  end
 end

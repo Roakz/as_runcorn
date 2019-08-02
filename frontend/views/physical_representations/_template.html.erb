@@ -141,6 +141,25 @@
         <%= render_aspace_partial :partial => "shared/subrecord_form", :locals => {:form => form, :name => "deaccessions"} %>
       <% end %>
 
+      <% if form.readonly? && !ASUtils.wrap(form.obj['assessments']).empty? %>
+        <section class="subrecord-form-dummy">
+          <h3><%= I18n.t('assessment._plural') %></h3>
+          <div class="subrecord-form-container">
+            <div class="subrecord-form-fields">
+              <div class="controls token-list">
+                <% ASUtils.wrap(form.obj['assessments']).each do |assessment_ref| %>
+                  <%= render_token :label => "#{I18n.t('assessment._singular')} #{JSONModel(:assessment).id_for(assessment_ref['ref'])}",
+                                   :type => 'assessment',
+                                   :uri => assessment_ref['ref'],
+                                   :placement => "top" %>
+                <% end %>
+                <div class="clearfix"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+      <% end %>
+
       <% if form.readonly? %>
         <%= show_plugins_for(JSONModel(:physical_representation).from_hash(form.obj, false, true), form) %>
       <% else %>
