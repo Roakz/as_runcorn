@@ -168,9 +168,15 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
       end
     end
 
+    # trigger a reindex of all representations
     self
       .filter(:qsa_id => qsa_ids)
       .update(:system_mtime => now)
+
+    # update the AO lock version so we trigger an audit history record for
+    # this action
+    linked_ao_ids = self.filter(:qsa_id => qsa_ids).select(:archival_object_id)
+    ArchivalObject.filter(:id => linked_ao_ids).update(:lock_version => Sequel.expr(1) + :lock_version, :system_mtime => now)
   end
 
 end
