@@ -71,7 +71,9 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
 
     # FUTURE NOTE: Public Access Requests and Exhibitions should be added to the
     # list of included context_uris once they're implemented.
-    Log.warn("HEY: Currently this query only supports file issues because Public Access Requests and Exhibitions haven't been implemented yet.  Once they exist, find this message and await further instructions.")
+    if rand < 0.01
+      Log.warn("HEY: Currently this query only supports file issues because Public Access Requests and Exhibitions haven't been implemented yet.  Once they exist, find this message and await further instructions.")
+    end
 
     frequency_of_use = Movement
                          .filter(:physical_representation_id => objs.map(&:id))
