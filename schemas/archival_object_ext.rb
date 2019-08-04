@@ -3,7 +3,7 @@
   "access_clearance_procedure" => {"type" => "string", "dynamic_enum" => "runcorn_access_clearance_procedure"},
   "disposal_class" => {"type" => "string"},
   "sensitivity_label" => {"type" => "string", "dynamic_enum" => "runcorn_sensitivity_label"},
-  "significance" => {"type" => "string", "dynamic_enum" => "runcorn_significance"},
+  "significance" => {"type" => "string", "dynamic_enum" => "runcorn_significance", "default" => "standard"},
   "significance_is_sticky" => {"type" => "boolean", "default" => false},
 
   "approval_date" => {"type" => "string"},
