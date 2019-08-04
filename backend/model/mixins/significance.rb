@@ -40,5 +40,10 @@ module Significance
 
 
   module ClassMethods
+    def create_from_json(json, extra_values = {})
+      obj = super
+      obj.apply_significance!(obj.significance_id)
+      obj
+    end
   end
 end
