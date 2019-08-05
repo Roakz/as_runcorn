@@ -31,7 +31,6 @@ module SeriesRepresentationCounts
 
       node_physical_representation_counts = {}
       node_digital_representation_counts = {}
-      node_significant_representation_counts = {}
 
       PhysicalRepresentation
         .inner_join(self.node_model.table_name, Sequel.qualify(PhysicalRepresentation.table_name, node_type_backlink_col) => Sequel.qualify(self.node_model.table_name, :id))
