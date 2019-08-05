@@ -56,6 +56,8 @@ class IndexerCommon
         doc['frequency_of_use_u_sint'] = record['record']['frequency_of_use']
         doc['file_issue_allowed_u_sbool'] = [record['record']['file_issue_allowed'] && !record['record']['deaccessioned']]
 
+        doc['significance_u_sstr'] = record['record']['significance']
+
         doc['responsible_agency_title_u_sstr'] = record.dig('record', 'responsible_agency', '_resolved', 'display_name', 'sort_name')
         doc['responsible_agency_qsa_id_u_sstr'] = record.dig('record', 'responsible_agency', '_resolved', 'qsa_id_prefixed')
 

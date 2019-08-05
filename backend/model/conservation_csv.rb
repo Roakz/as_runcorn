@@ -45,7 +45,7 @@ class ConservationCSV
             result['controlling_record_begin_date_u_ssort'],
             result['controlling_record_end_date_u_ssort'],
             result.dig('frequency_of_use_u_sint', 0),
-            'SIGNIFICANCE - TODO',
+            result.dig('significance_u_sstr', 0),
             result.dig('top_container_title_u_sstr', 0),
             result.dig('top_container_location_u_sstr', 0),
           ].map {|e| e || ''}.to_csv
