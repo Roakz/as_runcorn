@@ -20,6 +20,11 @@ class QSAId
   end
 
 
+  def self.prefixed_id_for(model, id)
+    prefix_for(model) + id.to_s
+  end
+
+
   def self.mode(mode = false)
     @mode ||= :backend
     @mode = mode if mode

@@ -5,7 +5,7 @@ module QSAIdPrefixer
   end
 
   def qsa_id_prefixed
-    QSAId.prefix_for(self.class) + self.qsa_id.to_s
+    QSAId.prefixed_id_for(self.class, self.qsa_id)
   end
 
   module ClassMethods
