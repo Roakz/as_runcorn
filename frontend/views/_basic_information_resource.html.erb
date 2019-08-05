@@ -15,7 +15,7 @@
     </div>
   <% end %>
 
-  <% unless form['significant_representations_counts'].empty? %>
+  <% unless form['significant_representations_counts'].blank? %>
     <div class="form-group">
       <div class="control-label col-sm-2"><%= I18n.t("resource.significant_representations_counts") %></div>
       <div class="col-sm-9 label-only">
