@@ -32,6 +32,8 @@ module SeriesRepresentationCounts
       node_physical_representation_counts = {}
       node_digital_representation_counts = {}
 
+      default_significance_counts = BackendEnumSource.values_for('runcorn_significance').reject{|sig| sig == 'standard'}.map{|sig| [sig, 0]}.to_h
+
       PhysicalRepresentation
         .inner_join(self.node_model.table_name, Sequel.qualify(PhysicalRepresentation.table_name, node_type_backlink_col) => Sequel.qualify(self.node_model.table_name, :id))
         .left_join(:deaccession, Sequel.qualify(:deaccession, :physical_representation_id) => Sequel.qualify(:physical_representation, :id))
@@ -41,7 +43,7 @@ module SeriesRepresentationCounts
         .group_and_count(Sequel.qualify(self.node_model.table_name, :root_record_id),
                          Sequel.qualify(:enumeration_value, :value)).each do |row|
 
-        node_physical_representation_counts[row[:root_record_id]] ||= {:total => 0}
+        node_physical_representation_counts[row[:root_record_id]] ||= default_significance_counts.merge({:total => 0})
         node_physical_representation_counts[row[:root_record_id]][:total] += row[:count]
         node_physical_representation_counts[row[:root_record_id]][row[:value]] = row[:count] unless row[:value].nil? || row[:value] == 'standard'
       end
