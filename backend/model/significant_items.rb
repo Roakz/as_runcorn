@@ -1,11 +1,21 @@
 class SignificantItems
 
-  def self.list(level = false)
-    if level && level != 'all'
-      query.filter(:significance__value => level).all.map{|row| format(row)}
-    else
-      query.filter(Sequel.~(:significance__value => 'standard')).all.map{|row| format(row)}
+  def self.list(opts = {})
+    opts[:level] ||= 'all'
+
+    ds = base_query
+
+    ds = if opts[:level] == 'all'
+           ds.filter(Sequel.~(:significance__value => 'standard'))
+         else
+           ds.filter(:significance__value => opts[:level])
+         end
+
+    if opts[:series]
+      ds = ds.filter(:resource__id => opts[:series].map{|uri| JSONModel.parse_reference(uri).fetch(:id)})
     end
+
+    ds.map{|row| format(row)}
   end
 
 
@@ -39,7 +49,7 @@ class SignificantItems
   end
 
 
-  def self.query
+  def self.base_query
     DB.open do |db|
       db[:physical_representation]
         .left_join(Sequel.as(:enumeration_value, :significance), :significance__id => :physical_representation__significance_id)
