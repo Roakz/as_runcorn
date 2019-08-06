@@ -107,9 +107,14 @@
       "controlling_record" => {
         "type" => "object",
         "subtype" => "ref",
+        "readonly" => "true",
         "properties" => {
           "ref" => {"type" => [{"type" => "JSONModel(:archival_object) uri"}],
                     "ifmissing" => "error"},
+          "qsa_id" => {"type" => "number"},
+          "qsa_id_prefixed" => {"type" => "string"},
+          "begin_date" => {"type" => "string"},
+          "end_date" => {"type" => "string"},
           "_resolved" => {
             "type" => "object",
             "readonly" => "true"
@@ -124,6 +129,8 @@
         "properties" => {
           "ref" => {"type" => [{"type" => "JSONModel(:resource) uri"}],
                     "ifmissing" => "error"},
+          "qsa_id" => {"type" => "number"},
+          "qsa_id_prefixed" => {"type" => "string"},
           "_resolved" => {
             "type" => "object",
             "readonly" => "true"
@@ -134,6 +141,7 @@
       "responsible_agency" => {
         "type" => "object",
         "subtype" => "ref",
+        "readonly" => "true",
         "properties" => {
           "ref" => {
             "type" => [{"type" => "JSONModel(:agent_corporate_entity) uri"}],
@@ -147,6 +155,7 @@
       },
       "recent_responsible_agencies" => {
         "type" => "array",
+        "readonly" => "true",
         "items" => {
           "type" => "object",
           "subtype" => "ref",

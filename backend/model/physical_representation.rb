@@ -88,13 +88,28 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
 
     assessments_map = build_assessments_map(objs)
 
+    controlling_records_qsa_id_map = build_controlling_records_qsa_id_map(controlling_records_by_representation_id)
+    controlling_records_dates_map = build_controlling_records_dates_map(controlling_records_by_representation_id)
+
     objs.zip(jsons).each do |obj, json|
       json['existing_ref'] = obj.uri
       json['display_string'] = build_display_string(json)
 
       controlling_record = controlling_records_by_representation_id.fetch(obj.id)
-      json['controlling_record'] = { 'ref' => controlling_record.uri }
-      json['controlling_record_series'] = { 'ref' => JSONModel(:resource).uri_for(controlling_record.root_record_id, :repo_id => controlling_record.repo_id) }
+      json['controlling_record'] = {
+                                     'ref' => controlling_record.uri,
+                                     'qsa_id' => controlling_records_qsa_id_map.fetch(controlling_record.uri).fetch(:qsa_id),
+                                     'qsa_id_prefixed' => controlling_records_qsa_id_map.fetch(controlling_record.uri).fetch(:qsa_id_prefixed),
+                                     'begin_date' => controlling_records_dates_map.fetch(controlling_record.id, {}).fetch(:begin, nil),
+                                     'end_date' => controlling_records_dates_map.fetch(controlling_record.id, {}).fetch(:end, nil),
+                                   }
+
+      resource_uri = JSONModel(:resource).uri_for(controlling_record.root_record_id, :repo_id => controlling_record.repo_id)
+      json['controlling_record_series'] = {
+                                            'ref' => resource_uri,
+                                            'qsa_id' => controlling_records_qsa_id_map.fetch(resource_uri).fetch(:qsa_id),
+                                            'qsa_id_prefixed' => controlling_records_qsa_id_map.fetch(resource_uri).fetch(:qsa_id_prefixed),
+                                          }
       json['responsible_agency'] = { 'ref' => controlling_record.responsible_agency }
       json['recent_responsible_agencies'] = controlling_record.recent_responsible_agencies
 
@@ -204,5 +219,52 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
     end
 
     result
+  end
+
+  def self.build_controlling_records_qsa_id_map(controlling_records_by_representation_id)
+    qsa_ids_by_record_uri = {}
+
+    ao_ids = controlling_records_by_representation_id.values.map(&:id)
+    ArchivalObject
+      .filter(:id => ao_ids)
+      .select(:repo_id, :id, :qsa_id)
+      .each do |row|
+      record_uri = JSONModel(:archival_object).uri_for(row[:id], :repo_id => row[:repo_id])
+      qsa_ids_by_record_uri[record_uri] = {
+        :qsa_id => row[:qsa_id],
+        :qsa_id_prefixed => QSAId.prefixed_id_for(ArchivalObject, row[:qsa_id]),
+      }
+    end
+
+    resource_ids = controlling_records_by_representation_id.values.map(&:root_record_id)
+    Resource
+      .filter(:id => resource_ids)
+      .select(:repo_id, :id, :qsa_id)
+      .each do |row|
+      record_uri = JSONModel(:resource).uri_for(row[:id], :repo_id => row[:repo_id])
+      qsa_ids_by_record_uri[record_uri] = {
+        :qsa_id => row[:qsa_id],
+        :qsa_id_prefixed => QSAId.prefixed_id_for(Resource, row[:qsa_id]),
+      }
+    end
+
+    qsa_ids_by_record_uri
+  end
+
+  def self.build_controlling_records_dates_map(controlling_records_by_representation_id)
+    dates_by_record_id = {}
+
+    ao_ids = controlling_records_by_representation_id.values.map(&:id)
+    ASDate
+      .filter(:archival_object_id => ao_ids)
+      .select(:archival_object_id, :begin, :end)
+      .each do |row|
+      dates_by_record_id[row[:archival_object_id]] = {
+        :begin => row[:begin],
+        :end => row[:end],
+      }
+    end
+
+    dates_by_record_id
   end
 end

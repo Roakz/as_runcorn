@@ -16,8 +16,6 @@ class IndexerCommon
   @@record_types << :conservation_request
 
   add_attribute_to_resolve('container')
-  add_attribute_to_resolve('controlling_record')
-  add_attribute_to_resolve('controlling_record_series')
   add_attribute_to_resolve('responsible_agency')
 
   def self.build_recent_agency_filter(recent_agencies)
@@ -61,18 +59,16 @@ class IndexerCommon
         doc['responsible_agency_title_u_sstr'] = record.dig('record', 'responsible_agency', '_resolved', 'display_name', 'sort_name')
         doc['responsible_agency_qsa_id_u_sstr'] = record.dig('record', 'responsible_agency', '_resolved', 'qsa_id_prefixed')
 
-        doc['controlling_record_qsa_id_u_sint'] = record['record']['controlling_record']['_resolved']['qsa_id']
-        doc['controlling_record_qsa_id_u_sort'] = record['record']['controlling_record']['_resolved']['qsa_id'].to_s.rjust(9, '0')
-        doc['controlling_record_qsa_id_u_ssort'] = record['record']['controlling_record']['_resolved']['qsa_id_prefixed']
-        doc['controlling_record_display_string_u_ssort'] = record['record']['controlling_record']['_resolved']['display_string']
+        doc['controlling_record_qsa_id_u_sint'] = record['record']['controlling_record']['qsa_id']
+        doc['controlling_record_qsa_id_u_sort'] = record['record']['controlling_record']['qsa_id'].to_s.rjust(9, '0')
+        doc['controlling_record_qsa_id_u_ssort'] = record['record']['controlling_record']['qsa_id_prefixed']
 
-        doc['controlling_record_begin_date_u_ssort'] = record.dig('record', 'controlling_record', '_resolved', 'dates', 0, 'begin')
-        doc['controlling_record_end_date_u_ssort'] = record.dig('record', 'controlling_record', '_resolved', 'dates', 0, 'end')
+        doc['controlling_record_begin_date_u_ssort'] = record.dig('record', 'controlling_record', 'begin_date')
+        doc['controlling_record_end_date_u_ssort'] = record.dig('record', 'controlling_record', 'end_date')
 
-        doc['controlling_record_series_qsa_id_u_sint'] = record['record']['controlling_record_series']['_resolved']['qsa_id']
-        doc['controlling_record_series_qsa_id_u_sort'] = record['record']['controlling_record_series']['_resolved']['qsa_id'].to_s.rjust(9, '0')
-        doc['controlling_record_series_qsa_id_u_ssort'] = record['record']['controlling_record_series']['_resolved']['qsa_id_prefixed']
-        doc['controlling_record_series_display_string_u_ssort'] = record['record']['controlling_record_series']['_resolved']['title']
+        doc['controlling_record_series_qsa_id_u_sint'] = record['record']['controlling_record_series']['qsa_id']
+        doc['controlling_record_series_qsa_id_u_sort'] = record['record']['controlling_record_series']['qsa_id'].to_s.rjust(9, '0')
+        doc['controlling_record_series_qsa_id_u_ssort'] = record['record']['controlling_record_series']['qsa_id_prefixed']
 
         doc['conservation_awaiting_treatment_u_sbool'] = Array(record['record']['conservation_treatments']).any?{|t| t['status'] == 'awaiting_treatment'}
         doc['conservation_treatment_in_progress_u_sbool'] = Array(record['record']['conservation_treatments']).any?{|t| t['status'] == 'in_progress'}
