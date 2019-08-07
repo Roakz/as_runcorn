@@ -1,0 +1,44 @@
+<%= setup_context(:title => I18n.t("as_runcorn.significant_item._plural")) %>
+
+<div class="row">
+  <div class="col-md-3">
+    <div class="sidebar">
+    </div>
+  </div>
+  <div class="col-md-9">
+    <% if user_can?('update_accession_record') %>
+      <div class="record-toolbar">
+        <div class="btn-group pull-right">
+        </div>
+        <br style="clear:both" />
+      </div>
+    <% end %>
+    <div class="record-pane">
+      <h2><%= I18n.t("as_runcorn.significant_item._plural") %></h2>
+
+      <table class="table table-striped table-bordered table-condensed table-hover">
+        <thead>
+          <tr>
+            <th class="col"><%= I18n.t('as_runcorn.significant_item.significance') %></th>
+            <th class="col title"><%= I18n.t('as_runcorn.qsa_id') %></th>
+            <th class="col"><%= I18n.t('as_runcorn.significant_item.label') %></th>
+            <th class="col"><%= I18n.t('as_runcorn.significant_item.format') %></th>
+            <th class="col"><%= I18n.t('as_runcorn.significant_item.current_location') %></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @significant_items.each do |item| %>
+            <tr>
+              <td><%= I18n.t('enumerations.runcorn_significance.' + item['significance']) %></td>
+              <td><%= item['qsa_id'] %></td>
+              <td><%= item['label'] %></td>
+              <td><%= item['format'] %></td>
+              <td><%= item['current_location']['uri'] ? item['current_location']['location'] : I18n.t('enumerations.runcorn_location.' + item['current_location']['location']) %></td>
+            </tr>
+          <% end %>
+        <tbody>
+      </table>
+    </div>
+  </div>
+</div>
