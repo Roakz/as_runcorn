@@ -29,7 +29,7 @@ class SignificantItems
       :functional_location => row[:prep_fn_loc],
       :uri => JSONModel::JSONModel(:physical_representation).uri_for(row[:prep_id], :repo_id => row[:repo_id]),
       :container => {
-        :label => row[:tcon_indicator],
+        :label => (row[:tcon_type] ? I18n.t('enumerations.container_type.' + row[:tcon_type]) + ': ' : '') + row[:tcon_indicator],
         :functional_location => row[:tcon_fn_loc],
         :uri => JSONModel::JSONModel(:top_container).uri_for(row[:tcon_id], :repo_id => row[:repo_id]),
         :storage_location => {
@@ -77,6 +77,7 @@ class SignificantItems
         .left_join(:top_container, :top_container__id => :representation_container_rlshp__top_container_id)
         .left_join(:top_container_housed_at_rlshp, :top_container_housed_at_rlshp__top_container_id => :top_container__id)
         .left_join(Sequel.as(:enumeration_value, :tcon_fn_loc), :tcon_fn_loc__id => :top_container__current_location_id)
+        .left_join(Sequel.as(:enumeration_value, :tcon_type), :tcon_type__id => :top_container__type_id)
         .left_join(:location, :location__id => :top_container_housed_at_rlshp__location_id)
         .left_join(:archival_object, :archival_object__id => :physical_representation__archival_object_id)
         .left_join(:resource, :resource__id => :archival_object__root_record_id)
@@ -93,6 +94,7 @@ class SignificantItems
                 Sequel.as(:top_container__id, :tcon_id),
                 Sequel.as(:top_container__indicator, :tcon_indicator),
                 Sequel.as(:tcon_fn_loc__value, :tcon_fn_loc),
+                Sequel.as(:tcon_type__value, :tcon_type),
                 Sequel.as(:location__id, :loc_id),
                 Sequel.as(:location__title, :loc_label),
                 Sequel.as(:archival_object__id, :record_id),

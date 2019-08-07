@@ -30,7 +30,7 @@
         </div>
       <% end %>
 
-      <table class="table table-bordered table-condensed table-hover">
+      <table class="table table-condensed table-hover">
         <thead>
           <tr>
             <th class="col" colspan="2"></th>
@@ -53,6 +53,9 @@
               <% @significant_items.select{|item| item['significance'] == level}.each do |item| %>
                 <tr>
                   <td>
+                    <a class="btn btn-sm" href="javascript:void(0);" onClick="$(this).closest('tr').next().slideToggle();">
+                     <span class='glyphicon glyphicon-chevron-right'></span>
+                    </a>
                     <%= QSAIdHelper.id(item['qsa_id']) %>
                   </td>
                   <td>
@@ -65,6 +68,28 @@
                     <% else %>
                       <%= I18n.t('enumerations.runcorn_location.' + item['current_location']['location']) %>
                     <% end %>
+                  </td>
+                </tr>
+                <tr class="significant_item_detail" style="display:none;">
+                  <td></td>
+                  <td colspan="3" style="background:#eee;">
+                    <table class="table">
+                      <% ['series', 'record', 'container'].each do |fld| %>
+                        <tr>
+                          <td><%= I18n.t('as_runcorn.significant_item.' + fld) %>:</td>
+                          <td>
+                            <%= QSAIdHelper.id(item[fld]['qsa_id']) if item[fld]['qsa_id'] %>
+                          </td>
+                          <td>
+                            <strong><%= link_to item[fld]['label'], {:controller => :resolver, :action => :resolve_readonly, :uri => item[fld]['uri']} %></strong>
+                            <% if fld == 'container' %>
+                              &nbsp;
+                              <%= I18n.t('as_runcorn.significant_item.' + (item['functional_location'] == 'HOME' ? 'in_container' : 'not_in_container')) %>
+                            <% end %>
+                          </td>
+                        </tr>
+                      <% end %>
+                    </table>
                   </td>
                 </tr>
               <% end %>
