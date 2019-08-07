@@ -3,6 +3,12 @@ en:
     qsa_id_auto_generation_message: "-- auto-generated upon save --"
     qsa_id: Identifier
     sticky_significance_message: "(not inheriting)"
+    significant_item:
+      significance: Significance
+      label: Title
+      format: Format
+      current_location: Current Location
+      _plural: Significant Items
   agent:
     agency_note: Note
   resource:

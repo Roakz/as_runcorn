@@ -5,8 +5,14 @@ class ArchivesSpaceService < Sinatra::Base
             ["level", String, "Significance level (or 'all')"],
             ["series", [String], "URIs of series", :optional => true])
     .permissions([])
-    .returns([200, '[:physical_representation]']) \
+    .returns([200, '[:physical_representation]'],
+             [400, :error]) \
   do
-    json_response(SignificantItems.list(params))
+    levels = BackendEnumSource.values_for('runcorn_significance').reject{|sig| sig == 'standard'}.push('all')
+    if levels.include?(params[:level])
+      json_response(SignificantItems.list(params))
+    else
+      json_response({:error => "Unknown significance level: #{params[:level]}. Supported levels: #{levels.join(' ')}"}, 400)
+    end
   end
 end

@@ -24,6 +24,8 @@ class SignificantItems
       :significance => row[:prep_significance],
       :qsa_id => QSAId.prefixed_id_for(PhysicalRepresentation, row[:prep_qsa_id]),
       :label => row[:prep_label],
+      :format => row[:prep_format],
+      :current_location => current_location_for(row),
       :functional_location => row[:prep_fn_loc],
       :uri => JSONModel::JSONModel(:physical_representation).uri_for(row[:prep_id], :repo_id => row[:repo_id]),
       :container => {
@@ -49,11 +51,28 @@ class SignificantItems
   end
 
 
+  def self.current_location_for(row)
+    out = {:uri => false}
+    if row[:prep_fn_loc] == 'HOME'
+      if row[:tcon_fn_loc] == 'HOME'
+        out[:location] = row[:loc_label]
+        out[:uri] = JSONModel::JSONModel(:location).uri_for(row[:loc_id], :repo_id => row[:repo_id])
+      else
+        out[:location] = row[:tcon_fn_loc]
+      end
+    else
+      out[:location] = row[:prep_fn_loc]
+    end
+    out
+  end
+
+
   def self.base_query
     DB.open do |db|
       db[:physical_representation]
         .left_join(Sequel.as(:enumeration_value, :significance), :significance__id => :physical_representation__significance_id)
         .left_join(Sequel.as(:enumeration_value, :prep_fn_loc), :prep_fn_loc__id => :physical_representation__current_location_id)
+        .left_join(Sequel.as(:enumeration_value, :prep_format), :prep_format__id => :physical_representation__format_id)
         .left_join(:representation_container_rlshp, :representation_container_rlshp__physical_representation_id => :physical_representation__id)
         .left_join(:top_container, :top_container__id => :representation_container_rlshp__top_container_id)
         .left_join(:top_container_housed_at_rlshp, :top_container_housed_at_rlshp__top_container_id => :top_container__id)
@@ -69,6 +88,7 @@ class SignificantItems
                 Sequel.as(:physical_representation__title, :prep_label),
                 Sequel.as(:significance__value, :prep_significance),
                 Sequel.as(:prep_fn_loc__value, :prep_fn_loc),
+                Sequel.as(:prep_format__value, :prep_format),
                 Sequel.as(:top_container__id, :tcon_id),
                 Sequel.as(:top_container__indicator, :tcon_indicator),
                 Sequel.as(:tcon_fn_loc__value, :tcon_fn_loc),

@@ -41,6 +41,8 @@ ArchivesSpace::Application.routes.draw do
       match('assessments/:id/linked_representations' => 'assessments#linked_representations', :via => [:get])
       match('assessments/:id/csv' => 'assessments#csv', :via => [:get])
       match('assessments/:id/generate_treatments' => 'assessments#generate_treatments', :via => [:get, :post])
+
+      match('significant_items/index' => 'significant_items#index', :via => [:get])
     end
   end
 end

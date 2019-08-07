@@ -30,6 +30,10 @@
   <li><%= link_to I18n.t("representation._plural"), {:controller => :representations, :action => :index} %></li>
 </script>
 
+<script type="text/template" id="browseSignificantItemsTemplate">
+  <li><%= link_to I18n.t("as_runcorn.significant_item._plural"), {:controller => :significant_items, :action => :index} %></li>
+</script>
+
 <script type="text/template" id="browseConservationRequestTemplate">
   <li class="divider"></li>
   <li><%= link_to I18n.t("conservation_request._plural"), {:controller => :conservation_requests, :action => :index} %></li>
@@ -58,6 +62,9 @@
 
       // Put representation browse in Repo menu
       $('.repository-header .navbar-nav .browse-container .dropdown-menu .divider:first').before(AS.renderTemplate("browseRepresentationsTemplate"))
+
+      // And significant items browse
+      $('.repository-header .navbar-nav .browse-container .dropdown-menu .divider:first').before(AS.renderTemplate("browseSignificantItemsTemplate"))
 
       // Conservation requests sit before assessments in browse
       $('.repository-header .navbar-nav .browse-container .dropdown-menu a[href="/assessments"]').parent().before(AS.renderTemplate("browseConservationRequestTemplate"))
