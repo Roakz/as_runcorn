@@ -106,9 +106,7 @@ module RAPsApplied
       rap_expiry_date = end_date.next_year(rap.years)
 
       if rap.access_category == 'Cabinet matters'
-        if rap_expiry_date.month > 1
-          rap_expiry_date = Date.new(rap_expiry_date.year + 1, 1, 1)
-        end
+        rap_expiry_date = Date.new(rap_expiry_date.year + 1, 1, 1)
       end
 
       rap_expiry_date
