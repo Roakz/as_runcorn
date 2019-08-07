@@ -24,6 +24,9 @@
           <%= SignificanceHelper.display(sig, count) %>
 
         <% end %>
+
+        <%= link_to I18n.t("as_runcorn.significant_item.series_button_label"), {:controller => :significant_items, :action => :index, :series_uri => form.obj['uri']}, :class => "label label-default" %>
+
       </div>
     </div>
   <% end %>

@@ -8,6 +8,10 @@ en:
       label: Title
       format: Format
       current_location: Current Location
+      none_for_level: "-- none --"
+      all_button_label: Show for all series
+      series_button_label: "View >"
+      for_series_message: "Showing items for series:"
       _plural: Significant Items
   agent:
     agency_note: Note
