@@ -33,7 +33,7 @@
       <table class="table table-condensed table-hover">
         <thead>
           <tr>
-            <th class="col" colspan="2"></th>
+            <th class="col" colspan="3"></th>
             <th class="col"><%= I18n.t('as_runcorn.significant_item.format') %></th>
             <th class="col"><%= I18n.t('as_runcorn.significant_item.current_location') %></th>
           </tr>
@@ -44,11 +44,11 @@
 
 
           <% levels.each do |level| %>
-            <tr><th colspan="4" style="background:#eee;"><div style="margin:6px 0px 6px 10px;"><%= SignificanceHelper.display(level) %></div></th></tr>
+            <tr><th colspan="5" style="background:#eee;"><div style="margin:6px 0px 6px 10px;"><%= SignificanceHelper.display(level) %></div></th></tr>
 
             <% items = @significant_items.select{|item| item['significance'] == level} %>
             <% if items.empty? %>
-              <tr><td colspan="4"><%= I18n.t('as_runcorn.significant_item.none_for_level') %></td></tr>
+              <tr><td colspan="5"><%= I18n.t('as_runcorn.significant_item.none_for_level') %></td></tr>
             <% else %>
               <% @significant_items.select{|item| item['significance'] == level}.each do |item| %>
                 <tr>
@@ -56,6 +56,8 @@
                     <a class="btn btn-sm" href="javascript:void(0);" onClick="$(this).closest('tr').next().slideToggle();">
                      <span class='glyphicon glyphicon-chevron-right'></span>
                     </a>
+                  </td>
+                  <td>
                     <%= QSAIdHelper.id(item['qsa_id']) %>
                   </td>
                   <td>
@@ -72,7 +74,7 @@
                 </tr>
                 <tr class="significant_item_detail" style="display:none;">
                   <td></td>
-                  <td colspan="3" style="background:#eee;">
+                  <td colspan="4" style="background:#eee;">
                     <table class="table">
                       <% ['series', 'record', 'container'].each do |fld| %>
                         <tr>
