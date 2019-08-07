@@ -21,7 +21,7 @@
       <div class="col-sm-9 label-only">
         <% form['significant_representations_counts'].each do |sig, count| %>
 
-          <%= SignificanceHelper.display(sig, count) %>
+          <%= SignificanceHelper.display(sig, count) if count > 0 %>
 
         <% end %>
 
