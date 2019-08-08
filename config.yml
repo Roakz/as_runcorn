@@ -1,4 +1,5 @@
 depends_on_plugins:
+  - qsa_kitchensink
   - series_system
   - as_reformulator
 recommends_plugins:
