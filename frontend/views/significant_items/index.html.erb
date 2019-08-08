@@ -72,7 +72,10 @@
 
             <% items = @significant_items.select{|item| item['significance'] == level} %>
             <% if items.empty? %>
-              <tr><td colspan="6"><%= I18n.t('as_runcorn.significant_item.none_for_level') %></td></tr>
+              <tr>
+                <td style="background:<%= levelcolor %>">&nbsp;</td>
+                <td colspan="5"><%= I18n.t('as_runcorn.significant_item.none_for_level') %></td>
+              </tr>
             <% else %>
               <% @significant_items.select{|item| item['significance'] == level}.each do |item| %>
                 <tr>
@@ -93,7 +96,11 @@
                     <% if item['current_location']['uri'] %>
                       <%= link_to item['current_location']['location'], {:controller => :resolver, :action => :resolve_readonly, :uri => item['current_location']['uri']} %>
                     <% else %>
-                      <%= I18n.t('enumerations.runcorn_location.' + item['current_location']['location']) %>
+                      <% if item['current_location']['location'] %>
+                        <%= I18n.t('enumerations.runcorn_location.' + item['current_location']['location']) %>
+                      <% else %>
+                        <%= I18n.t('as_runcorn.significant_item.no_location_message') %>
+                      <% end %>
                     <% end %>
                   </strong></td>
                 </tr>

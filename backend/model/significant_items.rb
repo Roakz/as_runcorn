@@ -34,7 +34,7 @@ class SignificantItems
         :uri => JSONModel::JSONModel(:top_container).uri_for(row[:tcon_id], :repo_id => row[:repo_id]),
         :storage_location => {
           :label => row[:loc_label],
-          :uri => JSONModel::JSONModel(:location).uri_for(row[:loc_id], :repo_id => row[:repo_id]),
+          :uri => row[:loc_id] ? JSONModel::JSONModel(:location).uri_for(row[:loc_id], :repo_id => row[:repo_id]) : false,
         }
       },
       :record => {
@@ -55,8 +55,8 @@ class SignificantItems
     out = {:uri => false}
     if row[:prep_fn_loc] == 'HOME'
       if row[:tcon_fn_loc] == 'HOME'
-        out[:location] = row[:loc_label]
-        out[:uri] = JSONModel::JSONModel(:location).uri_for(row[:loc_id], :repo_id => row[:repo_id])
+          out[:location] = row[:loc_label]
+          out[:uri] = JSONModel::JSONModel(:location).uri_for(row[:loc_id], :repo_id => row[:repo_id]) if row[:loc_id]
       else
         out[:location] = row[:tcon_fn_loc]
       end

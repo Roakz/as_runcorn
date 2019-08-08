@@ -17,6 +17,7 @@ en:
       all_button_label: Show for all series
       series_button_label: "View >"
       for_series_message: "Showing items for series:"
+      no_location_message: "-- CONTAINER LOCATION UNKNOWN --"
       _plural: Significant Items
   agent:
     agency_note: Note
