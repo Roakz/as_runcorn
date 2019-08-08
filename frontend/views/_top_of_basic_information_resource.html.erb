@@ -8,4 +8,21 @@
   </div>
 <% end %>
 
+<% if ASUtils.wrap(form.obj['gaps_in_control']).length > 0 %>
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="alert alert-warning" style="max-height: 100px; overflow: auto;">
+        <%= I18n.t('resource.gaps_in_control_message') %>
+        <ul>
+          <% ASUtils.wrap(form.obj['gaps_in_control']).each do |range| %>
+            <li>
+              <%= [range.fetch('start_date'), range.fetch('end_date')].join(' -- ') %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  </div>
+<% end %>
+
 <%= render_aspace_partial :partial => 'shared/qsa_id_form', :locals => {:form => form, :model => :resource} %>

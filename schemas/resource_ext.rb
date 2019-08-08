@@ -28,4 +28,16 @@
   "deaccessioned" => {"type" => "boolean", "readonly" => "true"},
 
   "rap_attached" => {"type" => "JSONModel(:rap) object"},
+
+  "gaps_in_control" => {
+    "type" => "array",
+    "readonly" => "true",
+    "items" => {
+      "type" => "object",
+      "properties" => {
+        "start_date" => {"type" => "string"},
+        "end_date" => {"type" => "string"},
+      }
+    }
+  }
 }

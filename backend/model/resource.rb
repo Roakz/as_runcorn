@@ -3,6 +3,7 @@ Resource.include(AllExistenceDates)
 Resource.include(ReindexSeriesRepresentations)
 Resource.include(RuncornDeaccession)
 Resource.include(RAPs)
+Resource.include(ControlGapsCalculator)
 
 class Resource
   define_relationship(:name => :representation_approved_by,
