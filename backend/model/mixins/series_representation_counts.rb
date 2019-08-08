@@ -15,11 +15,17 @@ module SeriesRepresentationCounts
       objs.zip(jsons).each do |obj, json|
         json['physical_representations_count'] = representations_counts.fetch(obj.id, {}).fetch('physical_representations_count', 0)
         json['digital_representations_count'] = representations_counts.fetch(obj.id, {}).fetch('digital_representations_count', 0)
-        json['significant_representations_counts'] = representations_counts.fetch(obj.id, {}).fetch('significant_representations_counts', {})
+        json['significant_representations_counts'] = representations_counts.fetch(obj.id, {}).fetch('significant_representations_counts')
       end
 
       jsons
     end
+
+
+    def default_significance_counts
+      @default_significance_counts ||= BackendEnumSource.values_for('runcorn_significance').reject{|sig| sig == 'standard'}.map{|sig| [sig, 0]}.to_h
+    end
+
 
     def prepare_counts(objs)
       result = {}
@@ -31,8 +37,6 @@ module SeriesRepresentationCounts
 
       node_physical_representation_counts = {}
       node_digital_representation_counts = {}
-
-      default_significance_counts = BackendEnumSource.values_for('runcorn_significance').reject{|sig| sig == 'standard'}.map{|sig| [sig, 0]}.to_h
 
       PhysicalRepresentation
         .inner_join(self.node_model.table_name, Sequel.qualify(PhysicalRepresentation.table_name, node_type_backlink_col) => Sequel.qualify(self.node_model.table_name, :id))
@@ -92,7 +96,7 @@ module SeriesRepresentationCounts
         result[obj.id] = {
           'physical_representations_count' => node_physical_representation_counts.fetch(obj.id, {:total => 0})[:total],
           'digital_representations_count' => node_digital_representation_counts.fetch(obj.id, 0),
-          'significant_representations_counts' => node_physical_representation_counts.fetch(obj.id, {}).reject{|k,v| k == :total}
+          'significant_representations_counts' => node_physical_representation_counts.fetch(obj.id, default_significance_counts).reject{|k,v| k == :total}
         }
       end
 
