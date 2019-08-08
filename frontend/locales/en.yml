@@ -152,7 +152,7 @@ en:
     _frontend:
       action:
         add: Add Physical Representation
-  digital_representation:
+  digital_representation: &digital_representation
     access_category: Access Status
     normal_location: Normal Location
     accessioned_status: Accessioned Status
@@ -198,6 +198,9 @@ en:
     indicator_2: Child Indicator
     type_3: Grandchild Type
     indicator_3: Grandchild Indicator
+
+  digital_representation_quick_add:
+    << : *digital_representation
 
   chargeable_item:
     name: Name

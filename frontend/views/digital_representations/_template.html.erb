@@ -172,6 +172,95 @@
   </div>
 <% end %>
 
+<% define_template "digital_representation_quick_add", jsonmodel_definition(:digital_representation) do |form| %>
+  <div class="subrecord-form-fields">
+
+    <%= render_aspace_partial :partial => 'shared/qsa_id_form', :locals => {:form => form, :model => :digital_representation} %>
+    <%= form.label_and_textfield "title" %>
+    <%= form.label_and_select "normal_location", form.possible_options_for("normal_location", false), :field_opts => {:default => 'DIG'} %>
+    <%= form.label_and_select "contained_within", form.possible_options_for("contained_within", false), :field_opts => {:default => 'Network Attached Storage (NAS)'} %>
+    <%= form.label_and_boolean "publish" %>
+    <%= form.label_and_date "approval_date", :default => Date.today.iso8601 %>
+    <% form.push("approved_by", form.obj["approved_by"] || {}) do %>
+      <div class="form-group">
+        <%= form.label('approved_by', {:for => 'approved_by_linker'}, ['col-sm-2']) %>
+        <div class="col-sm-9">
+          <div class="form-group required">
+            <div class="input-group linker-wrapper">
+              <input type="text" class="linker"
+                     id="approved_by_linker"
+                     data-label="<%= I18n.t("digital_representation.approved_by") %>"
+                     data-label_plural="<%= I18n.t("digital_representation.approved_by") %>"
+                     data-path="<%= form.path %>"
+                     data-name="ref"
+                     data-url="<%= url_for :controller => :search, :action => :do_search, :format => :json %>"
+                     data-browse-url="<%= url_for :controller => :search, :action => :do_search, :format => :js, :facets => [], :display_identifier => true %>"
+                     data-selected="<%= ASUtils.to_json(form.obj['_resolved'] || {}) %>"
+                     data-format_property="display_string"
+                     data-multiplicity="one"
+                     data-types='["agent_with_user"]'
+                />
+              <div class="input-group-btn">
+                <a class="btn btn-default dropdown-toggle last" data-toggle="dropdown" href="javascript:void(0);"><span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="javascript:void(0);" class="linker-browse-btn"><%= I18n.t("actions.browse") %></a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+    <% form.push('representation_file', (form.obj['representation_file'] || {})) do |form| %>
+      <div class="representation-file-widget form-group">
+        <label class="col-sm-2 control-label"><%= I18n.t('representation_file.attached_file') %></label>
+        <div class="col-sm-9">
+          <%= form.hidden_input('key', form.obj['key'], {:class => 'representation-file-key-input'}) %>
+          <%= form.hidden_input('mime_type', form.obj['mime_type'], {:class => 'representation-file-mime-type-input'}) %>
+
+          <% if form.obj['key'] %>
+            <%= link_to(I18n.t("representation_file.view_file"),
+                        {
+                            :controller => :representations,
+                            :action => :view_file,
+                            :key => form.obj['key'],
+                            :mime_type => form.obj['mime_type'],
+                        },
+                        {
+                            :class => "view-representation-file-link label-only",
+                            :target => "_blank",
+                        })
+            %>
+          <% end %>
+
+          <span style="display: none" class="representation-file-upload-label"><%= I18n.t("representation_file.upload") %></span>
+          <span style="display: none" class="representation-file-replace-label"><%= I18n.t("representation_file.upload_replace") %></span>
+          <span style="display: none" class="representation-file-uploading-label"><%= I18n.t("representation_file.uploading") %></span>
+          <button style="display: none" class="btn btn-xs btn-primary representation-file-upload"></button>
+          <button style="display: none" class="btn btn-xs btn-cancel representation-file-clear">
+            <%= I18n.t("representation_file.upload_clear") %>
+          </button>
+
+          <% unless form.obj['key'] %>
+            <%# Hidden link that will be used if the user uploads a new file %>
+            <%= link_to(I18n.t("representation_file.view_file"),
+                        {
+                            :controller => :representations,
+                            :action => :view_file,
+                        },
+                        {
+                            :class => "view-representation-file-link label-only",
+                            :target => "_blank",
+                            :style => "display: none;",
+                        })
+            %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
 
 <script>
   if (!window.RepresentationFilesLoaded) {
