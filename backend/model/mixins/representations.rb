@@ -99,6 +99,13 @@ module Representations
       representation_class
         .filter(backlink)
         .filter(Sequel.~(:id => ids_to_keep))
+        .each do |obj|
+        obj.delete
+      end
+
+      representation_class
+        .filter(backlink)
+        .filter(Sequel.~(:id => ids_to_keep))
         .each(&:delete)
 
       # Create the ones that don't exist yet (no ref)

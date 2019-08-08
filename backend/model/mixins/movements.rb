@@ -120,6 +120,15 @@ module Movements
     end
 
 
+    def handle_delete(ids_to_delete)
+      Movement.filter(:physical_representation_id => ids_to_delete).each do |obj|
+        obj.delete
+      end
+
+      super
+    end
+
+
     def move_to_storage_permitted
       @move_to_storage_permitted = true
     end

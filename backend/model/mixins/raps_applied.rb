@@ -149,6 +149,16 @@ module RAPsApplied
         $stderr.puts($@.join("\n"))
       end
     end
+
+    def handle_delete(ids_to_delete)
+      backlink_col = :"#{self.table_name}_id"
+
+      DB.open do |db|
+        db[:rap_applied].filter(backlink_col => ids_to_delete).delete
+      end
+
+      super
+    end
   end
 
 end

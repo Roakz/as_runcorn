@@ -204,7 +204,6 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
     ArchivalObject.filter(:id => linked_ao_ids).update(:lock_version => Sequel.expr(1) + :lock_version, :system_mtime => now)
   end
 
-
   private
 
   def self.build_assessments_map(objs)
