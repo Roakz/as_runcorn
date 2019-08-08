@@ -1,21 +1,46 @@
 <%= setup_context(:title => I18n.t("as_runcorn.significant_item._plural")) %>
 
+<% levels = JSONModel.enum_values('runcorn_significance').reject{|v| v == 'standard'}.reverse %>
+
+<script>
+  var toggleSignificantItemDetailFor = function(elt) {
+    var chev = $(elt).find('span');
+    if ($(elt).closest('tr').next().is(':visible')) {
+      chev.addClass('glyphicon-chevron-right')
+      chev.removeClass('glyphicon-chevron-down')
+    } else {
+      chev.addClass('glyphicon-chevron-down')
+      chev.removeClass('glyphicon-chevron-right')
+    }
+    $(elt).closest('tr').next().toggle();
+  };
+</script>
+
+
 <div class="row">
   <div class="col-md-3">
-    <div class="sidebar">
+    <div id="archivesSpaceSidebar" class="sidebar affix-top">
+      <ul class="nav list-group as-nav-list">
+        <% levels.each do |level| %>
+          <li>
+            <br/>
+            <a href="#<%= level %>">
+              <%= SignificanceHelper.display(level, @significant_items.select{|si| si['significance'] == level}.length) %>
+            </a>
+          </li>
+        <% end %>
+      </ul>
     </div>
   </div>
   <div class="col-md-9">
-    <% if user_can?('update_accession_record') %>
-      <div class="record-toolbar">
-        <% if params['series_uri'] %>
-          <div class="btn-group pull-right">
-            <%= link_to I18n.t("as_runcorn.significant_item.all_button_label"), {:controller => :significant_items, :action => :index}, :class => "btn btn-default" %>
-          </div>
-          <br style="clear:both" />
-        <% end %>
-      </div>
-    <% end %>
+    <div class="record-toolbar">
+      <% if params['series_uri'] %>
+        <div class="btn-group pull-right">
+          <%= link_to I18n.t("as_runcorn.significant_item.all_button_label"), {:controller => :significant_items, :action => :index}, :class => "btn btn-default" %>
+        </div>
+        <br style="clear:both" />
+      <% end %>
+    </div>
     <div class="record-pane">
       <h2><%= I18n.t("as_runcorn.significant_item._plural") %></h2>
 
@@ -32,54 +57,55 @@
 
       <table class="table table-condensed table-hover">
         <thead>
-          <tr>
-            <th class="col" colspan="3"></th>
-            <th class="col"><%= I18n.t('as_runcorn.significant_item.format') %></th>
-            <th class="col"><%= I18n.t('as_runcorn.significant_item.current_location') %></th>
-          </tr>
         </thead>
 
         <tbody>
-          <% levels = JSONModel.enum_values('runcorn_significance').reject{|v| v == 'standard'}.reverse %>
-
-
           <% levels.each do |level| %>
-            <tr><th colspan="5" style="background:#eee;"><div style="margin:6px 0px 6px 10px;"><%= SignificanceHelper.display(level) %></div></th></tr>
+            <% levelcolor = level == 'memory_of_the_world' ? '#d9534f' : level == 'iconic' ? '#f0ad4e' : '#5bc0de' %>
+            <tr>
+              <th style="background:<%= levelcolor %>">&nbsp;</th>
+              <th colspan="5" style="background:#eee;">
+                <a name="<%= level %>"/>
+                <div style="margin:6px 0px 6px 10px;"><%= SignificanceHelper.display(level) %></div>
+              </th>
+            </tr>
 
             <% items = @significant_items.select{|item| item['significance'] == level} %>
             <% if items.empty? %>
-              <tr><td colspan="5"><%= I18n.t('as_runcorn.significant_item.none_for_level') %></td></tr>
+              <tr><td colspan="6"><%= I18n.t('as_runcorn.significant_item.none_for_level') %></td></tr>
             <% else %>
               <% @significant_items.select{|item| item['significance'] == level}.each do |item| %>
                 <tr>
-                  <td>
-                    <a class="btn btn-sm" href="javascript:void(0);" onClick="$(this).closest('tr').next().slideToggle();">
+                  <td style="background:<%= levelcolor %>">&nbsp;</td>
+                  <td style="white-space:nowrap;vertical-align:middle;">
+                    <a class="btn btn-sm" href="javascript:void(0);" onClick="toggleSignificantItemDetailFor(this);">
                      <span class='glyphicon glyphicon-chevron-right'></span>
                     </a>
                   </td>
-                  <td>
+                  <td style="white-space:nowrap;vertical-align:middle;">
                     <%= QSAIdHelper.id(item['qsa_id']) %>
                   </td>
                   <td>
                     <strong><%= link_to item['label'], {:controller => :resolver, :action => :resolve_readonly, :uri => item['uri']} %></strong>
                   </td>
-                  <td><%= item['format'] %></td>
-                  <td>
+                  <td style="white-space:nowrap;"><%= item['format'] %></td>
+                  <td style="white-space:nowrap;"><strong>
                     <% if item['current_location']['uri'] %>
                       <%= link_to item['current_location']['location'], {:controller => :resolver, :action => :resolve_readonly, :uri => item['current_location']['uri']} %>
                     <% else %>
                       <%= I18n.t('enumerations.runcorn_location.' + item['current_location']['location']) %>
                     <% end %>
-                  </td>
+                  </strong></td>
                 </tr>
                 <tr class="significant_item_detail" style="display:none;">
+                  <td style="background:<%= levelcolor %>">&nbsp;</td>
                   <td></td>
-                  <td colspan="4" style="background:#eee;">
+                  <td colspan="5" style="background:#eee;">
                     <table class="table">
                       <% ['series', 'record', 'container'].each do |fld| %>
                         <tr>
-                          <td><%= I18n.t('as_runcorn.significant_item.' + fld) %>:</td>
-                          <td>
+                          <td style="white-space:nowrap;"><%= I18n.t('as_runcorn.significant_item.' + fld) %>:</td>
+                          <td style="white-space:nowrap;vertical-align:middle;">
                             <%= QSAIdHelper.id(item[fld]['qsa_id']) if item[fld]['qsa_id'] %>
                           </td>
                           <td>

@@ -11,8 +11,8 @@ en:
       series: Series
       record: Record
       container: Container
-      in_container: " (item is in this container)"
-      not_in_container: " (item is <strong>not</strong> currently in this container)"
+      in_container: "(item is with this container)"
+      not_in_container: "(item is <strong>not</strong> currently with this container)"
       none_for_level: "-- none --"
       all_button_label: Show for all series
       series_button_label: "View >"
