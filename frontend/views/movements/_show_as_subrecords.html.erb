@@ -20,7 +20,9 @@
             <strong><%= movements.length %></strong> <%= I18n.t("movement.#{many_mvmts ? '_plural' : '_singular'}") %>
           </div>
           <div class="col-md-9">
-            <%= many_mvmts ? 'Latest by' : 'By' %> <%= movements.last['user']['_resolved']['title'] %> on <%= movements.last['move_date'] %>
+            <% if movements.last && movements.last['user'] %>
+              <%= many_mvmts ? 'Latest by' : 'By' %> <%= movements.last['user']['_resolved']['title'] %> on <%= movements.last['move_date'] %>
+            <% end %>
           </div>
         </div>
       </div>
@@ -28,6 +30,7 @@
 
         <div class="panel-group details" id="<%= section_id %>_accordion">
           <% movements.each_with_index do |movement, ix| %>
+            <% next unless movement['user'] %>
 
             <div class="panel panel-default" style="margin-left:12px;margin-right:12px;">
               <div class="panel-heading">
