@@ -81,7 +81,7 @@ class SignificantItems
         .left_join(:location, :location__id => :top_container_housed_at_rlshp__location_id)
         .left_join(:archival_object, :archival_object__id => :physical_representation__archival_object_id)
         .left_join(:resource, :resource__id => :archival_object__root_record_id)
-        .filter(:top_container_housed_at_rlshp__status => 'current')
+        .filter(Sequel.|({:top_container_housed_at_rlshp__status => 'current'}, {:top_container_housed_at_rlshp__status => nil}))
         .reverse(:significance__position)
         .select(
                 Sequel.as(:physical_representation__repo_id, :repo_id),
