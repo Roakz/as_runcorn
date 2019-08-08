@@ -11,31 +11,45 @@
 
 %>
 
+<%
+
+def duration_in_days(duration, units)
+    case units
+    when :day, :days
+        duration
+    when :month, :months
+        (Date.today.next_month(duration) - Date.today).to_i
+    when :year, :years
+        (Date.today.next_year(duration) - Date.today).to_i
+    end
+end
+%>
+
 <div class="row">
   <div class="col-md-3">
     <div class="sidebar">
       <%= render_aspace_partial :partial => "search/filter" %>
 
       <% if @search_data.results? && !Array(@search_data[:criteria]['filter_term[]']).find {|term| JSON.parse(term).keys[0] == 'rap_expiring_within'} %>
-        <h3>RAP expiring within</h3>
-        <ul>
-          <% [30, 60, 90, 180, 365, 730, 1825].each do |days| %>
-            <% if days.to_s == params[:expiring_within_days].to_s %>
-              <li><%= days %> days <%= link_to("(clear)", build_search_params({})) %></li>
-            <% else %>
-              <%
-              label = "#{days} days"
-
-              if (days / 365) == 1
-                label = "#{days / 365} year"
-              elsif (days / 365) > 1
-                label = "#{days / 365} years"
-              end
-              %>
-              <li><%= link_to(label, build_search_params({}).merge("filter_term[]" => {"rap_expiring_within" => days}.to_json)) %></li>
+        <% [['RAP Expired In Past', -1], ['RAP To Expire Within', 1]].each do |section, multiplier| %>
+          <h3><%= section %></h3>
+          <ul>
+            <% [[multiplier * 30, :days], [multiplier * 60, :days], [multiplier * 90, :days],
+                [multiplier * 6, :months],
+                [multiplier * 1, :year], [multiplier * 2, :years], [multiplier * 5, :years]].each do |duration, units| %>
+              <% days = duration_in_days(duration, units) %>
+              <% if days.to_s == params[:expiring_within_days].to_s %>
+                <li><%= days %> days <%= link_to("(clear)", build_search_params({})) %></li>
+              <% else %>
+                <%
+                label = "#{duration.abs} #{units}"
+                %>
+                <li><%= link_to(label, build_search_params({}).merge("filter_term[]" => {"rap_expiring_within" => days}.to_json)) %></li>
+              <% end %>
             <% end %>
-          <% end %>
-        </ul>
+          </ul>
+        <% end %>
+
       <% end %>
     </div>
   </div>

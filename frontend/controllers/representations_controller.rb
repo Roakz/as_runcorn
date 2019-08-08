@@ -27,7 +27,9 @@ class RepresentationsController < ApplicationController
       end
     end
 
-    if expiring_days && expiring_days >= 0
+    if expiring_days
+      start_date, end_date = [Date.today, Date.today + expiring_days].sort
+
       query = {'query' => {
                  'jsonmodel_type' => 'boolean_query',
                  'op' => 'AND',
@@ -36,13 +38,13 @@ class RepresentationsController < ApplicationController
                      'jsonmodel_type' => 'date_field_query',
                      'comparator' => 'greater_than',
                      'field' => 'rap_expiry_date_sort_u_ssortdate',
-                     'value' => "%sT00:00:00Z" % [Date.today.iso8601],
+                     'value' => "%sT00:00:00Z" % [start_date.iso8601],
                    },
                    {
                      'jsonmodel_type' => 'date_field_query',
                      'comparator' => 'lesser_than',
                      'field' => 'rap_expiry_date_sort_u_ssortdate',
-                     'value' => "%sT00:00:00Z" % [(Date.today + expiring_days).iso8601],
+                     'value' => "%sT00:00:00Z" % [end_date.iso8601],
                    }
                  ]
                }
