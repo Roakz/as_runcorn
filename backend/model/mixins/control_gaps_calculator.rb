@@ -10,6 +10,11 @@ module ControlGapsCalculator
     end
 
     def call(resource_obj)
+      # Ensure we process the broadest existence range for the resource
+      # as determined the all_existence_dates mixin
+      date_calculator = DateCalculator.new(resource_obj, 'existence', true, :allow_open_end => true)
+      resource_obj.date.first.begin = date_calculator.min_begin
+
       queue = [WorkItem.new(resource_obj, [])]
 
       while !queue.empty?
@@ -17,7 +22,6 @@ module ControlGapsCalculator
         obj = next_item.obj
 
         unless Array(obj.date).empty?
-          # FIXME: date calculator for series?
           record_start_date = DateParse.date_parse_down(obj.date.first.begin)
           relationship_defn = obj.class.control_relationship.definition
 
