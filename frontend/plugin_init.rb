@@ -222,7 +222,7 @@ Rails.application.config.after_initialize do
           json       = ASUtils.json_parse(result["json"])
           identifier = json.fetch('qsa_id_prefixed', "")
         end
-        identifier.to_s.html_safe
+        QSAIdHelper.id(identifier)
       else
         identifier_for_search_result_orig(result)
       end
