@@ -190,6 +190,9 @@ Rails.application.config.after_initialize do
   Plugins.add_facet_group_i18n("representation_intended_use_u_sstr",
                                proc {|facet| "enumerations.runcorn_intended_use.#{facet}" })
 
+  Plugins.add_facet_group_i18n("significance_u_sstr",
+                               proc {|facet| "enumerations.runcorn_significance.#{facet}" })
+
   # Show a new search facet for our category
   Plugins.add_search_facets(:agent_corporate_entity, "agency_category_u_sstr")
 

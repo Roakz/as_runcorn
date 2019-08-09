@@ -5,6 +5,7 @@ class RepresentationsController < ApplicationController
   REPRESENTATION_FACETS = [
     'primary_type',
     'representation_intended_use_u_sstr',
+    'significance_u_sstr',
     'rap_open_access_metadata_u_ssort',
     'rap_access_status_u_ssort',
     'rap_access_category_u_ssort',
