@@ -13,6 +13,7 @@ module QSAIdPrefixer
       jsons = super
 
       objs.zip(jsons).each do |obj, json|
+        json['qsa_id'] ||= obj.qsa_id # this happens for models using the database id
         json['qsa_id_prefixed'] = obj.qsa_id_prefixed
       end
 

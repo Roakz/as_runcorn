@@ -1,4 +1,4 @@
-<% define_template "as_runcorn", jsonmodel_definition(model) do |form| %>
+<% define_template "as_runcorn_qsa_id", jsonmodel_definition(model) do |form| %>
   <div class="form-group">
     <label class="col-sm-2 control-label" for="<%= model %>_qsa_id_prefixed_" plugin="">
       <%= I18n.t('as_runcorn.qsa_id') %>
@@ -13,4 +13,4 @@
   </div>
 <% end %>
 
-<% form.emit_template("as_runcorn") %>
+<% form.emit_template("as_runcorn_qsa_id") %>

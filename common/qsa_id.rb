@@ -38,6 +38,7 @@ class QSAId
 
 
   def self.register(model, opts = {})
+    use_database_id = opts.fetch(:use_database_id, false)
     existing_id_field = opts.fetch(:existing_id_field, false)
     prefix = opts.fetch(:prefix, '')
 
@@ -45,11 +46,15 @@ class QSAId
 
     if QSAId.backend?
       asmodel.include(QSAIdPrefixer)
-      asmodel.include(AutoGenerator)
 
-      asmodel.auto_generate :property => :qsa_id,
-                            :generator => proc { |json| Sequence.get("QSA_ID_#{asmodel.table_name.upcase}") },
-                            :only_on_create => true
+      if use_database_id
+        asmodel.def_column_alias(:qsa_id, :id)
+      else
+        asmodel.include(AutoGenerator)
+        asmodel.auto_generate :property => :qsa_id,
+                              :generator => proc { |json| Sequence.get("QSA_ID_#{asmodel.table_name.upcase}") },
+                              :only_on_create => true
+      end
     end
 
     if existing_id_field
