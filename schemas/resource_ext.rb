@@ -34,10 +34,6 @@
     "readonly" => "true",
     "items" => {
       "type" => "object",
-      "properties" => {
-        "start_date" => {"type" => "string"},
-        "end_date" => {"type" => "string"},
-      }
     }
   }
 }

@@ -11,15 +11,22 @@
 <% if ASUtils.wrap(form.obj['gaps_in_control']).length > 0 %>
   <div class="row">
     <div class="col-sm-12">
-      <div class="alert alert-warning" style="max-height: 100px; overflow: auto;">
-        <%= I18n.t('resource.gaps_in_control_message') %>
-        <ul>
-          <% ASUtils.wrap(form.obj['gaps_in_control']).each do |range| %>
-            <li>
-              <%= [range.fetch('start_date'), range.fetch('end_date')].join(' -- ') %>
-            </li>
-          <% end %>
-        </ul>
+      <div class="alert alert-warning" style="max-height: 120px; overflow: auto;">
+        <p><%= I18n.t('resource.gaps_in_control_message') %></p>
+        <% ASUtils.wrap(form.obj['gaps_in_control']).each do |gap_description| %>
+          <p>
+            <%= link_to "#{gap_description['qsa_id']} #{gap_description['display_string']}",
+                        {:controller => :resolver, :action => :resolve_readonly, :uri => gap_description['ref']},
+                        :target => '_blank' %>
+          </p>
+          <ul>
+            <% gap_description['gaps'].each do |range| %>
+              <li>
+                <%= [range.fetch('start_date'), range.fetch('end_date')].join(' -- ') %>
+              </li>
+            <% end %>
+          </ul>
+        <% end %>
       </div>
     </div>
   </div>

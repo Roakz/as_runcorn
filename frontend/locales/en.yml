@@ -29,7 +29,7 @@ en:
     deaccessioned: This record has been deaccessioned
     all_existence_dates_range: Date range of all records
     significant_representations_counts: Significant Representations
-    gaps_in_control_message: "No controlling agency recorded for the following time periods:"
+    gaps_in_control_message: "No controlling agency recorded for the following records and time periods:"
   archival_object:
     description: Description
     access_clearance_procedure: Access Clearance Procedure
