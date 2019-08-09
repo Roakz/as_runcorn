@@ -34,10 +34,7 @@ module ControlGapsCalculator
             DateRange.new(parsed_start, parsed_end)
           end
 
-          lifespan_start_date = record_start_date
-          lifespan_end_date = (obj_control_ranges.map(&:start_date) + obj_control_ranges.map(&:end_date).compact).max
-
-          total_lifespan = DateRange.new(lifespan_start_date, lifespan_end_date)
+          total_lifespan = DateRange.new(record_start_date, nil)
           gaps = [total_lifespan]
 
           (next_item.inherited_control_ranges + obj_control_ranges).each do |control_date_range|
