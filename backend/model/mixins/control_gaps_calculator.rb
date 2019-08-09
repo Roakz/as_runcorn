@@ -3,44 +3,75 @@ module ControlGapsCalculator
   class GapAnalysis
     attr_reader :gaps
 
+    WorkItem = Struct.new(:obj, :inherited_control_ranges)
+
     def initialize
-      @gaps = {}
+      @gaps = []
     end
 
-    def call(objs)
-      calculate_gaps_in_control(objs, [])
-    end
+    def call(resource_obj)
+      queue = [WorkItem.new(resource_obj, [])]
 
-    def calculate_gaps_in_control(objs, inherited_controls = [])
-      objs.each do |obj|
-        record_start_date = DateParse.date_parse_down(obj.date.first.begin)
-        controlling_relationships = objs.class.control_relationship.definition.find_by_participant(obj).select{|relationship| relationship[:jsonmodel_type] == 'series_system_agent_record_ownership_relationship'}
+      while !queue.empty?
+        next_item = queue.shift
+        obj = next_item.obj
 
-        all_control_ranges = controlling_relationships.map do |r|
-          parsed_start = DateParse.date_parse_down(r.start_date)
-          parsed_end = r.end_date ? DateParse.date_parse_up(r.end_date) : nil
-          DateRange.new(parsed_start, parsed_end)
-        end
+        unless Array(obj.date).empty?
+          # FIXME: date calculator for series?
+          record_start_date = DateParse.date_parse_down(obj.date.first.begin)
+          relationship_defn = obj.class.control_relationship.definition
 
-        all_control_ranges.sort_by!(&:start_date)
+          agent_relationships = obj.cached_relationships.fetch(relationship_defn, [])
 
-        lifespan_start_date = record_start_date
-        lifespan_end_date = (all_control_ranges.map(&:start_date) + all_control_ranges.map(&:end_date).compact).max
-
-        total_lifespan = DateRange.new(lifespan_start_date, lifespan_end_date)
-        gaps = [total_lifespan]
-
-        (inherited_controls + all_control_ranges).each do |control_date_range|
-          next_lifespan = []
-          gaps.each do |lifespan_date_range|
-            bits = lifespan_date_range.remove_range(control_date_range)
-            next_lifespan.concat(bits)
+          controlling_relationships = Array(agent_relationships).select{|relationship| relationship[:jsonmodel_type] == 'series_system_agent_record_ownership_relationship'}
+          obj_control_ranges = controlling_relationships.map do |r|
+            parsed_start = DateParse.date_parse_down(r.start_date)
+            parsed_end = r.end_date ? DateParse.date_parse_up(r.end_date) : nil
+            DateRange.new(parsed_start, parsed_end)
           end
-          gaps = next_lifespan
+
+          lifespan_start_date = record_start_date
+          lifespan_end_date = (obj_control_ranges.map(&:start_date) + obj_control_ranges.map(&:end_date).compact).max
+
+          total_lifespan = DateRange.new(lifespan_start_date, lifespan_end_date)
+          gaps = [total_lifespan]
+
+          (next_item.inherited_control_ranges + obj_control_ranges).each do |control_date_range|
+            next_lifespan = []
+            gaps.each do |lifespan_date_range|
+              bits = lifespan_date_range.remove_range(control_date_range)
+              next_lifespan.concat(bits)
+            end
+            gaps = next_lifespan
+          end
+
+          unless gaps.empty?
+            @gaps << {
+              :ref => obj.uri,
+              :gaps => gaps,
+              :qsa_id => obj.qsa_id_prefixed,
+              :display_string => obj[:display_string] || obj[:title],
+            }
+          end
         end
 
-        @gaps[obj.uri] = gaps
+        find_children(obj).each do |child|
+          queue << WorkItem.new(child, next_item.inherited_control_ranges + obj_control_ranges)
+        end
       end
+    end
+
+    def find_children(obj)
+      children = if obj.is_a?(Resource)
+                   # Eager dates... & relationships
+                   ArchivalObject.filter(:root_record_id => obj.id, :parent_id => nil).eager_graph(:date).all
+                 else
+                   ArchivalObject.filter(:root_record_id => obj.root_record_id, :parent_id => obj.id).eager_graph(:date).all
+                 end
+
+      ArchivalObject.eager_load_relationships(children, [ArchivalObject.control_relationship.definition])
+
+      children
     end
   end
 
@@ -48,48 +79,21 @@ module ControlGapsCalculator
     base.extend(ClassMethods)
   end
 
-  def gaps_in_control(inherited_controls = [])
-    record_start_date = DateParse.date_parse_down(date.first.begin)
-
-    controlling_relationships = self.class.control_relationship.definition.find_by_participant(self).select{|relationship| relationship[:jsonmodel_type] == 'series_system_agent_record_ownership_relationship'}
-
-    all_control_ranges = controlling_relationships.map do |r|
-      parsed_start = DateParse.date_parse_down(r.start_date)
-      parsed_end = r.end_date ? DateParse.date_parse_up(r.end_date) : nil
-
-      DateRange.new(parsed_start, parsed_end)
-    end
-
-    all_control_ranges.sort_by!(&:start_date)
-
-    lifespan_start_date = record_start_date
-    lifespan_end_date = (all_control_ranges.map(&:start_date) + all_control_ranges.map(&:end_date).compact).max
-
-    total_lifespan = DateRange.new(lifespan_start_date, lifespan_end_date)
-    gaps = [total_lifespan]
-
-    (inherited_controls + all_control_ranges).each do |control_date_range|
-      next_lifespan = []
-      gaps.each do |lifespan_date_range|
-        bits = lifespan_date_range.remove_range(control_date_range)
-        next_lifespan.concat(bits)
-      end
-      gaps = next_lifespan
-    end
-
-    gaps.sort_by(&:start_date)
-  end
-
   module ClassMethods
     def sequel_to_jsonmodel(objs, opts = {})
       jsons = super
 
       objs.zip(jsons).each do |obj, json|
-        json['gaps_in_control'] = obj.gaps_in_control.map{|date_range|
-          {
-            'start_date' => date_range.start_date.strftime('%Y-%m-%d'),
-            'end_date' => date_range.end_date.strftime('%Y-%m-%d'),
-          }
+        gap_analyzer = GapAnalysis.new
+        gap_analyzer.call(obj)
+
+        json['gaps_in_control'] = gap_analyzer.gaps.map {|gap_description|
+          gap_description.merge(:gaps => gap_description[:gaps].map {|gap|
+                                  {
+                                    'start_date' => gap.start_date.strftime('%Y-%m-%d'),
+                                    'end_date' => gap.end_date.strftime('%Y-%m-%d'),
+                                  }
+                                })
         }
       end
 
