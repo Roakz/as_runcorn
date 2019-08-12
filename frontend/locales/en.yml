@@ -313,6 +313,7 @@ en:
     internal_reference: Internal Reference
     attached_to: Attached To
     justification: Access Justification Note
+    notice_date: Notice Date
 
   rap_summary:
     heading: Access Notification Summary

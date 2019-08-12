@@ -19,6 +19,8 @@
       "approved_by" => {"type" => "string", "ifmissing" => "error"},
       "internal_reference" => {"type" => "string", "ifmissing" => "error"},
 
+      "notice_date" => {"type" => "string"},
+
       "justification" => {"type" => "string"},
 
       "display_string" => {"type" => "string", "readonly" => "true"},
