@@ -1,18 +1,41 @@
 (function(exports) {
-    function RuncornRAPs($container) {
+    function RuncornRAPs($container, opts) {
+        this.opts = opts;
+        var self = this;
+
         $('.attach-rap-button', $container).each(function() {
-            new RuncornRAPAttachWorkflow($(this));
+            new RuncornRAPAttachWorkflow($(this), self);
         });
         $('.edit-rap-button', $container).each(function() {
-            new RuncornRAPEditWorkflow($(this));
+            new RuncornRAPEditWorkflow($(this), self);
         });
 
-        new RunctionRAPsTreeOverrides();
+        new RunctionRAPsTreeOverrides(self);
     }
 
-    function RuncornRAPAttachWorkflow($button) {
+    RuncornRAPs.prototype.setupForeverClosedAccessCategories = function($form) {
+        var self = this;
+        var $accessCategoryInput = $('#rap_access_category_', $form);
+        var $yearsInput = $('#rap_years_', $form);
+
+        function checkAndApplyForeverClosed() {
+            if (self.opts.forever_closed_access_categories.indexOf($accessCategoryInput.val()) >= 0) {
+                $yearsInput.val("").prop('disabled', true);
+            } else {
+                $yearsInput.prop('disabled', false);
+            }
+        };
+
+        checkAndApplyForeverClosed();
+        $accessCategoryInput.on('change', function() {
+            checkAndApplyForeverClosed();
+        });
+    };
+
+    function RuncornRAPAttachWorkflow($button, runcornRAPs) {
         this.$button = $button;
         this.recordURI = this.$button.data('uri');
+        this.runcornRAPs = runcornRAPs;
 
         var self = this;
         this.$button.on('click', function(event) {
@@ -25,6 +48,8 @@
 
     RuncornRAPAttachWorkflow.prototype.setupForm = function($modal) {
         var self = this;
+
+        self.runcornRAPs.setupForeverClosedAccessCategories($modal.find('form'));
 
         $modal.find('form').ajaxForm({
             beforeSubmit: function() {
@@ -64,10 +89,11 @@
     };
 
 
-    function RuncornRAPEditWorkflow($button) {
+    function RuncornRAPEditWorkflow($button, runcornRAPs) {
         this.$button = $button;
         this.recordURI = this.$button.data('record-uri');
         this.rapURI = this.$button.data('rap-uri');
+        this.runcornRAPs = runcornRAPs;
 
         var self = this;
         this.$button.on('click', function(event) {
@@ -80,6 +106,8 @@
 
     RuncornRAPEditWorkflow.prototype.setupForm = function($modal) {
         var self = this;
+
+        self.runcornRAPs.setupForeverClosedAccessCategories($modal.find('form'));
 
         $modal.find('form').ajaxForm({
             beforeSubmit: function() {
@@ -142,7 +170,9 @@
         });
     };
 
-    function RunctionRAPsTreeOverrides() {
+    function RunctionRAPsTreeOverrides(runcornRAPs) {
+        this.runcornRAPs = runcornRAPs;
+
         if (exports.tree && exports.tree.large_tree) {
             this.overrideLargeTreeReparentNodes();
         }

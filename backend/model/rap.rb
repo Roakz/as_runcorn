@@ -5,6 +5,8 @@ class RAP < Sequel::Model(:rap)
   set_model_scope :repository
 
   def update_from_json(json, opts = {}, apply_nested_records = true)
+    self.class.apply_forever_closed_access_categories(json)
+
     result = super
 
     touch_attached_record_mtime
@@ -57,6 +59,17 @@ class RAP < Sequel::Model(:rap)
     end
 
     jsons
+  end
+
+  def self.create_from_json(json, opts = {})
+    apply_forever_closed_access_categories(json)
+    super
+  end
+
+  def self.apply_forever_closed_access_categories(json)
+    if AppConfig[:as_runcorn_forever_closed_access_categories].include?(json['access_category'])
+      json['years'] = nil
+    end
   end
 
   def build_display_string(json)

@@ -169,7 +169,10 @@
   </script>
   <script>
     $(document).on('loadedrecordform.aspace', function(event, $container) {
-        new RuncornRAPs($container);
+        var opts = {
+          'forever_closed_access_categories': <%== AppConfig[:as_runcorn_forever_closed_access_categories].to_json %>,
+        };
+        new RuncornRAPs($container, opts);
     });
   </script>
 
