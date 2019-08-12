@@ -23,13 +23,13 @@
       <% @search_data['results'].each do |result| %>
         <tr data-resolved-record="<%= result['json'] %>">
           <td>
-            <%= result['controlling_record_series_qsa_id_u_ssort'] %>
+            <%= QSAIdHelper.id(result['controlling_record_series_qsa_id_u_ssort']) %>
           </td>
           <td>
-            <%= result['controlling_record_qsa_id_u_ssort'] %>
+            <%= QSAIdHelper.id(result['controlling_record_qsa_id_u_ssort']) %>
           </td>
           <td>
-            <%= result['qsa_id_u_ssort'] %>
+            <%= QSAIdHelper.id(result['qsa_id_u_ssort']) %>
           </td>
           <td>
             <%= result['title'] %>
