@@ -230,6 +230,10 @@
               "type" => [{"type" => "JSONModel(:conservation_request) uri"}],
               "readonly" => "true"
             },
+            "status" => {
+              "type" => "string",
+              "readonly" => "true",
+            },
             "_resolved" => {
               "type" => "object",
               "readonly" => "true"
@@ -267,6 +271,24 @@
             }
           },
         },
+      },
+
+      "availability" => {"type" => "string", "dynamic_enum" => "runcorn_physical_representation_availability"},
+      "calculated_availability" => {
+        "type" => "string",
+        "readonly" => "true",
+        "dynamic_enum" => "runcorn_physical_representation_availability",
+      },
+      "calculated_availability_context" => {
+        "type" => "array",
+        "readonly" => "true",
+        "items" => {
+          "type" => "string",
+        },
+      },
+      "calculated_availability_overrides_availability" => {
+        "type" => "boolean",
+        "readonly" => "true",
       },
     },
   },

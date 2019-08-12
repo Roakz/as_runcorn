@@ -97,6 +97,8 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
     controlling_records_qsa_id_map = build_controlling_records_qsa_id_map(controlling_records_by_representation_id)
     controlling_records_dates_map = build_controlling_records_dates_map(controlling_records_by_representation_id)
 
+    availability_options = get_sorted_availability_options
+
     objs.zip(jsons).each do |obj, json|
       json['existing_ref'] = obj.uri
       json['display_string'] = build_display_string(json)
@@ -123,10 +125,71 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
 
       json['frequency_of_use'] = frequency_of_use.fetch(obj.id, 0)
 
-      json['assessments'] = assessments_map.fetch(obj.id, []).map{|uri| { 'ref' => uri }}
+      json['assessments'] = assessments_map.fetch(obj.id, []).map{|assessment_blob| { 'ref' => assessment_blob.fetch(:uri) }}
+
+      set_calculated_availability!(json, assessments_map.fetch(obj.id, []), availability_options)
     end
 
     jsons
+  end
+
+  def self.get_sorted_availability_options
+    result = []
+
+    DB.open do |db|
+      availability_enum_id = db[:enumeration].filter(:name => 'runcorn_physical_representation_availability').select(:id)
+      db[:enumeration_value]
+        .filter(:enumeration_id => availability_enum_id)
+        .order(Sequel.asc(:position))
+        .select(:value)
+        .each do |row|
+        result << row[:value]
+      end
+    end
+
+    result
+  end
+
+  def self.set_calculated_availability!(json, assessments_for_representation, availability_options)
+    override = nil
+    override_context = []
+
+    # check for unavailable_due_to_deaccession
+    if json['deaccessioned']
+      override = 'unavailable_due_to_deaccession'
+      override_context << 'deaccession'
+    else
+      # check conservation requests to determine if unavailable_due_to_conservation
+      #  - conservation_request.status == 'Ready For Review'
+      if ASUtils.wrap(json['conservation_requests']).any?{|cr| cr['status'] == 'Ready For Review'}
+        override = 'unavailable_due_to_conservation'
+        override_context << 'conservation_request'
+      end
+
+      # check assessments to determine if unavailable_due_to_conservation
+      #  - assessment.survey_begin == not null (active)
+      if assessments_for_representation.any?{|assessment_blob| assessment_blob.fetch(:active)}
+        override = 'unavailable_due_to_conservation'
+        override_context << 'assessment'
+      end
+
+      # check conservation treatments to determine if unavailable_due_to_conservation
+      if json['conservation_treatments'].any?{|treatment| treatment['status'] != ConservationTreatment::STATUS_COMPLETED}
+        override = 'unavailable_due_to_conservation'
+        override_context << "conservation_treatment"
+      end
+
+      # check for unavailable_temporarily
+      if override.nil? && json['current_location'] != 'HOME'
+        override = 'unavailable_temporarily'
+      end
+    end
+
+    override ||= json['availability']
+
+    json['calculated_availability'] = override
+    json['calculated_availability_context'] = override_context
+    json['calculated_availability_overrides_availability'] = availability_options.index(override) > availability_options.index(json['availability'])
   end
 
   def self.build_display_string(json)
@@ -214,13 +277,26 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
 
   def self.build_assessments_map(objs)
     result = {}
+    blob_by_id = {}
 
     Assessment.find_relationship(:assessment)
       .find_by_participant_ids(self, objs.map(&:id))
       .each do |relationship|
         assessment_id = relationship[:assessment_id]
         result[relationship[:physical_representation_id]] ||= []
-        result[relationship[:physical_representation_id]] << JSONModel(:assessment).uri_for(assessment_id, :repo_id => RequestContext.get(:repo_id))
+        blob = {
+          uri: JSONModel(:assessment).uri_for(assessment_id, :repo_id => RequestContext.get(:repo_id)),
+          id: assessment_id,
+        }
+        result[relationship[:physical_representation_id]] << blob
+        blob_by_id[assessment_id] = blob
+    end
+
+    Assessment
+      .filter(:id => blob_by_id.keys)
+      .select(:id, :survey_end)
+      .map do |row|
+      blob_by_id[row[:id]][:active] = row[:survey_end].nil?
     end
 
     result

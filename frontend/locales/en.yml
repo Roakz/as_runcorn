@@ -149,11 +149,21 @@ en:
     deaccessioned: This record has been deaccessioned
     monetary_value: Monetary Value
     monetary_value_note: Monetary Value Note
+    availability: Availability
+    calculated_availability: Calculated Availability
     _plural: Physical Representations
     _singular: Physical Representation
     _frontend:
       action:
         add: Add Physical Representation
+      messages:
+        calculated_availability_preamble: "The calculated availability differs to its normal value:"
+        calculated_availability_context_preamble: "Reason(s) for change"
+        calculated_availability_context:
+          deaccession: Record is marked as deaccessioned
+          conservation_treatment: Active conservation treatment detected
+          assessment: Active assessment  detected
+          conservation_request: Active conservation request detected
   digital_representation: &digital_representation
     access_category: Access Status
     normal_location: Normal Location
