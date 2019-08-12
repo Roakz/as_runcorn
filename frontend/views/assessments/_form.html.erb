@@ -71,6 +71,9 @@
       <%= I18n.t "assessment._frontend.section.basic_information" %>
       <%= link_to_help :topic => "assessment_basic_information" %>
     </h3>
+
+    <%= render_aspace_partial :partial => 'shared/qsa_id_form', :locals => {:form => form, :model => :assessment} %>
+
     <% if form.readonly? %>
       <div class="form-group">
         <div class="control-label col-sm-2"><%= I18n.t("assessment.surveyed_by") %></div>
