@@ -256,7 +256,7 @@ en:
       agency_category_u_sstr: Agency Category
       representation_intended_use_u_sstr: Intended Use
       significance_u_sstr: Significance
-      rap_open_access_metadata_u_ssort: Open Metadata?
+      rap_open_access_metadata_u_ssort: Publish Details?
       rap_access_status_u_ssort: Access Status
       rap_access_category_u_ssort: Access Category
       rap_expiring_within: RAP expiry days
@@ -302,7 +302,7 @@ en:
     update_success_message: RAP updated successfully
 
   rap:
-    open_access_metadata: Open Access Metadata
+    open_access_metadata: Publish Details?
     access_status: Access Status
     access_category: Access Category
     years: Years
