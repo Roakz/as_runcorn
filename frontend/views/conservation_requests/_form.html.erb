@@ -13,6 +13,8 @@
                                  :form => form,
                                  :record => @conservation_request) %>
 
+      <%= render_aspace_partial :partial => 'shared/qsa_id_form', :locals => {:form => form, :model => :conservation_request} %>
+
       <% form.obj['requested_by'] ||= current_user %>
 
       <% if form.readonly? %>

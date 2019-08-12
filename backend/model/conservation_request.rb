@@ -156,8 +156,9 @@ class ConservationRequest < Sequel::Model(:conservation_request)
       .to_h
 
     objs.zip(jsons).each do |obj, json|
-      json['display_string'] = "CR#{obj.id}"
       json['linked_representation_count'] = linked_representation_counts.fetch(obj.id, 0)
+      json['display_string'] = obj.qsa_id_prefixed + ' (' + json['linked_representation_count'].to_s +
+                                                     ' item' + (json['linked_representation_count'] == 1 ? '' : 's') + ')'
     end
 
     jsons
