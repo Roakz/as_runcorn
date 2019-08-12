@@ -2,11 +2,11 @@
 
 <%
 add_column(I18n.t("conservation_request.status"),
-           proc {|record| record.fetch('conservation_request_status_u_ssort')[0]},
+           proc {|record| record.fetch('conservation_request_status_u_ssort')},
            :sortable => true, :sort_by => 'conservation_request_status_u_ssort')
 
 add_column(I18n.t("conservation_request.reason_requested"),
-           proc {|record| record.fetch('conservation_request_reason_requested_u_ssort')[0]},
+           proc {|record| record.fetch('conservation_request_reason_requested_u_ssort')},
            :sortable => true, :sort_by => 'conservation_request_reason_requested_u_ssort')
 
 add_column(I18n.t("conservation_request.date_of_request"),
