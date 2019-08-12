@@ -268,6 +268,9 @@
           },
         },
       },
+
+      "availability" => {"type" => "string", "dynamic_enum" => "runcorn_colour"},
+      "calculated_availability" => {"type" => "string", "readonly" => "true"},
     },
   },
 }

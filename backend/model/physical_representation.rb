@@ -91,6 +91,8 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
     controlling_records_qsa_id_map = build_controlling_records_qsa_id_map(controlling_records_by_representation_id)
     controlling_records_dates_map = build_controlling_records_dates_map(controlling_records_by_representation_id)
 
+    availability_status = build_availability_status_map(objs)
+
     objs.zip(jsons).each do |obj, json|
       json['existing_ref'] = obj.uri
       json['display_string'] = build_display_string(json)
@@ -118,9 +120,37 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
       json['frequency_of_use'] = frequency_of_use.fetch(obj.id, 0)
 
       json['assessments'] = assessments_map.fetch(obj.id, []).map{|uri| { 'ref' => uri }}
+
+      json['calculated_availability'] = calculate_availability(json)
     end
 
     jsons
+  end
+
+  def self.calculate_availability(json)
+    # check for unavailable_due_to_deaccession
+    if json['deaccessioned']
+      return 'unavailable_due_to_deaccession'
+    end
+
+    # check conservation requests to determine if unavailable_due_to_conservation
+    # TODO
+
+    # check assessments to determine if unavailable_due_to_conservation
+    # TODO
+
+    # check conservation treatments to determine if unavailable_due_to_conservation
+    if json['conservation_treatments'].any?{|treatment| treatment['status'] != ConservationTreatment::STATUS_COMPLETED}
+      return 'unavailable_due_to_conservation'
+    end
+
+    # check for unavailable_temporarily
+    if json['current_location'] != 'HOME'
+      return 'unavailable_temporarily'
+    end
+
+    # take the worst comparing stored value vs calculated
+    json['availability']
   end
 
   def self.build_display_string(json)
