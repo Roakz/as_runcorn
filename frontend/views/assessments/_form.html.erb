@@ -162,7 +162,9 @@
                 </tr>
               </thead>
               <tbody>
-                <% ASUtils.wrap(form.obj['ratings']).sort{|a, b| i18n_rating(a.fetch('label')) <=> i18n_rating(b.fetch('label'))}.each do |rating| %>
+                <% ASUtils.wrap(form.obj['ratings'])
+                          .select{|rating| rating['label'] != 'Research Value'}
+                          .sort{|a, b| i18n_rating(a.fetch('label')) <=> i18n_rating(b.fetch('label'))}.each do |rating| %>
                   <% next unless rating['value'] || rating['note'] %>
                   <tr>
                     <td><%= i18n_rating(rating.fetch('label')) %></td>
