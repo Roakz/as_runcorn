@@ -213,5 +213,66 @@ describe 'Runcorn RAPs' do
     expect(ArchivalObject.get_or_die(child.id).system_mtime).to be > original_ao_system_mtime
   end
 
+  describe "expiry calculation" do
 
+    it "nothing lasts forever" do
+      series = create(:json_resource,
+                      :rap_attached => {
+                        'open_access_metadata' => true,
+                        'access_status' => 'Restricted Access',
+                        'access_category' => 'N/A',
+                        'change_description' => 'test',
+                        'authorised_by' => 'me',
+                        'change_date' => '2019-01-01',
+                        'approved_by' => 'you',
+                        'internal_reference' => 'cc8f30cc-9534-4bbb-92e6-fb3a7732b480',
+                      })
+
+      ao = create(:json_archival_object,
+                  :resource => {'ref' => series.uri},
+                  :physical_representations => [
+                    build(:json_physical_representation)
+                  ])
+
+      ao_json = ArchivalObject.to_jsonmodel(ao.id)
+
+      expect(ao_json.physical_representations[0].fetch('rap_expiration')['expiry_date']).to be_nil
+      expect(ao_json.physical_representations[0].fetch('rap_expiration')['expired']).to be_falsey
+      expect(ao_json.physical_representations[0].fetch('rap_expiration')['expires']).to be_falsey
+    end
+
+    it "something never lasts" do
+      series = create(:json_resource,
+                      :rap_attached => {
+                        'open_access_metadata' => true,
+                        'years' => 10,
+                        'access_status' => 'Restricted Access',
+                        'access_category' => 'N/A',
+                        'change_description' => 'test',
+                        'authorised_by' => 'me',
+                        'change_date' => '2019-01-01',
+                        'approved_by' => 'you',
+                        'internal_reference' => 'cc8f30cc-9534-4bbb-92e6-fb3a7732b480',
+                      })
+
+      ao = create(:json_archival_object,
+                  :resource => {'ref' => series.uri},
+                  :dates => [
+                    build(:json_date, {
+                      'begin' => '2000-01-01',
+                      'end' => '2001-01-01',
+                      'label' => 'existence',
+                    })
+                  ],
+                  :physical_representations => [
+                    build(:json_physical_representation)
+                  ])
+
+      ao_json = ArchivalObject.to_jsonmodel(ao.id)
+
+      expect(ao_json.physical_representations[0].fetch('rap_expiration')['expiry_date']).to_not be_nil
+      expect(ao_json.physical_representations[0].fetch('rap_expiration')['expired']).to be_truthy
+      expect(ao_json.physical_representations[0].fetch('rap_expiration')['expires']).to be_truthy
+    end
+  end
 end

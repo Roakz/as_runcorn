@@ -40,12 +40,18 @@ module RAPsApplied
     def rap_expiration_for_representation(representation_id)
       expiry_date = @expiry_date_by_representation_id.fetch(representation_id, nil)
 
-      return nil if expiry_date.nil?
+      if expiry_date.nil?
+        return {
+          'expired' => false,
+          'expires' => false,
+        }
+      end
 
       {
         'existence_end_date' => @existence_end_date_by_representation_id.fetch(representation_id, nil)&.iso8601,
         'expiry_date' => expiry_date.iso8601,
-        'expired' => expiry_date < Date.today
+        'expired' => expiry_date < Date.today,
+        'expires' => true,
       }
     end
 

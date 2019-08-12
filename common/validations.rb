@@ -90,5 +90,27 @@ module JSONModel
       end
     end
 
+    def self.check_rap_years(hash)
+      errors = []
+      # years can be null or 0 - 100
+      if hash['years']
+        begin
+          years = Integer(hash['years'])
+          if years < 0 || years > 100
+            errors << ['years', 'must be in range 0-100 inclusive']
+          end
+        rescue ArgumentException
+          errors << ['years', 'must be an integer']
+        end
+      end
+      errors
+    end
+
+    if JSONModel(:rap)
+      JSONModel(:rap).add_validation("check_rap_years") do |hash|
+        check_rap_years(hash)
+      end
+    end
+
   end
 end

@@ -8,8 +8,10 @@
         <div class="col-md-12">
           <span class="glyphicon"></span>
           <% if record['rap_attached'] && rap['ref'] === record['rap_attached']['uri'] %><div class="badge badge-info">Attached</div> <% end %>
-          <% if record['rap_expiration'] && record['rap_expiration']['existence_end_date'] %>
+          <% if record['rap_expiration'] && record['rap_expiration']['expires'] %>
             <div class="badge badge-info">Expires: <%= record['rap_expiration']['expiry_date'] %></div>
+          <% elsif record['rap_expiration'] && !record['rap_expiration']['expires'] %>
+            <div class="badge badge-info">No Expiry</div>
           <% end %>
           <% if rap['_resolved']['is_repository_default'] %>
             <div class="badge badge-info">DEFAULT RESTRICTION</div>

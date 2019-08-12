@@ -61,11 +61,11 @@ class RAP < Sequel::Model(:rap)
 
   def build_display_string(json)
     [
-      "%s years" % [json.years.to_s],
+      json.years.nil? ? nil : "%s years" % [json.years.to_s],
       json.open_access_metadata ? "Open metadata" : "Closed Metadata",
       json['access_status'],
       json['access_category'],
-    ].join('; ')
+    ].compact.join('; ')
   end
 
   def self.get_default_id
