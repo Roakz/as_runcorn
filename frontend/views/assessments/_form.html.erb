@@ -456,7 +456,11 @@
 
 <% form.emit_template("assessment") %>
 
-<%= form_plugins_for("assessment", form) %>
+<% if form.readonly? %>
+  <%= show_plugins_for(JSONModel(:assessment).from_hash(form.obj, false, true), form) %>
+<% else %>
+  <%= form_plugins_for("assessment", form) %>
+<% end %>
 
 <script>
  $(function () {
