@@ -22,7 +22,11 @@ module ControlGapsCalculator
         obj = next_item.obj
 
         unless Array(obj.date).empty?
-          record_start_date = DateParse.date_parse_down(obj.date.first.begin)
+          record_start_date = obj.date.find(&:begin)
+          record_start_date = DateParse.date_parse_down(record_start_date.begin) if record_start_date
+
+          next unless record_start_date
+
           relationship_defn = obj.class.control_relationship.definition
 
           agent_relationships = obj.cached_relationships.fetch(relationship_defn, [])
