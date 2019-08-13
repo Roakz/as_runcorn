@@ -120,7 +120,7 @@
         <div class="form-group">
           <%= form.label('reviewer', {:for => 'token-input-assessment_reviewer_'}, ['col-sm-2']) %>
           <div class="col-sm-9">
-            <%= render_aspace_partial :partial => "assessments/agent_linker", :locals => {:form => form, :label => I18n.t('assessment._frontend.browse_reviewers'), :linker_id => 'assessment_reviewer_'} %>
+            <%= render_aspace_partial :partial => "assessments/agent_linker", :locals => {:form => form, :label => I18n.t('assessment._frontend.browse_reviewers'), :linker_id => 'assessment_reviewer_', :no_default => true} %>
           </div>
         </div>
       <% end %>

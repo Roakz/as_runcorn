@@ -1,6 +1,6 @@
 ArchivesSpace::Application.extend_aspace_routes(File.join(File.dirname(__FILE__), "routes.rb"))
 
-require_relative 'helpers/movements_helper'
+require_relative 'helpers/user_helper'
 require_relative 'helpers/qsa_id_helper'
 require_relative 'helpers/significance_helper'
 

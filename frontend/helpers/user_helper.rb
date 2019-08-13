@@ -1,7 +1,7 @@
-module MovementsHelper
+module UserHelper
 
-  # The movement.user linker needs to default to the current user
-  # it links via the user's agent record uri, which, sadly, we don't have
+  # Some user linkers need to default to the current user
+  # linking via the user's agent record uri, which, sadly, we don't have
   # so let's get it, and stash it since it won't be changing much
   # FIXME: feels like there's a better way to do this
   def self.agent_for_user(user_uri)
