@@ -38,7 +38,7 @@
       <%= form.label_and_textfield "requested_by" %>
       <%= form.label_and_select "requested_for", form.possible_options_for("requested_for", true) %>
       <%= form.label_and_select "reason_requested", form.possible_options_for("reason_requested", true) %>
-      <%= form.label_and_textfield "reason_requested_comments" %>
+      <%= form.label_and_textarea "reason_requested_comments" %>
 
       <%= form.label_and_select "client_type", form.possible_options_for("client_type", true) %>
       <%= form.label_and_textfield "client_name" %>
