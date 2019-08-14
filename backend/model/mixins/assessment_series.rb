@@ -11,8 +11,13 @@ module AssessmentSeries
       series_hash = series_for(objs)
 
       objs.zip(jsons).each do |obj, json|
-        json['series'] = series_hash[obj.id].map do |series_id|
-          {'ref' => JSONModel(:resource).uri_for(series_id, :repo_id => RequestContext.get(:repo_id))}
+        json['series'] = series_hash[obj.id].map do |series|
+          {
+            'ref' => JSONModel(:resource).uri_for(series[:id], :repo_id => RequestContext.get(:repo_id)),
+            'title' => series[:title],
+            'qsa_id' => series[:qsa_id],
+            'qsa_id_prefixed' => QSAId.prefixed_id_for(Resource, series[:qsa_id]),
+          }
         end
       end
 
@@ -28,9 +33,14 @@ module AssessmentSeries
       DB.open do |db|
         prep_series = db[:physical_representation].filter(:physical_representation__id => ass_prep.values.flatten)
           .left_join(:archival_object, Sequel.qualify(:archival_object, :id) => Sequel.qualify(:physical_representation, :archival_object_id))
-          .select(:physical_representation__id, :archival_object__root_record_id).map{|row| [row[:id], row[:root_record_id]]}.to_h
+          .left_join(:resource, Sequel.qualify(:resource, :id) => Sequel.qualify(:archival_object, :root_record_id))
+          .select(:physical_representation__id,
+                  Sequel.as(:resource__id, :series_id),
+                  Sequel.as(:resource__title, :series_title),
+                  Sequel.as(:resource__qsa_id, :series_qsa_id))
+          .map{|row| [row[:id], {:id => row[:series_id], :title => row[:series_title], :qsa_id => row[:series_qsa_id]}]}.to_h
 
-        ass_prep.map{|ass, preps| [ass, preps.map{|prep| prep_series[prep]}.uniq]}.to_h
+        ass_prep.map{|ass, preps| [ass, preps.map{|prep| prep_series[prep]}.uniq.compact]}.to_h
       end
     end
   end

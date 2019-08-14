@@ -31,6 +31,9 @@
           "type" => [{"type" => "JSONModel(:resource) uri"}],
           "ifmissing" => "error"
         },
+        "title" => {"type" => "string"},
+        "qsa_id" => {"type" => "integer"},
+        "qsa_id_prefixed" => {"type" => "string"},
         "_resolved" => {
           "type" => "object",
         }
