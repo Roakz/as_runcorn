@@ -2,6 +2,7 @@ class Assessment
   include ExternalIDs
   include AssessmentFromConservationRequest
   prepend AssessmentDisplayString
+  include AssessmentSeries
 
   define_relationship(:name => :assessment,
                       :json_property => 'records',
