@@ -242,6 +242,13 @@ en:
       high: High
       iconic: Iconic
       memory_of_the_world: Memory of the World
+    runcorn_physical_representation_availability:
+      available: "Available. There are no other restrictions current."
+      unavailable_temporarily: "Temporarily Unavailable. Contact QSA for more information."
+      unavailable_due_to_conservation: "This must be assessed by a conservator to determine if it can be made available."
+      unavailable_due_to_condition: "This is unavailable due to its condition. Where possible, a copy will be made available."
+      unavailable_due_to_format: "This is unavailable due to its format. Where possible, a copy will be made available."
+      unavailable_due_to_deaccession: "This is unavailable because it has been deaccessioned or destroyed."
   enumeration_names:
     runcorn_access_category: Runcorn Plugin - Access Category
     runcorn_access_clearance_procedure: Runcorn Plugin - Runcorn Access Clearance Procedure
@@ -258,3 +265,4 @@ en:
     runcorn_charge_quantity_unit: Runcorn Plugin - Runcorn Charge Quantity Unit
     runcorn_treatment_priority: Runcorn Plugin - Runcorn Treatment Priority
     runcorn_significance: Runcorn Plugin - Runcorn Significance
+    runcorn_physical_representation_availability: Runcorn Plugin = Physical Representation Availability

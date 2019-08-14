@@ -13,7 +13,14 @@ module ConservationRequests
 
       representation_to_conservation_request = {}
 
-      db[:conservation_request_representations].filter(backlink_col => objs.map(&:id)).select(:conservation_request_id, backlink_col).each do |row|
+      db[:conservation_request_representations]
+        .join(:conservation_request, Sequel.qualify(:conservation_request, :id) => Sequel.qualify(:conservation_request_representations, :conservation_request_id))
+        .join(Sequel.as(:enumeration_value, :conservation_request_status), Sequel.qualify(:conservation_request_status, :id) => Sequel.qualify(:conservation_request, :status_id))
+        .filter(backlink_col => objs.map(&:id))
+        .select(Sequel.qualify(:conservation_request_representations, :conservation_request_id),
+                Sequel.qualify(:conservation_request_representations, backlink_col),
+                Sequel.as(Sequel.qualify(:conservation_request_status, :value), :status))
+        .each do |row|
         representation_to_conservation_request[row[backlink_col]] ||= []
         representation_to_conservation_request[row[backlink_col]] << {
           id: row[:conservation_request_id],

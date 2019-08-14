@@ -5,7 +5,7 @@ Sequel.migration do
   up do
     alter_table(:physical_representation) do
       add_column(:availability_id, :integer,  :null => true)
-      add_foreign_key([:availability_id], :enumeration_value, :key => :id, :name => "runcorn_physical_representation_availability_fk")
+      add_foreign_key([:availability_id], :enumeration_value, :key => :id, :name => "runcorn_physical_representation_availability")
     end
 
     create_enum('runcorn_physical_representation_availability', [

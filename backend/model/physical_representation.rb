@@ -119,42 +119,52 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
 
       json['assessments'] = assessments_map.fetch(obj.id, []).map{|assessment_blob| { 'ref' => assessment_blob.fetch(:uri) }}
 
-      json['calculated_availability'] = calculate_availability(json, assessments_map.fetch(obj.id, []))
+      set_calculated_availability!(json, assessments_map.fetch(obj.id, []))
     end
 
     jsons
   end
 
-  def self.calculate_availability(json, assessments_for_representation)
+  def self.set_calculated_availability!(json, assessments_for_representation)
+    override = nil
+    override_context = []
+
     # check for unavailable_due_to_deaccession
     if json['deaccessioned']
-      return 'unavailable_due_to_deaccession'
+      json['calculated_availability'] = 'unavailable_due_to_deaccession'
+      json['calculated_availability_context'] = ['deaccession']
+
+      return
     end
 
     # check conservation requests to determine if unavailable_due_to_conservation
     #  - conservation_request.status == 'Ready For Review'
     if ASUtils.wrap(json['conservation_requests']).any?{|cr| cr['status'] == 'Ready For Review'}
-      return 'unavailable_due_to_conservation'
+      override = 'unavailable_due_to_conservation'
+      override_context << 'conservation_request'
     end
 
     # check assessments to determine if unavailable_due_to_conservation
     #  - assessment.survey_begin == not null (active)
-    if assessments_for_representation.any?{|assessment_blob| assessment_blob.fetch(:active, false)}
-      return 'unavailable_due_to_conservation'
+    if assessments_for_representation.any?{|assessment_blob| assessment_blob.fetch(:active)}
+      override = 'unavailable_due_to_conservation'
+      override_context << 'assessment'
     end
 
     # check conservation treatments to determine if unavailable_due_to_conservation
     if json['conservation_treatments'].any?{|treatment| treatment['status'] != ConservationTreatment::STATUS_COMPLETED}
-      return 'unavailable_due_to_conservation'
+      override = 'unavailable_due_to_conservation'
+      override_context << "conservation_treatment"
     end
 
     # check for unavailable_temporarily
-    if json['current_location'] != 'HOME'
-      return 'unavailable_temporarily'
+    if override.nil? && json['current_location'] != 'HOME'
+      override = 'unavailable_temporarily'
     end
 
-    # take the worst comparing stored value vs calculated
-    json['availability']
+    # FIXME take the worst comparing stored value vs calculated
+    json['calculated_availability'] = override || json['availability']
+    json['calculated_availability_context'] = override_context
   end
 
   def self.build_display_string(json)
@@ -258,7 +268,7 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
     end
 
     Assessment
-      .filter(:id => result.map{|blob| blob.fetch(:id)})
+      .filter(:id => blob_by_id.keys)
       .select(:id, :survey_end)
       .map do |row|
       blob_by_id[row[:id]][:active] = row[:survey_end].nil?

@@ -12,11 +12,30 @@
       </div>
     <% end %>
 
+    <% if form.obj['calculated_availability'] && form.obj['calculated_availability'] != form.obj['availability'] %>
+      <div class="alert alert-warning">
+        <p><%= I18n.t('physical_representation._frontend.messages.calculated_availability_preamble') %></p>
+        <%= form.label_and_readonly "calculated_availability" %>
+        <% unless ASUtils.wrap(form.obj['calculated_availability_context']).empty? %>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">
+              <%= I18n.t('physical_representation._frontend.messages.calculated_availability_context_preamble') %>
+            </label>
+            <div class="col-sm-9 label-only">
+              <%= ASUtils.wrap(form.obj['calculated_availability_context']).map{|context| I18n.t("physical_representation._frontend.messages.calculated_availability_context.#{context}", :default => context)}.join(', ') %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
     <%= form.hidden_input "existing_ref" %>
     <%= render_aspace_partial :partial => 'shared/qsa_id_form', :locals => {:form => form, :model => :physical_representation} %>
     <%= form.label_and_textfield "title" %>
     <%= form.label_and_textarea "description" %>
     <%= form.label_and_textfield "agency_assigned_id" %>
+
+    <%= form.label_and_select "availability", form.possible_options_for("availability", true) %>
 
     <%= form.label_and_select "access_category", form.possible_options_for("access_category", true) %>
     <%= form.hidden_input "current_location", "HOME" %>
