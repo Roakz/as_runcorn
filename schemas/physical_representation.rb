@@ -230,6 +230,10 @@
               "type" => [{"type" => "JSONModel(:conservation_request) uri"}],
               "readonly" => "true"
             },
+            "status" => {
+              "type" => "string",
+              "readonly" => "true",
+            },
             "_resolved" => {
               "type" => "object",
               "readonly" => "true"
@@ -269,7 +273,7 @@
         },
       },
 
-      "availability" => {"type" => "string", "dynamic_enum" => "runcorn_colour"},
+      "availability" => {"type" => "string", "dynamic_enum" => "runcorn_physical_representation_availability"},
       "calculated_availability" => {"type" => "string", "readonly" => "true"},
     },
   },

@@ -91,8 +91,6 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
     controlling_records_qsa_id_map = build_controlling_records_qsa_id_map(controlling_records_by_representation_id)
     controlling_records_dates_map = build_controlling_records_dates_map(controlling_records_by_representation_id)
 
-    availability_status = build_availability_status_map(objs)
-
     objs.zip(jsons).each do |obj, json|
       json['existing_ref'] = obj.uri
       json['display_string'] = build_display_string(json)
@@ -119,25 +117,31 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
 
       json['frequency_of_use'] = frequency_of_use.fetch(obj.id, 0)
 
-      json['assessments'] = assessments_map.fetch(obj.id, []).map{|uri| { 'ref' => uri }}
+      json['assessments'] = assessments_map.fetch(obj.id, []).map{|assessment_blob| { 'ref' => assessment_blob.fetch(:uri) }}
 
-      json['calculated_availability'] = calculate_availability(json)
+      json['calculated_availability'] = calculate_availability(json, assessments_map.fetch(obj.id, []))
     end
 
     jsons
   end
 
-  def self.calculate_availability(json)
+  def self.calculate_availability(json, assessments_for_representation)
     # check for unavailable_due_to_deaccession
     if json['deaccessioned']
       return 'unavailable_due_to_deaccession'
     end
 
     # check conservation requests to determine if unavailable_due_to_conservation
-    # TODO
+    #  - conservation_request.status == 'Ready For Review'
+    if ASUtils.wrap(json['conservation_requests']).any?{|cr| cr['status'] == 'Ready For Review'}
+      return 'unavailable_due_to_conservation'
+    end
 
     # check assessments to determine if unavailable_due_to_conservation
-    # TODO
+    #  - assessment.survey_begin == not null (active)
+    if assessments_for_representation.any?{|assessment_blob| assessment_blob.fetch(:active, false)}
+      return 'unavailable_due_to_conservation'
+    end
 
     # check conservation treatments to determine if unavailable_due_to_conservation
     if json['conservation_treatments'].any?{|treatment| treatment['status'] != ConservationTreatment::STATUS_COMPLETED}
@@ -238,13 +242,26 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
 
   def self.build_assessments_map(objs)
     result = {}
+    blob_by_id = {}
 
     Assessment.find_relationship(:assessment)
       .find_by_participant_ids(self, objs.map(&:id))
       .each do |relationship|
         assessment_id = relationship[:assessment_id]
         result[relationship[:physical_representation_id]] ||= []
-        result[relationship[:physical_representation_id]] << JSONModel(:assessment).uri_for(assessment_id, :repo_id => RequestContext.get(:repo_id))
+        blob = {
+          uri: JSONModel(:assessment).uri_for(assessment_id, :repo_id => RequestContext.get(:repo_id)),
+          id: assessment_id,
+        }
+        result[relationship[:physical_representation_id]] << blob
+        blob_by_id[assessment_id] = blob
+    end
+
+    Assessment
+      .filter(:id => result.map{|blob| blob.fetch(:id)})
+      .select(:id, :survey_end)
+      .map do |row|
+      blob_by_id[row[:id]][:active] = row[:survey_end].nil?
     end
 
     result
