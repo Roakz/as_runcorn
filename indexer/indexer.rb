@@ -16,6 +16,7 @@ class IndexerCommon
   @@record_types << :conservation_request
 
   add_attribute_to_resolve('container')
+  add_attribute_to_resolve('container::container_locations')
   add_attribute_to_resolve('responsible_agency')
 
   def self.build_recent_agency_filter(recent_agencies)
@@ -48,6 +49,16 @@ class IndexerCommon
 
         doc['top_container_title_u_sstr'] = record.dig('record', 'container', '_resolved', 'display_string')
         doc['top_container_location_u_sstr'] = record.dig('record', 'container', '_resolved', 'current_location')
+
+        home_location = (record.dig('record', 'container', '_resolved', 'container_locations') || []).find {|location|
+          location['status'] == 'current'
+        }
+
+        if home_location
+          doc['top_container_home_location_u_sstr'] = home_location['_resolved']['title']
+        end
+
+        doc['representation_format_u_sstr'] = record.dig('record', 'format')
 
         doc['controlling_record_u_sstr'] = record['record']['controlling_record']['ref']
         doc['responsible_agency_u_sstr'] = record['record']['responsible_agency']['ref']

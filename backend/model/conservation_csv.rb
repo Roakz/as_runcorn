@@ -5,6 +5,7 @@ class ConservationCSV
   HEADERS = [
     'Representation ID',
     'Representation Title',
+    'Representation Format',
     'Responsible Agency ID',
     'Responsible Agency Title',
     'Controlling Record Date - Start',
@@ -13,6 +14,7 @@ class ConservationCSV
     'Significance',
     'Container Title',
     'Container Location',
+    'Container Location - Description',
   ]
 
   def self.for_refs(many_many_refs)
@@ -40,6 +42,7 @@ class ConservationCSV
           [
             result['qsa_id_u_ssort'],
             result['title'],
+            result.dig('representation_format_u_sstr', 0),
             result.dig('responsible_agency_qsa_id_u_sstr', 0),
             result.dig('responsible_agency_title_u_sstr', 0),
             result['controlling_record_begin_date_u_ssort'],
@@ -48,6 +51,7 @@ class ConservationCSV
             result.dig('significance_u_sstr', 0),
             result.dig('top_container_title_u_sstr', 0),
             result.dig('top_container_location_u_sstr', 0),
+            result.dig('top_container_home_location_u_sstr', 0),
           ].map {|e| e || ''}.to_csv
         }.join("")
       )
