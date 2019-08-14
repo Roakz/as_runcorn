@@ -185,11 +185,11 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
       end
     end
 
-    override ||= json['availability']
+    override ||= json['availability'] || 'available'
 
     json['calculated_availability'] = override
     json['calculated_availability_context'] = override_context
-    json['calculated_availability_overrides_availability'] = availability_options.index(override) > availability_options.index(json['availability'])
+    json['calculated_availability_overrides_availability'] = json['availability'].nil? || availability_options.index(override) > availability_options.index(json['availability'])
   end
 
   def self.build_display_string(json)
@@ -287,6 +287,7 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
         blob = {
           uri: JSONModel(:assessment).uri_for(assessment_id, :repo_id => RequestContext.get(:repo_id)),
           id: assessment_id,
+          active: false,
         }
         result[relationship[:physical_representation_id]] << blob
         blob_by_id[assessment_id] = blob

@@ -12,7 +12,7 @@
       </div>
     <% end %>
 
-    <% if form.obj['calculated_availability'] && form.obj['calculated_availability'] != form.obj['availability'] %>
+    <% if form.obj['availability'] && form.obj['calculated_availability'] && form.obj['calculated_availability'] != form.obj['availability'] %>
       <div class="alert alert-warning">
         <p><%= I18n.t('physical_representation._frontend.messages.calculated_availability_preamble') %></p>
         <%= form.label_and_readonly "calculated_availability" %>
@@ -42,7 +42,11 @@
         </label>
         <div class="col-sm-9 label-only">
           <%= I18n.t("enumerations.runcorn_physical_representation_availability.#{form.obj['calculated_availability']}", :default => form.obj['calculated_availability']) %>
-          <div><small class="text-muted">Overrides availability set by user: "<%= I18n.t("enumerations.runcorn_physical_representation_availability.#{form.obj['availability']}", :default => form.obj['availability']) %>"</small></div>
+          <% if form.obj['availability'] %>
+            <div><small class="text-muted">Overrides availability set by user: "<%= I18n.t("enumerations.runcorn_physical_representation_availability.#{form.obj['availability']}", :default => form.obj['availability']) %>"</small></div>
+          <% else %>
+            <div><small class="text-muted">Overrides availability (not currently set by user)</small></div>
+          <% end %>
         </div>
       </div>
     <% else %>
