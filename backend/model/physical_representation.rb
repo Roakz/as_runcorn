@@ -66,6 +66,12 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
     super
   end
 
+  def self.handle_delete(ids_to_delete)
+    ConservationRequest.clear_physical_representations(ids_to_delete)
+
+    super
+  end
+
   def self.sequel_to_jsonmodel(objs, opts = {})
     jsons = super
 

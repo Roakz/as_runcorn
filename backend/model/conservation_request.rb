@@ -62,6 +62,12 @@ class ConservationRequest < Sequel::Model(:conservation_request)
   end
 
 
+  def self.clear_physical_representations(physical_representation_ids)
+    DB.open do |db|
+      db[:conservation_request_representations].filter(:physical_representation_id => physical_representation_ids).delete
+    end
+  end
+
   def self.handle_delete(ids_to_delete)
     DB.open do |db|
       db[:conservation_request_representations].filter(:conservation_request_id => ids_to_delete).delete
