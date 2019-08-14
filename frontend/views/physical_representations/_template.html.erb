@@ -22,7 +22,7 @@
               <%= I18n.t('physical_representation._frontend.messages.calculated_availability_context_preamble') %>
             </label>
             <div class="col-sm-9 label-only">
-              <%= ASUtils.wrap(form.obj['calculated_availability_context']).map{|context| I18n.t("physical_representation._frontend.messages.calculated_availability_context.#{context}", :default => context)}.join(', ') %>
+              <%= ASUtils.wrap(form.obj['calculated_availability_context']).map{|context| I18n.t("physical_representation._frontend.messages.calculated_availability_context.#{context}", :default => context)}.join('; ') %>
             </div>
           </div>
         <% end %>
@@ -35,7 +35,19 @@
     <%= form.label_and_textarea "description" %>
     <%= form.label_and_textfield "agency_assigned_id" %>
 
-    <%= form.label_and_select "availability", form.possible_options_for("availability", true) %>
+    <% if form.readonly? && form['calculated_availability_overrides_availability'] %>
+      <div class="form-group">
+        <label class="col-sm-2 control-label">
+          <%= I18n.t('physical_representation.availability') %>
+        </label>
+        <div class="col-sm-9 label-only">
+          <%= I18n.t("enumerations.runcorn_physical_representation_availability.#{form.obj['calculated_availability']}", :default => form.obj['calculated_availability']) %>
+          <div><small class="text-muted">Overrides availability set by user: "<%= I18n.t("enumerations.runcorn_physical_representation_availability.#{form.obj['availability']}", :default => form.obj['availability']) %>"</small></div>
+        </div>
+      </div>
+    <% else %>
+      <%= form.label_and_select "availability", form.possible_options_for("availability", true) %>
+    <% end %>
 
     <%= form.label_and_select "access_category", form.possible_options_for("access_category", true) %>
     <%= form.hidden_input "current_location", "HOME" %>
