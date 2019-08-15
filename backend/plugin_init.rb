@@ -40,5 +40,13 @@ TreeReordering.add_after_reorder_hook do |target_class, child_class, target_id, 
   end
 end
 
+# Make sure the default RAP exists from the outset
+
+DB.attempt {
+  RAP.get_default_id
+}.and_if_constraint_fails do |e|
+  Log.warn("Constraint failure while creating default RAP: #{e}")
+end
+
 require_relative 'lib/rap_provisioner'
 RapProvisioner.doit!
