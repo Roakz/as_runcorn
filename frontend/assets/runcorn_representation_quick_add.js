@@ -1,7 +1,7 @@
 (function(exports) {
     function RepresentationQuickAdd($section) {
         this.$section = $section;
-        this.$mainButton = this.$section.find('h3 button');
+        this.$mainButton = this.$section.find('> h3 > button');
         this.addButton();
     };
 
