@@ -3,10 +3,16 @@
         this.opts = opts;
         var self = this;
 
-        $('.attach-rap-button', $container).each(function() {
+        this.$form = $container.find('> form');
+        if (this.$form.data('RuncornRAPs')) {
+            return;
+        }
+        this.$form.data('RuncornRAPs', this);
+
+        $('.attach-rap-button', this.$form).each(function() {
             new RuncornRAPAttachWorkflow($(this), self);
         });
-        $('.edit-rap-button', $container).each(function() {
+        $('.edit-rap-button', this.$form).each(function() {
             new RuncornRAPEditWorkflow($(this), self);
         });
 
