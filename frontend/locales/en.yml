@@ -82,6 +82,7 @@ en:
     cannot_have_a_value_if_a_storage_location_is_specified: Cannot have a value if functional location is specified
     cannot_have_a_value_if_a_functional_location_is_specified: Cannot have a value if storage location is specified
     location_must_be_specified: Property is required
+    "must_be_in_range_0-100_inclusive": "Must be in the range 0-100 inclusive"
   managed_registration:
     title: Agency Registrations
     button_label: Agency Registrations
