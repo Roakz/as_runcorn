@@ -1,0 +1,5 @@
+<% series.each do |ser| %>
+  <%= QSAIdHelper.id(ser['qsa_id_prefixed']) %> &nbsp;
+  <strong><%= ser['title'] %></strong>
+  <br/><br/>
+<% end %>

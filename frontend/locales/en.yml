@@ -63,6 +63,9 @@ en:
   assessment:
     conservation_note: Condition Rating
     treatment_priority: Treatment Priority
+    series: Series
+    survey_begin: Survey Start
+    survey_end: Survey End
     _frontend:
       section:
         format_attributes: Proposed Treatments
@@ -262,6 +265,7 @@ en:
     controlling_record_series_qsa_id_u_sort: Series ID
     controlling_record_qsa_id_u_sort: Record ID
     qsa_id_u_sort: Identifier
+    assessment_treatment_priority_u_sort: Treatment Priority
 
   search_results:
     filter:

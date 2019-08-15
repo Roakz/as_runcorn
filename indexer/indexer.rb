@@ -151,6 +151,17 @@ class IndexerCommon
 
     end
 
+
+    indexer.add_document_prepare_hook {|doc, record|
+      if doc['primary_type'] == 'assessment'
+        vals = JSONModel.enum_values('runcorn_treatment_priority')
+        pri = record['record']['treatment_priority']
+        doc['assessment_treatment_priority_u_sort'] = ((vals.index(pri) || -1) + 1).to_s
+        doc['assessment_treatment_priority_u_ssort'] = pri
+      end
+    }
+
+
     indexer.add_document_prepare_hook do |doc, record|
       if record['record'].has_key?('qsa_id')
         doc['qsa_id_u_sint'] = record['record']['qsa_id']
