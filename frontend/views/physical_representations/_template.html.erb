@@ -16,6 +16,14 @@
       <div class="alert alert-warning">
         <p><%= I18n.t('physical_representation._frontend.messages.calculated_availability_preamble') %></p>
         <%= form.label_and_readonly "calculated_availability" %>
+        <div class="form-group">
+          <label class="col-sm-2 control-label">
+            <%= I18n.t('physical_representation.calculated_availability') %>
+          </label>
+          <div class="col-sm-9 label-only">
+            <%= I18n.t("enumerations.runcorn_physical_representation_availability.#{form.obj['calculated_availability']}", :default => form.obj['calculated_availability']) %>
+          </div>
+        </div>
         <% unless ASUtils.wrap(form.obj['calculated_availability_context']).empty? %>
           <div class="form-group">
             <label class="col-sm-2 control-label">

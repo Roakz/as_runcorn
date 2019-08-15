@@ -277,7 +277,6 @@
       "calculated_availability" => {
         "type" => "string",
         "readonly" => "true",
-        "dynamic_enum" => "runcorn_physical_representation_availability",
       },
       "calculated_availability_context" => {
         "type" => "array",
