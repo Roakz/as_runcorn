@@ -27,11 +27,10 @@ module RAPsApplied
 
     def rap_history_for_representation(representation_id)
       @rap_applied_by_representation_id.fetch(representation_id, [])
-        .sort_by {|rap_applied| rap_applied[:version]}
+        .sort_by {|rap_applied| rap_applied[:id]}
         .map {|rap_applied|
         {
           'ref' => JSONModel::JSONModel(:rap).uri_for(rap_applied[:rap_id], { :repo_id => RequestContext.get(:repo_id) }),
-          'version' => rap_applied[:version],
           'is_active' => rap_applied[:is_active] == 1,
         }
       }

@@ -123,7 +123,7 @@ class Resource
           db[:rap_applied]
             .filter(backlink_col => sub_nodes.map(&:record_id),
                     :is_active => 1)
-            .select(backlink_col, :rap_id, :version)
+            .select(backlink_col, :rap_id)
             .each do |row|
             active_raps[row[backlink_col]] = row.to_h
           end
@@ -138,7 +138,6 @@ class Resource
                 rows_to_insert << {
                   backlink_col => node.record_id,
                   :rap_id => node.applicable_rap_id,
-                  :version => existing_rap[:version] + 1,
                   :is_active => 1,
                 }
               end
@@ -147,7 +146,6 @@ class Resource
               rows_to_insert << {
                 backlink_col => node.record_id,
                 :rap_id => node.applicable_rap_id,
-                :version => 0,
                 :is_active => 1,
               }
             end
