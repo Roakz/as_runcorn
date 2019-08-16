@@ -10,9 +10,13 @@
     <div class="panel-group details" id="<%= accordion_id %>_accordion">
       <% raps_to_show = ASUtils.wrap(record['rap_history']).reverse %>
       <%= render_aspace_partial :partial => 'rap_applied/rap', :locals => {:form => form, :accordion_id => accordion_id, :rap => raps_to_show.shift, :record => record, :index => 0} %>
-      <% raps_to_show.reject{|rap| rap['_resolved']['is_repository_default']}.each_with_index do |rap, ix| %>
-        <% if ix == 0 %><h4>RAP History:</h4><% end %>
-        <%= render_aspace_partial :partial => 'rap_applied/rap', :locals => {:form => form, :accordion_id => accordion_id, :rap => rap, :record => record, :index => ix + 1} %>
+
+      <%# Show history on AOs and on representations that have RAP overrides %>
+      <% if record['rap_attached'] || record['jsonmodel_type'] == 'archival_object' %>
+        <% raps_to_show.reject{|rap| rap['_resolved']['is_repository_default']}.each_with_index do |rap, ix| %>
+          <% if ix == 0 %><h4>RAP History:</h4><% end %>
+          <%= render_aspace_partial :partial => 'rap_applied/rap', :locals => {:form => form, :accordion_id => accordion_id, :rap => rap, :record => record, :index => ix + 1} %>
+        <% end %>
       <% end %>
     </div>
   </div>
