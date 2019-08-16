@@ -56,4 +56,40 @@
   "agency_assigned_id" => {"type" => "string"},
 
   "rap_attached" => {"type" => "JSONModel(:rap) object"},
+
+  "rap_applied" => {
+    "type" => "JSONModel(:rap) object",
+    "readonly" => "true",
+  },
+
+  "rap_history" => {
+    "readonly" => "true",
+    "type" => "array",
+    "items" => {
+      "type" => "object",
+      "subtype" => "ref",
+      "properties" => {
+        "ref" => {
+          "type" => [{"type" => "JSONModel(:rap) uri"}],
+          "ifmissing" => "error",
+        },
+        "is_active" => {"type" => "boolean"},
+        "_resolved" => {
+          "type" => "object",
+        },
+      },
+    }
+  },
+
+  "rap_expiration" => {
+    "type" => "object",
+    "readonly" => "true",
+    "properties" => {
+      "existence_end_date" => {"type" => "date"},
+      "expiry_date" => {"type" => "date"},
+      "expired" => {"type" => "boolean"},
+      "expires" => {"type" => "boolean"},
+    },
+  },
+
 }

@@ -138,7 +138,7 @@ Rails.application.config.after_initialize do
     RAPSection.new(
       'as_runcorn',
       'rap_attached',
-      ['resource', 'archival_object'],
+      ['resource'],
       {
         erb_template: 'rap_attached/show_as_subrecords',
         heading_text:  I18n.t('rap_attached._plural'),
@@ -151,7 +151,7 @@ Rails.application.config.after_initialize do
     RAPSection.new(
       'as_runcorn',
       'rap_applied',
-      ['physical_representation', 'digital_representation'],
+      ['physical_representation', 'digital_representation', 'archival_object'],
       {
         erb_template: 'rap_applied/show_as_subrecords',
         heading_text:  I18n.t('rap_applied._plural'),

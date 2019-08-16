@@ -3,6 +3,7 @@ ArchivalObject.include(Representations)
 ArchivalObject.include(Deaccessions)
 ArchivalObject.include(RuncornDeaccession)
 ArchivalObject.include(RAPs)
+ArchivalObject.include(RAPsApplied)
 ArchivalObject.include(Significance)
 
 class ArchivalObject

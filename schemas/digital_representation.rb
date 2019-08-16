@@ -174,16 +174,16 @@
           "properties" => {
             "ref" => {
               "type" => [{"type" => "JSONModel(:rap) uri"}],
-              "readonly" => "true"
+              "ifmissing" => "error",
             },
             "is_active" => {"type" => "boolean"},
             "_resolved" => {
               "type" => "object",
-              "readonly" => "true"
-            }
-          }
+            },
+          },
         }
       },
+
     },
   },
 }
