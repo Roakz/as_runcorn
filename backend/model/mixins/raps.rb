@@ -53,7 +53,8 @@ module RAPs
 
 
   def self.apply_raps(obj, json)
-    return if json.rap_attached.nil?
+    # If there's no RAP attached, or if the attached RAP has already been created...
+    return if (json.rap_attached.nil? || json.rap_attached['uri'])
 
     backlink = {:"#{obj.class.table_name}_id" => obj.id}
 
