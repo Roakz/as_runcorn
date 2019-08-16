@@ -44,7 +44,7 @@ class Resource
     result || 0
   end
 
-  RAPPropagateState = Struct.new(:record_model, :record_id, :applicable_rap_id, :completed)
+  RAPPropagateState = Struct.new(:record_model, :record_id, :applicable_rap_id)
 
   # Returns a count of inserted rows.
   def propagate_raps!
@@ -82,9 +82,9 @@ class Resource
                               node.applicable_rap_id
                             end
 
-        if node.record_model == PhysicalRepresentation || node.record_model == DigitalRepresentation
-          # Leaf nodes!  Sweet leaf nodes!
-          completed << RAPPropagateState.new(node.record_model, node.record_id, applicable_rap_id, true)
+        if [PhysicalRepresentation, DigitalRepresentation].include?(node.record_model)
+          # This is a node that will have a rap applied to it, and nothing underneath.  Finished.
+          completed << RAPPropagateState.new(node.record_model, node.record_id, applicable_rap_id)
         else
           if node.record_model == ArchivalObject
             # These can have representations attached to them.  Process those.
@@ -93,6 +93,9 @@ class Resource
                 next_layer << RAPPropagateState.new(representation_model, representation[:id], applicable_rap_id)
               end
             end
+
+            # We also want to record history
+            completed << RAPPropagateState.new(ArchivalObject, node.record_id, applicable_rap_id)
           end
 
           # Search children
@@ -113,8 +116,8 @@ class Resource
 
     # Finally, we can record any updated RAPs and mark them as applied
     DB.open do |db|
-      completed.group_by(&:record_model).each do |representation_model, all_nodes|
-        backlink_col = :"#{representation_model.table_name}_id"
+      completed.group_by(&:record_model).each do |rap_applied_model, all_nodes|
+        backlink_col = :"#{rap_applied_model.table_name}_id"
 
         all_nodes.each_slice(500) do |sub_nodes|
           # Find the active RAPs for these records
@@ -163,15 +166,19 @@ class Resource
           end
 
           # Reindex the representations that were affected by these changes
-          representation_model.update_mtime_for_ids(rows_to_insert.map {|row| row.fetch(backlink_col)})
+          rap_applied_model.update_mtime_for_ids(rows_to_insert.map {|row| row.fetch(backlink_col)})
 
           # Reindex their connected AOs too, and bump their lock versions to
           # ensure we get a new history entry.
-          archival_object_ids = representation_model
-                                  .filter(:id => rows_to_insert.map {|row| row.fetch(backlink_col)})
-                                  .select(:archival_object_id)
-                                  .map {|row| row[:archival_object_id]}
-                                  .uniq
+          archival_object_ids = if rap_applied_model == ArchivalObject
+                                  rows_to_insert.map {|row| row.fetch(backlink_col)}
+                                else
+                                  rap_applied_model
+                                    .filter(:id => rows_to_insert.map {|row| row.fetch(backlink_col)})
+                                    .select(:archival_object_id)
+                                    .map {|row| row[:archival_object_id]}
+                                    .uniq
+                                end
 
           ArchivalObject.update_mtime_for_ids(archival_object_ids)
           ArchivalObject.filter(:id => archival_object_ids).update(:lock_version => Sequel.expr(1) + :lock_version)
