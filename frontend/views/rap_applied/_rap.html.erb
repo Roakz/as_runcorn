@@ -3,8 +3,8 @@
     <div class="panel-heading">
       <div class="row accordion-toggle collapsed"
            data-toggle="collapse"
-           data-parent="#<%= section_id %>_accordion"
-           href="#<%= section_id %>_rap_<%= index %>">
+           data-parent="#<%= accordion_id %>_accordion"
+           href="#<%= accordion_id %>_rap_<%= index %>">
         <div class="col-md-12">
           <span class="glyphicon"></span>
           <% if record['rap_attached'] && rap['ref'] === record['rap_attached']['uri'] %><div class="badge badge-info">Attached</div> <% end %>
@@ -24,7 +24,7 @@
         </div>
       </div>
     </div>
-    <div id="<%= section_id %>_rap_<%= index %>" class="panel-collapse collapse">
+    <div id="<%= accordion_id %>_rap_<%= index %>" class="panel-collapse collapse">
       <div class="subrecord-form-container">
         <% if rap['ref'] === record['rap_applied']['uri'] %>
           <% if rap['_resolved']['access_status'] == 'Restricted Access' %>
