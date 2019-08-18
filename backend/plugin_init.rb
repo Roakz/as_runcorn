@@ -47,6 +47,3 @@ DB.attempt {
 }.and_if_constraint_fails do |e|
   Log.warn("Constraint failure while creating default RAP: #{e}")
 end
-
-require_relative 'lib/rap_provisioner'
-RapProvisioner.doit!
