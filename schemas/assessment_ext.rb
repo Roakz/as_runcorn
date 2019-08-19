@@ -20,7 +20,6 @@
   },
   "series" => {
     "type" => "array",
-    "ifmissing" => "error",
     "readonly" => "true",
     "minItems" => 0,
     "items" => {
