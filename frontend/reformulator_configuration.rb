@@ -99,6 +99,11 @@ Reformulator.configure(
           "selector" => 'label[for="collection_accession"]',
           "hideClosestSelector" => '.form-group'
         },
+        {
+          "selector" => 'input[name^="agent[agent_contacts]"]',
+          "nameMustMatchRegex" => ".*\\[telephones\\]\\[[0-9]+\\]\\[ext\\]",
+          "hideClosestSelector" => ".form-group"
+        }
       ],
       "defaultValues" => [
         {

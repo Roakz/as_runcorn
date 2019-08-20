@@ -21,6 +21,10 @@ en:
       _plural: Significant Items
   agent:
     agency_note: Note
+  agent_contact:
+    position: Position
+    position_tooltip: |
+      <p>Position of the contact person</p>
   resource:
     approval_date: Approval Date
     approved_by: Approved By
@@ -284,7 +288,7 @@ en:
 
   runcorn_agency:
     agency_category: Agency Category
-    agency_note: Note
+    agency_note: Abstract
 
   representation_file:
     attached_file: Attached File
