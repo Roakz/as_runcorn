@@ -1,3 +1,5 @@
+require 'set'
+
 class RAP < Sequel::Model(:rap)
   include ASModel
   corresponds_to JSONModel(:rap)
@@ -156,5 +158,17 @@ class RAP < Sequel::Model(:rap)
     end
 
     changed
+  end
+
+  def self.with_deferred_propagations(&block)
+    RequestContext.open(:deferred_rap_propagation_resource_ids => Set.new) do
+      result = block.call
+
+      RequestContext.get(:deferred_rap_propagation_resource_ids).each do |resource_id|
+        Resource.propagate_raps!(resource_id)
+      end
+
+      result
+    end
   end
 end

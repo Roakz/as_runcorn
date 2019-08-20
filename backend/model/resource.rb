@@ -46,8 +46,7 @@ class Resource
 
   RAPPropagateState = Struct.new(:record_model, :record_id, :applicable_rap_id)
 
-  # Returns a count of inserted rows.
-  def propagate_raps!
+  def self.propagate_raps!(resource_id)
     update_count = 0
 
     default_rap_id = RAP.get_default_id
@@ -58,7 +57,7 @@ class Resource
     # the RAP we've calculated is different to what it has, the calculated RAP
     # becomes the new active one.
 
-    queue = [RAPPropagateState.new(Resource, self.id, default_rap_id)]
+    queue = [RAPPropagateState.new(Resource, resource_id, default_rap_id)]
     completed = []
 
     while !queue.empty?
@@ -191,6 +190,17 @@ class Resource
     end
 
     update_count
+  end
+
+  # Returns a count of inserted rows.
+  def propagate_raps!
+    if RequestContext.active? && RequestContext.get(:deferred_rap_propagation_resource_ids)
+      # Defer propagating.  Used for things like batch import.
+      RequestContext.get(:deferred_rap_propagation_resource_ids) << self.id
+    else
+      # Propagate immediately
+      self.class.propagate_raps!(self.id)
+    end
   end
 
   def generate_rap_summary
