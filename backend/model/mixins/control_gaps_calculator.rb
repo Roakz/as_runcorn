@@ -60,6 +60,8 @@ module ControlGapsCalculator
       date_calculator = DateCalculator.new(resource_obj, 'existence', true, :allow_open_end => true)
       resource_obj.date.first.begin = date_calculator.min_begin
 
+      Resource.eager_load_relationships([resource_obj], [Resource.control_relationship.definition])
+
       queue = [RootWorkItem.new(resource_obj)]
 
       while !queue.empty?
@@ -116,30 +118,16 @@ module ControlGapsCalculator
     end
   end
 
-  def self.included(base)
-    base.extend(ClassMethods)
-  end
-
-  module ClassMethods
-    def sequel_to_jsonmodel(objs, opts = {})
-      jsons = super
-
-      objs.zip(jsons).each do |obj, json|
-        gap_analyzer = GapAnalysis.new
-        gap_analyzer.call(obj)
-
-        json['gaps_in_control'] = gap_analyzer.gaps.map {|gap_description|
-          gap_description.merge(:gaps => gap_description[:gaps].map {|gap|
-                                  {
-                                    'start_date' => gap.start_date.strftime('%Y-%m-%d'),
-                                    'end_date' => gap.end_date.strftime('%Y-%m-%d'),
-                                  }
-                                })
+  def calculate_gaps_in_control!
+    gap_analyzer = GapAnalysis.new
+    gap_analyzer.call(self)
+    gap_analyzer.gaps.map {|gap_description|
+      gap_description.merge(:gaps => gap_description[:gaps].map {|gap|
+        {
+          'start_date' => gap.start_date.strftime('%Y-%m-%d'),
+          'end_date' => gap.end_date.strftime('%Y-%m-%d'),
         }
-      end
-
-      jsons
-    end
+      })
+    }
   end
-
 end

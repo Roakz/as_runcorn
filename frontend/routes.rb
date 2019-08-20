@@ -43,6 +43,8 @@ ArchivesSpace::Application.routes.draw do
       match('assessments/:id/generate_treatments' => 'assessments#generate_treatments', :via => [:get, :post])
 
       match('significant_items/index' => 'significant_items#index', :via => [:get])
+
+      match('resources/:id/gaps_in_control' => 'resources#gaps_in_control', :via => [:get])
     end
   end
 end

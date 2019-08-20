@@ -8,28 +8,10 @@
   </div>
 <% end %>
 
-<% if ASUtils.wrap(form.obj['gaps_in_control']).length > 0 %>
-  <div class="row">
-    <div class="col-sm-12">
-      <div class="alert alert-warning" style="max-height: 120px; overflow: auto;">
-        <p><%= I18n.t('resource.gaps_in_control_message') %></p>
-        <% ASUtils.wrap(form.obj['gaps_in_control']).each do |gap_description| %>
-          <p>
-            <%= link_to "#{gap_description['qsa_id']} #{gap_description['display_string']}",
-                        {:controller => :resolver, :action => :resolve_readonly, :uri => gap_description['ref']},
-                        :target => '_blank' %>
-          </p>
-          <ul>
-            <% gap_description['gaps'].each do |range| %>
-              <li>
-                <%= [range.fetch('start_date'), range.fetch('end_date')].join(' -- ') %>
-              </li>
-            <% end %>
-          </ul>
-        <% end %>
-      </div>
-    </div>
-  </div>
+<% if form.obj['uri'] %>
+<%= javascript_include_tag 'runcorn_gaps_in_control' %>
+<div id="runcornGapsInControl"></div>
+<script>new RuncornGapsInControl($('#runcornGapsInControl'), <%= JSONModel(:resource).id_for(form.obj['uri']) %>)</script>
 <% end %>
 
 <%= render_aspace_partial :partial => 'shared/qsa_id_form', :locals => {:form => form, :model => :resource} %>
