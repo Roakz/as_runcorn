@@ -13,6 +13,9 @@
 
 <%= stylesheet_link_tag "#{AppConfig[:frontend_proxy_prefix]}assets/runcorn.css" %>
 
+<script type="text/template" id="browseAgenciesTemplate">
+  <li><%= link_to I18n.t("agent_corporate_entity._plural"), {:controller => :agents, :action => :index, :filter_term => ["{\"primary_type\":\"agent_corporate_entity\"}"]} %></li>
+</script>
 
 <script type="text/template" id="managedRegistrationButtonTemplate">
   <%= link_to I18n.t("managed_registration.button_label"), {:controller => :managed_registration, :action => :index} %>
@@ -63,6 +66,9 @@
       setupButton("managedRegistrationButtonTemplate", true);
       setupButton("chargeableItemButtonTemplate", true);
       setupButton("chargeableServiceButtonTemplate");
+
+      // Put agency browse in Repo menu
+      $('.repository-header .navbar-nav .browse-container .dropdown-menu').prepend(AS.renderTemplate("browseAgenciesTemplate"))
 
       // Put representation browse in Repo menu
       $('.repository-header .navbar-nav .browse-container .dropdown-menu .divider:first').before(AS.renderTemplate("browseRepresentationsTemplate"))
