@@ -139,9 +139,9 @@ class Resource
 
   def self.drop_already_applied!(db, resource_id, new_raps)
     db[:rap_applied]
-      .join(:archival_object, Sequel.qualify(:archival_object, :id) => Sequel.qualify(:rap_applied, :archival_object_id))
-      .filter(Sequel.qualify(:archival_object, :root_record_id) => resource_id,
-              Sequel.qualify(:rap_applied, :is_active) => 1)
+      .filter(Sequel.qualify(:rap_applied, :root_record_id) => resource_id)
+      .filter(Sequel.~(Sequel.qualify(:rap_applied, :archival_object_id) => nil))
+      .filter(Sequel.qualify(:rap_applied, :is_active) => 1)
       .select(Sequel.qualify(:rap_applied, :archival_object_id),
               Sequel.qualify(:rap_applied, :rap_id))
       .each do |row|
@@ -152,9 +152,8 @@ class Resource
     end
 
     db[:rap_applied]
-      .join(:physical_representation, Sequel.qualify(:physical_representation, :id) => Sequel.qualify(:rap_applied, :physical_representation_id))
-      .join(:archival_object, Sequel.qualify(:archival_object, :id) => Sequel.qualify(:physical_representation, :archival_object_id))
-      .filter(Sequel.qualify(:archival_object, :root_record_id) => resource_id,
+      .filter(Sequel.~(Sequel.qualify(:rap_applied, :physical_representation_id) => nil))
+      .filter(Sequel.qualify(:rap_applied, :root_record_id) => resource_id,
               Sequel.qualify(:rap_applied, :is_active) => 1)
       .select(Sequel.qualify(:rap_applied, :physical_representation_id),
               Sequel.qualify(:rap_applied, :rap_id))
@@ -165,9 +164,8 @@ class Resource
     end
 
     db[:rap_applied]
-      .join(:digital_representation, Sequel.qualify(:digital_representation, :id) => Sequel.qualify(:rap_applied, :digital_representation_id))
-      .join(:archival_object, Sequel.qualify(:archival_object, :id) => Sequel.qualify(:digital_representation, :archival_object_id))
-      .filter(Sequel.qualify(:archival_object, :root_record_id) => resource_id,
+      .filter(Sequel.~(Sequel.qualify(:rap_applied, :digital_representation_id) => nil))
+      .filter(Sequel.qualify(:rap_applied, :root_record_id) => resource_id,
               Sequel.qualify(:rap_applied, :is_active) => 1)
       .select(Sequel.qualify(:rap_applied, :digital_representation_id),
               Sequel.qualify(:rap_applied, :rap_id))
@@ -284,7 +282,8 @@ class Resource
           :date_applied => now,
           :rap_id => rap_id,
           backlink_col => record_id,
-          :is_active => 1
+          :is_active => 1,
+          :root_record_id => resource_id,
         }
       end
 
@@ -294,8 +293,10 @@ class Resource
           .update(:is_active => 0)
       end
 
-      rows_to_insert.each do |backlink_col, rows|
-        db[:rap_applied].multi_insert(rows)
+      rows_to_insert.each do |backlink_col, all_rows|
+        all_rows.each_slice(1000) do |rows|
+          db[:rap_applied].multi_insert(rows)
+        end
       end
 
       rap_update_locks_and_mtimes(record_raps_applied)

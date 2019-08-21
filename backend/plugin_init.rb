@@ -24,29 +24,44 @@ require_relative 'lib/s3_storage'
 require_relative 'lib/s3_authenticated_storage'
 require_relative 'lib/byte_storage'
 
-# Config test!
-ByteStorage.get
-
-TreeReordering.add_after_reorder_hook do |target_class, child_class, target_id, child_ids, position|
-  if child_class == ArchivalObject
-    resource = if target_class == Resource
-                 Resource.get_or_die(target_id)
-               else
-                 ao = ArchivalObject.get_or_die(target_id)
-                 Resource.get_or_die(ao.root_record_id)
-               end
-
-    resource.propagate_raps!
+# FIXME: delete this post-release
+# If rap_applied doesn't have series set, regenerate.
+DB.open do |db|
+  if db[:rap_applied].filter(:root_record_id => nil).count > 0
+    db[:rap_applied].delete
+    [2, 3].each do |repo_id|
+      RequestContext.open(:repo_id => repo_id) do
+        Resource.each do |resource|
+          resource.propagate_raps!
+        end
+      end
+    end
   end
 end
 
+# Config test!
+ByteStorage.get
+
+# TreeReordering.add_after_reorder_hook do |target_class, child_class, target_id, child_ids, position|
+#   if child_class == ArchivalObject
+#     resource = if target_class == Resource
+#                  Resource.get_or_die(target_id)
+#                else
+#                  ao = ArchivalObject.get_or_die(target_id)
+#                  Resource.get_or_die(ao.root_record_id)
+#                end
+# 
+#     resource.propagate_raps!
+#   end
+# end
+
 # Make sure the default RAP exists from the outset
 
-DB.attempt {
-  RAP.get_default_id
-}.and_if_constraint_fails do |e|
-  Log.warn("Constraint failure while creating default RAP: #{e}")
-end
+# DB.attempt {
+#   RAP.get_default_id
+# }.and_if_constraint_fails do |e|
+#   Log.warn("Constraint failure while creating default RAP: #{e}")
+# end
 
-require_relative 'lib/rap_provisioner'
-RapProvisioner.doit!
+#require_relative 'lib/rap_provisioner'
+#RapProvisioner.doit!
