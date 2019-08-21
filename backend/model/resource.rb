@@ -44,153 +44,266 @@ class Resource
     result || 0
   end
 
-  RAPPropagateState = Struct.new(:record_model, :record_id, :applicable_rap_id)
+  def self.rap_reference(model, id)
+    [model, id]
+  end
+
+  def self.rap_load_tree(db, resource_id)
+    # Load the entire tree structure into memory.  This includes all
+    # ArchivalObjects and their representations.
+    record_parents = []
+
+    # AOs
+    db[:archival_object]
+      .filter(:root_record_id => resource_id)
+      .select(:id, :parent_id)
+      .each do |row|
+      if row[:parent_id]
+        record_parents << [
+          rap_reference(ArchivalObject, row[:id]),
+          rap_reference(ArchivalObject, row[:parent_id]),
+        ]
+      else
+        record_parents << [
+          rap_reference(ArchivalObject, row[:id]),
+          rap_reference(Resource, resource_id),
+        ]
+      end
+    end
+
+    # Representations...
+    [PhysicalRepresentation, DigitalRepresentation].each do |representation_model|
+      representation_table = representation_model.table_name
+
+      db[representation_table]
+        .join(:archival_object, Sequel.qualify(:archival_object, :id) => Sequel.qualify(representation_table, :archival_object_id))
+        .filter(Sequel.qualify(:archival_object, :root_record_id) => resource_id)
+        .select(Sequel.qualify(representation_table, :archival_object_id),
+                Sequel.qualify(representation_table, :id))
+        .each do |row|
+        record_parents << [
+          rap_reference(representation_model, row[:id]),
+          rap_reference(ArchivalObject, row[:archival_object_id]),
+        ]
+      end
+    end
+
+    record_parents
+  end
+
+  def self.rap_load_connected_raps(db, resource_id)
+    # Next we want to gather up all records in the tree with a RAP connected,
+    # which might be Resource, ArchivalObject, PhysicalRepresentation or
+    # DigitalRepresentation records.
+    connected_raps = {}
+
+    # Resource RAPs
+    db[:rap].filter(:resource_id => resource_id).select(:resource_id, :id).each do |row|
+      connected_raps[rap_reference(Resource, row[:resource_id])] = row[:id]
+    end
+
+    # AO RAPs
+    db[:rap]
+      .join(:archival_object, Sequel.qualify(:archival_object, :id) => Sequel.qualify(:rap, :archival_object_id))
+      .filter(Sequel.qualify(:archival_object, :root_record_id) => resource_id)
+      .select(Sequel.qualify(:rap, :id),
+              Sequel.qualify(:rap, :archival_object_id))
+      .each do |row|
+      connected_raps[rap_reference(ArchivalObject, row[:archival_object_id])] = row[:id]
+    end
+
+    # PhysicalRepresentation RAPs
+    db[:rap]
+      .join(:physical_representation, Sequel.qualify(:physical_representation, :id) => Sequel.qualify(:rap, :physical_representation_id))
+      .join(:archival_object, Sequel.qualify(:archival_object, :id) => Sequel.qualify(:physical_representation, :archival_object_id))
+      .filter(Sequel.qualify(:archival_object, :root_record_id) => resource_id)
+      .select(Sequel.qualify(:rap, :id),
+              Sequel.qualify(:rap, :physical_representation_id))
+      .each do |row|
+      connected_raps[rap_reference(PhysicalRepresentation, row[:physical_representation_id])] = row[:id]
+    end
+
+    # DigitalRepresentation RAPs
+    db[:rap]
+      .join(:digital_representation, Sequel.qualify(:digital_representation, :id) => Sequel.qualify(:rap, :digital_representation_id))
+      .join(:archival_object, Sequel.qualify(:archival_object, :id) => Sequel.qualify(:digital_representation, :archival_object_id))
+      .filter(Sequel.qualify(:archival_object, :root_record_id) => resource_id)
+      .select(Sequel.qualify(:rap, :id),
+              Sequel.qualify(:rap, :digital_representation_id))
+      .each do |row|
+      connected_raps[rap_reference(DigitalRepresentation, row[:digital_representation_id])] = row[:id]
+    end
+
+    connected_raps
+  end
+
+  def self.drop_already_applied!(db, resource_id, new_raps)
+    db[:rap_applied]
+      .join(:archival_object, Sequel.qualify(:archival_object, :id) => Sequel.qualify(:rap_applied, :archival_object_id))
+      .filter(Sequel.qualify(:archival_object, :root_record_id) => resource_id,
+              Sequel.qualify(:rap_applied, :is_active) => 1)
+      .select(Sequel.qualify(:rap_applied, :archival_object_id),
+              Sequel.qualify(:rap_applied, :rap_id))
+      .each do |row|
+      if new_raps[rap_reference(ArchivalObject, row[:archival_object_id])] == row[:rap_id]
+        # Already have this application.  No update needed.
+        new_raps.delete(rap_reference(ArchivalObject, row[:archival_object_id]))
+      end
+    end
+
+    db[:rap_applied]
+      .join(:physical_representation, Sequel.qualify(:physical_representation, :id) => Sequel.qualify(:rap_applied, :physical_representation_id))
+      .join(:archival_object, Sequel.qualify(:archival_object, :id) => Sequel.qualify(:physical_representation, :archival_object_id))
+      .filter(Sequel.qualify(:archival_object, :root_record_id) => resource_id,
+              Sequel.qualify(:rap_applied, :is_active) => 1)
+      .select(Sequel.qualify(:rap_applied, :physical_representation_id),
+              Sequel.qualify(:rap_applied, :rap_id))
+      .each do |row|
+      if new_raps[rap_reference(PhysicalRepresentation, row[:physical_representation_id])] == row[:rap_id]
+        new_raps.delete(rap_reference(PhysicalRepresentation, row[:physical_representation_id]))
+      end
+    end
+
+    db[:rap_applied]
+      .join(:digital_representation, Sequel.qualify(:digital_representation, :id) => Sequel.qualify(:rap_applied, :digital_representation_id))
+      .join(:archival_object, Sequel.qualify(:archival_object, :id) => Sequel.qualify(:digital_representation, :archival_object_id))
+      .filter(Sequel.qualify(:archival_object, :root_record_id) => resource_id,
+              Sequel.qualify(:rap_applied, :is_active) => 1)
+      .select(Sequel.qualify(:rap_applied, :digital_representation_id),
+              Sequel.qualify(:rap_applied, :rap_id))
+      .each do |row|
+      if new_raps[rap_reference(DigitalRepresentation, row[:digital_representation_id])] == row[:rap_id]
+        new_raps.delete(rap_reference(DigitalRepresentation, row[:digital_representation_id]))
+      end
+    end
+
+    new_raps
+  end
+
+  def self.rap_update_locks_and_mtimes(raps_applied)
+    raps_applied.keys
+      .group_by {|rap_reference| rap_reference[0]}
+      .each do |model, references|
+      model.update_mtime_for_ids(references.map {|reference| reference[1]})
+    end
+
+    # Find any AOs linked to any updated representations and bump those as well
+    archival_object_ids = raps_applied.keys
+                            .group_by {|rap_reference| rap_reference[0]}
+                            .flat_map do |model, references|
+      if model == ArchivalObject
+        references.map {|reference| reference[1]}
+      else
+        # PhysicalRepresentation or DigitalRepresentation
+        model
+          .filter(:id => references.map {|reference| reference[1]})
+          .select(:archival_object_id)
+          .map {|row| row[:archival_object_id]}
+          .uniq
+      end
+    end
+
+    # Reindex their connected AOs too, and bump their lock versions to
+    # ensure we get a new history entry.
+    ArchivalObject.update_mtime_for_ids(archival_object_ids)
+    ArchivalObject.filter(:id => archival_object_ids).update(:lock_version => Sequel.expr(1) + :lock_version)
+  end
 
   def self.propagate_raps!(resource_id)
-    update_count = 0
-
     default_rap_id = RAP.get_default_id
+    start_time = Time.now
 
-    # Walk from the resource, breadth-first, all the way down the tree to its
-    # representations.  Each branch we're exploring will have a currently active
-    # RAP (starting with the default one).  When we reach a representation, if
-    # the RAP we've calculated is different to what it has, the calculated RAP
-    # becomes the new active one.
-
-    queue = [RAPPropagateState.new(Resource, resource_id, default_rap_id)]
-    completed = []
-
-    while !queue.empty?
-      next_layer = []
-
-      while !queue.empty?
-        node = queue.shift
-
-        applicable_rap_id = if node.record_model.ancestors.include?(RAPs)
-                              # This node might have its own RAP.  If it does,
-                              # we'll apply that to anything below this node in
-                              # the tree.
-                              if rap = RAP[:"#{node.record_model.table_name}_id" => node.record_id]
-                                rap.id
-                              else
-                                # No new RAP found.  Keep the one we had.
-                                node.applicable_rap_id
-                              end
-                            else
-                              # No change because this node doesn't support RAPs being attached directly (i.e. it's a Resource)
-                              node.applicable_rap_id
-                            end
-
-        if [PhysicalRepresentation, DigitalRepresentation].include?(node.record_model)
-          # This is a node that will have a rap applied to it, and nothing underneath.  Finished.
-          completed << RAPPropagateState.new(node.record_model, node.record_id, applicable_rap_id)
-        else
-          if node.record_model == ArchivalObject
-            # These can have representations attached to them.  Process those.
-            [PhysicalRepresentation, DigitalRepresentation].each do |representation_model|
-              representation_model.filter(:archival_object_id => node.record_id).select(:id).each do |representation|
-                next_layer << RAPPropagateState.new(representation_model, representation[:id], applicable_rap_id)
-              end
-            end
-
-            # We also want to record history
-            completed << RAPPropagateState.new(ArchivalObject, node.record_id, applicable_rap_id)
-          end
-
-          # Search children
-          if node.record_model == Resource
-            ArchivalObject.filter(:parent_id => nil, :root_record_id => node.record_id).select(:id).each do |row|
-              next_layer << RAPPropagateState.new(ArchivalObject, row[:id], applicable_rap_id)
-            end
-          else
-            ArchivalObject.filter(:parent_id => node.record_id).select(:id).each do |row|
-              next_layer << RAPPropagateState.new(ArchivalObject, row[:id], applicable_rap_id)
-            end
-          end
-        end
-      end
-
-      queue = next_layer
-    end
-
-    # Finally, we can record any updated RAPs and mark them as applied
     DB.open do |db|
-      completed.group_by(&:record_model).each do |rap_applied_model, all_nodes|
-        backlink_col = :"#{rap_applied_model.table_name}_id"
+      record_parents = rap_load_tree(db, resource_id)
+      connected_raps = rap_load_connected_raps(db, resource_id)
 
-        all_nodes.each_slice(500) do |sub_nodes|
-          # Find the active RAPs for these records
-          active_raps = {}
+      # If the resource doesn't have a RAP, it takes the system default
+      connected_raps[rap_reference(Resource, resource_id)] ||= default_rap_id
 
-          db[:rap_applied]
-            .filter(backlink_col => sub_nodes.map(&:record_id),
-                    :is_active => 1)
-            .select(backlink_col, :rap_id)
-            .each do |row|
-            active_raps[row[backlink_col]] = row.to_h
-          end
+      Log.info("Tree size: %d" % [record_parents.length])
+      Log.info("Connected RAPs: %d" % [connected_raps.length])
 
-          # Some of these RAPs won't have changed.  Calculate which ones need updating.
-          rows_to_insert = []
-          sub_nodes.each do |node|
-            if active_raps.include?(node.record_id)
-              existing_rap = active_raps.fetch(node.record_id)
-              if existing_rap[:rap_id] != node.applicable_rap_id
-                # New RAP!
-                rows_to_insert << {
-                  backlink_col => node.record_id,
-                  :rap_id => node.applicable_rap_id,
-                  :is_active => 1,
-                }
-              end
-            else
-              # No existing RAP.  Need a new row
-              rows_to_insert << {
-                backlink_col => node.record_id,
-                :rap_id => node.applicable_rap_id,
-                :is_active => 1,
-              }
-            end
-          end
+      Log.info("Loaded tree structure and existing RAPs in %d ms" % [((Time.now.to_f - start_time.to_f) * 1000).to_i])
 
-          # Any rows referencing our record are now inactive
-          db[:rap_applied]
-            .filter(backlink_col => rows_to_insert.map {|row| row.fetch(backlink_col)})
-            .update(:is_active => 0)
+      record_raps_applied = {rap_reference(Resource, resource_id) => connected_raps[rap_reference(Resource, resource_id)]}
+      start_time = Time.now
+      processed = 0
 
-          # Set applied_date on new rows
-          now = Time.now
-          rows_to_insert.each do |row|
-            row[:date_applied] = now
-          end
+      # Trivial case: records with a RAP attached have that RAP applied.
+      record_parents.length.times do |idx|
+        id, parent_id = record_parents.fetch(idx)
 
-          # Reindex the representations that were affected by these changes
-          rap_applied_model.update_mtime_for_ids(rows_to_insert.map {|row| row.fetch(backlink_col)})
+        if connected_raps[id]
+          record_raps_applied[id] = connected_raps[id]
 
-          # Reindex their connected AOs too, and bump their lock versions to
-          # ensure we get a new history entry.
-          archival_object_ids = if rap_applied_model == ArchivalObject
-                                  rows_to_insert.map {|row| row.fetch(backlink_col)}
-                                else
-                                  rap_applied_model
-                                    .filter(:id => rows_to_insert.map {|row| row.fetch(backlink_col)})
-                                    .select(:archival_object_id)
-                                    .map {|row| row[:archival_object_id]}
-                                    .uniq
-                                end
-
-          ArchivalObject.update_mtime_for_ids(archival_object_ids)
-          ArchivalObject.filter(:id => archival_object_ids).update(:lock_version => Sequel.expr(1) + :lock_version)
-
-          # And our new RAPs are ready to go
-          db[:rap_applied].multi_insert(rows_to_insert)
-          update_count += rows_to_insert.length
+          processed += 1
+          record_parents[idx] = nil
         end
       end
-    end
 
-    update_count
+      # Everyone else needs a tree search
+      while processed < record_parents.length
+        old_processed = processed
+
+        record_parents.length.times do |idx|
+          id, parent_id = record_parents.fetch(idx)
+
+          # We've already processed this entry
+          next if id.nil?
+
+          # If the parent has a RAP, apply it to the child
+          if record_raps_applied[parent_id]
+            record_raps_applied[id] = record_raps_applied[parent_id]
+
+            processed += 1
+            record_parents[idx] = nil
+          end
+        end
+
+        raise "RAP deadlock detected after processing %d records" % [processed] if old_processed == processed
+      end
+
+      $stderr.puts("RAPs calculated in %d ms" % [((Time.now.to_f - start_time.to_f) * 1000).to_i])
+
+      record_raps_applied.delete(rap_reference(Resource, resource_id))
+      drop_already_applied!(db, resource_id, record_raps_applied)
+
+      # Apply any remaining changes
+      #
+      # Any rows referencing our records are now inactive
+      rows_to_insert = {}
+      now = Time.now
+
+      record_raps_applied.each do |record_reference, rap_id|
+        record_model, record_id = record_reference
+
+        backlink_col = :"#{record_model.table_name}_id"
+
+        rows_to_insert[backlink_col] ||= []
+        rows_to_insert[backlink_col] << {
+          :date_applied => now,
+          :rap_id => rap_id,
+          backlink_col => record_id,
+          :is_active => 1
+        }
+      end
+
+      rows_to_insert.each do |backlink_col, rows|
+        db[:rap_applied]
+          .filter(backlink_col => rows.map {|row| row.fetch(backlink_col)})
+          .update(:is_active => 0)
+      end
+
+      rows_to_insert.each do |backlink_col, rows|
+        db[:rap_applied].multi_insert(rows)
+      end
+
+      rap_update_locks_and_mtimes(record_raps_applied)
+
+      rows_to_insert.length
+    end
   end
+
 
   # Returns a count of inserted rows.
   def propagate_raps!
