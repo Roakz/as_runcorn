@@ -267,42 +267,65 @@ class Resource
       record_raps_applied.delete(rap_reference(Resource, resource_id))
       drop_already_applied!(db, resource_id, record_raps_applied)
 
-      # Apply any remaining changes
-      #
+      ## Apply any remaining changes
+
       # Any rows referencing our records are now inactive
-      rows_to_insert = {}
-      now = Time.now
-
-      record_raps_applied.each do |record_reference, rap_id|
-        record_model, record_id = record_reference
-
+      record_raps_applied.group_by {|record_reference, _|
+        record_reference[0]
+      }.each do |record_model, references_to_raps|
         backlink_col = :"#{record_model.table_name}_id"
 
-        rows_to_insert[backlink_col] ||= []
-        rows_to_insert[backlink_col] << {
-          :date_applied => now,
-          :rap_id => rap_id,
-          backlink_col => record_id,
-          :is_active => 1,
-          :root_record_id => resource_id,
-        }
+        record_ids = references_to_raps.map {|record_reference, rap_id| record_reference[1]}        
+
+        record_ids.slice(1000) do |id_subset|
+          db[:rap_applied]
+            .filter(backlink_col => id_subset)
+            .update(:is_active => 0)
+        end
       end
 
-      rows_to_insert.each do |backlink_col, rows|
-        db[:rap_applied]
-          .filter(backlink_col => rows.map {|row| row.fetch(backlink_col)})
-          .update(:is_active => 0)
-      end
 
-      rows_to_insert.each do |backlink_col, all_rows|
-        all_rows.each_slice(1000) do |rows|
-          db[:rap_applied].multi_insert(rows)
+      # Insert our rows
+      now = java.sql.Timestamp.new(java.util.Date.new.getTime)
+
+      updated_count = 0
+
+      # Dropping to JDBC here to keep memory usage under control while
+      # inserting.  Sequel builds up SQL strings that end up being large when
+      # there are millions of rows.
+      db.transaction do |jdbc_conn|
+        record_raps_applied.group_by {|record_reference, _|
+          record_reference[0]
+        }.each do |record_model, references_to_raps|
+          backlink_col = "#{record_model.table_name}_id"
+
+          ps = jdbc_conn.prepare_statement("insert into rap_applied (date_applied, rap_id, #{backlink_col}, is_active, root_record_id) values (?, ?, ?, ?, ?)")
+
+          count = 0
+          references_to_raps.each do |(record_model, record_id), rap_id|
+            count += 1
+            ps.setTimestamp(1, now)
+            ps.setInt(2, rap_id)
+            ps.setInt(3, record_id)
+            ps.setInt(4, 1)
+            ps.setInt(5, resource_id)
+
+            ps.addBatch
+
+            updated_count += 1
+
+            if (count % 1000) == 0
+              ps.executeBatch
+            end
+          end
+
+          ps.executeBatch
         end
       end
 
       rap_update_locks_and_mtimes(record_raps_applied)
 
-      rows_to_insert.length
+      updated_count
     end
   end
 
