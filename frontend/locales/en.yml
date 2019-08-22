@@ -289,7 +289,7 @@ en:
   runcorn_agency:
     agency_category: Agency Category
     agency_note: Abstract
-
+    original_registration_date: Original Registration Date
   representation_file:
     attached_file: Attached File
     view_file: Click to open in new window

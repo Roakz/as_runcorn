@@ -1,6 +1,7 @@
 <% define_template "runcorn_agency", jsonmodel_definition(:agent_corporate_entity) do |form| %>
-    <%= form.label_and_select "agency_category", form.possible_options_for('agency_category', true) %>
-    <%= form.label_and_textarea "agency_note" %>
+  <%= form.label_and_select "agency_category", form.possible_options_for('agency_category', true) %>
+  <%= form.label_and_textarea "agency_note" %>
+  <%= form.label_and_date "original_registration_date" %>
 <% end %>
 
 <% form.emit_template("runcorn_agency") %>
