@@ -44,6 +44,84 @@ class Resource
     result || 0
   end
 
+  class RapMapping
+    def initialize(size_estimate)
+      @size_estimate = size_estimate
+      @store = {}
+    end
+
+    def add(record_model, record_id, rap_id)
+      mapping = (@store[record_model] ||= java.util.HashMap.new(@size_estimate))
+      mapping.put(record_id, rap_id)
+    end
+
+    def rap_for(record_model, record_id)
+      @store.fetch(record_model, {})[record_id]
+    end
+
+    def delete(record_model, record_id)
+      if @store.fetch(record_model, nil)
+        @store[record_model].remove(record_id)
+      end
+    end
+
+    def each_chunk(chunk_size, &block)
+      @store.keys.each do |record_model|
+        entries = @store[record_model].entry_set
+
+        entries.each_slice(chunk_size) do |chunk|
+          block.call(record_model, chunk.map(&:key), chunk.map(&:value))
+        end
+      end
+    end
+
+    def length
+      @store.reduce(0) {|total, (_, map)| total + map.size}
+    end
+  end
+
+  class RecordParents
+    # Store child_id -> parent_id associations where parent & child might be of
+    # different record types.
+    #
+    # This would most simply be stored as:
+    #
+    #   map[[child_model, child_id]] = [parent_model, parent_id]
+    #
+    # but that's a lot of memory when there are millions of records.
+
+    def initialize
+      @mappings = {}
+    end
+
+    def store_child_to_parent((child_model, child_id), (parent_model, parent_id))
+      mapping = (@mappings[[child_model, parent_model]] ||= [])
+      mapping << child_id
+      mapping << parent_id
+    end
+
+    def length
+      @mappings.reduce(0) {|total, (_, mapping)| total + mapping.length / 2}
+    end
+
+    def each
+      @mappings.each do |(child_model, parent_model), mapping|
+        i = 0
+        while i < mapping.length
+          yield child_model, mapping[i], parent_model, mapping[i + 1], [mapping, i]
+          i += 2
+        end
+      end
+    end
+
+    def delete((mapping, idx))
+      mapping[idx] = nil
+      mapping[idx + 1] = nil
+    end
+
+  end
+
+
   def self.rap_reference(model, id)
     [model, id]
   end
@@ -51,7 +129,7 @@ class Resource
   def self.rap_load_tree(db, resource_id)
     # Load the entire tree structure into memory.  This includes all
     # ArchivalObjects and their representations.
-    record_parents = []
+    record_parents = RecordParents.new
 
     # AOs
     db[:archival_object]
@@ -59,15 +137,11 @@ class Resource
       .select(:id, :parent_id)
       .each do |row|
       if row[:parent_id]
-        record_parents << [
-          rap_reference(ArchivalObject, row[:id]),
-          rap_reference(ArchivalObject, row[:parent_id]),
-        ]
+        record_parents.store_child_to_parent(rap_reference(ArchivalObject, row[:id]),
+                                             rap_reference(ArchivalObject, row[:parent_id]))
       else
-        record_parents << [
-          rap_reference(ArchivalObject, row[:id]),
-          rap_reference(Resource, resource_id),
-        ]
+        record_parents.store_child_to_parent(rap_reference(ArchivalObject, row[:id]),
+                                             rap_reference(Resource, resource_id))
       end
     end
 
@@ -81,10 +155,8 @@ class Resource
         .select(Sequel.qualify(representation_table, :archival_object_id),
                 Sequel.qualify(representation_table, :id))
         .each do |row|
-        record_parents << [
-          rap_reference(representation_model, row[:id]),
-          rap_reference(ArchivalObject, row[:archival_object_id]),
-        ]
+        record_parents.store_child_to_parent(rap_reference(representation_model, row[:id]),
+                                             rap_reference(ArchivalObject, row[:archival_object_id]))
       end
     end
 
@@ -95,11 +167,11 @@ class Resource
     # Next we want to gather up all records in the tree with a RAP connected,
     # which might be Resource, ArchivalObject, PhysicalRepresentation or
     # DigitalRepresentation records.
-    connected_raps = {}
+    connected_raps = RapMapping.new(32)
 
     # Resource RAPs
     db[:rap].filter(:resource_id => resource_id).select(:resource_id, :id).each do |row|
-      connected_raps[rap_reference(Resource, row[:resource_id])] = row[:id]
+      connected_raps.add(resource_id, row[:resource_id], row[:id])
     end
 
     # AO RAPs
@@ -109,7 +181,7 @@ class Resource
       .select(Sequel.qualify(:rap, :id),
               Sequel.qualify(:rap, :archival_object_id))
       .each do |row|
-      connected_raps[rap_reference(ArchivalObject, row[:archival_object_id])] = row[:id]
+      connected_raps.add(ArchivalObject, row[:archival_object_id], row[:id])
     end
 
     # PhysicalRepresentation RAPs
@@ -120,7 +192,7 @@ class Resource
       .select(Sequel.qualify(:rap, :id),
               Sequel.qualify(:rap, :physical_representation_id))
       .each do |row|
-      connected_raps[rap_reference(PhysicalRepresentation, row[:physical_representation_id])] = row[:id]
+      connected_raps.add(PhysicalRepresentation, row[:physical_representation_id], row[:id])
     end
 
     # DigitalRepresentation RAPs
@@ -131,7 +203,7 @@ class Resource
       .select(Sequel.qualify(:rap, :id),
               Sequel.qualify(:rap, :digital_representation_id))
       .each do |row|
-      connected_raps[rap_reference(DigitalRepresentation, row[:digital_representation_id])] = row[:id]
+      connected_raps.add(DigitalRepresentation, row[:digital_representation_id], row[:id])
     end
 
     connected_raps
@@ -145,9 +217,9 @@ class Resource
       .select(Sequel.qualify(:rap_applied, :archival_object_id),
               Sequel.qualify(:rap_applied, :rap_id))
       .each do |row|
-      if new_raps[rap_reference(ArchivalObject, row[:archival_object_id])] == row[:rap_id]
+      if new_raps.rap_for(ArchivalObject, row[:archival_object_id]) == row[:rap_id]
         # Already have this application.  No update needed.
-        new_raps.delete(rap_reference(ArchivalObject, row[:archival_object_id]))
+        new_raps.delete(ArchivalObject, row[:archival_object_id])
       end
     end
 
@@ -158,8 +230,8 @@ class Resource
       .select(Sequel.qualify(:rap_applied, :physical_representation_id),
               Sequel.qualify(:rap_applied, :rap_id))
       .each do |row|
-      if new_raps[rap_reference(PhysicalRepresentation, row[:physical_representation_id])] == row[:rap_id]
-        new_raps.delete(rap_reference(PhysicalRepresentation, row[:physical_representation_id]))
+      if new_raps.rap_for(PhysicalRepresentation, row[:physical_representation_id]) == row[:rap_id]
+        new_raps.delete(PhysicalRepresentation, row[:physical_representation_id])
       end
     end
 
@@ -170,8 +242,8 @@ class Resource
       .select(Sequel.qualify(:rap_applied, :digital_representation_id),
               Sequel.qualify(:rap_applied, :rap_id))
       .each do |row|
-      if new_raps[rap_reference(DigitalRepresentation, row[:digital_representation_id])] == row[:rap_id]
-        new_raps.delete(rap_reference(DigitalRepresentation, row[:digital_representation_id]))
+      if new_raps.rap_for(DigitalRepresentation, row[:digital_representation_id]) == row[:rap_id]
+        new_raps.delete(DigitalRepresentation, row[:digital_representation_id])
       end
     end
 
@@ -179,25 +251,22 @@ class Resource
   end
 
   def self.rap_update_locks_and_mtimes(raps_applied)
-    raps_applied.keys
-      .group_by {|rap_reference| rap_reference[0]}
-      .each do |model, references|
-      model.update_mtime_for_ids(references.map {|reference| reference[1]})
+    raps_applied.each_chunk(1000) do |record_model, record_ids, _rap_ids|
+      record_model.update_mtime_for_ids(record_ids)
     end
 
     # Find any AOs linked to any updated representations and bump those as well
-    archival_object_ids = raps_applied.keys
-                            .group_by {|rap_reference| rap_reference[0]}
-                            .flat_map do |model, references|
-      if model == ArchivalObject
-        references.map {|reference| reference[1]}
+    archival_object_ids = []
+    raps_applied.each_chunk(1000) do |record_model, record_ids, _rap_ids|
+      if record_model == ArchivalObject
+        archival_object_ids.concat(record_ids)
       else
         # PhysicalRepresentation or DigitalRepresentation
-        model
-          .filter(:id => references.map {|reference| reference[1]})
-          .select(:archival_object_id)
-          .map {|row| row[:archival_object_id]}
-          .uniq
+        archival_object_ids.concat(record_model
+                                     .filter(:id => record_ids)
+                                     .select(:archival_object_id)
+                                     .map {|row| row[:archival_object_id]}
+                                     .uniq)
       end
     end
 
@@ -208,19 +277,19 @@ class Resource
   end
 
   def self.calculate_raps_applied(resource_id, record_parents, connected_raps)
-    record_raps_applied = {rap_reference(Resource, resource_id) => connected_raps[rap_reference(Resource, resource_id)]}
+    record_raps_applied = RapMapping.new(record_parents.length)
+    record_raps_applied.add(Resource, resource_id, connected_raps.rap_for(Resource, resource_id))
+
     start_time = Time.now
     processed = 0
 
     # Trivial case: records with a RAP attached have that RAP applied.
-    record_parents.length.times do |idx|
-      id, parent_id = record_parents.fetch(idx)
-
-      if connected_raps[id]
-        record_raps_applied[id] = connected_raps[id]
+    record_parents.each do |child_model, child_id, parent_model, parent_id, delete_key|
+      if rap_id = connected_raps.rap_for(child_model, child_id)
+        record_raps_applied.add(child_model, child_id, rap_id)
 
         processed += 1
-        record_parents[idx] = nil
+        record_parents.delete(delete_key)
       end
     end
 
@@ -228,18 +297,16 @@ class Resource
     while processed < record_parents.length
       old_processed = processed
 
-      record_parents.length.times do |idx|
-        id, parent_id = record_parents.fetch(idx)
-
+      record_parents.each do |child_model, child_id, parent_model, parent_id, delete_key|
         # We've already processed this entry
-        next if id.nil?
+        next if child_id.nil?
 
         # If the parent has a RAP, apply it to the child
-        if record_raps_applied[parent_id]
-          record_raps_applied[id] = record_raps_applied[parent_id]
+        if rap_id = record_raps_applied.rap_for(parent_model, parent_id)
+          record_raps_applied.add(child_model, child_id, rap_id)
 
           processed += 1
-          record_parents[idx] = nil
+          record_parents.delete(delete_key)
         end
       end
 
@@ -251,43 +318,40 @@ class Resource
 
   def self.propagate_raps!(resource_id)
     default_rap_id = RAP.get_default_id
-    start_time = Time.now
 
     DB.open do |db|
+      start_time = Time.now
+
       record_parents = rap_load_tree(db, resource_id)
       connected_raps = rap_load_connected_raps(db, resource_id)
 
       # If the resource doesn't have a RAP, it takes the system default
-      connected_raps[rap_reference(Resource, resource_id)] ||= default_rap_id
+      if connected_raps.rap_for(Resource, resource_id).nil?
+        connected_raps.add(Resource, resource_id, default_rap_id)
+      end
 
       Log.info("Resource: %d" % [resource_id])
       Log.info("Tree size: %d" % [record_parents.length])
       Log.info("Connected RAPs: %d" % [connected_raps.length])
 
       Log.info("Loaded tree structure and existing RAPs in %d ms" % [((Time.now.to_f - start_time.to_f) * 1000).to_i])
+      start_time = Time.now
 
       record_raps_applied = calculate_raps_applied(resource_id, record_parents, connected_raps)
 
-      $stderr.puts("RAPs calculated in %d ms" % [((Time.now.to_f - start_time.to_f) * 1000).to_i])
+      Log.info("RAPs calculated in %d ms" % [((Time.now.to_f - start_time.to_f) * 1000).to_i])
 
-      record_raps_applied.delete(rap_reference(Resource, resource_id))
+      record_raps_applied.delete(Resource, resource_id)
       drop_already_applied!(db, resource_id, record_raps_applied)
 
       ## Apply any remaining changes
 
       # Any rows referencing our records are now inactive
-      record_raps_applied.each_slice(1000) do |subset|
-        subset.group_by {|record_reference, _| record_reference[0]}.each do
-          |record_model, references_to_raps|
-
-          backlink_col = :"#{record_model.table_name}_id"
-
-          record_ids = references_to_raps.map {|(_, record_id), _| record_id}
-
-          db[:rap_applied]
-            .filter(backlink_col => record_ids)
-            .update(:is_active => 0)
-        end
+      record_raps_applied.each_chunk(1000) do |record_model, record_ids, _rap_ids|
+        backlink_col = :"#{record_model.table_name}_id"
+        db[:rap_applied]
+          .filter(backlink_col => record_ids)
+          .update(:is_active => 0)
       end
 
       # Insert our rows
@@ -299,32 +363,22 @@ class Resource
       # inserting.  Sequel builds up SQL strings that end up being large when
       # there are millions of rows.
       db.transaction do |jdbc_conn|
-        record_raps_applied.each_slice(1000) do |subset|
-          subset.group_by {|(record_model, _), _| record_model}.each do |record_model, references_to_raps|
-            backlink_col = "#{record_model.table_name}_id"
+        record_raps_applied.each_chunk(1000) do |record_model, record_ids, rap_ids|
+          backlink_col = "#{record_model.table_name}_id"
+          ps = jdbc_conn.prepare_statement("insert into rap_applied (date_applied, rap_id, #{backlink_col}, is_active, root_record_id) values (?, ?, ?, ?, ?)")
 
-            ps = jdbc_conn.prepare_statement("insert into rap_applied (date_applied, rap_id, #{backlink_col}, is_active, root_record_id) values (?, ?, ?, ?, ?)")
+          record_ids.zip(rap_ids).each do |record_id, rap_id|
+            ps.setTimestamp(1, now)
+            ps.setInt(2, rap_id)
+            ps.setInt(3, record_id)
+            ps.setInt(4, 1)
+            ps.setInt(5, resource_id)
 
-            count = 0
-            references_to_raps.each do |(record_model, record_id), rap_id|
-              count += 1
-              ps.setTimestamp(1, now)
-              ps.setInt(2, rap_id)
-              ps.setInt(3, record_id)
-              ps.setInt(4, 1)
-              ps.setInt(5, resource_id)
-
-              ps.addBatch
-
-              updated_count += 1
-
-              if (count % 1000) == 0
-                ps.executeBatch
-              end
-            end
-
-            ps.executeBatch
+            ps.addBatch
+            updated_count += 1
           end
+
+          ps.executeBatch
         end
       end
 
