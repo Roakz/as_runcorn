@@ -88,7 +88,12 @@ class Resource
     #
     #   map[[child_model, child_id]] = [parent_model, parent_id]
     #
-    # but that's a lot of memory when there are millions of records.
+    # but that's a lot of memory when there are millions of records.  Instead,
+    # we store an array of IDs (a "mapping") for each combination of child model
+    # and parent model we care about.
+    #
+    # Within the mapping, the child's ID is stored at position i and its parent
+    # is at i + 1.
 
     def initialize
       @mappings = {}
