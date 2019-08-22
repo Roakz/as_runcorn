@@ -1,9 +1,13 @@
-<% if ASUtils.wrap(gaps).length > 0 %>
+<% if ASUtils.wrap(gaps_in_control.dig('gaps')).length > 0 %>
   <div class="row">
     <div class="col-sm-12">
       <div class="alert alert-warning" style="max-height: 120px; overflow: auto;">
-        <p><%= I18n.t('resource.gaps_in_control_message') %></p>
-        <% ASUtils.wrap(gaps).each do |gap_description| %>
+        <% if gaps_in_control.fetch('max_limit_reached') %>
+          <p><%= I18n.t('resource.gaps_in_control_and_hit_limit_message', :limit => gaps_in_control.fetch('max_limit')) %></p>
+        <% else %>
+          <p><%= I18n.t('resource.gaps_in_control_message') %></p>
+        <% end %>
+        <% ASUtils.wrap(gaps_in_control.dig('gaps')).each do |gap_description| %>
           <p>
             <%= link_to "#{gap_description['qsa_id']} #{gap_description['display_string']}",
                         {:controller => :resolver, :action => :resolve_readonly, :uri => gap_description['ref']},

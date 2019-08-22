@@ -24,21 +24,6 @@ require_relative 'lib/s3_storage'
 require_relative 'lib/s3_authenticated_storage'
 require_relative 'lib/byte_storage'
 
-# FIXME: delete this post-release
-# If rap_applied doesn't have series set, regenerate.
-DB.open do |db|
-  if db[:rap_applied].filter(:root_record_id => nil).count > 0 || db[:rap_applied].count == 0
-    db[:rap_applied].delete
-    [2, 3].each do |repo_id|
-      RequestContext.open(:repo_id => repo_id) do
-        Resource.this_repo.each do |resource|
-          resource.propagate_raps!
-        end
-      end
-    end
-  end
-end
-
 # Config test!
 ByteStorage.get
 
@@ -125,7 +110,28 @@ if AppConfig.has_key?(:create_big_series)
 
         if batch.size == 1000 || (count + 1) == series_count
           db[:archival_object].multi_insert(batch)
+
+          first_inserted_id = db["select LAST_INSERT_ID()"].get(:"LAST_INSERT_ID()")
+          ids = (first_inserted_id...(first_inserted_id + batch.length)).to_a
+
           batch = []
+
+          db[:date].multi_insert(ids.map {|id|
+            {
+              :lock_version => 0,
+              :json_schema_version => 1,
+              :archival_object_id => id,
+              :date_type_id => 1281,
+              :label_id => 916,
+              :begin => '1900',
+              :end => '2050',
+              :create_time => Time.now,
+              :system_mtime => Time.now,
+              :user_mtime => Time.now,
+              :created_by => 'admin',
+              :last_modified_by => 'admin',
+            }
+          })
 
           count += 1000
           $stderr.puts("Created #{count} AOs so far")
