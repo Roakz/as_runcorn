@@ -249,8 +249,9 @@ Reformulator.configure(
       "agent_corporate_entity_dates_of_existence" => {
         "show" => [
           ["agent_dates_of_existence_", "_begin_"],
-          ["agent_dates_of_existence_", "_end_"],
           ["agent_dates_of_existence_", "_certainty_"],
+          ["agent_dates_of_existence_", "_end_"],
+          ["agent_dates_of_existence_", "_certainty_end_"],
           ["agent_dates_of_existence_", "_date_notes_"]
         ],
         "defaultValues" => [

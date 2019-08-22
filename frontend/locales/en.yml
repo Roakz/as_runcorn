@@ -393,3 +393,30 @@ en:
       awaiting_treatment: Awaiting treatment
       in_progress: In progress
       completed: Completed
+  date: &date_attributes
+    certainty_end: Certainty
+  date_type_single:
+    <<: *date_attributes
+  date_type_bulk:
+    <<: *date_attributes
+  date_type_inclusive:
+    <<: *date_attributes
+  date_type_range:
+    <<: *date_attributes
+  date_label:
+    <<: *date_attributes
+  existence_date:
+    <<: *date_attributes
+  usage_date:
+    <<: *date_attributes
+  event_date:
+    <<: *date_attributes
+  archival_record_date:
+    <<: *date_attributes
+  date_fields:
+    <<: *date_attributes
+  certainty_end: Certainty
+  certainty_end_tooltip: |
+    <p>The level of confidence for the information given in a date statement. This information is optional and should only be added when qualifying date information as potentially uncertain based upon the description or cataloging rules in use.</p>
+    <p>See EAD attribute "certainty".</p>
+

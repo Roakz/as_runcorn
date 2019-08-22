@@ -8,3 +8,6 @@
 #conservation_request_removes_linker_modal .modal-dialog {
     width: 95%;
 }
+.subrecord-form-divider {
+    border-bottom: 1px solid #E5E5E5;
+}
