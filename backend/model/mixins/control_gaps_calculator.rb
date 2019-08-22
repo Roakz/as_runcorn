@@ -152,6 +152,8 @@ module ControlGapsCalculator
           end
         end
       end
+
+      self
     end
 
     def uri_for(reference)
@@ -161,18 +163,21 @@ module ControlGapsCalculator
         JSONModel::JSONModel(:resource).uri_for(reference[1], :repo_id => RequestContext.get(:repo_id))
       end
     end
+
+    def to_hash
+      @gaps.values.map {|gap_description|
+        gap_description.merge(:gaps => gap_description[:gaps].map {|gap|
+          {
+            'start_date' => gap.start_date.strftime('%Y-%m-%d'),
+            'end_date' => gap.end_date.strftime('%Y-%m-%d'),
+          }
+        })
+      }
+    end
   end
 
   def calculate_gaps_in_control!
     gap_analyzer = GapAnalysis.new
-    gap_analyzer.call(self)
-    gap_analyzer.gaps.values.map {|gap_description|
-      gap_description.merge(:gaps => gap_description[:gaps].map {|gap|
-        {
-          'start_date' => gap.start_date.strftime('%Y-%m-%d'),
-          'end_date' => gap.end_date.strftime('%Y-%m-%d'),
-        }
-      })
-    }
+    gap_analyzer.call(self).to_hash
   end
 end
