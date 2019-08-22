@@ -207,6 +207,48 @@ class Resource
     ArchivalObject.filter(:id => archival_object_ids).update(:lock_version => Sequel.expr(1) + :lock_version)
   end
 
+  def self.calculate_raps_applied(resource_id, record_parents, connected_raps)
+    record_raps_applied = {rap_reference(Resource, resource_id) => connected_raps[rap_reference(Resource, resource_id)]}
+    start_time = Time.now
+    processed = 0
+
+    # Trivial case: records with a RAP attached have that RAP applied.
+    record_parents.length.times do |idx|
+      id, parent_id = record_parents.fetch(idx)
+
+      if connected_raps[id]
+        record_raps_applied[id] = connected_raps[id]
+
+        processed += 1
+        record_parents[idx] = nil
+      end
+    end
+
+    # Everyone else needs a tree search
+    while processed < record_parents.length
+      old_processed = processed
+
+      record_parents.length.times do |idx|
+        id, parent_id = record_parents.fetch(idx)
+
+        # We've already processed this entry
+        next if id.nil?
+
+        # If the parent has a RAP, apply it to the child
+        if record_raps_applied[parent_id]
+          record_raps_applied[id] = record_raps_applied[parent_id]
+
+          processed += 1
+          record_parents[idx] = nil
+        end
+      end
+
+      raise "RAP deadlock detected after processing %d records" % [processed] if old_processed == processed
+    end
+
+    record_raps_applied
+  end
+
   def self.propagate_raps!(resource_id)
     default_rap_id = RAP.get_default_id
     start_time = Time.now
@@ -224,43 +266,7 @@ class Resource
 
       Log.info("Loaded tree structure and existing RAPs in %d ms" % [((Time.now.to_f - start_time.to_f) * 1000).to_i])
 
-      record_raps_applied = {rap_reference(Resource, resource_id) => connected_raps[rap_reference(Resource, resource_id)]}
-      start_time = Time.now
-      processed = 0
-
-      # Trivial case: records with a RAP attached have that RAP applied.
-      record_parents.length.times do |idx|
-        id, parent_id = record_parents.fetch(idx)
-
-        if connected_raps[id]
-          record_raps_applied[id] = connected_raps[id]
-
-          processed += 1
-          record_parents[idx] = nil
-        end
-      end
-
-      # Everyone else needs a tree search
-      while processed < record_parents.length
-        old_processed = processed
-
-        record_parents.length.times do |idx|
-          id, parent_id = record_parents.fetch(idx)
-
-          # We've already processed this entry
-          next if id.nil?
-
-          # If the parent has a RAP, apply it to the child
-          if record_raps_applied[parent_id]
-            record_raps_applied[id] = record_raps_applied[parent_id]
-
-            processed += 1
-            record_parents[idx] = nil
-          end
-        end
-
-        raise "RAP deadlock detected after processing %d records" % [processed] if old_processed == processed
-      end
+      record_raps_applied = calculate_raps_applied(resource_id, record_parents, connected_raps)
 
       $stderr.puts("RAPs calculated in %d ms" % [((Time.now.to_f - start_time.to_f) * 1000).to_i])
 
@@ -270,20 +276,19 @@ class Resource
       ## Apply any remaining changes
 
       # Any rows referencing our records are now inactive
-      record_raps_applied.group_by {|record_reference, _|
-        record_reference[0]
-      }.each do |record_model, references_to_raps|
-        backlink_col = :"#{record_model.table_name}_id"
+      record_raps_applied.each_slice(1000) do |subset|
+        subset.group_by {|record_reference, _| record_reference[0]}.each do
+          |record_model, references_to_raps|
 
-        record_ids = references_to_raps.map {|record_reference, rap_id| record_reference[1]}        
+          backlink_col = :"#{record_model.table_name}_id"
 
-        record_ids.slice(1000) do |id_subset|
+          record_ids = references_to_raps.map {|(_, record_id), _| record_id}
+
           db[:rap_applied]
-            .filter(backlink_col => id_subset)
+            .filter(backlink_col => record_ids)
             .update(:is_active => 0)
         end
       end
-
 
       # Insert our rows
       now = java.sql.Timestamp.new(java.util.Date.new.getTime)
@@ -294,32 +299,32 @@ class Resource
       # inserting.  Sequel builds up SQL strings that end up being large when
       # there are millions of rows.
       db.transaction do |jdbc_conn|
-        record_raps_applied.group_by {|record_reference, _|
-          record_reference[0]
-        }.each do |record_model, references_to_raps|
-          backlink_col = "#{record_model.table_name}_id"
+        record_raps_applied.each_slice(1000) do |subset|
+          subset.group_by {|(record_model, _), _| record_model}.each do |record_model, references_to_raps|
+            backlink_col = "#{record_model.table_name}_id"
 
-          ps = jdbc_conn.prepare_statement("insert into rap_applied (date_applied, rap_id, #{backlink_col}, is_active, root_record_id) values (?, ?, ?, ?, ?)")
+            ps = jdbc_conn.prepare_statement("insert into rap_applied (date_applied, rap_id, #{backlink_col}, is_active, root_record_id) values (?, ?, ?, ?, ?)")
 
-          count = 0
-          references_to_raps.each do |(record_model, record_id), rap_id|
-            count += 1
-            ps.setTimestamp(1, now)
-            ps.setInt(2, rap_id)
-            ps.setInt(3, record_id)
-            ps.setInt(4, 1)
-            ps.setInt(5, resource_id)
+            count = 0
+            references_to_raps.each do |(record_model, record_id), rap_id|
+              count += 1
+              ps.setTimestamp(1, now)
+              ps.setInt(2, rap_id)
+              ps.setInt(3, record_id)
+              ps.setInt(4, 1)
+              ps.setInt(5, resource_id)
 
-            ps.addBatch
+              ps.addBatch
 
-            updated_count += 1
+              updated_count += 1
 
-            if (count % 1000) == 0
-              ps.executeBatch
+              if (count % 1000) == 0
+                ps.executeBatch
+              end
             end
-          end
 
-          ps.executeBatch
+            ps.executeBatch
+          end
         end
       end
 
