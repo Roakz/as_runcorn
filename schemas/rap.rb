@@ -13,10 +13,6 @@
 
       "years" => {"type" => "non_negative_integer"},
 
-      "change_description" => {"type" => "string", "ifmissing" => "error"},
-      "authorised_by" => {"type" => "string", "ifmissing" => "error"},
-      "change_date" => {"type" => "string", "ifmissing" => "error"},
-      "approved_by" => {"type" => "string", "ifmissing" => "error"},
       "internal_reference" => {"type" => "string", "ifmissing" => "error"},
 
       "notice_date" => {"type" => "string"},

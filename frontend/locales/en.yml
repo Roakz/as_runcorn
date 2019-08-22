@@ -324,10 +324,6 @@ en:
     access_status: Access Status
     access_category: Access Category
     years: Years
-    change_description: Change Description
-    authorised_by: Authorised By
-    change_date: Change Date
-    approved_by: Approved By
     internal_reference: Internal Reference
     attached_to: Attached To
     justification: Notes

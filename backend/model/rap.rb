@@ -93,10 +93,6 @@ class RAP < Sequel::Model(:rap)
                                        'access_status' => 'Restricted Access',
                                        'access_category' => 'N/A',
                                        'years' => 100,
-                                       'change_description' => 'System default',
-                                       'authorised_by' => 'admin',
-                                       'change_date' => Date.today.iso8601,
-                                       'approved_by' => 'admin',
                                        'internal_reference' => 'SYSTEM_DEFAULT_RAP',
                                      ),
                                     :default_for_repo_id => repo_id)

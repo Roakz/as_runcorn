@@ -13,10 +13,6 @@ describe 'Runcorn RAPs' do
                       'access_category' => 'N/A',
 
                       'years' => 10,
-                      'change_description' => 'test',
-                      'authorised_by' => 'me',
-                      'change_date' => '2019-01-01',
-                      'approved_by' => 'you',
                       'internal_reference' => '4a2b6588-11bb-4b98-a575-8109da2f44ea',
                     })
 
@@ -36,10 +32,6 @@ describe 'Runcorn RAPs' do
                       'access_category' => 'N/A',
 
                       'years' => 10,
-                      'change_description' => 'test',
-                      'authorised_by' => 'me',
-                      'change_date' => '2019-01-01',
-                      'approved_by' => 'you',
                       'internal_reference' => '4a2b6588-11bb-4b98-a575-8109da2f44ea',
                     })
 
@@ -70,10 +62,6 @@ describe 'Runcorn RAPs' do
                       'access_category' => 'N/A',
 
                       'years' => 10,
-                      'change_description' => 'test',
-                      'authorised_by' => 'me',
-                      'change_date' => '2019-01-01',
-                      'approved_by' => 'you',
                       'internal_reference' => '4a2b6588-11bb-4b98-a575-8109da2f44ea',
                     })
 
@@ -92,10 +80,6 @@ describe 'Runcorn RAPs' do
       'access_category' => 'N/A',
 
       'years' => 100,
-      'change_description' => 'override',
-      'authorised_by' => 'me',
-      'change_date' => '2019-01-01',
-      'approved_by' => 'you',
       'internal_reference' => 'd4e4edda-c57b-44b5-a76d-b35c811fb15f',
     }
 
@@ -118,10 +102,6 @@ describe 'Runcorn RAPs' do
                           'access_category' => 'N/A',
 
                           'years' => 10,
-                          'change_description' => 'test',
-                          'authorised_by' => 'me',
-                          'change_date' => '2019-01-01',
-                          'approved_by' => 'you',
                           'internal_reference' => '4a2b6588-11bb-4b98-a575-8109da2f44ea',
                         })
 
@@ -134,10 +114,6 @@ describe 'Runcorn RAPs' do
       'access_category' => 'N/A',
 
       'years' => 100,
-      'change_description' => 'test',
-      'authorised_by' => 'me',
-      'change_date' => '2019-01-01',
-      'approved_by' => 'you',
       'internal_reference' => '4a2b6588-11bb-4b98-a575-8109da2f44ea',
     }
 
@@ -154,10 +130,6 @@ describe 'Runcorn RAPs' do
                       'access_category' => 'N/A',
 
                       'years' => 11,
-                      'change_description' => 'test',
-                      'authorised_by' => 'me',
-                      'change_date' => '2019-01-01',
-                      'approved_by' => 'you',
                       'internal_reference' => 'cc8f30cc-9534-4bbb-92e6-fb3a7732b480',
                     })
 
@@ -180,10 +152,6 @@ describe 'Runcorn RAPs' do
                       'access_category' => 'N/A',
 
                       'years' => 11,
-                      'change_description' => 'test',
-                      'authorised_by' => 'me',
-                      'change_date' => '2019-01-01',
-                      'approved_by' => 'you',
                       'internal_reference' => 'cc8f30cc-9534-4bbb-92e6-fb3a7732b480',
                     })
 
@@ -221,10 +189,6 @@ describe 'Runcorn RAPs' do
                         'open_access_metadata' => true,
                         'access_status' => 'Restricted Access',
                         'access_category' => 'N/A',
-                        'change_description' => 'test',
-                        'authorised_by' => 'me',
-                        'change_date' => '2019-01-01',
-                        'approved_by' => 'you',
                         'internal_reference' => 'cc8f30cc-9534-4bbb-92e6-fb3a7732b480',
                       })
 
@@ -248,10 +212,6 @@ describe 'Runcorn RAPs' do
                         'years' => 10,
                         'access_status' => 'Restricted Access',
                         'access_category' => 'N/A',
-                        'change_description' => 'test',
-                        'authorised_by' => 'me',
-                        'change_date' => '2019-01-01',
-                        'approved_by' => 'you',
                         'internal_reference' => 'cc8f30cc-9534-4bbb-92e6-fb3a7732b480',
                       })
 
