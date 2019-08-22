@@ -218,6 +218,7 @@ class Resource
       # If the resource doesn't have a RAP, it takes the system default
       connected_raps[rap_reference(Resource, resource_id)] ||= default_rap_id
 
+      Log.info("Resource: %d" % [resource_id])
       Log.info("Tree size: %d" % [record_parents.length])
       Log.info("Connected RAPs: %d" % [connected_raps.length])
 

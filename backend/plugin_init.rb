@@ -31,7 +31,7 @@ DB.open do |db|
     db[:rap_applied].delete
     [2, 3].each do |repo_id|
       RequestContext.open(:repo_id => repo_id) do
-        Resource.each do |resource|
+        Resource.this_repo.each do |resource|
           resource.propagate_raps!
         end
       end
