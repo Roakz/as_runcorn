@@ -3,6 +3,8 @@ module ControlGapsCalculator
   class GapAnalysis
     attr_reader :gaps
 
+    MAX_GAPS = 100
+
     def initialize
       @gaps = {}
     end
@@ -143,6 +145,10 @@ module ControlGapsCalculator
               :gaps => gaps,
             }
           end
+
+          if @gaps.length >= MAX_GAPS
+            break
+          end
         end
 
         unless @gaps.empty?
@@ -165,13 +171,17 @@ module ControlGapsCalculator
     end
 
     def to_hash
-      @gaps.values.map {|gap_description|
-        gap_description.merge(:gaps => gap_description[:gaps].map {|gap|
-          {
-            'start_date' => gap.start_date.strftime('%Y-%m-%d'),
-            'end_date' => gap.end_date.strftime('%Y-%m-%d'),
-          }
-        })
+      {
+        :gaps => @gaps.values.map {|gap_description|
+          gap_description.merge(:gaps => gap_description[:gaps].map {|gap|
+            {
+              'start_date' => gap.start_date.strftime('%Y-%m-%d'),
+              'end_date' => gap.end_date.strftime('%Y-%m-%d'),
+            }
+          })
+        },
+        max_limit_reached: @gaps.length >= MAX_GAPS,
+        max_limit: MAX_GAPS,
       }
     end
   end
