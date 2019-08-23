@@ -24,21 +24,6 @@ require_relative 'lib/s3_storage'
 require_relative 'lib/s3_authenticated_storage'
 require_relative 'lib/byte_storage'
 
-# FIXME: delete this post-release
-# If rap_applied doesn't have series set, regenerate.
-DB.open do |db|
-  if db[:rap_applied].filter(:root_record_id => nil).count > 0 || db[:rap_applied].count == 0
-    db[:rap_applied].delete
-    [2, 3].each do |repo_id|
-      RequestContext.open(:repo_id => repo_id) do
-        Resource.this_repo.each do |resource|
-          resource.propagate_raps!
-        end
-      end
-    end
-  end
-end
-
 # Config test!
 ByteStorage.get
 
