@@ -23,4 +23,10 @@
     "type" => "string",
     "dynamic_enum" => "agency_category",
   },
+  "external_references" => {
+    "type" => "array",
+    "items" => {
+      "type" => "JSONModel(:external_reference) object"
+    }
+  }
 }

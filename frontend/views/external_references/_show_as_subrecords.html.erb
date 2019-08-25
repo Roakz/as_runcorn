@@ -1,0 +1,12 @@
+<% render_aspace_partial :partial => "external_references/template" %>
+
+<section id="<%= section_id %>" class="subrecord-form-dummy">
+  <h3><%= I18n.t("external_reference._plural") %></h3>
+  <% external_references.each do |external_reference| %>
+    <div class="subrecord-form-container">
+      <% context.push("external_reference", external_reference) do |context| %>
+        <% context.emit_template("external_reference") %>
+      <% end %>
+    </div>
+  <% end %>
+</section>
