@@ -41,11 +41,16 @@ TreeReordering.add_after_reorder_hook do |target_class, child_class, target_id, 
 end
 
 # Make sure the default RAP exists from the outset
+Repository.each do |repository|
+  next if repository.repo_code == Repository.GLOBAL
 
-DB.attempt {
-  RAP.get_default_id
-}.and_if_constraint_fails do |e|
-  Log.warn("Constraint failure while creating default RAP: #{e}")
+  RequestContext.open(:repo_id => repository.id) do
+    DB.attempt {
+      RAP.get_default_id
+    }.and_if_constraint_fails do |e|
+      Log.warn("Constraint failure while creating default RAP: #{e}")
+    end
+  end
 end
 
 require_relative 'lib/rap_provisioner'
