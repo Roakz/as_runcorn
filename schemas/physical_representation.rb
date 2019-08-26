@@ -83,6 +83,7 @@
       "physical_format_details" => {"type" => "string"},
 
       "publish" => {"type" => "boolean"},
+      "has_unpublished_ancestor" => {"type" => "boolean", "readonly" => "true"},
 
       "preferred_citation" => {"type" => "string"},
 
