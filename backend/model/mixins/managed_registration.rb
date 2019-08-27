@@ -12,8 +12,12 @@ module ManagedRegistration
                                   " Withdraw submission to edit the draft.")
     end
 
-    # no monkeying with registration state!
-    json['registration_state'] = self.registration_state
+    if AppConfig[:plugins].include?('qsa_migration_adapter')
+      # You're the boss.  Monkey away!
+    else
+      # no monkeying with registration state!
+      json['registration_state'] = self.registration_state
+    end
 
     super(json, opts, apply_nested_records)
   end
