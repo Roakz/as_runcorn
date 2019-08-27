@@ -39,9 +39,9 @@ module Deaccessioned
           .each do |row|
           parent_map[row[:id]] = row[:parent_id]
 
-          if row[:ao_deaccession_id]
-            deaccession_map[row[:id]] = true
-          else
+          deaccession_map[row[:id]] = !!row[:ao_deaccession_id]
+
+          if !deaccession_map[row[:id]]
             next_ids_to_process << row[:parent_id]
           end
         end
