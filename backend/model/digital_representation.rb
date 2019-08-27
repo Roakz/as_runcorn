@@ -47,6 +47,8 @@ class DigitalRepresentation < Sequel::Model(:digital_representation)
 
     controlling_records_by_representation_id = self.build_controlling_record_map(objs)
 
+    deaccessioned_map = Deaccessioned.build_deaccessioned_map(controlling_records_by_representation_id.values.map(&:id))
+
     objs.zip(jsons).each do |obj, json|
       json['existing_ref'] = obj.uri
       json['display_string'] = build_display_string(json)
@@ -56,7 +58,7 @@ class DigitalRepresentation < Sequel::Model(:digital_representation)
       json['responsible_agency'] = { 'ref' => controlling_record.responsible_agency }
       json['recent_responsible_agencies'] = controlling_record.recent_responsible_agencies
 
-      json['deaccessioned'] = !json['deaccessions'].empty? || controlling_record.deaccessioned?
+      json['deaccessioned'] = !json['deaccessions'].empty? || deaccessioned_map.fetch(controlling_record.id)
     end
 
     jsons
