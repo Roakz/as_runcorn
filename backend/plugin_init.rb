@@ -1,4 +1,3 @@
-require_relative '../common/managed_registration_init'
 require_relative '../common/validations'
 require_relative '../common/qsa_id'
 require_relative '../common/qsa_id_registrations'

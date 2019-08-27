@@ -15,9 +15,6 @@ module ManagedRegistration
     # no monkeying with registration state!
     json['registration_state'] = self.registration_state
 
-    # no publishing drafts!
-    json['publish'] = false unless self.registration_state == 'approved'
-
     super(json, opts, apply_nested_records)
   end
 
