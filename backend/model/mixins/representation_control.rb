@@ -50,7 +50,7 @@ module RepresentationControl
         while(!ids_to_process.empty?) do
           next_ids_to_process = []
           ArchivalObject
-            .filter(:id => next_ids_to_process)
+            .filter(:id => ids_to_process)
             .select(:id,
                     :parent_id,
                     :publish)
@@ -58,13 +58,13 @@ module RepresentationControl
             parent_map[row[:id]] = row[:parent_id]
 
             # only override an AO publish value if it is currently true
-            if publish_map[row[:id]] == true
+            if !publish_map.has_key?(row[:id]) || publish_map[row[:id]] == true
               publish_map[row[:id]] = row[:publish] == 1
             end
             next_ids_to_process << row[:parent_id]
           end
 
-        ids_to_process = next_ids_to_process.compact.uniq
+          ids_to_process = next_ids_to_process.compact.uniq
         end
       end
 
