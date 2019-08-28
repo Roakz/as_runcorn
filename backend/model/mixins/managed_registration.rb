@@ -24,9 +24,13 @@ module ManagedRegistration
 
   module ClassMethods
     def create_from_json(json, opts = {})
-      # these are the defaults, but just in case someone is trying to break the rules!
-      json['registration_state'] = 'draft'
-      json['publish'] = false
+      if AppConfig[:plugins].include?('qsa_migration_adapter')
+        # You're the boss.  Monkey away!
+      else
+        # these are the defaults, but just in case someone is trying to break the rules!
+        json['registration_state'] = 'draft'
+        json['publish'] = false
+      end
 
       super(json, opts)
     end
