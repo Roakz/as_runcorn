@@ -381,7 +381,7 @@ en:
     treatment_process: Treatment Process
     materials_used_consumables: Materials Used - Consumables
     materials_used_staff_time: Materials Used - Staff Time
-    external_reference: External Reference
+    external_resource: External Resource
     user: Created By
     assessment: Assessment
     _plural: Conservation Treatments
@@ -394,6 +394,7 @@ en:
       in_progress: In progress
       completed: Completed
   date: &date_attributes
+    begin: Start
     certainty_end: Certainty
   date_type_single:
     <<: *date_attributes
@@ -419,12 +420,12 @@ en:
   certainty_end_tooltip: |
     <p>The level of confidence for the information given in a date statement. This information is optional and should only be added when qualifying date information as potentially uncertain based upon the description or cataloging rules in use.</p>
     <p>See EAD attribute "certainty".</p>
-  external_reference:
-    _singular: External Reference
-    _plural: External References
+  external_resource:
+    _singular: External Resource
+    _plural: External Resources
     _frontend:
       action:
-        add: Add External Reference
+        add: Add External Resource
     title: Title
     location: Location
     publish: Publish
