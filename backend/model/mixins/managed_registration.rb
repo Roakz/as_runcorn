@@ -41,7 +41,7 @@ module ManagedRegistration
       unless json['registration_state'] == 'approved'
         ['sort_name', 'primary_name'].each do |field|
           if json.display_name.has_key?(field)
-            json.display_name[field] = "[#{json['registration_state'].upcase}] #{json.display_name[field]}"
+            json.display_name[field] = "[#{json['registration_state'].to_s.upcase}] #{json.display_name[field]}"
           end
         end
       end
