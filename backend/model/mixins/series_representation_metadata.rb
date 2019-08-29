@@ -1,4 +1,4 @@
-module SeriesRepresentationCounts
+module SeriesRepresentationMetadata
 
   extend JSONModel
 
@@ -11,11 +11,13 @@ module SeriesRepresentationCounts
       jsons = super
 
       representations_counts = prepare_counts(objs)
+      conservation_status = prepare_conservation_status(objs)
 
       objs.zip(jsons).each do |obj, json|
         json['physical_representations_count'] = representations_counts.fetch(obj.id, {}).fetch('physical_representations_count', 0)
         json['digital_representations_count'] = representations_counts.fetch(obj.id, {}).fetch('digital_representations_count', 0)
         json['significant_representations_counts'] = representations_counts.fetch(obj.id, {}).fetch('significant_representations_counts')
+        json['has_conservation_treatments_awaiting'] = conservation_status.fetch(obj.id, false)
       end
 
       jsons
@@ -24,6 +26,23 @@ module SeriesRepresentationCounts
 
     def default_significance_counts
       @default_significance_counts ||= BackendEnumSource.values_for('runcorn_significance').reject{|sig| sig == 'standard'}.map{|sig| [sig, 0]}.to_h
+    end
+
+
+    def prepare_conservation_status(objs)
+      Hash[DB.open do |db|
+        db[:resource]
+          .inner_join(:archival_object, Sequel.qualify(:archival_object, :root_record_id) => Sequel.qualify(:resource, :id))
+          .inner_join(:physical_representation, Sequel.qualify(:physical_representation, :archival_object_id) => Sequel.qualify(:archival_object, :id))
+          .inner_join(:conservation_treatment, Sequel.qualify(:conservation_treatment, :physical_representation_id) => Sequel.qualify(:physical_representation, :id))
+          .filter(Sequel.qualify(:resource, :id) => objs.map(&:id))
+          .filter(Sequel.~(Sequel.qualify(:conservation_treatment, :status) => 'completed'))
+          .distinct(Sequel.qualify(:resource, :id))
+          .select(Sequel.qualify(:resource, :id))
+          .map {|row|
+            [row[:id], true]
+          }
+      end]
     end
 
 

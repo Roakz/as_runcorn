@@ -35,6 +35,7 @@ en:
     significant_representations_counts: Significant Representations
     gaps_in_control_message: "No controlling agency recorded for the following records and time periods:"
     gaps_in_control_and_hit_limit_message: "No controlling agency recorded for the following records and time periods (note: only showing the first %{limit}):"
+    has_conservation_treatments_awaiting: Series has Conservation Treatments Awaiting
   archival_object:
     description: Description
     access_clearance_procedure: Access Clearance Procedure
@@ -381,9 +382,9 @@ en:
     treatment_process: Treatment Process
     materials_used_consumables: Materials Used - Consumables
     materials_used_staff_time: Materials Used - Staff Time
-    external_resource: External Resource
     user: Created By
     assessment: Assessment
+    external_reference: External Reference
     _plural: Conservation Treatments
     _singular: Conservation Treatment
     _frontend:

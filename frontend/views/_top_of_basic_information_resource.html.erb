@@ -8,10 +8,24 @@
   </div>
 <% end %>
 
+<% if form.obj['has_conservation_treatments_awaiting'] %>
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="alert alert-warning">
+        <%= I18n.t('resource.has_conservation_treatments_awaiting') %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
 <% if form.obj['uri'] %>
-<%= javascript_include_tag 'runcorn_gaps_in_control' %>
-<div id="runcornGapsInControl"></div>
-<script>new RuncornGapsInControl($('#runcornGapsInControl'), <%= JSONModel(:resource).id_for(form.obj['uri']) %>)</script>
+  <%= javascript_include_tag 'runcorn_gaps_in_control' %>
+  <div class="row">
+    <div class="col-sm-12">
+      <div id="runcornGapsInControl"></div>
+    </div>
+  </div>
+  <script>new RuncornGapsInControl($('#runcornGapsInControl'), <%= JSONModel(:resource).id_for(form.obj['uri']) %>)</script>
 <% end %>
 
 <%= render_aspace_partial :partial => 'shared/qsa_id_form', :locals => {:form => form, :model => :resource} %>

@@ -28,4 +28,6 @@
   "deaccessioned" => {"type" => "boolean", "readonly" => "true"},
 
   "rap_attached" => {"type" => "JSONModel(:rap) object"},
+
+  "has_conservation_treatments_awaiting" => {"type" => "boolean", "readonly" => "true"},
 }

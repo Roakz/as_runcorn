@@ -1,4 +1,4 @@
-Resource.include(SeriesRepresentationCounts)
+Resource.include(SeriesRepresentationMetadata)
 Resource.include(AllExistenceDates)
 Resource.include(ReindexSeriesRepresentations)
 Resource.include(RuncornDeaccession)
