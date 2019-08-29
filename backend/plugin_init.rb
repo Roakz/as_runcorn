@@ -146,6 +146,7 @@ ArchivesSpaceService.plugins_loaded_hook do
                   :lock_version => 0,
                   :repo_id => 2,
                   :archival_object_id => id,
+                  :resource_id => resource.id,
                   :title => "REP #{idx}",
                   :qsa_id => base_representation_qsa_id + count + idx,
                   :current_location_id => 2381, #HOME

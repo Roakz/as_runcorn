@@ -110,7 +110,7 @@ module Representations
 
       # Create the ones that don't exist yet (no ref)
       ASUtils.wrap(grouped.delete(nil)).each do |to_create|
-        representation_class.create_from_json(JSONModel(representation_jsonmodel).from_hash(to_create), backlink)
+        representation_class.create_from_json(JSONModel(representation_jsonmodel).from_hash(to_create), backlink.merge(:resource_id => obj.root_record_id))
         obj.mark_as_system_modified
       end
 
