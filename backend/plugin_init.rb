@@ -90,6 +90,15 @@ ArchivesSpaceService.plugins_loaded_hook do
 
         base_qsa_id = Sequence.get("QSA_ID_ARCHIVAL_OBJECT")
         base_representation_qsa_id = Sequence.get("QSA_ID_PHYSICAL_REPRESENTATION")
+        top_container_id = db[:top_container].insert(:lock_version => 1,
+                                                     :json_schema_version => 1,
+                                                     :type_id => 317,
+                                                     :current_location_id => 1719,
+                                                     :indicator => "BIG1",
+                                                     :repo_id => 2,
+                                                     :create_time => Time.now,
+                                                     :system_mtime => Time.now,
+                                                     :user_mtime => Time.now)
 
         series_count.times do |count|
           rando = SecureRandom.hex
