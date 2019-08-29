@@ -89,6 +89,7 @@ ArchivesSpaceService.plugins_loaded_hook do
         batch = []
 
         base_qsa_id = Sequence.get("QSA_ID_ARCHIVAL_OBJECT")
+        base_representation_qsa_id = Sequence.get("QSA_ID_PHYSICAL_REPRESENTATION")
 
         series_count.times do |count|
           rando = SecureRandom.hex
@@ -139,12 +140,49 @@ ArchivesSpaceService.plugins_loaded_hook do
                                      }
                                    })
 
+            if AppConfig.has_key?(:create_big_series_with_representations) && AppConfig[:create_big_series_with_representations]
+              db[:physical_representation].multi_insert(ids.each_with_index.map {|id, idx|
+                {
+                  :lock_version => 0,
+                  :repo_id => 2,
+                  :archival_object_id => id,
+                  :title => "REP #{idx}",
+                  :qsa_id => base_representation_qsa_id + count + idx,
+                  :current_location_id => 2381, #HOME
+                  :normal_location_id => 2381,
+                  :contained_within_id => 1819, #ARCBX
+                  :format_id => 1782, #Object
+                  :create_time => Time.now,
+                  :system_mtime => Time.now,
+                  :user_mtime => Time.now,
+                  :created_by => 'admin',
+                  :last_modified_by => 'admin',
+                }
+              })
+
+              first_inserted_rep_id = db["select LAST_INSERT_ID()"].get(:"LAST_INSERT_ID()")
+              rep_ids = (first_inserted_rep_id...(first_inserted_rep_id + ids.length)).to_a
+
+              db[:representation_container_rlshp].multi_insert(rep_ids.map{|rep_id| {
+                :physical_representation_id => rep_id,
+                :top_container_id => top_container_id,
+                :aspace_relationship_position => 0,
+                :system_mtime => Time.now,
+                :user_mtime => Time.now,
+                :created_by => 'admin',
+                :last_modified_by => 'admin',
+              }})
+            end
+
             count += 1000
             $stderr.puts("Created #{count} AOs so far")
           end
         end
 
         db[:sequence].filter(:sequence_name => "QSA_ID_ARCHIVAL_OBJECT").update(:value => base_qsa_id + count + 1)
+        if AppConfig.has_key?(:create_big_series_with_representations) && AppConfig[:create_big_series_with_representations]
+          db[:sequence].filter(:sequence_name => "QSA_ID_PHYSICAL_REPRESENTATION").update(:value => base_representation_qsa_id + count + 1)
+        end
       end
 
       resource.propagate_raps!
