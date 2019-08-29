@@ -73,9 +73,9 @@ module SeriesRepresentationMetadata
 
        query.each do |row|
 
-        node_physical_representation_counts[row[:root_record_id]] ||= default_significance_counts.merge({:total => 0})
-        node_physical_representation_counts[row[:root_record_id]][:total] += row[:count]
-        node_physical_representation_counts[row[:root_record_id]][row[:value]] = row[:count] unless row[:value].nil? || row[:value] == 'standard'
+        node_physical_representation_counts[row[:resource_id]] ||= default_significance_counts.merge({:total => 0})
+        node_physical_representation_counts[row[:resource_id]][:total] += row[:count]
+        node_physical_representation_counts[row[:resource_id]][row[:value]] = row[:count] unless row[:value].nil? || row[:value] == 'standard'
       end
       p [Time.now, "END", "prepare_counts:1"]
 
@@ -89,7 +89,7 @@ module SeriesRepresentationMetadata
         p query
   
        query.each do |row|
-        node_digital_representation_counts[row[:root_record_id]] = row[:count]
+        node_digital_representation_counts[row[:resource_id]] = row[:count]
       end
       p [Time.now, "END", "prepare_counts:2"]
 
