@@ -39,112 +39,115 @@ TreeReordering.add_after_reorder_hook do |target_class, child_class, target_id, 
   end
 end
 
-# Make sure the default RAP exists from the outset
-Repository.each do |repository|
-  next if repository.repo_code == Repository.GLOBAL
-
-  RequestContext.open(:repo_id => repository.id) do
-    DB.attempt {
-      RAP.get_default_id
-    }.and_if_constraint_fails do |e|
-      Log.warn("Constraint failure while creating default RAP: #{e}")
-    end
-  end
-end
 
 require_relative 'lib/rap_provisioner'
-RapProvisioner.doit!
 
+ArchivesSpaceService.plugins_loaded_hook do
+  # Make sure the default RAP exists from the outset
+  Repository.each do |repository|
+    next if repository.repo_code == Repository.GLOBAL
 
-if AppConfig.has_key?(:create_big_series)
-  series_count = AppConfig[:create_big_series]
-  RequestContext.open(:repo_id => 2) do
-    resource = Resource.create_from_json(JSONModel::JSONModel(:resource).from_hash(
-                                           "title" => "TEST RECORD - big series with #{series_count} AOs",
-                                           "dates" => [{
-                                                         "date_type" => "single",
-                                                         "label" => "creation",
-                                                         "begin" => "1901",
-                                                         "end" => "2020",
-                                                       }],
-                                           "id_0" => SecureRandom.hex,
-                                           "level" => "collection",
-                                           "language" => "eng",
-                                           "extents" => [{"portion" => "whole", "number" => "5 or so", "extent_type" => "reels"}],
-                                           "series_system_agent_relationships" => [
-                                             {
-                                               'jsonmodel_type' => 'series_system_agent_record_ownership_relationship',
-                                               'relator' => 'is_controlled_by',
-                                               'start_date' => "2000-01-01",
-                                               'ref' => "/agents/corporate_entities/1",
-                                             }
-                                           ]
-                                         ))
+    RequestContext.open(:repo_id => repository.id) do
+      DB.attempt {
+        RAP.get_default_id
+      }.and_if_constraint_fails do |e|
+        Log.warn("Constraint failure while creating default RAP: #{e}")
+      end
+    end
+  end
 
-    count = 0
+  RapProvisioner.doit!
 
-    DB.open do |db|
-      batch = []
+  if AppConfig.has_key?(:create_big_series)
+    series_count = AppConfig[:create_big_series]
+    RequestContext.open(:repo_id => 2) do
+      resource = Resource.create_from_json(JSONModel::JSONModel(:resource).from_hash(
+                                             "title" => "TEST RECORD - big series with #{series_count} AOs",
+                                             "dates" => [{
+                                                           "date_type" => "single",
+                                                           "label" => "creation",
+                                                           "begin" => "1901",
+                                                           "end" => "2020",
+                                                         }],
+                                             "id_0" => SecureRandom.hex,
+                                             "level" => "collection",
+                                             "language" => "eng",
+                                             "extents" => [{"portion" => "whole", "number" => "5 or so", "extent_type" => "reels"}],
+                                             "series_system_agent_relationships" => [
+                                               {
+                                                 'jsonmodel_type' => 'series_system_agent_record_ownership_relationship',
+                                                 'relator' => 'is_controlled_by',
+                                                 'start_date' => "2000-01-01",
+                                                 'ref' => "/agents/corporate_entities/1",
+                                               }
+                                             ]
+                                           ))
 
-      base_qsa_id = Sequence.get("QSA_ID_ARCHIVAL_OBJECT")
+      count = 0
 
-      series_count.times do |count|
-        rando = SecureRandom.hex
-        row = {
-          :lock_version => 1,
-          :json_schema_version => 1,
-          :repo_id => 2,
-          :root_record_id => resource.id,
-          :parent_name => "root@/repositories/2/resources/#{resource.id}",
-          :position => count,
-          :publish => 0,
-          :ref_id => rando,
-          :title => "Component #{rando}",
-          :display_string => "Component #{rando}",
-          :level_id => 890,
-          :create_time => Time.now,
-          :system_mtime => Time.now,
-          :user_mtime => Time.now,
-          :qsa_id => base_qsa_id + count,
-          :significance_id => 2798,
-          :significance_is_sticky => 0,
-        }
+      DB.open do |db|
+        batch = []
 
-        batch << row
+        base_qsa_id = Sequence.get("QSA_ID_ARCHIVAL_OBJECT")
 
-        if batch.size == 1000 || (count + 1) == series_count
-          db[:archival_object].multi_insert(batch)
+        series_count.times do |count|
+          rando = SecureRandom.hex
+          row = {
+            :lock_version => 1,
+            :json_schema_version => 1,
+            :repo_id => 2,
+            :root_record_id => resource.id,
+            :parent_name => "root@/repositories/2/resources/#{resource.id}",
+            :position => count,
+            :publish => 0,
+            :ref_id => rando,
+            :title => "Component #{rando}",
+            :display_string => "Component #{rando}",
+            :level_id => 890,
+            :create_time => Time.now,
+            :system_mtime => Time.now,
+            :user_mtime => Time.now,
+            :qsa_id => base_qsa_id + count,
+            :significance_id => 2798,
+            :significance_is_sticky => 0,
+          }
 
-          first_inserted_id = db["select LAST_INSERT_ID()"].get(:"LAST_INSERT_ID()")
-          ids = (first_inserted_id...(first_inserted_id + batch.length)).to_a
+          batch << row
 
-          batch = []
+          if batch.size == 1000 || (count + 1) == series_count
+            db[:archival_object].multi_insert(batch)
 
-          db[:date].multi_insert(ids.map {|id|
-            {
-              :lock_version => 0,
-              :json_schema_version => 1,
-              :archival_object_id => id,
-              :date_type_id => 1281,
-              :label_id => 916,
-              :begin => '1900',
-              :end => '2050',
-              :create_time => Time.now,
-              :system_mtime => Time.now,
-              :user_mtime => Time.now,
-              :created_by => 'admin',
-              :last_modified_by => 'admin',
-            }
-          })
+            first_inserted_id = db["select LAST_INSERT_ID()"].get(:"LAST_INSERT_ID()")
+            ids = (first_inserted_id...(first_inserted_id + batch.length)).to_a
 
-          count += 1000
-          $stderr.puts("Created #{count} AOs so far")
+            batch = []
+
+            db[:date].multi_insert(ids.map {|id|
+                                     {
+                                       :lock_version => 0,
+                                       :json_schema_version => 1,
+                                       :archival_object_id => id,
+                                       :date_type_id => 1281,
+                                       :label_id => 916,
+                                       :begin => '1900',
+                                       :end => '2050',
+                                       :create_time => Time.now,
+                                       :system_mtime => Time.now,
+                                       :user_mtime => Time.now,
+                                       :created_by => 'admin',
+                                       :last_modified_by => 'admin',
+                                     }
+                                   })
+
+            count += 1000
+            $stderr.puts("Created #{count} AOs so far")
+          end
         end
+
+        db[:sequence].filter(:sequence_name => "QSA_ID_ARCHIVAL_OBJECT").update(:value => base_qsa_id + count + 1)
       end
 
-      db[:sequence].filter(:sequence_name => "QSA_ID_ARCHIVAL_OBJECT").update(:value => base_qsa_id + count + 1)
+      resource.propagate_raps!
     end
-
-    resource.propagate_raps!
   end
 end
