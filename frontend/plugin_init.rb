@@ -250,6 +250,23 @@ Rails.application.config.after_initialize do
 
   require_relative 'reformulator_configuration'
 
+  # Override application_controller.find_opts to be more selective when
+  # resolving for a record
+  class ApplicationController
+    alias :as_runcorn_find_opts_orig :find_opts
+    def find_opts
+      if controller_name == 'archival_objects'
+        if ['show', 'edit', 'update'].include?(action_name)
+          result = as_runcorn_find_opts_orig.clone
+          result.fetch('resolve[]').reject!{|field| field == 'resource'}
+          return result
+        end
+      end
+
+      as_runcorn_find_opts_orig
+    end
+  end
+
   begin
     HistoryController.add_skip_field('move_to_storage_permitted')
     HistoryController.add_skip_field('normal_location')
