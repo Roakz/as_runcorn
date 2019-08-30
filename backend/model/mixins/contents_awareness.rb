@@ -25,10 +25,10 @@ module ContentsAwareness
 
       objs.zip(jsons).each do |obj, json|
         json['contents_count'] = contents_count(obj)
-        json['absent_contents'] = absent_contents(obj, location_enum_map, home_id).map do |ac|
+        json['absent_contents'] = absent_contents(obj, home_id).map do |ac|
           {
             'ref' => JSONModel(:physical_representation).uri_for(ac[:id], :repo_id => obj.repo_id),
-            'current_location' => ac[:loc],
+            'current_location' => location_enum_map.fetch(ac[:current_location_id]),
             'title' => ac[:title]
           }
         end
@@ -43,18 +43,18 @@ module ContentsAwareness
     end
 
 
-    def absent_contents(obj, location_enum_map, home_id)
+    def absent_contents(obj, runcorn_location_home_enum_id)
       db[:representation_container_rlshp]
         .join(:physical_representation, Sequel.qualify(:physical_representation, :id) => Sequel.qualify(:representation_container_rlshp, :physical_representation_id))
         .filter(Sequel.qualify(:representation_container_rlshp, :top_container_id) => obj.id)
-        .filter(Sequel.~(Sequel.qualify(:physical_representation, :current_location_id) => home_id))
+        .filter(Sequel.~(Sequel.qualify(:physical_representation, :current_location_id) => runcorn_location_home_enum_id))
         .select(Sequel.qualify(:representation_container_rlshp, :physical_representation_id),
                 Sequel.qualify(:physical_representation, :current_location_id),
                 Sequel.qualify(:physical_representation, :title))
         .map do |row|
           {
             :id => row[:physical_representation_id],
-            :loc => location_enum_map.fetch(row[:current_location_id]),
+            :current_location_id => row[:current_location_id],
             :title => row[:title]
           }
         end
