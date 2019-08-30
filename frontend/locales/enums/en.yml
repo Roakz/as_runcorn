@@ -257,6 +257,9 @@ en:
       unavailable_due_to_condition: "This is unavailable due to its condition. Where possible, a copy will be made available."
       unavailable_due_to_format: "This is unavailable due to its format. Where possible, a copy will be made available."
       unavailable_due_to_deaccession: "This is unavailable because it has been deaccessioned or destroyed."
+    runcorn_copyright_status:
+      copyright_expired: Copyright expired
+      copyright_state_of_queensland: Copyright State of Queensland
   enumeration_names:
     runcorn_access_category: Runcorn Plugin - Access Category
     runcorn_access_clearance_procedure: Runcorn Plugin - Runcorn Access Clearance Procedure
@@ -273,4 +276,5 @@ en:
     runcorn_charge_quantity_unit: Runcorn Plugin - Runcorn Charge Quantity Unit
     runcorn_treatment_priority: Runcorn Plugin - Runcorn Treatment Priority
     runcorn_significance: Runcorn Plugin - Runcorn Significance
-    runcorn_physical_representation_availability: Runcorn Plugin = Physical Representation Availability
+    runcorn_physical_representation_availability: Runcorn Plugin - Physical Representation Availability
+    runcorn_copyright_status: Runcorn Plugin - Copyright Status
