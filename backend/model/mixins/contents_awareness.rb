@@ -18,15 +18,19 @@ module ContentsAwareness
     def sequel_to_jsonmodel(objs, opts = {})
       jsons = super
 
+      location_enum_map = BackendEnumSource.values_for('runcorn_location').map{|value|
+        [BackendEnumSource.id_for_value('runcorn_location', value), value]
+      }.to_h
+      home_id = BackendEnumSource.id_for_value('runcorn_location', 'HOME')
+
       objs.zip(jsons).each do |obj, json|
         json['contents_count'] = contents_count(obj)
-        json['absent_contents'] = absent_contents(obj).map do |ac|
+        json['absent_contents'] = absent_contents(obj, location_enum_map, home_id).map do |ac|
           {
             'ref' => JSONModel(:physical_representation).uri_for(ac[:id], :repo_id => obj.repo_id),
             'current_location' => ac[:loc],
             'title' => ac[:title]
           }
-
         end
       end
 
@@ -35,23 +39,26 @@ module ContentsAwareness
 
 
     def contents_count(obj)
-      contents_ds(obj).count
+      db[:representation_container_rlshp].filter(:top_container_id => obj.id).count
     end
 
 
-    def absent_contents(obj)
-      contents_ds(obj)
-        .left_join(Sequel.as(:enumeration_value, :loc), :id => :physical_representation__current_location_id)
-        .exclude(:loc__value => 'HOME')
-        .select(:physical_representation_id, :loc__value, :physical_representation__title)
-        .all.map{|row| {:id => row[:physical_representation_id], :loc => row[:value], :title => row[:title]}}
-    end
-
-
-    def contents_ds(obj)
+    def absent_contents(obj, location_enum_map, home_id)
       db[:representation_container_rlshp]
-        .join(:physical_representation, :physical_representation__id => :representation_container_rlshp__physical_representation_id)
-        .filter(:top_container_id => obj.id)
+        .join(:physical_representation, Sequel.qualify(:physical_representation, :id) => Sequel.qualify(:representation_container_rlshp, :physical_representation_id))
+        .filter(Sequel.qualify(:representation_container_rlshp, :top_container_id) => obj.id)
+        .filter(Sequel.~(Sequel.qualify(:physical_representation, :current_location_id) => home_id))
+        .select(Sequel.qualify(:representation_container_rlshp, :physical_representation_id),
+                Sequel.qualify(:physical_representation, :current_location_id),
+                Sequel.qualify(:physical_representation, :title))
+        .map do |row|
+          {
+            :id => row[:physical_representation_id],
+            :loc => location_enum_map.fetch(row[:current_location_id]),
+            :title => row[:title]
+          }
+        end
     end
+
   end
 end
