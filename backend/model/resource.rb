@@ -113,16 +113,40 @@ class Resource
     [model, id]
   end
 
-  def self.rap_load_tree(db, resource_id)
+  def self.rap_load_tree(db, resource_id, subtree_ao_id = nil)
     # Load the entire tree structure into memory.  This includes all
     # ArchivalObjects and their representations.
     record_parents = RecordParents.new
 
+    ao_ids = if subtree_ao_id
+               result = []
+               ids = [subtree_ao_id]
+
+               while !ids.empty?
+                 children = db[:archival_object]
+                              .filter(:parent_id => ids)
+                              .select(:id)
+                              .map {|row| row[:id]}
+
+                 result.concat(ids)
+                 ids = children
+               end
+
+               result
+             else
+               []
+             end
+
     # AOs
-    db[:archival_object]
+    ao_query = db[:archival_object]
       .filter(:root_record_id => resource_id)
       .select(:id, :parent_id)
-      .each do |row|
+
+    unless ao_ids.empty?
+      ao_query = ao_query.filter(:id => ao_ids)
+    end
+
+    ao_query.each do |row|
       if row[:parent_id]
         record_parents.store_child_to_parent(rap_reference(ArchivalObject, row[:id]),
                                              rap_reference(ArchivalObject, row[:parent_id]))
@@ -136,12 +160,16 @@ class Resource
     [PhysicalRepresentation, DigitalRepresentation].each do |representation_model|
       representation_table = representation_model.table_name
 
-      db[representation_table]
-        .join(:archival_object, Sequel.qualify(:archival_object, :id) => Sequel.qualify(representation_table, :archival_object_id))
-        .filter(Sequel.qualify(:archival_object, :root_record_id) => resource_id)
+      query = db[representation_table]
+        .filter(Sequel.qualify(representation_table, :resource_id) => resource_id)
         .select(Sequel.qualify(representation_table, :archival_object_id),
                 Sequel.qualify(representation_table, :id))
-        .each do |row|
+
+      unless ao_ids.empty?
+        query = query.filter(Sequel.qualify(representation_table, :archival_object_id) => ao_ids)
+      end
+
+      query.each do |row|
         record_parents.store_child_to_parent(rap_reference(representation_model, row[:id]),
                                              rap_reference(ArchivalObject, row[:archival_object_id]))
       end
@@ -197,40 +225,51 @@ class Resource
   end
 
   def self.drop_already_applied!(db, resource_id, new_raps)
-    db[:rap_applied]
-      .filter(Sequel.qualify(:rap_applied, :root_record_id) => resource_id)
-      .filter(Sequel.~(Sequel.qualify(:rap_applied, :archival_object_id) => nil))
-      .filter(Sequel.qualify(:rap_applied, :is_active) => 1)
-      .select(Sequel.qualify(:rap_applied, :archival_object_id),
-              Sequel.qualify(:rap_applied, :rap_id))
-      .each do |row|
-      if new_raps.rap_for(ArchivalObject, row[:archival_object_id]) == row[:rap_id]
-        # Already have this application.  No update needed.
-        new_raps.delete(ArchivalObject, row[:archival_object_id])
+    new_raps.each_chunk(1000) do |record_model, record_ids|
+      next unless record_model == ArchivalObject
+      db[:rap_applied]
+        .filter(Sequel.qualify(:rap_applied, :root_record_id) => resource_id)
+        .filter(Sequel.qualify(:rap_applied, :archival_object_id) => record_ids)
+        .filter(Sequel.qualify(:rap_applied, :is_active) => 1)
+        .select(Sequel.qualify(:rap_applied, :archival_object_id),
+                Sequel.qualify(:rap_applied, :rap_id))
+        .each do |row|
+        if new_raps.rap_for(ArchivalObject, row[:archival_object_id]) == row[:rap_id]
+          # Already have this application.  No update needed.
+          new_raps.delete(ArchivalObject, row[:archival_object_id])
+        end
       end
     end
 
-    db[:rap_applied]
-      .filter(Sequel.~(Sequel.qualify(:rap_applied, :physical_representation_id) => nil))
-      .filter(Sequel.qualify(:rap_applied, :root_record_id) => resource_id,
-              Sequel.qualify(:rap_applied, :is_active) => 1)
-      .select(Sequel.qualify(:rap_applied, :physical_representation_id),
-              Sequel.qualify(:rap_applied, :rap_id))
-      .each do |row|
-      if new_raps.rap_for(PhysicalRepresentation, row[:physical_representation_id]) == row[:rap_id]
-        new_raps.delete(PhysicalRepresentation, row[:physical_representation_id])
+    new_raps.each_chunk(1000) do |record_model, record_ids|
+      next unless record_model == PhysicalRepresentation
+
+      db[:rap_applied]
+        .filter(Sequel.qualify(:rap_applied, :physical_representation_id) => record_ids)
+        .filter(Sequel.qualify(:rap_applied, :root_record_id) => resource_id,
+                Sequel.qualify(:rap_applied, :is_active) => 1)
+        .select(Sequel.qualify(:rap_applied, :physical_representation_id),
+                Sequel.qualify(:rap_applied, :rap_id))
+        .each do |row|
+        if new_raps.rap_for(PhysicalRepresentation, row[:physical_representation_id]) == row[:rap_id]
+          new_raps.delete(PhysicalRepresentation, row[:physical_representation_id])
+        end
       end
     end
 
-    db[:rap_applied]
-      .filter(Sequel.~(Sequel.qualify(:rap_applied, :digital_representation_id) => nil))
-      .filter(Sequel.qualify(:rap_applied, :root_record_id) => resource_id,
-              Sequel.qualify(:rap_applied, :is_active) => 1)
-      .select(Sequel.qualify(:rap_applied, :digital_representation_id),
-              Sequel.qualify(:rap_applied, :rap_id))
-      .each do |row|
-      if new_raps.rap_for(DigitalRepresentation, row[:digital_representation_id]) == row[:rap_id]
-        new_raps.delete(DigitalRepresentation, row[:digital_representation_id])
+    new_raps.each_chunk(1000) do |record_model, record_ids|
+      next unless record_model == DigitalRepresentation
+
+      db[:rap_applied]
+        .filter(Sequel.qualify(:rap_applied, :digital_representation_id) => record_ids)
+        .filter(Sequel.qualify(:rap_applied, :root_record_id) => resource_id,
+                Sequel.qualify(:rap_applied, :is_active) => 1)
+        .select(Sequel.qualify(:rap_applied, :digital_representation_id),
+                Sequel.qualify(:rap_applied, :rap_id))
+        .each do |row|
+        if new_raps.rap_for(DigitalRepresentation, row[:digital_representation_id]) == row[:rap_id]
+          new_raps.delete(DigitalRepresentation, row[:digital_representation_id])
+        end
       end
     end
 
@@ -303,13 +342,13 @@ class Resource
     record_raps_applied
   end
 
-  def self.propagate_raps!(resource_id)
+  def self.propagate_raps!(resource_id, subtree_ao_id = nil)
     default_rap_id = RAP.get_default_id
 
     DB.open do |db|
       start_time = Time.now
 
-      record_parents = rap_load_tree(db, resource_id)
+      record_parents = rap_load_tree(db, resource_id, subtree_ao_id)
       connected_raps = rap_load_connected_raps(db, resource_id)
 
       # If the resource doesn't have a RAP, it takes the system default
@@ -329,6 +368,7 @@ class Resource
       Log.info("RAPs calculated in %d ms" % [((Time.now.to_f - start_time.to_f) * 1000).to_i])
 
       record_raps_applied.delete(Resource, resource_id)
+
       drop_already_applied!(db, resource_id, record_raps_applied)
 
       ## Apply any remaining changes
@@ -377,13 +417,13 @@ class Resource
 
 
   # Returns a count of inserted rows.
-  def propagate_raps!
+  def propagate_raps!(subtree_ao_id = nil)
     if RequestContext.active? && RequestContext.get(:deferred_rap_propagation_resource_ids)
       # Defer propagating.  Used for things like batch import.
       RequestContext.get(:deferred_rap_propagation_resource_ids) << self.id
     else
       # Propagate immediately
-      self.class.propagate_raps!(self.id)
+      self.class.propagate_raps!(self.id, subtree_ao_id)
     end
   end
 

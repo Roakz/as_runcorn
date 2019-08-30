@@ -15,10 +15,13 @@ module Representations
 
   def reindex_representations!
     DB.open do |db|
-      id_set = db[:archival_object].filter(:root_record_id => self.root_record_id).select(:id)
+      ao_ids = [self.id]
+      while !ao_ids.empty?
+        [:physical_representation, :digital_representation].each do |tbl|
+          db[tbl].filter(:archival_object_id => ao_ids).update(:system_mtime => Time.now)
+        end
 
-      [:physical_representation, :digital_representation].each do |tbl|
-        db[tbl].filter(:archival_object_id => id_set).update(:system_mtime => Time.now)
+        ao_ids = self.class.filter(:parent_id => ao_ids).select(:id).map(&:id)
       end
     end
   end
@@ -124,7 +127,7 @@ module Representations
     end
 
     # Make sure our RAPs are up to date
-    Resource[obj.root_record_id].propagate_raps!
+    Resource[obj.root_record_id].propagate_raps!(obj.id)
   end
 
 end
