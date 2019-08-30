@@ -30,6 +30,8 @@ class Resource
     def initialize(size_estimate)
       @size_estimate = size_estimate
       @store = {}
+      @pending_deletes = Set.new
+      @iterating = false
     end
 
     def add(record_model, record_id, rap_id)
@@ -42,19 +44,46 @@ class Resource
     end
 
     def delete(record_model, record_id)
-      if @store.fetch(record_model, nil)
-        @store[record_model].remove(record_id)
+      if @iterating
+        # Can't delete from our map while we're iterating over it, so handle these specially.
+        @pending_deletes << record_id
+      else
+        if @store.fetch(record_model, nil)
+          @store[record_model].remove(record_id)
+        end
       end
     end
 
     def each_chunk(chunk_size, &block)
+      @iterating = true
+
       @store.keys.each do |record_model|
         entries = @store[record_model].entry_set
 
         entries.each_slice(chunk_size) do |chunk|
           block.call(record_model, chunk.map(&:key), chunk.map(&:value))
+
+          # Apply deletes while at this safepoint
+          chunk.each do |entry|
+            if @pending_deletes.include?(entry.key)
+              # Mark entry for delete.  We'll sweep at the end.
+              entry.set_value(nil)
+            end
+          end
+
+          @pending_deletes.clear
+        end
+
+        # Clear marked deletes
+        it = entries.iterator
+        while it.hasNext
+          entry = it.next
+          it.remove if entry.value.nil?
         end
       end
+    ensure
+
+      @iterating = false
     end
 
     def length
@@ -227,6 +256,7 @@ class Resource
   def self.drop_already_applied!(db, resource_id, new_raps)
     new_raps.each_chunk(1000) do |record_model, record_ids|
       next unless record_model == ArchivalObject
+
       db[:rap_applied]
         .filter(Sequel.qualify(:rap_applied, :root_record_id) => resource_id)
         .filter(Sequel.qualify(:rap_applied, :archival_object_id) => record_ids)
@@ -369,7 +399,11 @@ class Resource
 
       record_raps_applied.delete(Resource, resource_id)
 
-      drop_already_applied!(db, resource_id, record_raps_applied)
+      begin
+        drop_already_applied!(db, resource_id, record_raps_applied)
+      rescue
+        Log.exception($!)
+      end
 
       ## Apply any remaining changes
 
