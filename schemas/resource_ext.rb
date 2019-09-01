@@ -30,4 +30,12 @@
   "rap_attached" => {"type" => "JSONModel(:rap) object"},
 
   "has_conservation_treatments_awaiting" => {"type" => "boolean", "readonly" => "true"},
+
+  "archivist_approved" => {"type" => "boolean"},
+  "copyright_status" => {"type" => "string", "dynamic_enum" => "runcorn_copyright_status"},
+  "original_registration_date" => {"type" => "string"},
+  "serialised" => {"type" => "boolean"},
+  "information_sources" => {"type" => "string"},
+  "abstract" => {"type" => "string"},
+  "description" => {"type" => "string"}
 }

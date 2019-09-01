@@ -37,6 +37,14 @@ Reformulator.configure(
           "hideClosestSelector" => '.form-group',
         },
         {
+          "selector" => 'select[name="resource[level]"]',
+          "hideClosestSelector" => '.form-group'
+        },
+        {
+          "selector" => 'select[name="resource[language]"]',
+          "hideClosestSelector" => '.form-group'
+        },
+        {
           "selector" => '.extent-calculator-btn',
         },
         {
@@ -226,9 +234,22 @@ Reformulator.configure(
       },
       "basic_information" => {
         "fieldMoves" => [
-          {"path" => ["archival_object", "_description_"], "moveAfter" => "_title_"},
+          {"path" => ["resource", "_abstract_"], "moveAfter" => "_title_"},
+          {"path" => ["resource", "_archivist_approved_"], "moveAfter" => "_repository_processing_note_"}
         ]
-      }
+      },
+      "resource_rights_statements_" => {
+        "show" => []
+      },
+      "resource_collection_management_" => {
+        "show" => []
+      },
+      "resource_classifications_" => {
+        "show" => []
+      },
+      "resource_user_defined_" => {
+        "show" => []
+      },
     },
 
     "agents" => {
