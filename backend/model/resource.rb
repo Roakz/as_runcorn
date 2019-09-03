@@ -161,6 +161,18 @@ class Resource
                  ids = children
                end
 
+              # and path to root
+               next_id = subtree_ao_id
+               while !next_id.nil?
+                 parent_id = db[:archival_object]
+                              .filter(:id => next_id)
+                              .select(:parent_id)
+                              .first[:parent_id]
+
+                 result << parent_id if parent_id
+                 next_id = parent_id
+               end
+
                result
              else
                []
@@ -215,7 +227,7 @@ class Resource
 
     # Resource RAPs
     db[:rap].filter(:resource_id => resource_id).select(:resource_id, :id).each do |row|
-      connected_raps.add(resource_id, row[:resource_id], row[:id])
+      connected_raps.add(Resource, row[:resource_id], row[:id])
     end
 
     # AO RAPs
