@@ -28,6 +28,7 @@
                                      {"type" => "JSONModel(:physical_representation) uri"}]},
               },
             },
+            "item_count" => { "type" => "number" },
             "digital_representation_count" => { "type" => "number" },
             "physical_representation_count" => { "type" => "number" },
           }

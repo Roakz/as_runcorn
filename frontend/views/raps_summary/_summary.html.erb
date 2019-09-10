@@ -6,6 +6,7 @@
     <tr>
       <th>RAP</th>
       <th>Attached To</th>
+      <th>Item Count</th>
       <th>Physical Representation<br>Count</th>
       <th>Digital Representation<br>Count</th>
     </tr>
@@ -17,6 +18,7 @@
         <tr>
           <td><div class="badge badge-info">DEFAULT RESTRICTION</div></td>
           <td></td>
+          <td><%= rap_summary.fetch('item_count') %></td>
           <td><%= rap_summary.fetch('physical_representation_count') %></td>
           <td><%= rap_summary.fetch('digital_representation_count') %></td>
         </tr>
@@ -34,6 +36,7 @@
                                :inside_linker_browse => true %>
             </div>
           </td>
+          <td><%= rap_summary.fetch('item_count') %></td>
           <td><%= rap_summary.fetch('physical_representation_count') %></td>
           <td><%= rap_summary.fetch('digital_representation_count') %></td>
         </tr>

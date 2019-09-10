@@ -489,6 +489,7 @@ class Resource
           "attached_to" => {
             "ref" => JSONModel(:repository).uri_for(RequestContext.get(:repo_id)),
           },
+          "item_count" => 0,
           "digital_representation_count" => 0,
           "physical_representation_count" => 0,
         }
@@ -507,6 +508,7 @@ class Resource
           "attached_to" => {
             "ref" => self.uri,
           },
+          "item_count" => 0,
           "digital_representation_count" => 0,
           "physical_representation_count" => 0,
         }
@@ -526,6 +528,7 @@ class Resource
           "attached_to" => {
             "ref" => JSONModel(:archival_object).uri_for(row[:archival_object_id], :repo_id => RequestContext.get(:repo_id)),
           },
+          "item_count" => 0,
           "digital_representation_count" => 0,
           "physical_representation_count" => 0,
         }
@@ -546,6 +549,7 @@ class Resource
           "attached_to" => {
             "ref" => JSONModel(:digital_representation).uri_for(row[:digital_representation_id], :repo_id => RequestContext.get(:repo_id)),
           },
+          "item_count" => 0,
           "digital_representation_count" => 0,
           "physical_representation_count" => 0,
         }
@@ -566,9 +570,21 @@ class Resource
           "attached_to" => {
             "ref" => JSONModel(:physical_representation).uri_for(row[:physical_representation_id], :repo_id => RequestContext.get(:repo_id)),
           },
+          "item_count" => 0,
           "digital_representation_count" => 0,
           "physical_representation_count" => 0,
         }
+      end
+
+      db[:rap_applied]
+        .join(:archival_object, Sequel.qualify(:archival_object, :id) => Sequel.qualify(:rap_applied, :archival_object_id))
+        .filter(Sequel.qualify(:archival_object, :root_record_id) => self.id)
+        .filter(:rap_id => rap_id_to_summary.keys)
+        .filter(:is_active => 1)
+        .filter(Sequel.~(:archival_object_id => nil))
+        .group_and_count(:rap_id)
+        .each do |row|
+        rap_id_to_summary.fetch(row[:rap_id])["item_count"] = row[:count]
       end
 
       db[:rap_applied]
