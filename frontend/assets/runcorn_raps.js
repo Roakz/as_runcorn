@@ -3,7 +3,7 @@
         this.opts = opts;
         var self = this;
 
-        this.$form = $container.find('> form');
+        this.$form = $container.find('.record-pane:first');
         if (this.$form.data('RuncornRAPs')) {
             return;
         }
