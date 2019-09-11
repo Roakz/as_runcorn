@@ -23,7 +23,7 @@ module Movements
     json = self.class.to_jsonmodel(self)
 
     mvmt = {
-      'user' => opts[:user],
+      'user' => {'ref' => opts[:user]},
       'move_date' => opts.fetch(:date, Time.now.getlocal.iso8601),
     }
 

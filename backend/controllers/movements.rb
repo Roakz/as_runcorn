@@ -16,7 +16,9 @@ class ArchivesSpaceService < Sinatra::Base
     do
       obj = model.get_or_die(params[:id])
 
-      obj.move(params.merge(:user => current_user.username))
+      user_uri = User.uri_for(current_user.agent_record_type, current_user.agent_record_id)
+
+      obj.move(params.merge(:user => user_uri))
 
       json = obj.class.to_jsonmodel(obj[:id])
 
