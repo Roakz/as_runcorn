@@ -68,9 +68,15 @@ en:
       action:
         add_sibling_from_clone: Clone to Sibling
   top_container:
-      current_location: Current location
-      storage_location: Home Location
-      absent_contents: Absent Contents
+    current_location: Current location
+    storage_location: Home Location
+    absent_contents: Absent Contents
+    _frontend:
+      bulk_operations:
+        update_locations_singular: "Update Home Locations: Single Location"
+        update_locations_singular_help: Choose a Home Location for all selected containers.
+        update_locations_multiple: "Update Home Locations: Multiple Locations"
+        update_locations_multiple_help: Choose a Home Location for each selected container.
   location:
     building: Repository
     barcode: Repository ID
