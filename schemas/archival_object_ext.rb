@@ -62,6 +62,11 @@
     "readonly" => "true",
   },
 
+  "rap_access_status" => {
+    "type" => "string",
+    "readonly" => "true",
+  },
+
   "rap_history" => {
     "readonly" => "true",
     "type" => "array",

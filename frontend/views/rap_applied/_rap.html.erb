@@ -14,6 +14,7 @@
             <% elsif record['rap_expiration'] && !record['rap_expiration']['expires'] %>
               <div class="badge badge-info">No Expiry</div>
             <% end %>
+            <div class="badge badge-info"><%= record['rap_access_status'] %></div>
           <% end %>
           <% if rap['_resolved']['is_repository_default'] %>
             <div class="badge badge-info">DEFAULT RESTRICTION</div>
@@ -29,9 +30,10 @@
     <div id="<%= accordion_id %>_rap_<%= index %>" class="panel-collapse collapse">
       <div class="subrecord-form-container">
         <% if rap['ref'] === record['rap_applied']['uri'] %>
-          <% if rap['_resolved']['access_status'] == 'Restricted Access' %>
+          <% if record['rap_access_status'] == 'Restricted Access' %>
             <div class="alert alert-info">Access to these records has been restricted by the agency. For permission to access these records please contact the agency.</div>
           <% end %>
+          <%= form.label_and_textfield 'rap_access_status' %>
           <% if record['rap_expiration'] %>
             <% form.push('rap_expiration', record['rap_expiration']) do %>
               <% form.emit_template 'rap_expiration' %>

@@ -64,6 +64,7 @@ en:
     approved_by: Approved By
     deaccessioned: This record has been deaccessioned
     agency_assigned_id: Agency Assigned ID
+    rap_access_status: Access Status
     _frontend:
       action:
         add_sibling_from_clone: Clone to Sibling
@@ -185,6 +186,7 @@ en:
     monetary_value_note: Monetary Value Note
     availability: Availability
     calculated_availability: Calculated Availability
+    rap_access_status: Access Status
     _plural: Physical Representations
     _singular: Physical Representation
     _frontend:
@@ -227,6 +229,7 @@ en:
     significance: Significance
     title: Title
     deaccessioned: This record has been deaccessioned
+    rap_access_status: Access Status
     _plural: Digital Representations
     _singular: Digital Representation
     _frontend:

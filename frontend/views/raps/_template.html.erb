@@ -1,6 +1,5 @@
 <% define_template "rap", jsonmodel_definition(:rap) do |form| %>
   <%= form.label_and_boolean 'open_access_metadata' %>
-  <%= form.label_and_select 'access_status', form.possible_options_for("access_status", false) %>
   <%= form.label_and_select 'access_category', form.possible_options_for("access_category", false) %>
   <%
     if form.obj['years']

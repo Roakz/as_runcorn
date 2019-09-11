@@ -6,6 +6,8 @@ class RAP < Sequel::Model(:rap)
 
   set_model_scope :repository
 
+  ACCESS_CATEGORY_CABINET_MATTERS = 'Cabinet matters'
+
   def update_from_json(json, opts = {}, apply_nested_records = true)
     self.class.apply_forever_closed_access_categories(json)
 
@@ -75,9 +77,16 @@ class RAP < Sequel::Model(:rap)
   end
 
   def build_display_string(json)
+    metadata_access_status = json.open_access_metadata ? "Open metadata" : "Closed Metadata"
+    record_access_status = 'Closed records'
+    if json.open_access_metadata && json.years == 0 && json.access_category != ACCESS_CATEGORY_CABINET_MATTERS
+      record_access_status = 'Open records'
+    end
+
     [
-      json.years.nil? ? nil : "%s years" % [json.years.to_s],
-      json.open_access_metadata ? "Open metadata" : "Closed Metadata",
+      json.years.nil? || json.years == 0 ? nil : "%s years" % [json.years.to_s],
+      metadata_access_status,
+      record_access_status,
       json['access_status'],
       json['access_category'],
     ].compact.join('; ')
@@ -90,9 +99,8 @@ class RAP < Sequel::Model(:rap)
     if default.nil?
       default = RAP.create_from_json(JSONModel(:rap).from_hash(
                                        'open_access_metadata' => false,
-                                       'access_status' => 'Restricted Access',
                                        'access_category' => 'N/A',
-                                       'years' => 100,
+                                       'years' => nil,
                                        'internal_reference' => 'SYSTEM_DEFAULT_RAP',
                                      ),
                                     :default_for_repo_id => repo_id)

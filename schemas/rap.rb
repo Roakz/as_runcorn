@@ -8,7 +8,7 @@
       "uri" => {"type" => "string"},
 
       "open_access_metadata" => {"type" => "boolean"},
-      "access_status" => {"type" => "string", "dynamic_enum" => "runcorn_rap_access_status", "ifmissing" => "error"},
+
       "access_category" => {"type" => "string", "dynamic_enum" => "runcorn_rap_access_category", "ifmissing" => "error"},
 
       "years" => {"type" => "non_negative_integer"},

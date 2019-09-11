@@ -155,6 +155,11 @@
         "readonly" => "true",
       },
 
+      "rap_access_status" => {
+        "type" => "string",
+        "readonly" => "true",
+      },
+
       "rap_expiration" => {
         "type" => "object",
         "readonly" => "true",

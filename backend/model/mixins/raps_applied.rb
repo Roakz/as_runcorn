@@ -52,6 +52,31 @@ module RAPsApplied
       }
     end
 
+    RAP_ACCESS_STATUS_RESTRICTED = 'Restricted Access'
+    RAP_ACCESS_STATUS_OPEN = 'Open Access'
+
+    def calculate_rap_access_status(json)
+      result = RAP_ACCESS_STATUS_RESTRICTED
+
+      if json['rap_applied']['open_access_metadata']
+        if json['rap_applied']['years'].nil?
+          result = RAP_ACCESS_STATUS_RESTRICTED
+        elsif json['rap_applied']['years'] == 0
+          if json['rap_applied']['access_category'] == RAP::ACCESS_CATEGORY_CABINET_MATTERS
+            if json['rap_expiration']['expired']
+              result = RAP_ACCESS_STATUS_OPEN
+            end
+          else
+            result = RAP_ACCESS_STATUS_OPEN
+          end
+        elsif json['rap_expiration']['expired']
+          result = RAP_ACCESS_STATUS_OPEN
+        end
+      end
+
+      result
+    end
+
     private
 
     # rap_applied_objs is a list of either representations or Archival Objects
@@ -109,7 +134,7 @@ module RAPsApplied
 
       rap_expiry_date = end_date.next_year(rap.years)
 
-      if rap.access_category == 'Cabinet matters'
+      if rap.access_category == RAP::ACCESS_CATEGORY_CABINET_MATTERS
         rap_expiry_date = Date.new(rap_expiry_date.year + 1, 1, 1)
       end
 
@@ -144,6 +169,7 @@ module RAPsApplied
         json['rap_applied'] = raps.rap_json_for_rap_applied(obj.id)
         json['rap_history'] = raps.rap_history_for_rap_applied(obj.id)
         json['rap_expiration'] = raps.rap_expiration_for_rap_applied(obj.id)
+        json['rap_access_status'] = raps.calculate_rap_access_status(json)
       end
 
       jsons
