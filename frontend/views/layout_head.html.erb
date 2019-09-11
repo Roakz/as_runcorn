@@ -229,3 +229,8 @@
     </div>
   </script>
 <% end %>
+
+<% if controller.controller_name == 'top_containers' && controller.action_name == 'index' %>
+  <%= javascript_include_tag("runcorn_top_containers.bulk") %>
+  <%= render_aspace_partial :partial => "top_containers/bulk_operations/bulk_action_extra_templates" %>
+<% end %>

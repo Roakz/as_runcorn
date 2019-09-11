@@ -73,6 +73,8 @@ en:
     absent_contents: Absent Contents
     _frontend:
       bulk_operations:
+        update_functional_locations_singular: "Update Functional Locations"
+        update_functional_locations_singular_help: Choose a Functional Location for all selected containers.
         update_locations_singular: "Update Home Locations: Single Location"
         update_locations_singular_help: Choose a Home Location for all selected containers.
         update_locations_multiple: "Update Home Locations: Multiple Locations"

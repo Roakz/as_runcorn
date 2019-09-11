@@ -10,12 +10,15 @@ class TopContainer
   # movements require a user uri so adding it to the sigs
   # the endpoints now call these versions
 
-  def self.bulk_update_location(ids, location_uri, user_uri)
+  # also changed location_uri to location here
+  # the move method can take a uri (for a storage location)
+  # or an enum value (for a functional location)
+  def self.bulk_update_location(ids, location, user_uri)
     out = {:records_updated => ids.length}
 
     opts = {
       :user => user_uri,
-      :location => location_uri
+      :location => location
     }
 
     begin

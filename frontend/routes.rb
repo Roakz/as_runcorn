@@ -45,6 +45,8 @@ ArchivesSpace::Application.routes.draw do
       match('significant_items/index' => 'significant_items#index', :via => [:get])
 
       match('resources/:id/gaps_in_control' => 'resources#gaps_in_control', :via => [:get])
+
+      match('top_containers/bulk_operations/update_functional_location' => 'top_containers#bulk_functional_location', :via => [:post])
     end
   end
 end
