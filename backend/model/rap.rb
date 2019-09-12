@@ -11,6 +11,8 @@ class RAP < Sequel::Model(:rap)
   def update_from_json(json, opts = {}, apply_nested_records = true)
     self.class.apply_forever_closed_access_categories(json)
 
+    more_restrictive = update_makes_rap_more_restrictive?(json)
+
     result = super
 
     touch_attached_record_mtime
@@ -22,7 +24,37 @@ class RAP < Sequel::Model(:rap)
       self.attached_root_record.propagate_raps!
     end
 
+    if more_restrictive
+      self.class.set_attached_unpublished!(self.id)
+    end
+
     result
+  end
+
+  def self.set_attached_unpublished!(rap_id)
+    DB.open do |db|
+      RAPs.supported_models.each do |model|
+        model_backlink_col = :"#{model.table_name}_id"
+
+        next unless db[:rap_applied].columns.include?(model_backlink_col)
+
+        model
+          .filter(:id => db[:rap_applied]
+                           .filter(Sequel.qualify(:rap_applied, :rap_id) => rap_id)
+                           .filter(Sequel.qualify(:rap_applied, :is_active) => 1)
+                           .select(Sequel.qualify(:rap_applied, model_backlink_col)))
+          .filter(:publish => 1)
+          .update(:publish => 0)
+      end
+    end
+  end
+
+  def update_makes_rap_more_restrictive?(json)
+    if json['open_access_metadata']
+      false
+    else
+      self.open_access_metadata == 1
+    end
   end
 
   def attached_root_record
