@@ -32,6 +32,7 @@ class RAP < Sequel::Model(:rap)
   end
 
   def self.set_attached_unpublished!(rap_id)
+    # FIXME only where RAP has not expired???
     DB.open do |db|
       RAPs.supported_models.each do |model|
         model_backlink_col = :"#{model.table_name}_id"

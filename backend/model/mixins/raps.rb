@@ -75,6 +75,8 @@ module RAPs
       ao = ArchivalObject[obj.archival_object_id]
       Resource[ao.root_record_id].propagate_raps!(obj.archival_object_id)
     end
+
+    
   end
 
 end

@@ -318,6 +318,21 @@ class Resource
     new_raps
   end
 
+  def self.set_unpublished_for_closed_records!(record_raps_applied)
+    # GAH.
+    # FIXME only where RAP is not expired???
+    # record_raps_applied.each do |record_model, _, rap_ids|
+    #   db[:rap]
+    #     .join(:rap_applied, Sequel.qualify(:rap_applied, :rap_id) => Sequel.qualify(:rap, :id))
+    #     .join(record_model.table_name, Sequel.qualify(record_model.table_name, :id) => Sequel.qualify(:rap_applied, :"#{record_model.table_name}_id"))
+    #     .filter(Sequel.qualify(:rap_applied, :is_active) => 1)
+    #     .filter(Sequel.qualify(:rap, :id) => rap_ids)
+    #     .filter(Sequel.qualify(:rap, :open_access_metadata) => 0)
+    #     .filter(Sequel.qualify(:record_model.table_name, :publish) => 1)
+    #     .update(Sequel.qualify(:record_model.table_name, :publish) => 0)
+    # end
+  end
+
   def self.rap_update_locks_and_mtimes(raps_applied)
     raps_applied.each_chunk(1000) do |record_model, record_ids, _rap_ids|
       record_model.update_mtime_for_ids(record_ids)
@@ -455,6 +470,8 @@ class Resource
         end
       end
 
+      set_unpublished_for_closed_records!(record_raps_applied)
+      
       rap_update_locks_and_mtimes(record_raps_applied)
 
       updated_count
