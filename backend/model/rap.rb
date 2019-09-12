@@ -77,7 +77,7 @@ class RAP < Sequel::Model(:rap)
   end
 
   def build_display_string(json)
-    metadata_access_status = json.open_access_metadata ? "Open metadata" : "Closed Metadata"
+    metadata_access_status = json.open_access_metadata ? "Open metadata" : "Closed metadata"
     record_access_status = 'Closed records'
     if json.open_access_metadata && json.years == 0 && json.access_category != ACCESS_CATEGORY_CABINET_MATTERS
       record_access_status = 'Open records'
