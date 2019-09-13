@@ -13,7 +13,7 @@
 
       "years" => {"type" => "non_negative_integer"},
 
-      "internal_reference" => {"type" => "string", "ifmissing" => "error"},
+      "internal_reference" => {"type" => "string"},
 
       "notice_date" => {"type" => "string"},
 
