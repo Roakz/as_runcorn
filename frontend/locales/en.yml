@@ -66,6 +66,7 @@ en:
     agency_assigned_id: Agency Assigned ID
     rap_access_status: Access Status
     _frontend:
+      has_representation_with_rap_attached: Some representations have a different restriction period
       action:
         add_sibling_from_clone: Clone to Sibling
   top_container:

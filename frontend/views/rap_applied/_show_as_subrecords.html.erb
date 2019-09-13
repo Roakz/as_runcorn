@@ -6,6 +6,12 @@
     <button class="attach-rap-button btn btn-sm btn-default pull-right" data-uri="<%= record['uri'] %>">Attach RAP</button>
   </h3>
   <div class="subrecord-form-container">
+
+    <% if record['jsonmodel_type'] == 'archival_object' && record['physical_representations'].any?{|prep| prep.has_key?('rap_attached') } %>
+      <div class="alert alert-info"><%= I18n.t('archival_object._frontend.has_representation_with_rap_attached') %></div>
+      <br/>
+    <% end %>
+
     <% accordion_id = SecureRandom.hex %>
     <div class="panel-group details" id="<%= accordion_id %>_accordion">
       <% raps_to_show = ASUtils.wrap(record['rap_history']).reverse %>
