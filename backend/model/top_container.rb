@@ -13,7 +13,12 @@ class TopContainer
   # also changed location_uri to location here
   # the move method can take a uri (for a storage location)
   # or an enum value (for a functional location)
-  def self.bulk_update_location(ids, location, user_uri)
+  def self.bulk_update_location(ids, location, user_uri = nil)
+    if user_uri.nil?
+      current_user = User[:username => RequestContext.get(:current_username)]
+      user_uri = User.uri_for(current_user.agent_record_type, current_user.agent_record_id)
+    end
+
     out = {:records_updated => ids.length}
 
     opts = {
@@ -36,7 +41,13 @@ class TopContainer
   end
 
 
-  def self.bulk_update_locations(location_data, user_uri)
+  def self.bulk_update_locations(location_data, user_uri = nil)
+    if user_uri.nil?
+      current_user = User[:username => RequestContext.get(:current_username)]
+      user_uri = User.uri_for(current_user.agent_record_type, current_user.agent_record_id)
+    end
+
+
     out = {
       :records_ids_updated => []
     }
