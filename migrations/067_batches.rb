@@ -44,7 +44,9 @@ Sequel.migration do
       String :approved_user, :null => true
       DateTime :approved_time, :null => true
       String :action_user, :null => false
-      DateTime :action_time, :null => false
+      DateTime :action_time, :null => true
+
+      apply_mtime_columns
     end
 
     create_table(:batch_action_batch_rlshp) do
