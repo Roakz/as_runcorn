@@ -73,4 +73,15 @@ describe 'Runcorn Batch' do
 
     expect(batch.object_refs).to eq([agency['uri']])
   end
+
+
+  it "has a handy display string" do
+    agency = create(:json_agent_corporate_entity)
+    batch = Batch.create_from_json(build(:json_batch))
+    batch.add_objects(:agent_corporate_entity, JSONModel.parse_reference(agency['uri'])[:id])
+
+    json = Batch.to_jsonmodel(batch[:id]).to_hash
+
+    expect(json['display_string'].empty?).to_not be_truthy
+  end
 end

@@ -85,6 +85,11 @@ class Batch < Sequel::Model(:batch)
   end
 
 
+  def object_total
+    objects_ds.count
+  end
+
+
   def included_models
     object_counts.keys
   end
@@ -102,6 +107,9 @@ class Batch < Sequel::Model(:batch)
     jsons = super
 
     objs.zip(jsons).each do |obj, json|
+      objects = obj.object_total
+      actions = json['actions'].length
+      json['display_string'] = "#{obj.qsa_id_prefixed} -- #{objects} object#{objects == 1 ? '' : 's'} : #{actions} action#{actions == 1 ? '' : 's'}"
     end
 
     jsons
