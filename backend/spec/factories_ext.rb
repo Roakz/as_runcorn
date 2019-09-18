@@ -89,4 +89,7 @@ FactoryBot.define do
     external_reference { "ark:://location/goes/here" }
   end
 
+  factory :json_batch, class: JSONModel::JSONModel(:batch) do
+    notes { generate(:generic_description) }
+  end
 end
