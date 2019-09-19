@@ -35,6 +35,9 @@ Sequel.migration do
     create_table(:batch_action) do
       primary_key :id
 
+      Integer :lock_version, :default => 0, :null => false
+      Integer :json_schema_version, :null => false
+
       DynamicEnum :action_status_id, :null => false
 
       TextField :notes, :null => true
