@@ -2,6 +2,13 @@ require_relative '../common/validations'
 require_relative '../common/qsa_id'
 require_relative '../common/qsa_id_registrations'
 
+require_relative 'lib/batch_action_handler'
+
+# load batch action handlers
+Dir.glob(File.join(File.dirname(__FILE__), 'lib',  'batch_action_handlers', "*.rb")).sort.each do |file|
+  require file
+end
+
 Permission.define("manage_agency_registration",
                   "The ability to manage the agency registration workflow",
                   :level => "repository")

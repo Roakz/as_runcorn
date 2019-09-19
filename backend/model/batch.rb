@@ -9,6 +9,7 @@ class Batch < Sequel::Model(:batch)
                       :contains_references_to_types => proc {[BatchAction]})
 
   class UnsupportedModel < StandardError; end
+  class InvalidAction < StandardError; end
 
   def self.models
     @models ||= BackendEnumSource.values_for('runcorn_batch_model').map{|m| m.intern}
@@ -92,6 +93,43 @@ class Batch < Sequel::Model(:batch)
 
   def included_models
     object_counts.keys
+  end
+
+
+  def add_action(type, params = {})
+    if current_action
+      raise InvalidAction.new('Cannot add action. Batch already has a current action.')
+    end
+
+    handler = BatchActionHandler.handler_for_type(type)
+
+    handler.validate_params(params)
+
+    json = {
+      :action_type => type.to_s,
+      :action_params => params.to_json,
+      :action_status => 'draft',
+      :action_user => RequestContext.get(:current_username),
+      :batch => {:ref => self.uri}
+    }
+
+    BatchAction.create_from_json(JSONModel(:batch_action).from_hash(json))
+  end
+
+
+  def current_action
+    BatchAction.sequel_to_jsonmodel(related_records(:batch_action_batch)).select{|action| action['action_status'] != 'executed'}.first
+  end
+
+
+  def perform_action
+    action = current_action
+    handler = BatchActionHandler.handler_for_type(action['action_type'])
+
+    handler.perform_action(ASUtils.json_parse(action['action_params']), action['action_user'], action['uri'], self.object_refs)
+    action['action_status'] = 'executed'
+    action['action_time'] = Time.now
+    BatchAction.get_or_die(JSONModel.parse_reference(action['uri'])[:id]).update_from_json(action)
   end
 
 

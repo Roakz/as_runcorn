@@ -84,4 +84,74 @@ describe 'Runcorn Batch' do
 
     expect(json['display_string'].empty?).to_not be_truthy
   end
+
+
+  it "lets you add an action" do
+    batch = Batch.create_from_json(build(:json_batch))
+
+    2.times do
+      tcon = create(:json_top_container)
+      batch.add_objects(:top_container, JSONModel.parse_reference(tcon['uri'])[:id])
+    end
+
+    batch.add_action(:functional_move, 'location' => 'PER')
+
+    json = URIResolver.resolve_references(Batch.to_jsonmodel(batch[:id]), ['actions']) 
+
+    expect(json['actions'].first['_resolved']['action_type']).to eq('functional_move')
+  end
+
+
+  it 'does not let you add an action if it already has a current action' do
+    batch = Batch.create_from_json(build(:json_batch))
+    batch.add_action(:functional_move, 'location' => 'PER')
+    expect{batch.add_action(:functional_move, 'location' => 'HOME')}.to raise_error(Batch::InvalidAction)
+  end
+
+
+  it "lets you perform an action" do
+    batch = Batch.create_from_json(build(:json_batch))
+
+    2.times do
+      tcon = create(:json_top_container)
+      batch.add_objects(:top_container, JSONModel.parse_reference(tcon['uri'])[:id])
+    end
+
+    batch.add_action(:functional_move, 'location' => 'PER')
+    batch.perform_action
+
+    batch.object_refs.each do |uri|
+      expect(TopContainer.to_jsonmodel(JSONModel.parse_reference(uri)[:id])['current_location']).to eq('PER')
+    end
+
+    batch.add_action(:functional_move, 'location' => 'HOME')
+
+    json = URIResolver.resolve_references(Batch.to_jsonmodel(batch[:id]), ['actions']) 
+    expect(json['actions'][0]['_resolved']['action_status']).to eq('executed')
+    expect(json['actions'][1]['_resolved']['action_status']).to eq('draft')
+
+    batch.perform_action
+
+    batch.object_refs.each do |uri|
+      expect(TopContainer.to_jsonmodel(JSONModel.parse_reference(uri)[:id])['current_location']).to eq('HOME')
+    end
+
+    json = URIResolver.resolve_references(Batch.to_jsonmodel(batch[:id]), ['actions']) 
+
+    pp json
+  end
+
+
+  it "complains if you try to add an action with an unknown type" do
+    batch = Batch.create_from_json(build(:json_batch))
+    expect{batch.add_action(:unknown_action_type)}.to raise_error(BatchActionHandler::UnknownActionType)
+  end
+
+
+  it "complains if you try to add an action with bad params" do
+    batch = Batch.create_from_json(build(:json_batch))
+    expect{batch.add_action(:functional_move)}.to raise_error(BatchActionHandler::InvalidParams)
+    expect{batch.add_action(:functional_move, 'moocation' => 'HOME')}.to raise_error(BatchActionHandler::InvalidParams)
+    expect{batch.add_action(:functional_move, 'location' => 'moooooo')}.to raise_error(BatchActionHandler::InvalidParams)
+  end
 end

@@ -25,7 +25,8 @@
         "subtype" => "ref",
         "properties" => {
           "ref" => {
-            "type" => [{"type" => "JSONModel(:assessment) uri"}],
+            "type" => [{"type" => "JSONModel(:assessment) uri"},
+                       {"type" => "JSONModel(:batch_action) uri"}],
           },
           "_resolved" => {
             "type" => "object",
