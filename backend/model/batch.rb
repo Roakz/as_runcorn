@@ -177,31 +177,31 @@ class Batch < Sequel::Model(:batch)
   end
 
 
-  def assign_for_model_with_type_ids(action, model, type, *ids)
-    # action is :add or :remove
+  def assign_for_model_with_type_ids(operation, model, type, *ids)
+    # operation is :add or :remove
     # model is the kind of objects we want to add
     # type is the kind of object ids we've been given
 
-    raise InvalidAction.new("Unknown assign action: #{action}") unless [:add, :remove].include?(action)
+    raise "Unknown assign operation: #{operation}" unless [:add, :remove].include?(operation)
 
     # if they are the same then go ahead and add the ids
     if model == type
-      if action == :add
+      if operation == :add
         self.add_objects(model, *ids)
-      elsif action == :remove
+      elsif operation == :remove
         self.remove_objects(model, *ids)
       else
-        raise InvalidAction.new("Unknown assign action: #{action}")
+        raise "Unknown assign operation: #{operation}"
       end
     else
       # otherwise we need to recurse down until they are the same
       case type
       when 'resource'
-        self.assign_for_model_with_type_ids(action, model, 'archival_object', *toplevel_aos_for_resources(ids))
+        self.assign_for_model_with_type_ids(operation, model, 'archival_object', *toplevel_aos_for_resources(ids))
       when 'archival_object'
-        self.assign_for_model_with_type_ids(action, model, model, *objects_for_aos(model, ids))
+        self.assign_for_model_with_type_ids(operation, model, model, *objects_for_aos(model, ids))
       when 'top_container'
-        self.assign_for_model_with_type_ids(action, model, model, *physical_representations_for_top_containers(ids))
+        self.assign_for_model_with_type_ids(operation, model, model, *physical_representations_for_top_containers(ids))
       else
         raise InvalidRef.new("Don't know how to find refs of type: #{type.inspect} for model: #{model.inspect}")
       end
@@ -210,7 +210,7 @@ class Batch < Sequel::Model(:batch)
   end
 
 
-  def assign_by_ref(action, model, *refs)
+  def assign_by_ref(operation, model, *refs)
     refs.map {|ref| {:ref => ref, :parsed => JSONModel.parse_reference(ref)}}
       .group_by {|parsed|
                   raise InvalidRef.new("Malformed ref: #{parsed[:ref]}") if parsed[:parsed].nil?
@@ -223,7 +223,7 @@ class Batch < Sequel::Model(:batch)
 
       ids = type_refs.map {|ref| ref[:parsed].fetch(:id)}
 
-      self.assign_for_model_with_type_ids(action, model, type, *ids)
+      self.assign_for_model_with_type_ids(operation, model, type, *ids)
 
     end
   end
