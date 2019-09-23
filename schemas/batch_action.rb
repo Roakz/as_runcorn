@@ -7,7 +7,7 @@
     "properties" => {
       "uri" => {"type" => "string"},
 
-      "notes" => {"type" => "string"},
+      "note" => {"type" => "string"},
 
       "action_status" => {
         "type" => "string",

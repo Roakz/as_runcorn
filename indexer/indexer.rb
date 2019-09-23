@@ -14,6 +14,7 @@ class IndexerCommon
   @@record_types << :chargeable_service
   @@record_types << :chargeable_item
   @@record_types << :conservation_request
+  @@record_types << :batch
 
   add_attribute_to_resolve('container')
   add_attribute_to_resolve('container::container_locations')
@@ -149,6 +150,13 @@ class IndexerCommon
         doc['conservation_request_attached_u_sstr'] = record['record']['conservation_requests'].map {|ref| ref['ref']}
       end
 
+    end
+
+
+    indexer.add_document_prepare_hook do |doc, record|
+      if doc['primary_type'] == 'batch'
+        doc['title'] = record['record']['display_string']
+      end
     end
 
 

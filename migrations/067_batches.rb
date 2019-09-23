@@ -27,7 +27,7 @@ Sequel.migration do
       Integer :lock_version, :default => 0, :null => false
       Integer :json_schema_version, :null => false
 
-      TextField :notes, :null => true
+      TextField :note, :null => true
 
       apply_mtime_columns
     end
@@ -40,7 +40,7 @@ Sequel.migration do
 
       DynamicEnum :action_status_id, :null => false
 
-      TextField :notes, :null => true
+      TextField :note, :null => true
 
       String :action_type, :null => false
       String :action_params, :null => true
