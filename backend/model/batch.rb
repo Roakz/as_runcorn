@@ -327,4 +327,12 @@ class Batch < Sequel::Model(:batch)
     jsons
   end
 
+
+  def self.handle_delete(ids_to_delete)
+    DB.open do |db|
+      db[:batch_objects].filter(:batch_id => ids_to_delete).delete
+    end
+
+    super
+  end
 end
