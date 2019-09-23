@@ -21,8 +21,9 @@ Permission.define("approve_agency_registration",
 begin
   History.register_model(ChargeableItem)
   History.register_model(ChargeableService)
+  History.register_model(Batch)
 rescue NameError
-  Log.info("Unable to register ChargeableItem and ChargeableService for history. Please install the as_history plugin")
+  Log.info("Unable to register new models for history. Please install the as_history plugin")
 end
 
 require_relative 'lib/file_storage'
