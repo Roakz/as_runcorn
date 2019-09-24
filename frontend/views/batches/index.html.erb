@@ -1,9 +1,20 @@
 <%= setup_context(:title => I18n.t("batch._plural")) %>
 
 <%
-add_column(I18n.t("batch.status"),
-           proc {|record| I18n.t('enumerations.runcorn_batch_status.' + record.fetch('batch_status_u_ssort'))},
-           :sortable => true, :sort_by => 'batch_status_u_ssort')
+  @no_title = true
+
+  add_column(I18n.t("as_runcorn.qsa_id"),
+             proc {|record|
+               QSAIdHelper.id(record['qsa_id_u_ssort'])
+             }, :sortable => true, :sort_by => 'qsa_id_u_sort', :class => 'col-sm-1')
+
+  add_column(I18n.t("batch.display_string"),
+             proc {|record| record.fetch('title')},
+             :sortable => true, :sort_by => 'title')
+
+  add_column(I18n.t("batch.status"),
+             proc {|record| I18n.t('enumerations.runcorn_batch_status.' + record.fetch('batch_status_u_ssort'))},
+             :sortable => true, :sort_by => 'batch_status_u_ssort')
 %>
 
 <div class="row">

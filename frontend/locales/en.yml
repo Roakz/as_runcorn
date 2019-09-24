@@ -302,6 +302,7 @@ en:
     qsa_id_u_sort: Identifier
     assessment_treatment_priority_u_sort: Treatment Priority
     batch_status_u_ssort: Status
+    title: Title
 
   search_results:
     filter:
@@ -455,6 +456,7 @@ en:
   batch:
     _singular: Batch
     _plural: Batches
+    display_string: Title
     status: Status
     note: Note
     actions: Actions
