@@ -19,6 +19,7 @@ class IndexerCommon
   add_attribute_to_resolve('container')
   add_attribute_to_resolve('container::container_locations')
   add_attribute_to_resolve('responsible_agency')
+  add_attribute_to_resolve('actions')
 
   def self.build_recent_agency_filter(recent_agencies)
     result = []
@@ -158,10 +159,16 @@ class IndexerCommon
         doc['title'] = record['record']['display_string']
         doc['batch_status_u_ssort'] = record['record']['status']
         if record['record']['note']
-          doc['note_summary_u_ssort'] = record['record']['note'][0,60]
-          doc['note_summary_u_ssort'] += ' ...' if record['record']['note'].length > 60
+          doc['batch_note_summary_u_ssort'] = record['record']['note'][0,60]
+          doc['batch_note_summary_u_ssort'] += ' ...' if record['record']['note'].length > 60
         else
-          doc['note_summary_u_ssort'] = '-- no note --'
+          doc['batch_note_summary_u_ssort'] = '-- no note --'
+        end
+
+        if record['record']['actions'].empty?
+          doc['batch_latest_action_u_ssort'] = 'no_action'
+        else
+          doc['batch_latest_action_u_ssort'] = record['record']['actions'].last['_resolved']['action_type']
         end
       end
     end

@@ -302,6 +302,7 @@ en:
     qsa_id_u_sort: Identifier
     assessment_treatment_priority_u_sort: Treatment Priority
     batch_status_u_ssort: Status
+    batch_latest_action_u_ssort: Latest Action
     title: Title
 
   search_results:
@@ -460,5 +461,9 @@ en:
     status: Status
     note: Note
     actions: Actions
-    status_values:
-      no_action: No Action
+    latest_action: Latest Action
+
+  batch_action:
+    action_type:
+      no_action: "-- no action --"
+      functional_move: Functional Move

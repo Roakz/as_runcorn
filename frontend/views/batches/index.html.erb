@@ -16,8 +16,12 @@
              proc {|record| I18n.t('enumerations.runcorn_batch_status.' + record.fetch('batch_status_u_ssort'))},
              :sortable => true, :sort_by => 'batch_status_u_ssort')
 
+  add_column(I18n.t("batch.latest_action"),
+             proc {|record| I18n.t('batch_action.action_type.' + record.fetch('batch_latest_action_u_ssort'))},
+             :sortable => true, :sort_by => 'batch_latest_action_u_ssort')
+
   add_column(I18n.t("batch.note"),
-             proc {|record| record.fetch('note_summary_u_ssort')},
+             proc {|record| record.fetch('batch_note_summary_u_ssort')},
              :sortable => false)
 %>
 
