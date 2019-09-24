@@ -449,12 +449,4 @@ en:
   certainty_end_tooltip: |
     <p>The level of confidence for the information given in a date statement. This information is optional and should only be added when qualifying date information as potentially uncertain based upon the description or cataloging rules in use.</p>
     <p>See EAD attribute "certainty".</p>
-  external_resource:
-    _singular: External Resource
-    _plural: External Resources
-    _frontend:
-      action:
-        add: Add External Resource
-    title: Title
-    location: Location
     publish: Publish

@@ -94,19 +94,6 @@ Rails.application.config.after_initialize do
     )
   )
 
-  Plugins.register_plugin_section(
-    Plugins::PluginSubRecord.new(
-      'as_runcorn',
-      'external_resources',
-      ['agent_corporate_entity'],
-      {
-        template_name: 'external_resource',
-        js_edit_template_name: 'template_external_resource',
-        heading_text: I18n.t('external_resource._plural'),
-        sidebar_label: I18n.t('external_resource._plural')
-      }
-    )
-  )
 
   class RAPSection < Plugins::AbstractPluginSection
     def render_readonly(view_context, record, form_context)
