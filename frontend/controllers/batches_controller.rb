@@ -5,7 +5,7 @@ class BatchesController < ApplicationController
   # FIXME: Who should be able to create/edit batches?  Assuming
   # any logged in user here.
   set_access_control "view_repository" => [:new, :edit, :create, :update, :delete,
-                                           :index, :show, :linked_objects,
+                                           :index, :show, :assigned_objects,
                                            :assign_objects_form, :assign_objects,
                                            :clear_assigned_objects,
                                            :submit_for_review,
@@ -87,10 +87,6 @@ class BatchesController < ApplicationController
     redirect_to(:controller => :batches, :action => :index, :deleted_uri => batch.uri)
   end
 
-  def spawn_assessment
-    batch = JSONModel(:batch).find(params[:id])
-    redirect_to(:controller => :assessments, :action => :new, :batch_uri => batch.uri)
-  end
 
   def submit_for_review
     batch = JSONModel(:batch).find(params[:id])
@@ -99,6 +95,7 @@ class BatchesController < ApplicationController
 
     redirect_to(:controller => :batches, :action => :show, :id => params[:id])
   end
+
 
   def revert_to_draft
     batch = JSONModel(:batch).find(params[:id])
@@ -109,15 +106,14 @@ class BatchesController < ApplicationController
   end
 
 
-
-  def linked_objects
+  def assigned_objects
     respond_to do |format|
       format.js {
         raise "Not supported" unless params[:listing_only]
 
         criteria = params_for_backend_search
 
-        response = JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/search_assigned_objects",
+        response = JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/search_objects",
                                              criteria)
 
         @search_data = SearchResultData.new(ASUtils.json_parse(response.body).merge(:criteria => criteria))

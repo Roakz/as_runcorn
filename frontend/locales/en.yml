@@ -462,8 +462,16 @@ en:
     note: Note
     actions: Actions
     latest_action: Latest Action
+    _frontend:
+      action:
+        csv_download: Download CSV
+      section:
+        basic_information: Basic Information
 
   batch_action:
     action_type:
       no_action: "-- no action --"
       functional_move: Functional Move
+
+  batch_assigned_objects:
+    _plural: Assigned Objects

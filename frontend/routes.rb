@@ -51,7 +51,7 @@ ArchivesSpace::Application.routes.draw do
       resources :batches
       match('batches/:id/assign_objects_form' => 'batches#assign_objects_form', :via => [:get])
       match('batches/:id/assign_objects' => 'batches#assign_objects', :via => [:post])
-      match('batches/:id/linked_representations' => 'batches#linked_objects', :via => [:get])
+      match('batches/:id/assigned_objects' => 'batches#assigned_objects', :via => [:get])
       match('batches/:id/clear_assigned_objects' => 'batches#clear_assigned_objects', :via => [:post])
       match('batches/:id/submit_for_review' => 'batches#submit_for_review', :via => [:post])
       match('batches/:id/revert_to_draft' => 'batches#revert_to_draft', :via => [:post])

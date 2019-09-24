@@ -11,7 +11,7 @@
         <h2><%= @batch.display_string %>  <span class="label label-info"><%= I18n.t("batch._singular") %></span></h2>
         <%= render_aspace_partial :partial => "form", :locals => { :form => readonly } %>
 
-        <%= render_aspace_partial :partial => "batches/linked_objects", :locals => { :id => @batch.id } %>
+        <%= render_aspace_partial :partial => "batches/assigned_objects", :locals => { :id => @batch.id } %>
       <% end %>
     </div>
   </div>

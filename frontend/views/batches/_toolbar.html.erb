@@ -9,7 +9,7 @@
     </div>
     <div class="pull-right">
       <%# Drafts with objects can be submitted for review %>
-      <% if @batch.status == 'Draft' && @batch.linked_representation_count > 0 %>
+      <% if @batch.status == 'Draft' && @batch.object_count > 0 %>
         <div class="btn-group">
           <%= form_tag({:controller => :batches, :action => :submit_for_review}) do |f| %>
             <button class="btn btn-sm btn-primary"><%= I18n.t("batch._frontend.action.submit_for_review") %></button>
@@ -31,7 +31,7 @@
 
       <% end %>
 
-      <% if @batch.linked_representation_count > 0 %>
+      <% if @batch.object_count > 0 %>
         <div class="btn-group">
           <%= link_to I18n.t("batch._frontend.action.csv_download"), {:controller => :batches, :action => :csv, :id => @batch.id}, :class => "btn btn-sm btn-default" %>
         </div>
