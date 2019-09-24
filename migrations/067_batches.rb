@@ -11,6 +11,15 @@ Sequel.migration do
                  'executed',
                 ])
 
+    create_enum('runcorn_batch_status',
+                [
+                 'no_action',
+                 'draft',
+                 'proposed',
+                 'approved',
+                 'executed',
+                ])
+
     create_enum('runcorn_batch_model',
                 [
                  'agent_corporate_entity',
