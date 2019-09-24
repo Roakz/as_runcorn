@@ -55,6 +55,20 @@ class ArchivesSpaceService < Sinatra::Base
   end
 
 
+  Endpoint.get('/repositories/:repo_id/batch_actions/:id')
+    .description("Get a Batch Action by ID")
+    .params(["repo_id", :repo_id],
+            ["id", :id],
+            ["resolve", :resolve])
+    .permissions([])
+    .returns([200, "(:batch_action)"]) \
+  do
+
+    json = BatchAction.to_jsonmodel(params[:id])
+    json_response(resolve_references(json, params[:resolve]))
+  end
+
+
   Endpoint.post('/repositories/:repo_id/batches/:id/assign_objects')
     .description("Add and remove objects from a batch")
     .params(["repo_id", :repo_id],
