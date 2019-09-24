@@ -301,6 +301,7 @@ en:
     controlling_record_qsa_id_u_sort: Record ID
     qsa_id_u_sort: Identifier
     assessment_treatment_priority_u_sort: Treatment Priority
+    batch_status_u_ssort: Status
 
   search_results:
     filter:
@@ -450,3 +451,12 @@ en:
     <p>The level of confidence for the information given in a date statement. This information is optional and should only be added when qualifying date information as potentially uncertain based upon the description or cataloging rules in use.</p>
     <p>See EAD attribute "certainty".</p>
     publish: Publish
+
+  batch:
+    _singular: Batch
+    _plural: Batches
+    status: Status
+    note: Note
+    actions: Actions
+    status_values:
+      no_action: No Action

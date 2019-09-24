@@ -47,6 +47,17 @@ ArchivesSpace::Application.routes.draw do
       match('resources/:id/gaps_in_control' => 'resources#gaps_in_control', :via => [:get])
 
       match('top_containers/bulk_operations/update_functional_location' => 'top_containers#bulk_functional_location', :via => [:post])
+
+      resources :batches
+      match('batches/:id/assign_objects_form' => 'batches#assign_objects_form', :via => [:get])
+      match('batches/:id/assign_objects' => 'batches#assign_objects', :via => [:post])
+      match('batches/:id/linked_representations' => 'batches#linked_objects', :via => [:get])
+      match('batches/:id/clear_assigned_objects' => 'batches#clear_assigned_objects', :via => [:post])
+      match('batches/:id/submit_for_review' => 'batches#submit_for_review', :via => [:post])
+      match('batches/:id/revert_to_draft' => 'batches#revert_to_draft', :via => [:post])
+      match('batches/:id/delete' => 'batches#delete', :via => [:post])
+      match('batches/:id' => 'batches#update', :via => [:post])
+      match('batches/:id/csv' => 'batches#csv', :via => [:get])
     end
   end
 end

@@ -1,0 +1,59 @@
+<% if @search_data.results? %>
+  <%= render_aspace_partial :partial => "shared/pagination_summary" %>
+
+  <table id="tabledSearchResults" class="table table-striped table-bordered table-condensed table-hover table-sortable table-search-results">
+    <thead>
+      <tr>
+        <th class="col sortable <% if @search_data.sorted_by === "controlling_record_series_qsa_id_u_sort"%>sort-<%= @search_data.current_sort_direction %><% end %>">
+          <%= link_to 'Series ID', build_search_params("sort" => @search_data.sort_filter_for("controlling_record_series_qsa_id_u_sort")) %>
+        </th>
+        <th class="col sortable <% if @search_data.sorted_by === "controlling_record_qsa_id_u_sort"%>sort-<%= @search_data.current_sort_direction %><% end %>">
+          <%= link_to 'Record ID', build_search_params("sort" => @search_data.sort_filter_for("controlling_record_qsa_id_u_sort")) %>
+        </th>
+        <th class="col sortable <% if @search_data.sorted_by === "qsa_id_u_sort"%>sort-<%= @search_data.current_sort_direction %><% end %>">
+          <%= link_to 'Representation ID', build_search_params("sort" => @search_data.sort_filter_for("qsa_id_u_sort")) %>
+        </th>
+        <th class="col title sortable <% if @search_data.sorted_by === "title_sort"%>sort-<%= @search_data.current_sort_direction %><% end %>">
+          <%= link_to title_column_header_label, build_search_params("sort" => @search_data.sort_filter_for("title_sort")) %>
+        </th>
+        <th class="col actions"><!-- actions --></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @search_data['results'].each do |result| %>
+        <tr data-resolved-record="<%= result['json'] %>">
+          <td>
+            <%= QSAIdHelper.id(result['controlling_record_series_qsa_id_u_ssort']) %>
+          </td>
+          <td>
+            <%= QSAIdHelper.id(result['controlling_record_qsa_id_u_ssort']) %>
+          </td>
+          <td>
+            <%= QSAIdHelper.id(result['qsa_id_u_ssort']) %>
+          </td>
+          <td>
+            <%= result['title'] %>
+          </td>
+          <td class="table-record-actions">
+            <div class="btn-group">
+              <%= link_to I18n.t("actions.view"),
+               {:controller => :resolver, :action => :resolve_readonly, :uri => result["id"]},
+               {:class => "btn btn-xs btn-default", :target => '_blank'} %>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%= render_aspace_partial :partial => "shared/pagination" %>
+<% else %>
+  <p class="alert alert-info">
+    <%= I18n.t("search_results.no_results") %>
+  </p>
+<% end %>
+
+<script>
+ if (window.assign_objects_form) {
+   window.assign_objects_form.addJSWonderment();
+ }
+</script>

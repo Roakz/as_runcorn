@@ -1,0 +1,124 @@
+<%= setup_context :object => @batch, :title => @batch.display_string %>
+
+<div id="clear_request_modal_template" data-title="Clear This Request?"><!--
+   <div class="modal-body">
+     <p>This will remove all objects currently linked to this Conservation Request.</p>
+     <p>Really clear this request?</p>
+   </div>
+   <div class="modal-footer">
+      <button id="confirmButton" class="btn btn-primary">Clear Request</button>
+      <button class="btn btn-cancel btn-default" data-dismiss="modal"><%= I18n.t "actions.cancel" %></button>
+   </div>
+--></div>
+
+
+<div class="row">
+    <div class="record-pane batch_assign_objects">
+        <div class="pull-right">
+            <%= form_tag({:controller => :batches, :action => :clear_assigned_objects},
+                         {:id => "clear-request-form"}) do |f| %>
+                <button id="clear-request-btn" class="btn btn-danger">Clear Request</button>
+            <% end %>
+        </div>
+        <%= form_tag(:controller => :batches, :action => :assign_objects) do |f| %>
+            <h2>Assign objects to <%= @batch.display_string %></h2>
+
+            <p>You can add and remove objects from this conservation request using the forms below.</p>
+
+            <p>The following record types are available:</p>
+            <ul>
+                <li><b>Physical Representation</b> &mdash; adds/removes a single representation</li>
+                <li><b>Series</b> &mdash; adds/removes all objects within a series</li>
+                <li><b>Archival Object</b> &mdash; adds/removes all objects under an Archival Object (including child objects)</li>
+                <li><b>Top Container</b> &mdash; adds/removes all objects held within a given Top Container</li>
+            </ul>
+
+
+            <section id="objects_add" class="subrecord-form-dummy">
+                <h3>Add Representations</h3>
+                <div class="subrecord-form-container">
+                    <div class="form-group">
+                        <div class="col-sm-9">
+                            <div class="form-group required">
+                                <div class="input-group linker-wrapper">
+                                    <input type="text" class="linker"
+                                           id="batch_adds_linker"
+                                           data-label="Context"
+                                           data-label_plural="Context"
+                                           data-path="batch_adds"
+                                           data-name="ref"
+                                           data-url="<%= url_for :controller => :search, :action => :do_search, :format => :json %>"
+                                           data-browse-url="<%= url_for :controller => :search, :action => :do_search, :format => :js, :facets => [], :display_identifier => true %>"
+                                           data-format_property="display_string"
+                                           data-multiplicity="many"
+                                           data-types='["physical_representation", "top_container", "archival_object", "resource"]'
+                                    />
+                                    <div class="input-group-btn">
+                                        <a class="btn btn-default dropdown-toggle last" data-toggle="dropdown" href="javascript:void(0);"><span class="caret"></span></a>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="javascript:void(0);" class="linker-browse-btn"><%= I18n.t("actions.browse") %></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <br>
+            </section>
+
+            <section id="objects_add" class="subrecord-form-dummy">
+                <h3>Remove Representations</h3>
+                <div class="subrecord-form-container">
+                    <div class="form-group">
+                        <div class="col-sm-9">
+                            <div class="form-group required">
+                                <div class="input-group linker-wrapper">
+                                    <input type="text" class="linker"
+                                           id="batch_removes_linker"
+                                           data-label="Context"
+                                           data-label_plural="Context"
+                                           data-path="batch_removes"
+                                           data-name="ref"
+                                           data-url="<%= url_for :controller => :search, :action => :do_search, :format => :json %>"
+                                           data-browse-url="<%= url_for :controller => :search, :action => :do_search, :format => :js, :facets => [], :display_identifier => true %>"
+                                           data-format_property="display_string"
+                                           data-multiplicity="many"
+                                           data-types='["physical_representation", "top_container", "archival_object", "resource"]'
+                                    />
+                                    <div class="input-group-btn">
+                                        <a class="btn btn-default dropdown-toggle last" data-toggle="dropdown" href="javascript:void(0);"><span class="caret"></span></a>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="javascript:void(0);" class="linker-browse-btn"><%= I18n.t("actions.browse") %></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <br>
+            </section>
+
+            <section id="objects_linked" class="subrecord-form-dummy">
+                <%= render_aspace_partial :partial => "batches/linked_objects", :locals => { :id => @batch.id } %>
+            </section>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Assign Representations</button>
+                <%= link_to I18n.t("actions.cancel"), :back, :class => "btn btn-cancel btn-default" %>
+            </div>
+        <% end %>
+
+    </div>
+</div>
+
+<%= javascript_include_tag("batch_assign_objects.js") %>
+
+<script>
+ $(function () {
+     $(".linker:not(.initialised)").linker();
+ });
+</script>

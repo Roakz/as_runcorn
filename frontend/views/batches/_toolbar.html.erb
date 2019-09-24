@@ -1,0 +1,62 @@
+<div class="record-toolbar">
+  <% if ['new', 'create', 'edit', 'update'].include?(controller.action_name) %>
+    <div class="pull-left save-changes">
+      <button type="submit" class="btn btn-primary btn-sm"><%= I18n.t("actions.save_prefix") %></button>
+    </div>
+  <% else %>
+    <div class="btn-group pull-left">
+      <%= link_to I18n.t("actions.edit"), {:controller => :batches, :action => :edit, :id => @batch.id}, :class => "btn btn-sm btn-primary" %>
+    </div>
+    <div class="pull-right">
+      <%# Drafts with objects can be submitted for review %>
+      <% if @batch.status == 'Draft' && @batch.linked_representation_count > 0 %>
+        <div class="btn-group">
+          <%= form_tag({:controller => :batches, :action => :submit_for_review}) do |f| %>
+            <button class="btn btn-sm btn-primary"><%= I18n.t("batch._frontend.action.submit_for_review") %></button>
+          <% end %>
+        </div>
+      <% end %>
+
+      <%# Ready for review requests can have assessments created %>
+      <% if @batch.status == 'Ready For Review' %>
+        <div class="btn-group">
+          <%= link_to I18n.t("batch._frontend.action.spawn_assessment"), {:controller => :batches, :action => :spawn_assessment, :id => @batch.id}, :class => "btn btn-sm btn-primary" %>
+        </div>
+
+        <div class="btn-group">
+          <%= form_tag({:controller => :batches, :action => :revert_to_draft}) do |f| %>
+            <button class="btn btn-sm btn-primary"><%= I18n.t("batch._frontend.action.revert_to_draft") %></button>
+          <% end %>
+        </div>
+
+      <% end %>
+
+      <% if @batch.linked_representation_count > 0 %>
+        <div class="btn-group">
+          <%= link_to I18n.t("batch._frontend.action.csv_download"), {:controller => :batches, :action => :csv, :id => @batch.id}, :class => "btn btn-sm btn-default" %>
+        </div>
+      <% end %>
+
+    <%# Drafts can have objects assigned or be deleted %>
+      <% if @batch.status == 'Draft' %>
+        <div class="btn-group">
+          <%= link_to I18n.t("batch._frontend.action.assign_objects"), {:controller => :batches, :action => :assign_objects_form, :id => @batch.id}, :class => "btn btn-sm btn-primary" %>
+        </div>
+
+        <div class="btn-group">
+          <%= button_delete_action url_for(:controller => :batches, :action => :delete, :id => @batch.id), { :"data-title" => I18n.t("actions.delete_confirm_title", :title => @batch.display_string) } %>
+        </div>
+      <% end %>
+    </div>
+
+  <% end %>
+
+  <% if ['edit', 'update'].include?(controller.action_name) %>
+    <div class="pull-left revert-changes">
+      <%= link_to I18n.t("actions.revert"), {:controller => :batches, :action => :edit, :id => @batch.id}, :class => "btn btn-sm btn-default" %>
+      <%= I18n.t("actions.toolbar_disabled_message") %>
+    </div>
+  <% end %>
+
+  <div class="clearfix"></div>
+</div>

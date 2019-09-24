@@ -1,0 +1,7 @@
+<%= render(:layout => '/shared/sidebar',
+           :locals => {
+               :record_type => 'batch',
+               :record => @batch,
+           }) do |sidebar| %>
+      <%= sidebar.render_for_view_only(:subrecord_type => 'objects_requested', :property => :none) %>
+<% end %>

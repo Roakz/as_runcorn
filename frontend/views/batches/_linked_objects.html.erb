@@ -1,0 +1,12 @@
+<% ajax_search_url = url_for({:controller => :batches, :action => :linked_objects, :id => id, :format => :js, :listing_only => true}) %>
+
+<section id="objects_requested" class="subrecord-form-dummy">
+    <h3><%= I18n.t('objects_requested._plural') %></h3>
+    <div class="subrecord-form-container">
+        <div class="subrecord-form-fields embedded-search" data-url="<%= ajax_search_url %>">
+            <div class="alert alert-info">Loading...</div>
+        </div>
+    </div>
+</section>
+
+<%= javascript_include_tag("embedded_search.js") %>

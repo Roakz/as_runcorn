@@ -260,6 +260,21 @@ en:
     runcorn_copyright_status:
       copyright_expired: Copyright expired
       copyright_state_of_queensland: Copyright State of Queensland
+    runcorn_batch_action_status: &batch_action_statuses
+      draft: Draft
+      proposed: Proposed
+      approved: Approved
+      executed: Executed
+    runcorn_batch_status:
+      no_action: No Action
+      <<: *batch_action_statuses
+    runcorn_batch_model:
+      agent_corporate_entity: Agency
+      resource: Series
+      archival_object: Item
+      physical_representation: Physical Representation
+      digital_representation: Digital Representation
+      top_container: Top Container
   enumeration_names:
     runcorn_access_category: Runcorn Plugin - Access Category
     runcorn_access_clearance_procedure: Runcorn Plugin - Runcorn Access Clearance Procedure
@@ -278,3 +293,6 @@ en:
     runcorn_significance: Runcorn Plugin - Runcorn Significance
     runcorn_physical_representation_availability: Runcorn Plugin - Physical Representation Availability
     runcorn_copyright_status: Runcorn Plugin - Copyright Status
+    runcorn_batch_action_status: Runcorn Batch Action Status
+    runcorn_batch_status: Runcorn Batch Status
+    runcorn_batch_model: Runcorn Batch Model

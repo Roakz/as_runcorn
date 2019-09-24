@@ -156,6 +156,7 @@ class IndexerCommon
     indexer.add_document_prepare_hook do |doc, record|
       if doc['primary_type'] == 'batch'
         doc['title'] = record['record']['display_string']
+        doc['batch_status_u_ssort'] = record['record']['status']
       end
     end
 

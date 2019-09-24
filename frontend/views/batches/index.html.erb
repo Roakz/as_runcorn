@@ -1,0 +1,33 @@
+<%= setup_context(:title => I18n.t("batch._plural")) %>
+
+<%
+add_column(I18n.t("batch.status"),
+           proc {|record| I18n.t('enumerations.runcorn_batch_status.' + record.fetch('batch_status_u_ssort'))},
+           :sortable => true, :sort_by => 'batch_status_u_ssort')
+%>
+
+<div class="row">
+  <div class="col-md-3">
+    <div class="sidebar">
+      <%= render_aspace_partial :partial => "search/filter" %>
+    </div>
+  </div>
+  <div class="col-md-9">
+    <div class="record-toolbar">
+      <div class="btn-group pull-right">
+        <%= link_to I18n.t("actions.create"), {:controller => :batches, :action => :new}, :class => "btn btn-sm btn-default" %>
+      </div>
+      <br style="clear:both" />
+    </div>
+
+    <div class="record-pane">
+      <%= link_to_help :topic => "search" %>
+
+      <h2><%= I18n.t("batch._plural") %></h2>
+
+      <%= render_aspace_partial :partial => "shared/flash_messages" %>
+
+      <%= render_aspace_partial :partial => "search/listing" %>
+    </div>
+  </div>
+</div>

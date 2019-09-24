@@ -200,6 +200,10 @@ Rails.application.config.after_initialize do
   Plugins.add_facet_group_i18n("agency_category_u_sstr",
                                proc {|facet| "enumerations.agency_category.#{facet}" })
 
+  Plugins.add_search_facets(:batch, "batch_status_u_ssort")
+  Plugins.add_facet_group_i18n("batch_status_u_ssort",
+                               proc {|facet| "enumerations.runcorn_batch_status.#{facet}" })
+
   # Eager load all JSON schemas
   Dir.glob(File.join(File.dirname(__FILE__), "..", "schemas", "*.rb")).each do |schema|
     next if schema.end_with?('_ext.rb')
