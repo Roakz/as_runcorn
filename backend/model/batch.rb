@@ -12,6 +12,12 @@ class Batch < Sequel::Model(:batch)
   class InvalidAction < StandardError; end
   class InvalidRef < StandardError; end
 
+
+  def self.statuses
+    @statuses ||= ['no_action'] + BackendEnumSource.values_for('runcorn_batch_action_status').map{|m| m.intern}
+  end
+
+
   def self.models
     @models ||= BackendEnumSource.values_for('runcorn_batch_model').map{|m| m.intern}
   end
@@ -270,6 +276,25 @@ class Batch < Sequel::Model(:batch)
   end
 
 
+  def status
+    actions = related_records(:batch_action_batch)
+
+    return 'no_action' if actions.empty?
+
+    current_action_status = BatchAction.filter(:batch_action__id => actions.map{|a| a[:id]})
+      .left_join(Sequel.as(:enumeration_value, :status), :status__id => :batch_action__action_status_id)
+      .filter(Sequel.~(:status__value => 'executed'))
+      .select(:status__value).get(:status__value)
+
+    current_action_status || 'executed'
+  end
+
+
+  def current_action
+    BatchAction.sequel_to_jsonmodel(related_records(:batch_action_batch)).select{|action| action['action_status'] != 'executed'}.first
+  end
+
+
   def add_action(type, params = {})
     if current_action
       raise InvalidAction.new('Cannot add action. Batch already has a current action.')
@@ -288,11 +313,6 @@ class Batch < Sequel::Model(:batch)
     }
 
     BatchAction.create_from_json(JSONModel(:batch_action).from_hash(json))
-  end
-
-
-  def current_action
-    BatchAction.sequel_to_jsonmodel(related_records(:batch_action_batch)).select{|action| action['action_status'] != 'executed'}.first
   end
 
 
@@ -319,6 +339,7 @@ class Batch < Sequel::Model(:batch)
     jsons = super
 
     objs.zip(jsons).each do |obj, json|
+      json['status'] = obj.status
       objects = obj.object_total
       actions = json['actions'].length
       json['display_string'] = "#{obj.qsa_id_prefixed} -- #{objects} object#{objects == 1 ? '' : 's'} : #{actions} action#{actions == 1 ? '' : 's'}"
