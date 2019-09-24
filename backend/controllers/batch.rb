@@ -163,6 +163,23 @@ class ArchivesSpaceService < Sinatra::Base
   end
 
 
+  Endpoint.post('/repositories/:repo_id/batches/:id/add_action/:action_type')
+    .description("Adds an action to a batch")
+    .params(["repo_id", :repo_id],
+            ["id", :id],
+            ["action_type", String, "The type of action to add"],
+            ["action_params", String, "JSON containing the params for the action", :body => true])
+    .permissions([])
+    .returns([200, :updated]) \
+  do
+    batch = Batch.get_or_die(params[:id])
+
+    batch.add_action(params[:action_type], ASUtils.json_parse(params[:action_params]))
+
+    json_response("status" => "OK")
+  end
+
+
   Endpoint.get('/repositories/:repo_id/batches/:id/csv')
     .description("Download batch as a CSV document")
     .params(["repo_id", :repo_id],
