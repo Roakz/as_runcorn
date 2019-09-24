@@ -13,7 +13,7 @@
       "materials_used_consumables" => {"type" => "string"},
       "materials_used_staff_time" => {"type" => "string"},
 
-      "external_resource" => {"type" => "string"},
+      "external_reference" => {"type" => "string"},
 
       "user" => {
         "type" => "object",
