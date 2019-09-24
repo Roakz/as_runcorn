@@ -106,7 +106,11 @@ class Batch < Sequel::Model(:batch)
 
       # Clear any existing entries so we don't end up with duplicates
       db[:batch_objects].filter(id_col => ids, :batch_id => self.id).delete
+      begin
       db[:batch_objects].multi_insert(ids.map {|id| {id_col => id, :batch_id => self.id}})
+      rescue Sequel::ForeignKeyConstraintViolation
+        raise RecordNotFound.new('Attempt to add a non-existent object')
+      end
     end
   end
 
