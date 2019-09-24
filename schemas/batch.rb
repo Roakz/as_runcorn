@@ -38,7 +38,7 @@
         "readonly" => "true",
       },
 
-      "linked_object_count" => {
+      "object_count" => {
         "type" => "non_negative_integer",
         "readonly" => "true",
       },
