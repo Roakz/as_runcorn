@@ -30,6 +30,7 @@
 
       "status" => {
         "type" => "string",
+        "dynamic_enum" => "runcorn_batch_status",
         "readonly" => "true",
       },
 

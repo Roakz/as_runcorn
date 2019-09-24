@@ -458,7 +458,7 @@ en:
     _singular: Batch
     _plural: Batches
     display_string: Title
-    status: Status
+    status: Action Status
     note: Note
     actions: Actions
     latest_action: Latest Action
