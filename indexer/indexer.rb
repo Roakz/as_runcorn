@@ -157,6 +157,12 @@ class IndexerCommon
       if doc['primary_type'] == 'batch'
         doc['title'] = record['record']['display_string']
         doc['batch_status_u_ssort'] = record['record']['status']
+        if record['record']['note']
+          doc['note_summary_u_ssort'] = record['record']['note'][0,60]
+          doc['note_summary_u_ssort'] += ' ...' if record['record']['note'].length > 60
+        else
+          doc['note_summary_u_ssort'] = '-- no note --'
+        end
       end
     end
 

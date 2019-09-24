@@ -15,6 +15,10 @@
   add_column(I18n.t("batch.status"),
              proc {|record| I18n.t('enumerations.runcorn_batch_status.' + record.fetch('batch_status_u_ssort'))},
              :sortable => true, :sort_by => 'batch_status_u_ssort')
+
+  add_column(I18n.t("batch.note"),
+             proc {|record| record.fetch('note_summary_u_ssort')},
+             :sortable => false)
 %>
 
 <div class="row">
