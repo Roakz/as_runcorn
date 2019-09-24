@@ -11,6 +11,7 @@ class Batch < Sequel::Model(:batch)
   class UnsupportedModel < StandardError; end
   class InvalidAction < StandardError; end
   class InvalidRef < StandardError; end
+  class OperationNotPermitted < StandardError; end
 
 
   def self.statuses
@@ -188,7 +189,7 @@ class Batch < Sequel::Model(:batch)
     # model is the kind of objects we want to add
     # type is the kind of object ids we've been given
 
-    raise "Unknown assign operation: #{operation}" unless [:add, :remove].include?(operation)
+    raise OperationNotPermitted.new("Unknown assign operation: #{operation}") unless [:add, :remove].include?(operation)
 
     # if they are the same then go ahead and add the ids
     if model == type
@@ -217,6 +218,8 @@ class Batch < Sequel::Model(:batch)
 
 
   def assign_by_ref(operation, model, *refs)
+    raise OperationNotPermitted.new("Assigning objects not permitted for batches with actions") unless self.status == 'no_action'
+
     refs.map {|ref| {:ref => ref, :parsed => JSONModel.parse_reference(ref)}}
       .group_by {|parsed|
                   raise InvalidRef.new("Malformed ref: #{parsed[:ref]}") if parsed[:parsed].nil?
