@@ -318,6 +318,11 @@ class Batch < Sequel::Model(:batch)
 
   def perform_action
     action = current_action
+
+    unless action
+      raise InvalidAction.new('Batch does not have a current action to perform.')
+    end
+
     handler = BatchActionHandler.handler_for_type(action['action_type'])
 
     handler.perform_action(ASUtils.json_parse(action['action_params']), action['action_user'], action['uri'], self.object_refs)

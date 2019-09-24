@@ -194,6 +194,21 @@ class ArchivesSpaceService < Sinatra::Base
   end
 
 
+  Endpoint.post('/repositories/:repo_id/batches/:id/perform_action')
+    .description("Perform the current action for a batch")
+    .params(["repo_id", :repo_id],
+            ["id", :id])
+    .permissions([])
+    .returns([200, :updated]) \
+  do
+    batch = Batch.get_or_die(params[:id])
+
+    batch.perform_action
+
+    json_response("status" => "OK")
+  end
+
+
   Endpoint.get('/repositories/:repo_id/batches/:id/csv')
     .description("Download batch as a CSV document")
     .params(["repo_id", :repo_id],
