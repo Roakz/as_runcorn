@@ -464,14 +464,25 @@ en:
     latest_action: Latest Action
     _frontend:
       action:
+        save: Save Batch
         csv_download: Download CSV
       section:
         basic_information: Basic Information
+        current_action: Current Action
+        action_history: Action History
 
   batch_action:
-    action_type:
+    action_status: Status
+    action_type: Type
+    action_params: Parameters 
+    note: Note
+    action_types:
       no_action: "-- no action --"
       functional_move: Functional Move
 
   batch_assigned_objects:
-    _plural: Assigned Objects
+    _plural: Objects
+
+  batch_action_types:
+    functional_move:
+      location: Location

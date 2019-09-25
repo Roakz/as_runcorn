@@ -1,0 +1,33 @@
+<% define_template "batch_action", jsonmodel_definition(:batch_action) do |form| %>
+  <% editable = form.obj['action_status'] == 'draft' && !form.readonly? %>
+  <% action_type = form.obj['action_type'] %>
+
+  <div class="subrecord-form-container">
+  <div class="subrecord-form-fields">
+
+    <%= form.label_and_readonly "action_status" %>
+    <%= form.label_and_textarea "note" %>
+
+    <div class="form-group">
+      <label class="control-label col-sm-2"><%= I18n.t("batch_action.action_type") %></label>
+      <div class="label-only col-sm-10">
+        <%= I18n.t("batch_action.action_types.#{form.obj['action_type']}") %>
+      </div>
+    </div>
+
+  <div class="subrecord-form-container">
+    <div class="subrecord-form-fields">
+
+    <h4 class="subrecord-form-heading"><%= I18n.t("batch_action.action_params") %></h4>
+
+
+      <% form.push('action_params', ASUtils.json_parse(form.obj['action_params'] || '{}')) do %>
+        <%= render_aspace_partial :partial => "batches/action_params_template", :locals => {:form => form, :action_type => action_type} %>
+      <% end %>
+
+    </div>
+    </div>
+
+  </div>
+  </div>
+<% end %>

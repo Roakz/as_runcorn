@@ -4,7 +4,7 @@
   <%= form_context :batch, @batch do |form| %>
     <div class="row">
       <div class="col-md-3">
-        <%= render_aspace_partial :partial => "sidebar" %>
+        <%= render_aspace_partial :partial => "sidebar", :locals => {:form => form} %>
       </div>
       <div class="col-md-9">
         <%= render_aspace_partial :partial => "toolbar" %>

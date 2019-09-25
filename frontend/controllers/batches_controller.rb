@@ -1,6 +1,6 @@
 class BatchesController < ApplicationController
 
-  RESOLVES = []
+  RESOLVES = ['actions']
 
   # FIXME: Who should be able to create/edit batches?  Assuming
   # any logged in user here.
@@ -28,11 +28,11 @@ class BatchesController < ApplicationController
   end
 
   def show
-    @batch = JSONModel(:batch).find(params[:id], find_opts)
+    @batch = JSONModel(:batch).find(params[:id], find_opts.merge('resolve[]' => RESOLVES))
   end
 
   def assign_objects_form
-    @batch = JSONModel(:batch).find(params[:id], find_opts)
+    @batch = JSONModel(:batch).find(params[:id], find_opts.merge('resolve[]' => RESOLVES))
   end
 
   def assign_objects

@@ -1,0 +1,30 @@
+<section id="current_action">
+  <h3>
+    <%= I18n.t("batch._frontend.section.current_action") %>
+  </h3>
+
+  <% if ['no_action', 'executed'].include?(@batch.status) %>
+    <pre>ADD ACTION BUTTON</pre>
+  <% else %>
+    <% current_action = @batch.actions.last['_resolved'] %>
+
+    <% form.push('current_action', current_action) do %>
+      <% form.emit_template 'batch_action' %>
+    <% end %>
+
+  <% end %>
+
+</section>
+
+<% if form.readonly? %>
+  <section id="action_history">
+    <h3><%= I18n.t("batch._frontend.section.action_history") %></h3>
+
+    <% @batch.actions.each do |action| %>
+      <pre>
+        <%= action['_resolved'] %>
+      </pre>
+    <% end %>
+
+  </section>
+<% end %>

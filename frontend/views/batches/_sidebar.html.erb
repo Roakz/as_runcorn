@@ -3,5 +3,7 @@
                :record_type => 'batch',
                :record => @batch,
            }) do |sidebar| %>
+      <%= sidebar.render_for_view_and_edit(:subrecord_type => 'current_action', :property => :none) %>
+      <%= sidebar.render_for_view_only(:subrecord_type => 'action_history', :property => :none) %>
       <%= sidebar.render_for_view_only(:subrecord_type => 'batch_assigned_objects', :property => :none) %>
 <% end %>

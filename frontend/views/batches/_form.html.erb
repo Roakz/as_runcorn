@@ -1,3 +1,5 @@
+<% render_aspace_partial :partial => "batches/action_template" %>
+
 <%= render_aspace_partial :partial => "shared/form_messages", :locals => {:object => @batch, :form => form} %>
 
 <fieldset>
@@ -21,6 +23,9 @@
 
       <%= form.label_and_textarea "note" %>
     </section>
+
+    <%= render_aspace_partial :partial => "batches/actions", :locals => {:form => form} %>
+    <%= render_aspace_partial :partial => "batches/assigned_objects", :locals => {:form => form, :id => @batch.id } if form.readonly? %>
 
   <% end %>
 
