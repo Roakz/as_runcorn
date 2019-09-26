@@ -75,6 +75,8 @@ class Batch < Sequel::Model(:batch)
 
 
   def handle_deaccessions_for_ids(model, *ids)
+    return ids if ids.empty?
+
     if self.include_deaccessioned? || !Batch.deaccessionable_models.has_key?(model.intern)
       return ids
     end
@@ -159,7 +161,7 @@ class Batch < Sequel::Model(:batch)
     result = []
 
     DB.open do |db|
-      queue = self.handle_deaccessions_for_ids('archival_object', archival_object_ids.clone)
+      queue = self.handle_deaccessions_for_ids('archival_object', *archival_object_ids.clone)
 
       while !queue.empty?
         if type == 'archival_object'
@@ -172,7 +174,7 @@ class Batch < Sequel::Model(:batch)
         end
 
         # And continue the search with any children of our AO set
-        queue = self.handle_deaccessions_for_dataset('archival_object', db[:archival_object].filter(:parent_id => queue)).select(:id).map {|row| row[:id]}
+        queue = self.handle_deaccessions_for_dataset('archival_object', db[:archival_object].filter(:parent_id => queue)).select(:archival_object__id).map {|row| row[:archival_object__id]}
       end
     end
 
