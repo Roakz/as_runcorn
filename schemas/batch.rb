@@ -9,6 +9,8 @@
 
       "note" => {"type" => "string"},
 
+      "current_action" => {"type" => "object"},
+
       "actions" => {
         "type" => "array",
         "readonly" => "true",

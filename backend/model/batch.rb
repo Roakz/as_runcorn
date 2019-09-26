@@ -347,6 +347,28 @@ class Batch < Sequel::Model(:batch)
   end
 
 
+  def update_from_json(json, opts = {}, apply_nested_records = true)
+    if json.has_key?('current_action')
+      current_action = self.current_action
+      if current_action
+        ca_json = json['current_action']
+
+        current_action['action_params'] = ca_json['action_params']
+        current_action['note'] = ca_json['note']
+        current_action['lock_version'] = ca_json['lock_version']
+
+        BatchAction.get_or_die(JSONModel.parse_reference(current_action['uri'])[:id]).update_from_json(current_action)
+
+        # the update to the BatchAction causes a bump to the Batch's lock_version, so bump here to catch up
+        json['lock_version']  = json['lock_version'] + 1
+      end
+      json['current_action'] = nil
+    end
+
+    super
+  end
+
+
   def self.sequel_to_jsonmodel(objs, opts = {})
     jsons = super
 
@@ -355,6 +377,7 @@ class Batch < Sequel::Model(:batch)
       objects = obj.object_total
       json['object_count'] = objects
       actions = json['actions'].length
+      json['current_action'] = obj.current_action
       json['display_string'] = "#{obj.qsa_id_prefixed} -- #{objects} object#{objects == 1 ? '' : 's'} : #{actions} action#{actions == 1 ? '' : 's'}"
     end
 
