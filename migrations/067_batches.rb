@@ -52,7 +52,7 @@ Sequel.migration do
       TextField :note, :null => true
 
       String :action_type, :null => false
-      String :action_params, :null => true
+      HalfLongString :action_params, :null => true
       String :approved_user, :null => true
       DateTime :approved_time, :null => true
       String :action_user, :null => false

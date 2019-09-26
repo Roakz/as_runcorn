@@ -11,13 +11,12 @@
 
       "action_status" => {
         "type" => "string",
-        "ifmissing" => "error",
         "dynamic_enum" => "runcorn_batch_action_status",
         "default" => "draft",
       },
 
       "action_type" => {"type" => "string", "ifmissing" => "error"},
-      "action_params" => {"type" => "string"},
+      "action_params" => {"type" => "string", "maxLength" => 8192},
 
       "action_user" => {"type" => "string", "ifmissing" => "error"},
       "action_time" => {"type" => "date-time"},
