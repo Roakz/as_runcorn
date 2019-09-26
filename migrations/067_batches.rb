@@ -35,10 +35,15 @@ Sequel.migration do
 
       Integer :lock_version, :default => 0, :null => false
       Integer :json_schema_version, :null => false
+      Integer :repo_id, :null => false
 
       TextField :note, :null => true
 
       apply_mtime_columns
+    end
+
+    alter_table(:batch) do
+      add_foreign_key([:repo_id], :repository, :key => :id)
     end
 
     create_table(:batch_action) do
@@ -46,6 +51,7 @@ Sequel.migration do
 
       Integer :lock_version, :default => 0, :null => false
       Integer :json_schema_version, :null => false
+      Integer :repo_id, :null => false
 
       DynamicEnum :action_status_id, :null => false
 
@@ -59,6 +65,10 @@ Sequel.migration do
       DateTime :action_time, :null => true
 
       apply_mtime_columns
+    end
+
+    alter_table(:batch_action) do
+      add_foreign_key([:repo_id], :repository, :key => :id)
     end
 
     create_table(:batch_action_batch_rlshp) do
