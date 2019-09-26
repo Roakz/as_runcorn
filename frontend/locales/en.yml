@@ -476,10 +476,13 @@ en:
       messages:
         created: Batch successfully created
         updated: Batch successfully updated
+        no_actions: Batch currently has no action history
 
   batch_action:
     action_status: Status
     action_type: Type
+    action_user: By
+    action_time: At
     action_params: Parameters 
     note: Note
     action_types:

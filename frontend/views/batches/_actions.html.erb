@@ -17,11 +17,46 @@
   <section id="action_history">
     <h3><%= I18n.t("batch._frontend.section.action_history") %></h3>
 
-    <% @batch.actions.each do |action| %>
-      <pre>
-        <%= action['_resolved'] %>
-      </pre>
+    <% if @batch.actions.empty? %>
+      <div class="alert alert-info"><%= I18n.t("batch._frontend.messages.no_actions") %></div>
     <% end %>
+
+
+    <div class="panel-group details" id="action_history_accordion">
+      <% @batch.actions.each_with_index do |action, ix| %>
+        <% actn = action['_resolved'] %>
+        <div class="panel panel-default" style="margin-left:12px;margin-right:12px;">
+          <div class="panel-heading">
+            <div class="row accordion-toggle collapsed"
+                 data-toggle="collapse"
+                 data-parent="#action_history_accordion"
+                 href="#action_history_action_<%= ix %>">
+              <div class="col-md-1">
+                <span class="glyphicon"></span>
+              </div>
+              <div class="col-md-2">
+                <%= I18n.t("batch_action.action_types.#{actn['action_type']}") %>
+              </div>
+              <div class="col-md-2">
+                <%= I18n.t("enumerations.runcorn_batch_action_status.#{actn['action_status']}") %>
+              </div>
+              <div class="col-md-2">
+                <%= actn['action_user'] %>
+              </div>
+              <div class="col-md-3">
+                <%= actn['action_time'] %>
+              </div>
+            </div>
+          </div>
+          <div id="action_history_action_<%= ix %>" class="panel-collapse collapse">
+
+            <% form.push('actions', actn) do %>
+              <% form.emit_template 'batch_action' %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
 
   </section>
 <% end %>
