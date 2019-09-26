@@ -462,9 +462,12 @@ en:
     note: Note
     actions: Actions
     latest_action: Latest Action
+    models: Select the type of objects to add or remove
     _frontend:
       action:
         save: Save Batch
+        submit_for_review: Submit for approval
+        assign_objects: Assign objects
         csv_download: Download CSV
       section:
         basic_information: Basic Information

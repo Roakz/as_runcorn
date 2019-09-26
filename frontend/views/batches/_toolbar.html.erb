@@ -9,7 +9,7 @@
     </div>
     <div class="pull-right">
       <%# Drafts with objects can be submitted for review %>
-      <% if @batch.status == 'Draft' && @batch.object_count > 0 %>
+      <% if @batch.status == 'draft' && @batch.object_count > 0 %>
         <div class="btn-group">
           <%= form_tag({:controller => :batches, :action => :submit_for_review}) do |f| %>
             <button class="btn btn-sm btn-primary"><%= I18n.t("batch._frontend.action.submit_for_review") %></button>
@@ -18,7 +18,7 @@
       <% end %>
 
       <%# Ready for review requests can have assessments created %>
-      <% if @batch.status == 'Ready For Review' %>
+      <% if @batch.status == 'proposed' %>
         <div class="btn-group">
           <%= link_to I18n.t("batch._frontend.action.spawn_assessment"), {:controller => :batches, :action => :spawn_assessment, :id => @batch.id}, :class => "btn btn-sm btn-primary" %>
         </div>
@@ -38,7 +38,7 @@
       <% end %>
 
     <%# Drafts can have objects assigned or be deleted %>
-      <% if @batch.status == 'Draft' %>
+      <% if @batch.status == 'no_action' %>
         <div class="btn-group">
           <%= link_to I18n.t("batch._frontend.action.assign_objects"), {:controller => :batches, :action => :assign_objects_form, :id => @batch.id}, :class => "btn btn-sm btn-primary" %>
         </div>

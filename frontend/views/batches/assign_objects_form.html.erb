@@ -2,11 +2,11 @@
 
 <div id="clear_request_modal_template" data-title="Clear This Request?"><!--
    <div class="modal-body">
-     <p>This will remove all objects currently linked to this Conservation Request.</p>
-     <p>Really clear this request?</p>
+     <p>This will remove all objects currently linked to this batch.</p>
+     <p>Really clear this batch?</p>
    </div>
    <div class="modal-footer">
-      <button id="confirmButton" class="btn btn-primary">Clear Request</button>
+      <button id="confirmButton" class="btn btn-primary">Clear batch</button>
       <button class="btn btn-cancel btn-default" data-dismiss="modal"><%= I18n.t "actions.cancel" %></button>
    </div>
 --></div>
@@ -23,19 +23,92 @@
         <%= form_tag(:controller => :batches, :action => :assign_objects) do |f| %>
             <h2>Assign objects to <%= @batch.display_string %></h2>
 
-            <p>You can add and remove objects from this conservation request using the forms below.</p>
+            <p>You can add and remove objects from this batch using the forms below.</p>
 
-            <p>The following record types are available:</p>
-            <ul>
-                <li><b>Physical Representation</b> &mdash; adds/removes a single representation</li>
-                <li><b>Series</b> &mdash; adds/removes all objects within a series</li>
-                <li><b>Archival Object</b> &mdash; adds/removes all objects under an Archival Object (including child objects)</li>
-                <li><b>Top Container</b> &mdash; adds/removes all objects held within a given Top Container</li>
-            </ul>
+            <%
+              options = JSONModel.enum_values('runcorn_batch_model').map{|label|
+                          [I18n.t("enumerations.runcorn_batch_model.#{label}", :default => label), label]
+                        }
+            %>
 
+            <div class="form-group required">
+              <label class="control-label required col-sm-3"><%= I18n.t("batch.models") %></label>
+              <div class="control col-sm-4">
+                <%= select_tag 'model', options_for_select(options.unshift(['-- select a type --', nil])), :class => 'form-control' %>
+              </div>
+            </div>
 
-            <section id="objects_add" class="subrecord-form-dummy">
-                <h3>Add Representations</h3>
+            <div class="clearfix"></div>
+
+            <hr/>
+
+            <div>
+              <p>The following types are available to be searched:</p>
+
+              <div class="batch-model-help batch-model-help-">
+                <ul>
+                  <li>Select a type to see which other types can be searched to assign that type</li>
+                </ul>
+              </div>
+
+              <div class="batch-model-help batch-model-help-agent_corporate_entity"
+                   style="display:none;"
+                   data-types='["agent_corporate_entity"]'>
+                <ul>
+                  <li><b>Agency</b> &mdash; adds/removes Agencies</li>
+                </ul>
+              </div>
+
+              <div class="batch-model-help batch-model-help-resource"
+                   style="display:none;"
+                   data-types='["resource"]'>
+                <ul>
+                  <li><b>Series</b> &mdash; adds/removes Series</li>
+                </ul>
+              </div>
+
+              <div class="batch-model-help batch-model-help-archival_object"
+                   style="display:none;"
+                   data-types='["resource", "archival_object"]'>
+                <ul>
+                  <li><b>Series</b> &mdash; adds/removes all Items within a Series</li>
+                  <li><b>Item</b> &mdash; adds/removes Items (including children)</li>
+                </ul>
+              </div>
+
+              <div class="batch-model-help batch-model-help-physical_representation"
+                   style="display:none;"
+                   data-types='["resource", "archival_object", "physical_representation", "top_container"]'>
+                <ul>
+                  <li><b>Series</b> &mdash; adds/removes all Physical Representations within a Series</li>
+                  <li><b>Item</b> &mdash; adds/removes all Physical Representations under an Item (including children)</li>
+                  <li><b>Physical Representation</b> &mdash; adds/removes Physical Representations</li>
+                  <li><b>Top Container</b> &mdash; adds/removes all Physical Representations held within a given Top Container</li>
+                </ul>
+              </div>
+
+              <div class="batch-model-help batch-model-help-digital_representation"
+                   style="display:none;"
+                   data-types='["resource", "archival_object", "digital_representation"]'>
+                <ul>
+                  <li><b>Series</b> &mdash; adds/removes all Digital Representations within a Series</li>
+                  <li><b>Item</b> &mdash; adds/removes all Digital Representations under an Item (including children)</li>
+                  <li><b>Digital Representation</b> &mdash; adds/removes Digital Representations</li>
+                </ul>
+              </div>
+
+              <div class="batch-model-help batch-model-help-top_container"
+                   style="display:none;"
+                   data-types='["top_container"]'>
+                <ul>
+                  <li><b>Top Container</b> &mdash; adds/removes Top Containers</li>
+                </ul>
+              </div>
+
+            </div>
+
+            <section id="objects_add" class="subrecord-form-dummy" style="display:none;">
+                <h3>Add <span class="batch-assign-type-label">moo</span> objects</h3>
                 <div class="subrecord-form-container">
                     <div class="form-group">
                         <div class="col-sm-9">
@@ -68,8 +141,8 @@
                 <br>
             </section>
 
-            <section id="objects_add" class="subrecord-form-dummy">
-                <h3>Remove Representations</h3>
+            <section id="objects_remove" class="subrecord-form-dummy" style="display:none;">
+                <h3>Remove <span class="batch-assign-type-label">moo</span> objects</h3>
                 <div class="subrecord-form-container">
                     <div class="form-group">
                         <div class="col-sm-9">
@@ -103,11 +176,11 @@
             </section>
 
             <section id="objects_linked" class="subrecord-form-dummy">
-                <%= render_aspace_partial :partial => "batches/linked_objects", :locals => { :id => @batch.id } %>
+                <%= render_aspace_partial :partial => "batches/assigned_objects", :locals => { :id => @batch.id } %>
             </section>
 
             <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Assign Representations</button>
+                <button type="submit" class="btn btn-primary" disabled>Assign Objects</button>
                 <%= link_to I18n.t("actions.cancel"), :back, :class => "btn btn-cancel btn-default" %>
             </div>
         <% end %>
