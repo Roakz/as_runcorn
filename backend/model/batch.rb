@@ -360,7 +360,7 @@ class Batch < Sequel::Model(:batch)
         BatchAction.get_or_die(JSONModel.parse_reference(current_action['uri'])[:id]).update_from_json(current_action)
 
         # the update to the BatchAction causes a bump to the Batch's lock_version, so bump here to catch up
-        json['lock_version']  = json['lock_version'] + 1
+        json['lock_version'] = json['lock_version'].to_i + 1
       end
       json['current_action'] = nil
     end

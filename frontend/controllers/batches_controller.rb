@@ -65,8 +65,11 @@ class BatchesController < ApplicationController
   def update
     obj = JSONModel(:batch).find(params[:id])
 
-    # No updating status or linked assessment from the edit form
-#    params[:batch]['status'] = obj.status
+    batch = params[:batch].to_hash
+    if (cap = batch['current_action']['action_params'])
+      batch['current_action']['action_params'] = ASUtils.to_json(cap)
+      params[:batch] = batch
+    end
 
     handle_crud(:instance => :batch,
                 :model => JSONModel(:batch),

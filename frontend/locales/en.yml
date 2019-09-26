@@ -470,6 +470,8 @@ en:
         basic_information: Basic Information
         current_action: Current Action
         action_history: Action History
+      messages:
+        updated: Batch successfully updated
 
   batch_action:
     action_status: Status
