@@ -3,15 +3,12 @@
     <%= I18n.t("batch._frontend.section.current_action") %>
   </h3>
 
-  <% if ['no_action', 'executed'].include?(@batch.status) %>
-    <pre>ADD ACTION BUTTON</pre>
-  <% else %>
-    <% current_action = @batch.actions.last['_resolved'] %>
-
+  <% if (current_action = @batch.current_action) %>
     <% form.push('current_action', current_action) do %>
       <% form.emit_template 'batch_action' %>
     <% end %>
-
+  <% else %>
+    <pre>ADD ACTION BUTTON</pre>
   <% end %>
 
 </section>
