@@ -471,6 +471,7 @@ en:
         current_action: Current Action
         action_history: Action History
       messages:
+        created: Batch successfully created
         updated: Batch successfully updated
 
   batch_action:

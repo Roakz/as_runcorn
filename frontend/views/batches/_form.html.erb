@@ -24,7 +24,10 @@
       <%= form.label_and_textarea "note" %>
     </section>
 
-    <%= render_aspace_partial :partial => "batches/actions", :locals => {:form => form} %>
+    <% if @batch.object_count && @batch.object_count > 0 %>
+      <%= render_aspace_partial :partial => "batches/actions", :locals => {:form => form} %>
+    <% end %>
+
     <%= render_aspace_partial :partial => "batches/assigned_objects", :locals => {:form => form, :id => @batch.id } if form.readonly? %>
 
   <% end %>
