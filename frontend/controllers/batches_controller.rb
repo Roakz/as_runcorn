@@ -8,6 +8,7 @@ class BatchesController < ApplicationController
                                            :index, :show, :assigned_objects,
                                            :assign_objects_form, :assign_objects,
                                            :clear_assigned_objects,
+                                           :add_action_form, :add_action,
                                            :submit_for_review,
                                            :revert_to_draft,
                                            :csv]
@@ -35,12 +36,26 @@ class BatchesController < ApplicationController
     @batch = JSONModel(:batch).find(params[:id], find_opts.merge('resolve[]' => RESOLVES))
   end
 
+  def add_action_form
+    @batch = JSONModel(:batch).find(params[:id], find_opts.merge('resolve[]' => RESOLVES))
+  end
+
   def assign_objects
     JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/assign_objects",
                               'model' => params[:model],
                               'adds[]' => Array(params.dig(:batch_adds, 'ref')),
                               'removes[]' => Array(params.dig(:batch_removes, 'ref')),
                               'include_deaccessioned' => params[:include_deaccessioned])
+
+    return redirect_to :controller => :batches, :action => :show
+  end
+
+  def add_action_form
+    @batch = JSONModel(:batch).find(params[:id], find_opts.merge('resolve[]' => RESOLVES))
+  end
+
+  def add_action
+    JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/add_action/#{params[:action_type]}")
 
     return redirect_to :controller => :batches, :action => :show
   end

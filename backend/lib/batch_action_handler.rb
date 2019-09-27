@@ -13,9 +13,16 @@ class BatchActionHandler
     @@handlers[type] = RegisteredHandler.new(type, models, self)
   end
 
+
   def self.handler_for_type(type)
     (@@handlers[type.intern] or raise UnknownActionType.new(type)).handler
   end
+
+
+  def self.default_params
+    raise NotImplementedError.new("This method must be overriden by the implementing class")
+  end
+
 
   def self.validate_params(params)
     raise NotImplementedError.new("This method must be overriden by the implementing class")

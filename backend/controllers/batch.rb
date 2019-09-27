@@ -188,7 +188,8 @@ class ArchivesSpaceService < Sinatra::Base
   do
     batch = Batch.get_or_die(params[:id])
 
-    batch.add_action(params[:action_type], ASUtils.json_parse(params[:action_params]))
+    action_params = params[:action_params].empty? ? '{}' : params[:action_params]
+    batch.add_action(params[:action_type], ASUtils.json_parse(action_params))
 
     json_response("status" => "OK")
   end

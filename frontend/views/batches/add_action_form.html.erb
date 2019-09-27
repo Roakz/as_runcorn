@@ -1,0 +1,37 @@
+<%= setup_context :object => @batch, :title => @batch.display_string %>
+
+<div class="row">
+    <div class="record-pane batch_add_action">
+        <div class="pull-right">
+        </div>
+        <%= form_tag(:controller => :batches, :action => :add_action) do |f| %>
+            <h2>Add a draft action to <%= @batch.display_string %></h2>
+
+            <div>
+              Object types in this batch:
+            </div>
+
+            <div class="clearfix"></div>
+
+            <hr/>
+
+            <div>
+              Click on the action to add. Note some actions may not be available because this batch
+              contains objects of a type that the action does not support.
+            </div>
+
+            <div>
+              <%= form_tag({:controller => :batches, :action => :add_action}) do |f| %>
+                <input type="hidden" name="action_type" value="functional_move">
+                <button class="btn btn-sm btn-primary"><%= I18n.t("batch_action_types.functional_move.label") %></button>
+              <% end %>
+              <%# action_types.each ... %>
+            </div>
+
+            <div class="form-actions">
+                <%= link_to I18n.t("actions.cancel"), :back, :class => "btn btn-cancel btn-default" %>
+            </div>
+        <% end %>
+
+    </div>
+</div>

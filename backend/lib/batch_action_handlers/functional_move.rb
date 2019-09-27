@@ -2,6 +2,13 @@ class FunctionalMove < BatchActionHandler
 
   register(:functional_move, [:top_container, :physical_representation])
 
+  def self.default_params
+    {
+      'location' => 'HOME'
+    }
+  end
+
+
   def self.validate_params(params)
     location = params['location'] or raise InvalidParams.new('Must provide a location')
 
@@ -10,6 +17,7 @@ class FunctionalMove < BatchActionHandler
       raise InvalidParams.new('location must be one of: ' + locs.join(', '))
     end
   end
+
 
   def self.perform_action(params, user, action_uri, uris)
     validate_params(params)

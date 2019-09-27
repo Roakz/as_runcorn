@@ -311,6 +311,7 @@ class Batch < Sequel::Model(:batch)
 
     handler = BatchActionHandler.handler_for_type(type)
 
+    params = handler.default_params if params.empty?
     handler.validate_params(params)
 
     json = {

@@ -1,15 +1,42 @@
 <div class="record-toolbar">
+
   <% if ['new', 'create', 'edit', 'update'].include?(controller.action_name) %>
     <div class="pull-left save-changes">
       <button type="submit" class="btn btn-primary btn-sm"><%= I18n.t("actions.save_prefix") %></button>
     </div>
   <% else %>
+
+    <%# toolbar buttons only available in show %>
+
+    <%# edit button %>
     <div class="btn-group pull-left">
       <%= link_to I18n.t("actions.edit"), {:controller => :batches, :action => :edit, :id => @batch.id}, :class => "btn btn-sm btn-primary" %>
     </div>
+
+    <%# all the other buttons are on the right %>
     <div class="pull-right">
-      <%# Drafts with objects can be submitted for review %>
-      <% if @batch.status == 'draft' && @batch.object_count > 0 %>
+
+      <%# batches without any actions can have objects assigned %>
+      <% if @batch.status == 'no_action' %>
+        <div class="btn-group">
+          <%= link_to I18n.t("batch._frontend.action.assign_objects"), {:controller => :batches, :action => :assign_objects_form, :id => @batch.id}, :class => "btn btn-sm btn-primary" %>
+        </div>
+
+        <%# ... or be deleted %>
+        <div class="btn-group">
+          <%= button_delete_action url_for(:controller => :batches, :action => :delete, :id => @batch.id), { :"data-title" => I18n.t("actions.delete_confirm_title", :title => @batch.display_string) } %>
+        </div>
+      <% end %>
+
+      <%# batches without a current action can have one added %>
+      <% unless @batch.current_action %>
+        <div class="btn-group">
+          <%= link_to I18n.t("batch._frontend.action.add_action"), {:controller => :batches, :action => :add_action_form, :id => @batch.id}, :class => "btn btn-sm btn-primary" %>
+        </div>
+      <% end %>
+
+      <%# draft actions can be submitted for review %>
+      <% if @batch.status == 'draft' %>
         <div class="btn-group">
           <%= form_tag({:controller => :batches, :action => :submit_for_review}) do |f| %>
             <button class="btn btn-sm btn-primary"><%= I18n.t("batch._frontend.action.submit_for_review") %></button>
@@ -17,38 +44,28 @@
         </div>
       <% end %>
 
-      <%# Ready for review requests can have assessments created %>
+      <%# proposed actions can be approved %>
       <% if @batch.status == 'proposed' %>
         <div class="btn-group">
           <%= link_to I18n.t("batch._frontend.action.spawn_assessment"), {:controller => :batches, :action => :spawn_assessment, :id => @batch.id}, :class => "btn btn-sm btn-primary" %>
         </div>
 
+        <%# ... or reverted to draft %>
         <div class="btn-group">
           <%= form_tag({:controller => :batches, :action => :revert_to_draft}) do |f| %>
             <button class="btn btn-sm btn-primary"><%= I18n.t("batch._frontend.action.revert_to_draft") %></button>
           <% end %>
         </div>
-
       <% end %>
 
-      <% if @batch.object_count > 0 %>
+      <%# batches with objects can be downloaded as csv %>
+      <% if @batch.object_count && @batch.object_count > 0 %>
         <div class="btn-group">
           <%= link_to I18n.t("batch._frontend.action.csv_download"), {:controller => :batches, :action => :csv, :id => @batch.id}, :class => "btn btn-sm btn-default" %>
         </div>
       <% end %>
 
-    <%# Drafts can have objects assigned or be deleted %>
-      <% if @batch.status == 'no_action' %>
-        <div class="btn-group">
-          <%= link_to I18n.t("batch._frontend.action.assign_objects"), {:controller => :batches, :action => :assign_objects_form, :id => @batch.id}, :class => "btn btn-sm btn-primary" %>
-        </div>
-
-        <div class="btn-group">
-          <%= button_delete_action url_for(:controller => :batches, :action => :delete, :id => @batch.id), { :"data-title" => I18n.t("actions.delete_confirm_title", :title => @batch.display_string) } %>
-        </div>
-      <% end %>
     </div>
-
   <% end %>
 
   <% if ['edit', 'update'].include?(controller.action_name) %>
