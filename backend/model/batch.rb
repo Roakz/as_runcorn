@@ -275,7 +275,7 @@ class Batch < Sequel::Model(:batch)
 
   def object_counts
     objects_ds.group_and_count{Batch.id_columns.map{|col| Sequel.~(col => nil).as(col)}}.map{|row|
-      [Batch.id_column_to_model(row.select{|k,v| v == true}.keys.first), row[:count]]
+      [Batch.id_column_to_model(row.select{|k,v| v > 0}.keys.first), row[:count]]
     }.to_h
   end
 
@@ -312,6 +312,10 @@ class Batch < Sequel::Model(:batch)
   def add_action(type, params = {})
     if current_action
       raise InvalidAction.new('Cannot add action. Batch already has a current action.')
+    end
+
+    unless (self.included_models - BatchActionHandler.models_for_type(type)).empty?
+      raise InvalidAction.new('Cannot add action. Batch has unsupported models.')
     end
 
     handler = BatchActionHandler.handler_for_type(type)
@@ -397,6 +401,7 @@ class Batch < Sequel::Model(:batch)
       json['status'] = obj.status
       objects = obj.object_total
       json['object_count'] = objects
+      json['model_counts'] = obj.object_counts
       actions = json['actions'].length
       json['current_action'] = obj.current_action
       json['display_string'] = "#{obj.qsa_id_prefixed}: #{objects} object#{objects == 1 ? '' : 's'} -- #{actions} action#{actions == 1 ? '' : 's'}"

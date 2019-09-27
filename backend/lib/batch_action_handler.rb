@@ -23,7 +23,17 @@ class BatchActionHandler
 
 
   def self.handler_for_type(type)
-    (@@handlers[type.intern] or raise UnknownActionType.new(type)).handler
+    registration_for_type(type).handler
+  end
+
+
+  def self.models_for_type(type)
+    registration_for_type(type).models
+  end
+
+
+  def self.registration_for_type(type)
+    (@@handlers[type.intern] or raise UnknownActionType.new(type))
   end
 
 

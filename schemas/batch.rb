@@ -45,6 +45,11 @@
         "type" => "non_negative_integer",
         "readonly" => "true",
       },
+
+      "model_counts" => {
+        "type" => "object",
+        "readonly" => "true",
+      },
     },
   },
 }

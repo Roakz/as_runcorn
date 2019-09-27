@@ -481,7 +481,7 @@ en:
         created: Batch successfully created
         updated: Batch successfully updated
         no_current_action: "No current action. Create one by clicking the 'Add draft action' button above"
-        no_actions: Batch currently has no action history
+        no_actions: Batch has no action history
 
   batch_action:
     action_status: Status

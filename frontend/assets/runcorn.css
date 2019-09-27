@@ -12,7 +12,7 @@
     border-bottom: 1px solid #E5E5E5;
 }
 
-.batch-action-type-panel:hover {
+.batch-action-type-available:hover {
     cursor: pointer;
     background: #efe;
 }

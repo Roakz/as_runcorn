@@ -8,7 +8,10 @@
             <h2>Add a draft action to <%= @batch.display_string %></h2>
 
             <div>
-              Object types in this batch:
+              <strong>Object types in this batch:</strong>
+              <% @batch.model_counts.each do |model, count| %>
+                <span class="label label-info"><%= I18n.t("#{model}._singular") %></span>
+              <% end %>
             </div>
 
             <div class="clearfix"></div>
@@ -22,9 +25,16 @@
 
             <div>
               <% batch_action_types.each do |type| %>
+                <% available = (@batch.model_counts.keys - type['models']).empty? %>
                 <%= form_tag({:controller => :batches, :action => :add_action}) do |f| %>
                   <input type="hidden" name="action_type" value="<%= type['type'] %>">
-                  <div class="batch-action-type-panel" onclick="submit()">
+
+                  <% if available %>
+                    <div class="batch-action-type-panel batch-action-type-available" onclick="submit();">
+                  <% else %>
+                    <div class="batch-action-type-panel">
+                  <% end %>
+
                     <h4><%= I18n.t("batch_action_types.#{type['type']}.label") %></h4>
                     <div><%= type['description'] %></div>
 
