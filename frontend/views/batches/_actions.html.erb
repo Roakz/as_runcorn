@@ -8,7 +8,7 @@
       <% form.emit_template 'batch_action' %>
     <% end %>
   <% else %>
-    <pre>ADD ACTION BUTTON</pre>
+    <div class="alert alert-info"><%= I18n.t("batch._frontend.messages.no_current_action") %></div>
   <% end %>
 
 </section>
