@@ -5,6 +5,9 @@ require_relative 'helpers/qsa_id_helper'
 require_relative 'helpers/significance_helper'
 
 Rails.application.config.after_initialize do
+
+  MemoryLeak::Resources.define(:batch_action_types, proc { JSONModel::HTTP.get_json('/batch_action_handler/action_types') }, 60)
+
   Plugins.register_plugin_section(
     Plugins::PluginSubRecord.new(
       'as_runcorn',

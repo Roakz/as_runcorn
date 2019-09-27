@@ -21,11 +21,22 @@
             </div>
 
             <div>
-              <%= form_tag({:controller => :batches, :action => :add_action}) do |f| %>
-                <input type="hidden" name="action_type" value="functional_move">
-                <button class="btn btn-sm btn-primary"><%= I18n.t("batch_action_types.functional_move.label") %></button>
+              <% batch_action_types.each do |type| %>
+                <%= form_tag({:controller => :batches, :action => :add_action}) do |f| %>
+                  <input type="hidden" name="action_type" value="<%= type['type'] %>">
+                  <div class="batch-action-type-panel" onclick="submit()">
+                    <h4><%= I18n.t("batch_action_types.#{type['type']}.label") %></h4>
+                    <div><%= type['description'] %></div>
+
+                    <div class="batch-action-supported-types-panel">
+                      <strong>Supported types:</strong>
+                      <% type['models'].each do |model| %>
+                        <span class="label label-info"><%= I18n.t("#{model}._singular") %></span>
+                      <% end %>
+                    </div>
+                  </div>
+                <% end %>
               <% end %>
-              <%# action_types.each ... %>
             </div>
 
             <div class="form-actions">

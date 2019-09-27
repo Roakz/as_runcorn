@@ -14,6 +14,11 @@ class Batch < Sequel::Model(:batch)
   class OperationNotPermitted < StandardError; end
 
 
+  def self.action_types
+    BatchActionHandler.handlers
+  end
+
+
   def self.statuses
     @statuses ||= ['no_action'] + BackendEnumSource.values_for('runcorn_batch_action_status').map{|m| m.intern}
   end

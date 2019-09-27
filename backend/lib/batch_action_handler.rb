@@ -4,13 +4,21 @@ class BatchActionHandler
   class InvalidParams < StandardError; end
 
   RegisteredHandler = Struct.new(:type,
+                                 :description,
                                  :models,
                                  :handler)
 
-  def self.register(type, models)
+  def self.register(type, description, models)
     @@handlers ||= {}
 
-    @@handlers[type] = RegisteredHandler.new(type, models, self)
+    @@handlers[type] = RegisteredHandler.new(type, description, models, self)
+  end
+
+
+  def self.handlers
+    @@handlers ||= {}
+
+    @@handlers.values.map{|h| h.to_h}
   end
 
 

@@ -14,6 +14,11 @@ class BatchesController < ApplicationController
                                            :perform_action,
                                            :csv]
 
+  helper_method :batch_action_types
+  def batch_action_types
+    @supported_models ||= MemoryLeak::Resources.get(:batch_action_types)
+  end
+
   def index
     @search_data = Search.for_type(
       session[:repo_id],

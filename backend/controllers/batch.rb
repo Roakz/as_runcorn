@@ -1,5 +1,14 @@
 class ArchivesSpaceService < Sinatra::Base
 
+  Endpoint.get('/batch_action_handler/action_types')
+    .description("List all Batch Action types")
+    .params()
+    .permissions([])
+    .returns([200, '[action_types]']) \
+  do
+    json_response(Batch.action_types)
+  end
+
   Endpoint.get('/repositories/:repo_id/batches')
     .description("List all Batches for indexing")
     .params(["repo_id", :repo_id])

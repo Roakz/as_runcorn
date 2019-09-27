@@ -11,3 +11,24 @@
 .subrecord-form-divider {
     border-bottom: 1px solid #E5E5E5;
 }
+
+.batch-action-type-panel:hover {
+    cursor: pointer;
+    background: #efe;
+}
+
+.batch-action-type-panel {
+    position: relative;
+    display: inline-block;
+    border: 2px solid #aaa;
+    border-radius: 3px;
+    margin: 20px;
+    padding: 10px;
+    width: 450px;
+    height: 200px;
+}
+
+.batch-action-supported-types-panel {
+    position: absolute;
+    bottom: 20px;
+}
