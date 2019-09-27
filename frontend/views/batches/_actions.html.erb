@@ -34,6 +34,9 @@
               <div class="col-md-1">
                 <span class="glyphicon"></span>
               </div>
+              <div class="col-md-1">
+                <%= QSAIdHelper.id(actn['qsa_id_prefixed']) %>
+              </div>
               <div class="col-md-2">
                 <%= I18n.t("batch_action.action_types.#{actn['action_type']}") %>
               </div>
