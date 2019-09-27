@@ -326,6 +326,19 @@ class Batch < Sequel::Model(:batch)
   end
 
 
+  def update_action_status(status)
+    action = self.current_action
+
+    unless action
+      raise InvalidAction.new('Batch does not have a current action')
+    end
+
+    action['action_status'] = status
+
+    BatchAction.get_or_die(JSONModel.parse_reference(action['uri'])[:id]).update_from_json(action)
+  end
+
+
   def perform_action
     action = current_action
 
@@ -381,7 +394,7 @@ class Batch < Sequel::Model(:batch)
       json['object_count'] = objects
       actions = json['actions'].length
       json['current_action'] = obj.current_action
-      json['display_string'] = "#{obj.qsa_id_prefixed} -- #{objects} object#{objects == 1 ? '' : 's'} : #{actions} action#{actions == 1 ? '' : 's'}"
+      json['display_string'] = "#{obj.qsa_id_prefixed}: #{objects} object#{objects == 1 ? '' : 's'} -- #{actions} action#{actions == 1 ? '' : 's'}"
     end
 
     jsons

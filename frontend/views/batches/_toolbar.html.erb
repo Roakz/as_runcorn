@@ -47,10 +47,23 @@
       <%# proposed actions can be approved %>
       <% if @batch.status == 'proposed' %>
         <div class="btn-group">
-          <%= link_to I18n.t("batch._frontend.action.spawn_assessment"), {:controller => :batches, :action => :spawn_assessment, :id => @batch.id}, :class => "btn btn-sm btn-primary" %>
+          <%= form_tag({:controller => :batches, :action => :approve}) do |f| %>
+            <button class="btn btn-sm btn-primary"><%= I18n.t("batch._frontend.action.approve") %></button>
+          <% end %>
         </div>
+      <% end %>
 
-        <%# ... or reverted to draft %>
+      <%# approved actions can be performed! %>
+      <% if @batch.status == 'approved' %>
+        <div class="btn-group">
+          <%= form_tag({:controller => :batches, :action => :perform_action}) do |f| %>
+            <button class="btn btn-sm btn-primary"><%= I18n.t("batch._frontend.action.perform_action") %></button>
+          <% end %>
+        </div>
+      <% end %>
+
+      <%# proposed or approved actions reverted to draft %>
+      <% if ['proposed', 'approved'].include?(@batch.status) %>
         <div class="btn-group">
           <%= form_tag({:controller => :batches, :action => :revert_to_draft}) do |f| %>
             <button class="btn btn-sm btn-primary"><%= I18n.t("batch._frontend.action.revert_to_draft") %></button>

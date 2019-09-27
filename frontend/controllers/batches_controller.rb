@@ -9,8 +9,9 @@ class BatchesController < ApplicationController
                                            :assign_objects_form, :assign_objects,
                                            :clear_assigned_objects,
                                            :add_action_form, :add_action,
-                                           :submit_for_review,
+                                           :submit_for_review, :approve,
                                            :revert_to_draft,
+                                           :perform_action,
                                            :csv]
 
   def index
@@ -60,6 +61,30 @@ class BatchesController < ApplicationController
     return redirect_to :controller => :batches, :action => :show
   end
 
+  def submit_for_review
+    JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/propose")
+
+    return redirect_to :controller => :batches, :action => :show
+  end
+
+  def revert_to_draft
+    JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/revert_to_draft")
+
+    return redirect_to :controller => :batches, :action => :show
+  end
+
+  def approve
+    JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/approve")
+
+    return redirect_to :controller => :batches, :action => :show
+  end
+
+  def perform_action
+    JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/perform_action")
+
+    return redirect_to :controller => :batches, :action => :show
+  end
+
   def edit
     show
   end
@@ -103,24 +128,6 @@ class BatchesController < ApplicationController
 
     flash[:success] = I18n.t("batch._frontend.messages.deleted", JSONModelI18nWrapper.new(:batch => batch))
     redirect_to(:controller => :batches, :action => :index, :deleted_uri => batch.uri)
-  end
-
-
-  def submit_for_review
-    batch = JSONModel(:batch).find(params[:id])
-    batch.status = 'Ready For Review'
-    batch.save
-
-    redirect_to(:controller => :batches, :action => :show, :id => params[:id])
-  end
-
-
-  def revert_to_draft
-    batch = JSONModel(:batch).find(params[:id])
-    batch.status = 'Draft'
-    batch.save
-
-    redirect_to(:controller => :batches, :action => :show, :id => params[:id])
   end
 
 

@@ -195,6 +195,51 @@ class ArchivesSpaceService < Sinatra::Base
   end
 
 
+  Endpoint.post('/repositories/:repo_id/batches/:id/propose')
+    .description("Propose the current action for a batch for approval")
+    .params(["repo_id", :repo_id],
+            ["id", :id])
+    .permissions([])
+    .returns([200, :updated]) \
+  do
+    batch = Batch.get_or_die(params[:id])
+
+    batch.update_action_status('proposed')
+
+    json_response("status" => "OK")
+  end
+
+
+  Endpoint.post('/repositories/:repo_id/batches/:id/revert_to_draft')
+    .description("Revert the current action for a batch to draft state")
+    .params(["repo_id", :repo_id],
+            ["id", :id])
+    .permissions([])
+    .returns([200, :updated]) \
+  do
+    batch = Batch.get_or_die(params[:id])
+
+    batch.update_action_status('draft')
+
+    json_response("status" => "OK")
+  end
+
+
+  Endpoint.post('/repositories/:repo_id/batches/:id/approve')
+    .description("Approve the current action for a batch to be performed")
+    .params(["repo_id", :repo_id],
+            ["id", :id])
+    .permissions([])
+    .returns([200, :updated]) \
+  do
+    batch = Batch.get_or_die(params[:id])
+
+    batch.update_action_status('approved')
+
+    json_response("status" => "OK")
+  end
+
+
   Endpoint.post('/repositories/:repo_id/batches/:id/perform_action')
     .description("Perform the current action for a batch")
     .params(["repo_id", :repo_id],
