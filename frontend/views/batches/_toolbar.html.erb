@@ -28,8 +28,8 @@
         </div>
       <% end %>
 
-      <%# batches without a current action can have one added %>
-      <% unless @batch.current_action %>
+      <%# batches with objects but without a current action can have an action added %>
+      <% if @batch.object_count && @batch.object_count > 0 && !@batch.current_action %>
         <div class="btn-group">
           <%= link_to I18n.t("batch._frontend.action.add_action"), {:controller => :batches, :action => :add_action_form, :id => @batch.id}, :class => "btn btn-sm btn-primary" %>
         </div>

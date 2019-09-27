@@ -17,6 +17,11 @@
     background: #efe;
 }
 
+.batch-action-type-unavailable:hover {
+    cursor: not-allowed;
+    background: #eee;
+}
+
 .batch-action-type-panel {
     position: relative;
     display: inline-block;
