@@ -7,6 +7,8 @@
       <div class="subrecord-form-fields">
         <%= form.hidden_input('lock_version', form.obj['lock_version']) %>
 
+        <%= render_aspace_partial :partial => 'shared/qsa_id_form', :locals => {:form => form, :model => :batch_action} %>
+
         <%= form.label_and_readonly "action_status" %>
         <% if form.readonly? %>
           <%= form.label_and_readonly "action_user" %>
