@@ -483,6 +483,12 @@ en:
         deleted: Batch successfully deleted
         no_current_action: "No current action. Create one by clicking the 'Add draft action' button above"
         no_actions: Batch has no action history
+        objects_assigned: Objects successfully assigned
+        action_added: Draft action successfully added
+        submitted_for_review: Action submitted for review
+        reverted_to_draft: Action reverted to draft
+        approved: Action approved to be performed
+        action_performed: Action successfully performed
 
   batch_action:
     action_status: Status

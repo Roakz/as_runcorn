@@ -42,10 +42,6 @@ class BatchesController < ApplicationController
     @batch = JSONModel(:batch).find(params[:id], find_opts.merge('resolve[]' => RESOLVES))
   end
 
-  def add_action_form
-    @batch = JSONModel(:batch).find(params[:id], find_opts.merge('resolve[]' => RESOLVES))
-  end
-
   def assign_objects
     JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/assign_objects",
                               'model' => params[:model],
@@ -53,6 +49,7 @@ class BatchesController < ApplicationController
                               'removes[]' => Array(params.dig(:batch_removes, 'ref')),
                               'include_deaccessioned' => params[:include_deaccessioned])
 
+    flash[:success] = I18n.t("batch._frontend.messages.objects_assigned")
     return redirect_to :controller => :batches, :action => :show
   end
 
@@ -63,30 +60,35 @@ class BatchesController < ApplicationController
   def add_action
     JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/add_action/#{params[:action_type]}")
 
+    flash[:success] = I18n.t("batch._frontend.messages.action_added")
     return redirect_to :controller => :batches, :action => :show
   end
 
   def submit_for_review
     JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/propose")
 
+    flash[:success] = I18n.t("batch._frontend.messages.submitted_for_review")
     return redirect_to :controller => :batches, :action => :show
   end
 
   def revert_to_draft
     JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/revert_to_draft")
 
+    flash[:success] = I18n.t("batch._frontend.messages.reverted_to_draft")
     return redirect_to :controller => :batches, :action => :show
   end
 
   def approve
     JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/approve")
 
+    flash[:success] = I18n.t("batch._frontend.messages.approved")
     return redirect_to :controller => :batches, :action => :show
   end
 
   def perform_action
     JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/perform_action")
 
+    flash[:success] = I18n.t("batch._frontend.messages.action_performed")
     return redirect_to :controller => :batches, :action => :show
   end
 
