@@ -19,6 +19,11 @@ class BatchesController < ApplicationController
     @supported_models ||= MemoryLeak::Resources.get(:batch_action_types)
   end
 
+  helper_method :batch_action_type
+  def batch_action_type(type)
+    batch_action_types.select{|t| t['type'] == type}.first
+  end
+
   def index
     @search_data = Search.for_type(
       session[:repo_id],

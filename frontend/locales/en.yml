@@ -497,8 +497,12 @@ en:
     action_type: Type
     action_user: By
     action_time: At
+    approved_user: Approved by
+    approved_time: Approved at
     action_params: Parameters 
     note: Note
+    approval_required: Approval required
+    no_approval_required: No approval required
     action_types:
       no_action: "-- no action --"
       functional_move: Functional Move

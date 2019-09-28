@@ -36,7 +36,16 @@
                          title="Unsupported models in batch: <%= unsupported_models.map{|m| I18n.t("#{m}._singular") }.join(', ') %>">
                   <% end %>
 
+                    <div class="pull-right">
+                     <% if type['approval'] == 'no_approval_required' %>
+                       <div class="label label-success"><%= I18n.t('batch_action.no_approval_required') %></div>
+                     <% else %>
+                       <div class="label label-warning"><%= I18n.t('batch_action.approval_required') %></div>
+                     <% end %>
+                    </div>
+
                     <h4><%= I18n.t("batch_action_types.#{type['type']}.label") %></h4>
+
                     <div><%= type['description'] %></div>
 
                     <div class="batch-action-supported-types-panel">

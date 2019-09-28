@@ -4,6 +4,7 @@ class FunctionalMove < BatchActionHandler
            'Create a movement to a new functional location.',
            [:top_container, :physical_representation])
 
+
   def self.default_params
     {
       'location' => 'HOME'

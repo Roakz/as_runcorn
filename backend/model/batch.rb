@@ -351,6 +351,19 @@ class Batch < Sequel::Model(:batch)
       raise InvalidAction.new('Batch does not have a current action')
     end
 
+    if status == 'approved'
+      if BatchActionHandler.action_requires_approval?(action['action_type'])
+        approval_perm = BatchActionHandler.approval_for_type(action['action_type'])
+        current_user = User[:username => RequestContext.get(:current_username)]
+        unless current_user.can?(approval_perm)
+          raise OperationNotPermitted.new("User does not have pwermission to approve this action.")
+        end
+      end
+
+      action['approved_user'] = RequestContext.get(:current_username)
+      action['approved_time'] = Time.now
+    end
+
     action['action_status'] = status
 
     BatchAction.get_or_die(JSONModel.parse_reference(action['uri'])[:id]).update_from_json(action)
@@ -364,9 +377,16 @@ class Batch < Sequel::Model(:batch)
       raise InvalidAction.new('Batch does not have a current action to perform.')
     end
 
+    if BatchActionHandler.action_requires_approval?(action['action_type'])
+      unless action['action_status'] == 'approved'
+        raise OperationNotPermitted.new("Action nust be approved before it can be performed.")
+      end
+    end
+
     handler = BatchActionHandler.handler_for_type(action['action_type'])
 
     handler.perform_action(ASUtils.json_parse(action['action_params']), action['action_user'], action['uri'], self.object_refs)
+
     action['action_status'] = 'executed'
     action['action_time'] = Time.now
     BatchAction.get_or_die(JSONModel.parse_reference(action['uri'])[:id]).update_from_json(action)

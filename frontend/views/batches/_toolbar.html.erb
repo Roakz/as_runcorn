@@ -37,49 +37,60 @@
         </div>
       <% end %>
 
-      <%# draft actions can be submitted for review %>
-      <% if @batch.status == 'draft' %>
-        <div class="btn-group">
-          <%= form_tag({:controller => :batches, :action => :submit_for_review}) do |f| %>
-            <button class="btn btn-sm btn-warning"><%= I18n.t("batch._frontend.action.submit_for_review") %></button>
-          <% end %>
-        </div>
-      <% end %>
+      <% if (action = @batch.current_action) %>
 
-      <%# proposed actions can be approved %>
-      <% if @batch.status == 'proposed' %>
-        <div class="btn-group">
-          <%= form_tag({:controller => :batches, :action => :approve}) do |f| %>
-            <button class="btn btn-sm btn-success"><%= I18n.t("batch._frontend.action.approve") %></button>
-          <% end %>
-        </div>
-      <% end %>
+        <% approval_perm = batch_action_type(action['action_type'])['approval'] %>
 
-      <%# approved actions can be performed! %>
-      <% if @batch.status == 'approved' %>
-        <div class="btn-group">
-          <%= form_tag({:controller => :batches, :action => :perform_action}) do |f| %>
-            <button class="btn btn-sm btn-danger"><%= I18n.t("batch._frontend.action.perform_action") %></button>
-          <% end %>
-        </div>
-      <% end %>
+        <%# approved actions and those not requiring approval can be performed! %>
+        <% if approval_perm == 'no_approval_required' || @batch.status == 'approved' %>
+          <div class="btn-group">
+            <%= form_tag({:controller => :batches, :action => :perform_action}) do |f| %>
+              <button class="btn btn-sm btn-primary"><%= I18n.t("batch._frontend.action.perform_action") %></button>
+            <% end %>
+          </div>
+        <% end %>
 
-      <%# proposed or approved actions reverted to draft %>
-      <% if ['proposed', 'approved'].include?(@batch.status) %>
-        <div class="btn-group">
-          <%= form_tag({:controller => :batches, :action => :revert_to_draft}) do |f| %>
-            <button class="btn btn-sm btn-default"><%= I18n.t("batch._frontend.action.revert_to_draft") %></button>
-          <% end %>
-        </div>
-      <% end %>
+        <%# workflow buttons for actions that need to be approved before they can be performed %>
+        <% unless approval_perm == 'no_approval_required' %>
 
-      <%# current actions can be deleted %>
-      <% if @batch.current_action %>
-        <div class="btn-group">
-          <%= form_tag({:controller => :batches, :action => :delete_action}) do |f| %>
-            <button class="btn btn-sm btn-danger"><%= I18n.t("batch._frontend.action.delete_action") %></button>
+          <%# draft actions can be submitted for review %>
+          <% if @batch.status == 'draft' %>
+            <div class="btn-group">
+              <%= form_tag({:controller => :batches, :action => :submit_for_review}) do |f| %>
+                <button class="btn btn-sm btn-warning"><%= I18n.t("batch._frontend.action.submit_for_review") %></button>
+              <% end %>
+            </div>
           <% end %>
-        </div>
+
+          <%# proposed actions can be approved by the right kind of person %>
+          <% if @batch.status == 'proposed' && user_can?(approval_perm) %>
+            <div class="btn-group">
+              <%= form_tag({:controller => :batches, :action => :approve}) do |f| %>
+                <button class="btn btn-sm btn-success"><%= I18n.t("batch._frontend.action.approve") %></button>
+              <% end %>
+            </div>
+          <% end %>
+
+          <%# proposed or approved actions reverted to draft %>
+          <% if ['proposed', 'approved'].include?(@batch.status) %>
+            <div class="btn-group">
+              <%= form_tag({:controller => :batches, :action => :revert_to_draft}) do |f| %>
+                <button class="btn btn-sm btn-default"><%= I18n.t("batch._frontend.action.revert_to_draft") %></button>
+              <% end %>
+            </div>
+          <% end %>
+
+        <% end %>
+
+        <%# draft actions can be deleted %>
+        <% if @batch.status == 'draft' %>
+          <div class="btn-group">
+            <%= form_tag({:controller => :batches, :action => :delete_action}) do |f| %>
+              <button class="btn btn-sm btn-danger"><%= I18n.t("batch._frontend.action.delete_action") %></button>
+            <% end %>
+          </div>
+        <% end %>
+
       <% end %>
 
       <%# batches with objects can be downloaded as csv %>

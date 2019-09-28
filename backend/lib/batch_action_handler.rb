@@ -6,12 +6,13 @@ class BatchActionHandler
   RegisteredHandler = Struct.new(:type,
                                  :description,
                                  :models,
+                                 :approval,
                                  :handler)
 
-  def self.register(type, description, models)
+  def self.register(type, description, models, approval = :no_approval_required)
     @@handlers ||= {}
 
-    @@handlers[type] = RegisteredHandler.new(type, description, models, self)
+    @@handlers[type] = RegisteredHandler.new(type, description, models, approval, self)
   end
 
 
@@ -29,6 +30,16 @@ class BatchActionHandler
 
   def self.models_for_type(type)
     registration_for_type(type).models
+  end
+
+
+  def self.approval_for_type(type)
+    registration_for_type(type).approval
+  end
+
+
+  def self.action_requires_approval?(type)
+    registration_for_type(type).approval != :no_approval_required
   end
 
 

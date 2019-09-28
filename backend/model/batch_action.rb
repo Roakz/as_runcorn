@@ -15,7 +15,7 @@ class BatchAction < Sequel::Model(:batch_action)
 
     objs.zip(jsons).each do |obj, json|
       json['action_time'] = obj.action_time.getlocal.iso8601 if obj.action_time
-      json['approved_time'] = obj.action_time.getlocal.iso8601 if obj.approved_time
+      json['approved_time'] = obj.approved_time.getlocal.iso8601 if obj.approved_time
       json['display_string'] = "#{obj.qsa_id_prefixed}: #{I18n.t('batch_action_types.' + obj.action_type + '.label')}"
     end
 
