@@ -73,6 +73,15 @@
         </div>
       <% end %>
 
+      <%# current actions can be deleted %>
+      <% if @batch.current_action %>
+        <div class="btn-group">
+          <%= form_tag({:controller => :batches, :action => :delete_action}) do |f| %>
+            <button class="btn btn-sm btn-danger"><%= I18n.t("batch._frontend.action.delete_action") %></button>
+          <% end %>
+        </div>
+      <% end %>
+
       <%# batches with objects can be downloaded as csv %>
       <% if @batch.object_count && @batch.object_count > 0 %>
         <div class="btn-group">

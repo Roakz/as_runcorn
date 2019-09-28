@@ -10,7 +10,7 @@ class BatchesController < ApplicationController
                                            :clear_assigned_objects,
                                            :add_action_form, :add_action,
                                            :submit_for_review, :approve,
-                                           :revert_to_draft,
+                                           :revert_to_draft, :delete_action,
                                            :perform_action,
                                            :csv]
 
@@ -82,6 +82,13 @@ class BatchesController < ApplicationController
     JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/approve")
 
     flash[:success] = I18n.t("batch._frontend.messages.approved")
+    return redirect_to :controller => :batches, :action => :show
+  end
+
+  def delete_action
+    JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/delete_action")
+
+    flash[:success] = I18n.t("batch._frontend.messages.action_deleted")
     return redirect_to :controller => :batches, :action => :show
   end
 

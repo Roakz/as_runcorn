@@ -249,6 +249,21 @@ class ArchivesSpaceService < Sinatra::Base
   end
 
 
+  Endpoint.post('/repositories/:repo_id/batches/:id/delete_action')
+    .description("Delete the current action for a batch")
+    .params(["repo_id", :repo_id],
+            ["id", :id])
+    .permissions([])
+    .returns([200, :updated]) \
+  do
+    batch = Batch.get_or_die(params[:id])
+
+    batch.delete_current_action
+
+    json_response("status" => "OK")
+  end
+
+
   Endpoint.post('/repositories/:repo_id/batches/:id/perform_action')
     .description("Perform the current action for a batch")
     .params(["repo_id", :repo_id],

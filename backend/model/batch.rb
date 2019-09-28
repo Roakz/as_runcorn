@@ -309,6 +309,15 @@ class Batch < Sequel::Model(:batch)
   end
 
 
+  def delete_current_action
+    unless (action = self.current_action)
+      raise InvalidAction.new('No current action to delete.')
+    end
+
+    BatchAction[action.id].delete
+  end
+
+
   def add_action(type, params = {})
     if current_action
       raise InvalidAction.new('Cannot add action. Batch already has a current action.')
