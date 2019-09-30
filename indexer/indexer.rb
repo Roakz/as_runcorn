@@ -188,11 +188,12 @@ class IndexerCommon
       if record['record'].has_key?('qsa_id')
         doc['qsa_id_u_sint'] = record['record']['qsa_id']
 
-        # include the prefix in the sort string so that different models sort separately
-        id_bits = record['record']['qsa_id_prefixed'].split(/(?=\d)/, 2)
-        doc['qsa_id_u_sort'] = id_bits[0].ljust(9, '0') + id_bits[1].rjust(9,'0')
-
-        doc['qsa_id_u_ssort'] = record['record']['qsa_id_prefixed']
+        if record['record']['qsa_id_prefixed']
+          # include the prefix in the sort string so that different models sort separately
+          ((prefix, number)) = record['record']['qsa_id_prefixed'].scan(/([^\d]+)?(\d+)/)
+          doc['qsa_id_u_sort'] = prefix.to_s.ljust(9, '0') + number.to_s.rjust(9,'0')
+          doc['qsa_id_u_ssort'] = record['record']['qsa_id_prefixed']
+        end
       end
     end
 
