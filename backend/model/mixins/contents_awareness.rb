@@ -18,6 +18,11 @@ module ContentsAwareness
     def sequel_to_jsonmodel(objs, opts = {})
       jsons = super
 
+      # Skip this for indexing: it's not used and the payloads are currently way too big.
+      if RequestContext.get(:current_username) == AppConfig[:search_username]
+        return jsons
+      end
+
       location_enum_map = BackendEnumSource.values_for('runcorn_location').map{|value|
         [BackendEnumSource.id_for_value('runcorn_location', value), value]
       }.to_h
