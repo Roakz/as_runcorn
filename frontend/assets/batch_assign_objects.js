@@ -18,10 +18,12 @@ BatchAssignObjects.prototype.setupBinds = function() {
 
         // reinitialise the linkers with the new set of types
         // FIXME: is there a saner way to do this?
+    $("#batch_adds_linker").closest('.linker-wrapper').find('.linker-browse-btn').off('click');
 	$('#batch_adds_linker').data('types', help.data('types'));
 	$("#batch_adds_linker").removeClass('initialised');
 	$("#batch_adds_linker").linker();
 	$("#batch_adds_linker").closest('.linker-wrapper').find('.token-input-list').first().remove();
+    $("#batch_removes_linker").closest('.linker-wrapper').find('.linker-browse-btn').off('click');
 	$('#batch_removes_linker').data('types', help.data('types'));
 	$("#batch_removes_linker").removeClass('initialised');
 	$("#batch_removes_linker").linker();
