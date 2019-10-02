@@ -72,6 +72,8 @@ module RAPsApplied
         elsif json['rap_expiration']['expired']
           result = RAP_ACCESS_STATUS_OPEN
         end
+      elsif json['rap_expiration']['expired']
+        result = RAP_ACCESS_STATUS_OPEN
       end
 
       result
