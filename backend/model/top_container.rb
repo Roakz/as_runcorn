@@ -107,4 +107,33 @@ class TopContainer
       ids: (resource_ids_linked_via_representation(obj.id)).uniq
      }]
   end
+
+
+  # again overriding directly to save on unneccessary work
+  #  -  looking for 'series'
+  #  -  having to rerun #collections to get the qsa_id 
+  #  -  getting rid of exported_to_ils which is unused
+  def self.sequel_to_jsonmodel(objs, opts = {})
+    jsons = super
+
+    publication_status = ImpliedPublicationCalculator.new.for_top_containers(objs)
+
+    jsons.zip(objs).each do |json, obj|
+      json['is_linked_to_published_record'] = publication_status.fetch(obj)
+
+      json['display_string'] = obj.display_string
+      json['long_display_string'] = obj.long_display_string
+
+      obj.collections.each do |collection|
+        json['collection'] ||= []
+        json['collection'] << {
+          'ref' => collection.uri,
+          'identifier' => collection.qsa_id_prefixed,
+          'display_string' => find_title_for(collection)
+        }
+      end
+    end
+
+    jsons
+  end
 end
