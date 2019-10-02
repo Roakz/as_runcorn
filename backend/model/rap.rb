@@ -209,6 +209,10 @@ class RAP < Sequel::Model(:rap)
 
         # Return a set of AO/RAP applied rows that might now be unpublishable
         # after the RAP changes.
+        #
+        # This deliberately casts a wide net so there may be false positives.
+        # For example, we add one to the end date to compensate for cabinet
+        # matters that will round up to January 1 of the following year. 
         possibly_unpublishable =
           db[:rap_applied]
             .join(:rap, Sequel.qualify(:rap, :id) => Sequel.qualify(:rap_applied, :rap_id))
