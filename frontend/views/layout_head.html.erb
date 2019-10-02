@@ -57,6 +57,11 @@
   <li><%= link_to I18n.t("batch._plural"), {:controller => :batches, :action => :index} %></li>
 </script>
 
+<script type="text/template" id="createBatchTemplate">
+  <li class="divider"></li>
+  <li><%= link_to I18n.t("batch._singular"), {:controller => :batches, :action => :new} %></li>
+</script>
+
 <script>
     // put link in the System menu
     $(function() {
@@ -91,6 +96,9 @@
 
       // Add batch link to browse
       $('.repository-header .navbar-nav .browse-container .dropdown-menu a[href="/locations"]').parent().after(AS.renderTemplate("browseBatchesTemplate"))
+
+      // Add batch link to create
+      $('.repository-header .navbar-nav .create-container .dropdown-menu a[href="/functions/new"]').parent().after(AS.renderTemplate("createBatchTemplate"))
 
       // And replaces them in create
       $('.repository-header .navbar-nav .create-container .dropdown-menu a[href="/assessments/new"]').parent().replaceWith(AS.renderTemplate("createConservationRequestTemplate"))
