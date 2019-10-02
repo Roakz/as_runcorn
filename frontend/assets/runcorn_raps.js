@@ -240,7 +240,7 @@
                                             if (changed.status) {
                                                 var $modal = self.showModal();
                                                 $modal.on('click', '#confirmRAPReparentButton', function() {
-                                                    $modal.remove();
+                                                    $modal.modal('hide');
                                                     callOriginal();
                                                 });
 
