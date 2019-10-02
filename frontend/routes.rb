@@ -64,6 +64,7 @@ ArchivesSpace::Application.routes.draw do
       match('batches/:id/delete' => 'batches#delete', :via => [:post])
       match('batches/:id' => 'batches#update', :via => [:post])
       match('batches/:id/csv' => 'batches#csv', :via => [:get])
+      match('batch_actions/show/:id' => 'batch_actions#show', :via => [:get])
     end
   end
 end

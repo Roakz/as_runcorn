@@ -10,6 +10,14 @@ class BatchAction < Sequel::Model(:batch_action)
                       :is_array => false)
 
 
+  def self.batch_ref_for(id)
+    batch = BatchAction.get_or_die(id).related_records(:batch_action_batch)
+
+    raise NotFoundException.new unless batch
+
+    batch.uri
+  end
+
   def self.sequel_to_jsonmodel(objs, opts = {})
     jsons = super
 

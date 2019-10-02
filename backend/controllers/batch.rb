@@ -295,4 +295,15 @@ class ArchivesSpaceService < Sinatra::Base
     ]
   end
 
+
+  Endpoint.get('/repositories/:repo_id/batch_actions/backlink_uri/:batch_action_id')
+    .description("Get a ref for the batch containing a given batch action")
+    .params(["repo_id", :repo_id],
+            ["batch_action_id", Integer, "The requested ID"])
+    .permissions([:view_repository])
+    .returns([200, '{"ref": <id>}']) \
+  do
+    json_response({'ref' => BatchAction.batch_ref_for(params[:batch_action_id])})
+  end
+
 end
