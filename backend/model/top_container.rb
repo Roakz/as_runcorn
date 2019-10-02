@@ -1,5 +1,4 @@
 class TopContainer
-  prepend RepresentationContainers
   include Movements
   move_to_storage_permitted
   include ContentsAwareness
@@ -75,5 +74,37 @@ class TopContainer
     out[:records_updated] = out[:records_ids_updated].length
 
     out
+  end
+
+
+  # overriding because we've changed the way top_containers are linked to their contents
+  def calculate_collections
+    resource_ids = self.class.resource_ids_linked_via_representation(self.id)
+
+    Resource
+      .filter(:id => resource_ids)
+      .select_all(:resource)
+      .all
+  end
+
+
+  # this is how you get from a top_container to a resource in runcorn!
+  def self.resource_ids_linked_via_representation(id)
+    Resource
+      .join(:physical_representation, :physical_representation__resource_id => :resource__id)
+      .join(:representation_container_rlshp, :representation_container_rlshp__physical_representation_id => :physical_representation__id)
+      .filter(:representation_container_rlshp__top_container_id => id)
+      .select(:resource__id)
+      .distinct
+      .all.map{|row| row[:id]}
+  end
+
+
+  # and overriding this to reflect the new way of linking too
+  def self.touch_records(obj)
+    [{
+      type: Resource,
+      ids: (resource_ids_linked_via_representation(obj.id)).uniq
+     }]
   end
 end
