@@ -10,7 +10,13 @@
           <% if record['rap_attached'] && rap['ref'] === record['rap_attached']['uri'] %><div class="badge badge-info">Attached</div> <% end %>
           <% if rap['is_active'] %>
             <% if record['rap_expiration'] && record['rap_expiration']['expires'] %>
-              <div class="badge badge-info">Expires: <%= record['rap_expiration']['expiry_date'] %></div>
+              <% if record['rap_expiration']['expired'] %>
+                <div class="badge badge-info">
+                  <div class="text-danger">Expired: <%= record['rap_expiration']['expiry_date'] %></div>
+                </div>
+              <% else %>
+                <div class="badge badge-info">Expires: <%= record['rap_expiration']['expiry_date'] %></div>
+              <% end %>
             <% elsif record['rap_expiration'] && !record['rap_expiration']['expires'] %>
               <div class="badge badge-info">No Expiry</div>
             <% end %>
