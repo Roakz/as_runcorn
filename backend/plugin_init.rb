@@ -44,6 +44,28 @@ TreeReordering.add_after_reorder_hook do |target_class, child_class, target_id, 
                end
 
     resource.propagate_raps!
+    DB.open do |db|
+      rap = if target_class == Resource
+              db[:rap]
+                .filter(:resource_id => target_id)
+                .first
+            else
+              applied_rap_id = db[:rap_applied]
+                                 .filter(:"#{target_class.table_name}_id" => target_id)
+                                 .filter(:is_active => 1)
+                                 .first[:rap_id]
+
+              RAP[applied_rap_id]
+            end
+
+      return if rap.nil? || rap[:default_for_repo_id]
+
+      if rap[:archival_object_id]
+        RAP.force_unpublish_for_restricted(ArchivalObject, rap[:archival_object_id])
+      elsif rap[:resource_id]
+        RAP.force_unpublish_for_restricted(Resource, rap[:resource_id])
+      end
+    end
   end
 end
 
