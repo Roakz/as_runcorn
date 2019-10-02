@@ -293,6 +293,12 @@
         "type" => "boolean",
         "readonly" => "true",
       },
+
+
+      "publishable" => {
+        "type" => "boolean",
+        "readonly" => "true"
+      }
     },
   },
 }

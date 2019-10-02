@@ -85,7 +85,21 @@
     <%= form.label_and_textarea "processing_handling_notes" %>
     <%= form.label_and_textarea "remarks" %>
     <%= form.label_and_boolean "sterilised_status" %>
-    <%= form.label_and_boolean "publish" %>
+
+    <% if form.obj['publishable'] == false %>
+      <div class="form-group">
+        <label class="control-label col-sm-2" for="<%= form.id_for('publish') %>">Publish?</label>
+        <div class="checkbox col-sm-9">
+          <input id="<%= form.id_for('publish') %>"
+                 type="checkbox"
+                 value="0"
+                 disabled="disabled" />
+          <span class="help-inline"><span class="text-muted">Record cannot be published due to RAP restriction</span></span>
+        </div>
+      </div>
+    <% else %>
+      <%= form.label_and_boolean "publish" %>
+    <% end %>
 
     <% if form.readonly? %>
       <% if form.obj['significance'] %>

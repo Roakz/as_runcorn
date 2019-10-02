@@ -97,4 +97,8 @@
     },
   },
 
+  "publishable" => {
+    "type" => "boolean",
+    "readonly" => "true"
+  }
 }

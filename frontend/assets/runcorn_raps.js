@@ -17,6 +17,7 @@
         });
 
         new RunctionRAPsTreeOverrides(self);
+        new RAPsPublishable(self);
     }
 
     RuncornRAPs.prototype.setupForeverClosedAccessCategories = function($form) {
@@ -262,9 +263,22 @@
         return AS.openCustomModal("runcornRAPReparentNodesConfirmation", 'Confirm Move', $content.html(), 'large', {keyboard: false});
     };
 
+    function RAPsPublishable(runcornRAPs) {
+        this.RuncornRAPs = runcornRAPs;
+        var $checkbox = $(':checkbox[name="archival_object[publish]"]', runcornRAPs.$container);
+        var $publishable = $(':hidden[name="archival_object[publishable]"]', runcornRAPs.$container);
+        if ($publishable.length > 0 && $checkbox.length > 0) {
+            if ($publishable.val() === 'false') {
+                $checkbox.prop('checked', false).prop('disabled', true);
+                $checkbox.after('<span class="help-inline"><span class="text-muted">Record cannot be published due to RAP restriction</span></span>');
+            }
+        }
+    }
+
     exports.RuncornRAPAttachWorkflow = RuncornRAPAttachWorkflow;
     exports.RuncornRAPEditWorkflow = RuncornRAPEditWorkflow;
     exports.RuncornRAPs = RuncornRAPs;
     exports.RAPSummary = RAPSummary;
     exports.RunctionRAPsTreeOverrides = RunctionRAPsTreeOverrides;
+    exports.RAPsPublishable = RAPsPublishable;
 })(window);
