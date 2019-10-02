@@ -1,6 +1,6 @@
 class RapsController < ApplicationController
 
-  set_access_control  "view_repository" => [:attach_and_apply, :attach_form, :summary, :edit, :update, :check_tree_move]
+  set_access_control  "view_repository" => [:attach_and_apply, :attach_form, :summary, :edit, :update, :check_tree_move, :attach_summary]
 
   def attach_and_apply
     rap_data = cleanup_params_for_schema(params[:rap], JSONModel(:rap).schema)
@@ -72,6 +72,11 @@ class RapsController < ApplicationController
                                          'position' => params[:position])
 
     render :json => response.body
+  end
+
+  def attach_summary
+    summary = JSONModel::HTTP.get_json("/raps/attach_summary", uri: params[:uri])
+    render_aspace_partial :partial => 'raps_summary/attach_summary', :locals => {summary: summary}
   end
 
 end

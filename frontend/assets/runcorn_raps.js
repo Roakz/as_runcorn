@@ -38,6 +38,19 @@
         });
     };
 
+    RuncornRAPs.prototype.showAffectedRecordCounts = function($form) {
+        $.ajax({
+            method: 'GET',
+            url: '/raps/attach_summary',
+            data: {
+                uri: $form.find(':hidden[name=uri]').val()
+            },
+            success: function(html) {
+                $form.find('#rap-counts-summary').html(html);
+            }
+        });
+    }
+
     function RuncornRAPAttachWorkflow($button, runcornRAPs) {
         this.$button = $button;
         this.recordURI = this.$button.data('uri');
@@ -56,6 +69,7 @@
         var self = this;
 
         self.runcornRAPs.setupForeverClosedAccessCategories($modal.find('form'));
+        self.runcornRAPs.showAffectedRecordCounts($modal.find('form'));
 
         $modal.find('form').ajaxForm({
             beforeSubmit: function() {
@@ -97,7 +111,7 @@
 
     function RuncornRAPEditWorkflow($button, runcornRAPs) {
         this.$button = $button;
-        this.recordURI = this.$button.data('record-uri');
+        this.recordURI = this.$button.data('attached-uri');
         this.rapURI = this.$button.data('rap-uri');
         this.runcornRAPs = runcornRAPs;
 
@@ -114,6 +128,7 @@
         var self = this;
 
         self.runcornRAPs.setupForeverClosedAccessCategories($modal.find('form'));
+        self.runcornRAPs.showAffectedRecordCounts($modal.find('form'));
 
         $modal.find('form').ajaxForm({
             beforeSubmit: function() {

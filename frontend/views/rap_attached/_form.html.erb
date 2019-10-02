@@ -5,6 +5,16 @@
 %>
 
 <%= form_for rap, :as => "rap", :url => {:controller => :raps, :action => form_action}, :html => {:class => 'form-horizontal aspace-record-form', :id => "rap_form"} do |f| %>
+  <div class="alert alert-warning">
+    <% if rap['uri'] %>
+      <p>Updating this RAP will apply changes to all items and representations currently inheriting these RAP conditions.</p>
+    <% else %>
+      <p>This new RAP will apply changes to all items and representations currently inheriting these RAP conditions.</p>
+    <% end %>
+    <div id="rap-counts-summary"></div>
+    <p>Please be aware a more restrictive RAP may result in some published records becoming unpublished.</p>
+  </div>
+
   <input type="hidden" name="uri" value="<%= uri %>"/>
   <input type="hidden" name="rap_uri" value="<%= rap['uri'] %>"/>
   <%= form_context :rap, rap do |form| %>

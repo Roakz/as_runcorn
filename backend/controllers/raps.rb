@@ -97,4 +97,15 @@ class ArchivesSpaceService < Sinatra::Base
     json_response({:status => raps_changed})
   end
 
+  Endpoint.get('/raps/attach_summary')
+    .description("RAPs and Representation counts")
+    .params(["uri", String, "URI of record RAP will be attached to"])
+    .permissions([])
+    .use_transaction(false)
+    .returns([200, "JSON"]) \
+  do
+    # FIXME permissions
+    json_response(RAP.attached_summary_for(params[:uri]))
+  end
+
 end

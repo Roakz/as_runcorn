@@ -1,0 +1,19 @@
+<% unless summary.empty? %>
+  <p>Summary of records that will inherit this RAP:</p>
+  <table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+      <th>Record Type</th>
+      <th>Count</th>
+    </tr>
+    </thead>
+    <tbody>
+      <% summary.keys.each do |record_type| %>
+        <tr>
+            <td><%= I18n.t("#{record_type}._plural") %></td>
+            <td><%= summary.fetch(record_type).fetch('count') %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

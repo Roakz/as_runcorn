@@ -315,4 +315,58 @@ class RAP < Sequel::Model(:rap)
     force_unpublish_for_restricted(model_class, id)
   end
 
+  def self.attached_summary_for(record_uri)
+    parsed = JSONModel.parse_reference(record_uri)
+    repo_id = JSONModel.parse_reference(parsed[:repository])[:id]
+
+    result = {}
+
+    RequestContext.open(:repo_id => repo_id) do
+      DB.open(true) do
+        begin
+          backlink_col = :"#{parsed[:type]}_id"
+          dummy_rap = RAP.create_from_json(JSONModel(:rap).from_hash(
+            'open_access_metadata' => false,
+            'access_category' => 'N/A',
+            'years' => nil,
+            'internal_reference' => 'DUMMY_RAP',
+            ), backlink_col => parsed[:id])
+
+          resource_id = if parsed[:type] == 'resource'
+                          parsed[:id]
+                        elsif parsed[:type] == 'archival_object'
+                          ArchivalObject[parsed[:id]].root_record_id
+                        end
+
+          Resource.propagate_raps!(resource_id, parsed[:type] == 'archival_object' ? parsed[:id] : nil)
+
+          db[:rap_applied]
+            .filter(:rap_id => dummy_rap.id)
+            .filter(:is_active => 1)
+            .each do |row|
+            if row[:archival_object_id]
+              result[:archival_object] ||= {}
+              result[:archival_object][:count] ||= 0
+              result[:archival_object][:count] += 1
+            elsif row[:digital_representation_id]
+              result[:digital_representation] ||= {}
+              result[:digital_representation][:count] ||= 0
+              result[:digital_representation][:count] += 1
+            elsif row[:physical_representation_id]
+              result[:physical_representation] ||= {}
+              result[:physical_representation][:count] ||= 0
+              result[:physical_representation][:count] += 1
+            end
+          end
+        rescue
+          Log.exception($!)
+        ensure
+          p result.inspect
+          raise Sequel::Rollback
+        end
+      end
+    end
+
+    result
+  end
 end
