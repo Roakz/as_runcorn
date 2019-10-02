@@ -22,7 +22,24 @@ class RAP < Sequel::Model(:rap)
       self.attached_root_record.propagate_raps!
     end
 
+    attached = attached_record
+    RAP.force_unpublish_for_restricted(attached.class, attached.id)
+
     result
+  end
+
+  def attached_record
+    if self[:resource_id]
+      Resource.get_or_die(self[:resource_id])
+    elsif self[:archival_object_id]
+      ArchivalObject.get_or_die(self[:archival_object_id])
+    elsif self[:physical_representation_id]
+      PhysicalRepresentation.get_or_die(self[:physical_representation_id])
+    elsif self[:digital_representation_id]
+      DigitalRepresentation.get_or_die(self[:digital_representation_id])
+    else
+      raise "Can't determine attached record for #{self}"
+    end
   end
 
   def attached_root_record
