@@ -8,7 +8,8 @@ class ArchivesSpaceService < Sinatra::Base
     .permissions([])
     .returns([200, :created]) \
   do
-    attach_rap(ArchivalObject, params[:id], params[:rap])
+    RAP.attach_rap(ArchivalObject, params[:id], params[:rap])
+    json_response({:status => 'ok'})
   end
 
   Endpoint.post('/raps/repositories/:repo_id/physical_representations/:id/attach_and_apply')
@@ -19,7 +20,8 @@ class ArchivesSpaceService < Sinatra::Base
     .permissions([])
     .returns([200, :created]) \
   do
-    attach_rap(PhysicalRepresentation, params[:id], params[:rap])
+    RAP.attach_rap(PhysicalRepresentation, params[:id], params[:rap])
+    json_response({:status => 'ok'})
   end
 
   Endpoint.post('/raps/repositories/:repo_id/digital_representations/:id/attach_and_apply')
@@ -30,7 +32,8 @@ class ArchivesSpaceService < Sinatra::Base
     .permissions([])
     .returns([200, :created]) \
   do
-    attach_rap(DigitalRepresentation, params[:id], params[:rap])
+    RAP.attach_rap(DigitalRepresentation, params[:id], params[:rap])
+    json_response({:status => 'ok'})
   end
 
   Endpoint.post('/raps/repositories/:repo_id/resources/:id/attach_and_apply')
@@ -41,7 +44,8 @@ class ArchivesSpaceService < Sinatra::Base
     .permissions([])
     .returns([200, :created]) \
   do
-    attach_rap(Resource, params[:id], params[:rap])
+    RAP.attach_rap(Resource, params[:id], params[:rap])
+    json_response({:status => 'ok'})
   end
 
   Endpoint.get('/raps/repositories/:repo_id/resources/:id/summary')
@@ -91,16 +95,6 @@ class ArchivesSpaceService < Sinatra::Base
     raps_changed = RAP.does_movement_affect_raps(params[:parent_uri], params[:node_uris], params[:position])
 
     json_response({:status => raps_changed})
-  end
-
-  private
-
-  def attach_rap(model_class, id, rap)
-    obj = model_class.get_or_die(id)
-    json = model_class.to_jsonmodel(obj)
-    json['rap_attached'] = rap.to_hash
-    obj.update_from_json(json)
-    json_response({:status => 'ok'})
   end
 
 end

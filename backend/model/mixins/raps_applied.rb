@@ -116,32 +116,38 @@ module RAPsApplied
           .select(:archival_object_id,
                   :end)
           .each do |row|
-          ao_id_to_end_date[row[:archival_object_id]] ||= handle_fuzzy_date(row[:end])
+          ao_id_to_end_date[row[:archival_object_id]] ||= RAPApplications.handle_fuzzy_date(row[:end])
         end
 
         rap_applied_objs.each do |rap_applied_obj|
           @existence_end_date_by_id[rap_applied_obj.id] = ao_id_to_end_date.fetch(rap_applied_obj[id_col], nil)
-          @expiry_date_by_id[rap_applied_obj.id] = calculate_expiry_date_for(rap_applied_obj, ao_id_to_end_date.fetch(rap_applied_obj[id_col], Date.today))
+          @expiry_date_by_id[rap_applied_obj.id] = calculate_expiry_date_for_record(rap_applied_obj.id, ao_id_to_end_date.fetch(rap_applied_obj[id_col], Date.today))
         end
       end
     end
 
-    def calculate_expiry_date_for(rap_applied_obj, end_date)
-      rap_applied_row = @rap_applied_by_record_id.fetch(rap_applied_obj.id).find {|row| row[:is_active] == 1}
+    def calculate_expiry_date_for_record(record_id, end_date)
+      rap_applied_row = @rap_applied_by_record_id.fetch(record_id).find {|row| row[:is_active] == 1}
       rap = @active_raps_by_id.fetch(rap_applied_row[:rap_id])
 
       return nil if rap.years.nil?
+      return nil if end_date.nil?
 
-      rap_expiry_date = end_date.next_year(rap.years)
+      RAPApplications.calculate_expiry_date(rap.years, end_date, rap.access_category_id)
+    end
 
-      if rap.access_category == RAP::ACCESS_CATEGORY_CABINET_MATTERS
+    def self.calculate_expiry_date(years, end_date, access_category_id)
+      rap_expiry_date = end_date.next_year(years)
+
+      if access_category_id == BackendEnumSource.id_for_value('runcorn_rap_access_category',
+                                                              RAP::ACCESS_CATEGORY_CABINET_MATTERS)
         rap_expiry_date = Date.new(rap_expiry_date.year + 1, 1, 1)
       end
 
       rap_expiry_date
     end
 
-    def handle_fuzzy_date(s)
+    def self.handle_fuzzy_date(s)
       return Date.today if s.nil?
 
       default = [Date.today.year.to_s, '12', '31']
@@ -155,6 +161,7 @@ module RAPsApplied
         Date.today
       end
     end
+
   end
 
   module ClassMethods

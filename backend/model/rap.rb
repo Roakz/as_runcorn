@@ -175,4 +175,123 @@ class RAP < Sequel::Model(:rap)
       result
     end
   end
+
+  def self.force_unpublish_for_restricted(model_class, id)
+    today = Date.today
+
+    DB.open do |db|
+      existence_label_id = BackendEnumSource.id_for_value('date_label', 'existence')
+
+      if model_class == ArchivalObject || model_class == Resource
+        rap_id = if model_class == ArchivalObject
+                   db[:rap].filter(:archival_object_id => id).select(:id).first[:id]
+                 else
+                   db[:rap].filter(:resource_id => id).select(:id).first[:id]
+                 end
+
+
+        # Return a set of AO/RAP applied rows that might now be unpublishable
+        # after the RAP changes.
+        possibly_unpublishable =
+          db[:rap_applied]
+            .join(:rap, Sequel.qualify(:rap, :id) => Sequel.qualify(:rap_applied, :rap_id))
+            .join(:archival_object, Sequel.qualify(:archival_object, :id) => Sequel.qualify(:rap_applied, :archival_object_id))
+            .join(:date,
+                  Sequel.qualify(:archival_object, :id) => Sequel.qualify(:date, :archival_object_id),
+                  Sequel.qualify(:date, :label_id) => existence_label_id)
+            .filter(Sequel.qualify(:archival_object, :publish) => 1)
+            .filter(Sequel.qualify(:rap_applied, :is_active) => 1)
+            .filter(Sequel.qualify(:rap, :id) => rap_id)
+            .where { Sequel.qualify(:rap, :years) != 0 }
+            .filter(Sequel.qualify(:rap, :open_access_metadata) => 0)
+            .where {
+          Sequel.|({ Sequel.qualify(:date, :end) => nil },
+                   { Sequel.qualify(:rap, :years) => nil },
+                   Sequel.lit("(substring(date.end, 1, 4) + rap.years + 1) >= year(curdate())"))
+        }.select(Sequel.qualify(:rap, :years),
+                 Sequel.qualify(:rap, :access_category_id),
+                 Sequel.qualify(:date, :end),
+                 Sequel.qualify(:archival_object, :id))
+
+        to_unpublish = []
+
+        possibly_unpublishable.each do |row|
+          if row[:end].nil? || row[:years].nil?
+            # If the record is undated or years is null (and therefore "always
+            # closed") then it shouldn't be published.
+            to_unpublish << row[:id]
+          else
+            # Otherwise, it should be unpublished if the RAP hasn't expired yet.
+            rounded_up_end_date = RAPsApplied::RAPApplications.handle_fuzzy_date(row[:end])
+
+            rap_expires = RAPsApplied::RAPApplications.calculate_expiry_date(Integer(row[:years]),
+                                                                             rounded_up_end_date,
+                                                                             row[:access_category_id])
+
+            if rap_expires >= today
+              to_unpublish << row[:id]
+            end
+          end
+        end
+
+        db[:archival_object].filter(:id => to_unpublish).update(:system_mtime => Time.now,
+                                                                :publish => 0,
+                                                                :lock_version => Sequel.expr(1) + :lock_version)
+
+        Log.info("Unpublished #{to_unpublish.length} records due to RAP update")
+
+      elsif model_class == PhysicalRepresentation || model_class == DigitalRepresentation
+        representation = model_class[id]
+        return if representation.publish == 0
+
+        backlink_col = :"#{model_class.table_name}_id"
+        rap = db[:rap].filter(backlink_col => id).first
+
+        parent_end_date = db[:date]
+                            .filter(:archival_object_id => representation.archival_object_id,
+                                    :label_id => existence_label_id)
+                            .select(:end)
+                            .first[:end]
+
+        should_unpublish = false
+
+        if parent_end_date.nil? || rap[:years].nil?
+          # If the record is undated or years is null (and therefore "always
+          # closed") then it shouldn't be published.
+          should_unpublish = true
+        else
+          # Otherwise, it should be unpublished if the RAP hasn't expired yet.
+          rounded_up_end_date = RAPsApplied::RAPApplications.handle_fuzzy_date(parent_end_date)
+
+          rap_expires = RAPsApplied::RAPApplications.calculate_expiry_date(Integer(rap[:years]),
+                                                                           rounded_up_end_date,
+                                                                           rap[:access_category_id])
+
+          if rap_expires >= today
+            should_unpublish = true
+          end
+        end
+
+        if should_unpublish
+          Log.info("Unpublished representation due to RAP update")
+
+          db[model_class.table_name]
+            .filter(:id => id)
+            .update(:system_mtime => Time.now,
+                    :publish => 0,
+                    :lock_version => Sequel.expr(1) + :lock_version)
+        end
+      end
+    end
+  end
+
+  def self.attach_rap(model_class, id, rap)
+    obj = model_class.get_or_die(id)
+    json = model_class.to_jsonmodel(obj)
+    json['rap_attached'] = rap.to_hash
+    obj.update_from_json(json)
+
+    force_unpublish_for_restricted(model_class, id)
+  end
+
 end
