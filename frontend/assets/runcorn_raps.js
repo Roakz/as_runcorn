@@ -20,6 +20,31 @@
         new RAPsPublishable(self);
     }
 
+    RuncornRAPs.prototype.setupAccessCategoryHints = function($form) {
+        var self = this;
+        var $accessCategoryInput = $('#rap_access_category_', $form);
+        var $yearsInput = $('#rap_years_', $form);
+
+        $yearsInput.after('<small id="rapYearsHelp" class="form-text text-muted"></small>');
+
+        var $hintContainer = $('#rapYearsHelp', $form);
+
+        function addHelpfulHint() {
+            if (self.opts.forever_closed_access_categories.indexOf($accessCategoryInput.val()) >= 0) {
+                $hintContainer.text('Years cannot be set as Access Category implies closed permanently');
+            } else if ($accessCategoryInput.val() === 'N/A') {
+                $hintContainer.text('Set to 0 if open; leave empty if closed permanently; otherwise provide a value from 1 to 100');
+            } else {
+                $hintContainer.text('Set to 0 if open; otherwise provide a value from 1 to 100 (default 100)');
+            }
+        }
+
+        addHelpfulHint();
+        $accessCategoryInput.on('change', function() {
+            addHelpfulHint();
+        });
+    };
+
     RuncornRAPs.prototype.setupForeverClosedAccessCategories = function($form) {
         var self = this;
         var $accessCategoryInput = $('#rap_access_category_', $form);
@@ -70,6 +95,7 @@
         var self = this;
 
         self.runcornRAPs.setupForeverClosedAccessCategories($modal.find('form'));
+        self.runcornRAPs.setupAccessCategoryHints($modal.find('form'));
         self.runcornRAPs.showAffectedRecordCounts($modal.find('form'));
 
         $modal.find('form').ajaxForm({
@@ -129,6 +155,7 @@
         var self = this;
 
         self.runcornRAPs.setupForeverClosedAccessCategories($modal.find('form'));
+        self.runcornRAPs.setupAccessCategoryHints($modal.find('form'));
         self.runcornRAPs.showAffectedRecordCounts($modal.find('form'));
 
         $modal.find('form').ajaxForm({

@@ -10,6 +10,7 @@ class RAP < Sequel::Model(:rap)
 
   def update_from_json(json, opts = {}, apply_nested_records = true)
     self.class.apply_forever_closed_access_categories(json)
+    self.class.apply_forever_is_too_long_access_categories(json)
 
     result = super
 
@@ -84,12 +85,23 @@ class RAP < Sequel::Model(:rap)
 
   def self.create_from_json(json, opts = {})
     apply_forever_closed_access_categories(json)
+    apply_forever_is_too_long_access_categories(json)
     super
   end
 
   def self.apply_forever_closed_access_categories(json)
+    # if access_category = 9-13, ensure years is empty
     if AppConfig[:as_runcorn_forever_closed_access_categories].include?(json['access_category'])
       json['years'] = nil
+    end
+  end
+
+  def self.apply_forever_is_too_long_access_categories(json)
+    # if access_category = 1-8 and years is empty, default years to 100
+    if json['years'].nil?
+      if !AppConfig[:as_runcorn_forever_closed_access_categories].include?(json['access_category']) && json['access_category'] != 'N/A'
+        json['years'] = 100
+      end
     end
   end
 
