@@ -37,6 +37,10 @@ class IndexerCommon
     result
   end
 
+  def self.split_qsa_id(s)
+    s.scan(/([^\d]+)?(\d+)/)[0]
+  end
+
   add_indexer_initialize_hook do |indexer|
     require_relative '../common/qsa_id'
     QSAId.mode(:indexer)
@@ -190,7 +194,7 @@ class IndexerCommon
 
         if record['record']['qsa_id_prefixed']
           # include the prefix in the sort string so that different models sort separately
-          ((prefix, number)) = record['record']['qsa_id_prefixed'].scan(/([^\d]+)?(\d+)/)
+          (prefix, number) = IndexerCommon.split_qsa_id(record['record']['qsa_id_prefixed'])
           doc['qsa_id_u_sort'] = prefix.to_s.ljust(9, '0') + number.to_s.rjust(9,'0')
           doc['qsa_id_u_ssort'] = record['record']['qsa_id_prefixed']
         end
