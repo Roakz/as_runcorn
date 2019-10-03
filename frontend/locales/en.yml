@@ -65,6 +65,8 @@ en:
     deaccessioned: This record has been deaccessioned
     agency_assigned_id: Agency Assigned ID
     rap_access_status: Access Status
+    _singular: Item
+    _plural: Items
     _frontend:
       has_representation_with_rap_attached: Some representations have a different restriction period
       action:
