@@ -1,6 +1,6 @@
 <%= setup_context :object => @batch, :title => @batch.display_string %>
 
-<div id="clear_request_modal_template" data-title="Clear This Request?"><!--
+<div id="clear_batch_modal_template" data-title="Clear This Batch?"><!--
    <div class="modal-body">
      <p>This will remove all objects currently linked to this batch.</p>
      <p>Really clear this batch?</p>
@@ -13,11 +13,11 @@
 
 
 <div class="row">
-    <div class="record-pane batch_assign_objects">
+    <div class="record-pane batch_assign_objects col-sm-12">
         <div class="pull-right">
             <%= form_tag({:controller => :batches, :action => :clear_assigned_objects},
-                         {:id => "clear-request-form"}) do |f| %>
-                <button id="clear-request-btn" class="btn btn-danger">Clear Request</button>
+                         {:id => "clear-batch-form"}) do |f| %>
+                <button id="clear-batch-btn" class="btn btn-danger"><%= I18n.t("batch._frontend.action.clear") %></button>
             <% end %>
         </div>
         <%= form_tag(:controller => :batches, :action => :assign_objects) do |f| %>
