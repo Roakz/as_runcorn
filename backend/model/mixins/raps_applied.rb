@@ -58,7 +58,9 @@ module RAPsApplied
     def calculate_rap_access_status(json)
       result = RAP_ACCESS_STATUS_RESTRICTED
 
-      if json['rap_applied']['open_access_metadata']
+      if json['rap_applied']['access_category'] == RAP::ACCESS_CATEGORY_NA
+        result = RAP_ACCESS_STATUS_RESTRICTED
+      elsif json['rap_applied']['open_access_metadata']
         if json['rap_applied']['years'].nil?
           result = RAP_ACCESS_STATUS_RESTRICTED
         elsif json['rap_applied']['years'] == 0
@@ -77,6 +79,13 @@ module RAPsApplied
       end
 
       result
+    end
+
+    def calculate_publishable(json)
+      return false if json['rap_applied']['is_repository_default']
+      return false if json['rap_applied']['access_category'] == RAP::ACCESS_CATEGORY_NA
+
+      json['rap_applied']['open_access_metadata'] || json['rap_expiration']['expired']
     end
 
     private
@@ -179,7 +188,7 @@ module RAPsApplied
         json['rap_history'] = raps.rap_history_for_rap_applied(obj.id)
         json['rap_expiration'] = raps.rap_expiration_for_rap_applied(obj.id)
         json['rap_access_status'] = raps.calculate_rap_access_status(json)
-        json['publishable'] = json['rap_applied']['open_access_metadata'] || json['rap_expiration']['expired']
+        json['publishable'] = raps.calculate_publishable(json)
       end
 
       jsons
