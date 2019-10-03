@@ -1,11 +1,23 @@
 function BatchAssignObjects() {
     this.setupBinds();
+    $('select#model').trigger("change");
 }
 
 BatchAssignObjects.prototype.addJSWonderment = function() {
-    $('#objects_assigned .table-record-actions .btn-group').each(function () {
-        $(this).append($('<button class="btn btn-xs btn-danger object-remove-btn">Remove</button>'));
+    $('#batch_assigned_objects .table-record-actions .btn-group').each(function () {
+        $(this).append($('<button class="btn btn-xs btn-warning object-remove-btn">Remove</button>'));
+	var json = $(this).closest('tr').data('resolved-record');
+	$(this).find('.object-remove-btn').addClass('object-remove-btn-' + json['jsonmodel_type']);
     })
+
+    this.setupRemoveButtons();
+};
+
+BatchAssignObjects.prototype.setupRemoveButtons = function() {
+    var model = $('select#model').val();
+
+    $('.object-remove-btn').attr('disabled', 'disabled');
+    $('.object-remove-btn-' + model).removeAttr('disabled');
 };
 
 BatchAssignObjects.prototype.setupBinds = function() {
@@ -18,16 +30,17 @@ BatchAssignObjects.prototype.setupBinds = function() {
 
         // reinitialise the linkers with the new set of types
         // FIXME: is there a saner way to do this?
-    $("#batch_adds_linker").closest('.linker-wrapper').find('.linker-browse-btn').off('click');
-	$('#batch_adds_linker').data('types', help.data('types'));
-	$("#batch_adds_linker").removeClass('initialised');
-	$("#batch_adds_linker").linker();
-	$("#batch_adds_linker").closest('.linker-wrapper').find('.token-input-list').first().remove();
-    $("#batch_removes_linker").closest('.linker-wrapper').find('.linker-browse-btn').off('click');
-	$('#batch_removes_linker').data('types', help.data('types'));
-	$("#batch_removes_linker").removeClass('initialised');
-	$("#batch_removes_linker").linker();
-	$("#batch_removes_linker").closest('.linker-wrapper').find('.token-input-list').first().remove();
+        $("#batch_adds_linker").closest('.linker-wrapper').find('.linker-browse-btn').off('click');
+        $('#batch_adds_linker').data('types', help.data('types'));
+        $("#batch_adds_linker").removeClass('initialised');
+        $("#batch_adds_linker").linker();
+        $("#batch_adds_linker").closest('.linker-wrapper').find('.token-input-list').first().remove();
+
+        $("#batch_removes_linker").closest('.linker-wrapper').find('.linker-browse-btn').off('click');
+        $('#batch_removes_linker').data('types', help.data('types'));
+        $("#batch_removes_linker").removeClass('initialised');
+        $("#batch_removes_linker").linker();
+        $("#batch_removes_linker").closest('.linker-wrapper').find('.token-input-list').first().remove();
 
 	if (model == '') {
             $('button[type=submit]').attr('disabled', 'disabled');
@@ -38,8 +51,12 @@ BatchAssignObjects.prototype.setupBinds = function() {
             $('.batch-assign-type-label').text($(this).find(':selected').text());
 	    $('#objects_add').show();
 	    $('#objects_remove').show();
+
+	    $('.object-remove-btn').attr('disabled', 'disabled');
+	    $('.object-remove-btn-' + model).removeAttr('disabled');
 	}
     });
+
 
     $(document).on('click', '.object-remove-btn', function (e) {
         e.preventDefault();
@@ -81,4 +98,6 @@ BatchAssignObjects.prototype.setupBinds = function() {
     });
 }
 
-window.assign_objects_form = new BatchAssignObjects();
+$(function() {
+    window.assign_objects_form = new BatchAssignObjects();
+});
