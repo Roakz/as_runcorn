@@ -114,7 +114,8 @@ class Batch < Sequel::Model(:batch)
       # Clear any existing entries so we don't end up with duplicates
       db[:batch_objects].filter(id_col => ids, :batch_id => self.id).delete
       begin
-      db[:batch_objects].multi_insert(ids.map {|id| {id_col => id, :batch_id => self.id}})
+        db[:batch_objects].multi_insert(ids.map {|id| {id_col => id, :batch_id => self.id}})
+        db[:batch].filter(:id => self.id).update(:lock_version => Sequel.expr(1) + :lock_version, :system_mtime => Time.now)
       rescue Sequel::ForeignKeyConstraintViolation
         raise RecordNotFound.new('Attempt to add a non-existent object')
       end
@@ -129,6 +130,7 @@ class Batch < Sequel::Model(:batch)
 
     DB.open do |db|
       db[:batch_objects].filter(id_col => ids, :batch_id => self.id).delete
+      db[:batch].filter(:id => self.id).update(:lock_version => Sequel.expr(1) + :lock_version, :system_mtime => Time.now)
     end
   end
 
@@ -136,6 +138,7 @@ class Batch < Sequel::Model(:batch)
   def remove_all_objects
     DB.open do |db|
       db[:batch_objects].filter(:batch_id => self.id).delete
+      db[:batch].filter(:id => self.id).update(:lock_version => Sequel.expr(1) + :lock_version, :system_mtime => Time.now)
     end
   end
 
