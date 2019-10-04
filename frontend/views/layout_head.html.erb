@@ -250,3 +250,19 @@
   <%= javascript_include_tag("runcorn_top_containers.bulk") %>
   <%= render_aspace_partial :partial => "top_containers/bulk_operations/bulk_action_extra_templates" %>
 <% end %>
+
+<% if controller.controller_name == 'search' %>
+  <script type="text/template" id="createBatchFromSearchTemplate">
+    <div class="btn-group">
+      <%= form_tag({:controller => :batches, :action => :create_from_search}.merge(params.select{|k,v| !['controller', 'action'].include?(k)})) do |f| %>
+        <button class="btn btn-sm btn-primary"><%= I18n.t("batch._frontend.action.create_from_search") %></button>
+      <% end %>
+    </div>
+  </script>
+
+  <script>
+    $(function () {
+      $('.record-toolbar .btn-group').prepend(AS.renderTemplate("createBatchFromSearchTemplate"))
+    });
+  </script>
+<% end %>

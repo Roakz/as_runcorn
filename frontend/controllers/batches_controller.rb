@@ -5,6 +5,7 @@ class BatchesController < ApplicationController
   # FIXME: Who should be able to create/edit batches?  Assuming
   # any logged in user here.
   set_access_control "view_repository" => [:new, :edit, :create, :update, :delete,
+                                           :create_from_search,
                                            :index, :show, :assigned_objects,
                                            :assign_objects_form, :assign_objects,
                                            :clear_assigned_objects,
@@ -147,6 +148,18 @@ class BatchesController < ApplicationController
 
     flash[:success] = I18n.t("batch._frontend.messages.deleted", JSONModelI18nWrapper.new(:batch => batch))
     redirect_to(:controller => :batches, :action => :index, :deleted_uri => batch.uri)
+  end
+
+
+  def create_from_search
+    post_uri = URI("/repositories/#{session[:repo_id]}/batches/create_from_search")
+    criteria = params_for_backend_search
+    Search.build_filters(criteria)
+    response = JSONModel::HTTP.post_form(post_uri, criteria)
+    result = ASUtils.json_parse(response.body)
+
+    flash[:success] = I18n.t("batch._frontend.messages.created")
+    redirect_to :controller => :batches, :action => :show, :id => result.fetch('id')
   end
 
 

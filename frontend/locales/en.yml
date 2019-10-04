@@ -469,6 +469,7 @@ en:
       action:
         save: Save Batch
         clear: Clear Batch
+        create_from_search: Create Batch
         add_action: Add draft action
         submit_for_review: Submit action for approval
         revert_to_draft: Revert action to draft

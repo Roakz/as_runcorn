@@ -49,6 +49,7 @@ ArchivesSpace::Application.routes.draw do
 
       match('top_containers/bulk_operations/update_functional_location' => 'top_containers#bulk_functional_location', :via => [:post])
 
+      match('batches/create_from_search' => 'batches#create_from_search', :via => [:post])
       resources :batches
       match('batches/:id/assign_objects_form' => 'batches#assign_objects_form', :via => [:get])
       match('batches/:id/assign_objects' => 'batches#assign_objects', :via => [:post])

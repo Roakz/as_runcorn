@@ -29,6 +29,45 @@ class ArchivesSpaceService < Sinatra::Base
     handle_create(Batch, params[:batch])
   end
 
+  Endpoint.post('/repositories/:repo_id/batches/create_from_search')
+    .description("Create a Batch and populate with the results of a search")
+    .params(["repo_id", :repo_id],
+            ["include_deaccessioned", BooleanParam, "Whether to include deaccessioned objects", :default => false],
+            *BASE_SEARCH_PARAMS)
+    .permissions([])
+    .returns([200, :created]) \
+  do
+    note = 'Created from search results, excluding unspported models'
+    note += ' and deaccessioned records' unless params[:include_deaccessioned]
+
+    batch = Batch.create_from_json(JSONModel(:batch).from_hash({:note => note}))
+
+    batch.include_deaccessioned(params[:include_deaccessioned])
+
+    page = 1
+    objs = {}
+
+    sparms = params.merge(:page_size => 2**16,
+                          :type => Batch.models,
+                          :fields => ['primary_type', 'uri'],
+                          :sort => 'primary_type asc')
+
+    sr = Search.search(sparms.merge(:page => page), params[:repo_id])
+
+    while !sr['results'].empty?
+      sr['results'].each{|r| objs[r['primary_type']] ||= []; objs[r['primary_type']] << r['uri']}
+
+      page = page += 1
+      sr = Search.search(sparms.merge(:page => page), params[:repo_id])
+    end
+
+    objs.each do |model, uris|
+      batch.add_by_ref(model, *uris)
+    end
+
+    created_response(batch)
+  end
+
   Endpoint.post('/repositories/:repo_id/batches/:id')
     .description("Update a Batch")
     .params(["repo_id", :repo_id],
