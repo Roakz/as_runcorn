@@ -35,7 +35,7 @@
         }
       },
 
-      "move_date" => {"type" => "date-time", "ifmissing" => "error"},
+      "move_date" => {"type" => "date", "ifmissing" => "error"},
       "move_to_storage_permitted" => {"type" => "boolean", "readonly" => "true"},
 
       "user" => {

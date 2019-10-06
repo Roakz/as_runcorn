@@ -24,7 +24,7 @@ module Movements
 
     mvmt = {
       'user' => {'ref' => opts[:user]},
-      'move_date' => opts.fetch(:date, Time.now.getlocal.iso8601),
+      'move_date' => opts.fetch(:date, Date.today.strftime('%Y-%m-%d')),
     }
 
 

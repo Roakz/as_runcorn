@@ -21,8 +21,6 @@ class Movement < Sequel::Model(:movement)
       if obj.storage_location_id
         json['storage_location'] = {'ref' => JSONModel(:location).uri_for(obj.storage_location_id)}
       end
-
-      json['move_date'] = json['move_date'].getlocal.strftime("%Y-%m-%d")
     end
 
     jsons
