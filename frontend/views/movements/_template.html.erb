@@ -75,7 +75,7 @@
     <% end %>
 
     <% if form.readonly? %>
-      <% if form.obj['move_context'] %>
+      <% if form.obj['move_context']  && form.obj['move_context'].has_key?('_resolved') %>
         <% obj = form.obj['move_context'] %>
 
         <% token = render_token :object => obj['_resolved'],
