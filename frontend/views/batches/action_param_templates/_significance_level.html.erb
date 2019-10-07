@@ -1,0 +1,38 @@
+<div class="form-group">
+  <div class="control-label col-sm-2"><%= I18n.t("batch_action_types.significance_level.match_level") %></div>
+  <% if form.readonly? %>
+    <div class="label-only col-sm-6">
+      <%= I18n.t("enumerations.runcorn_significance.#{form.obj['match_level']}") %>
+    </div>
+  <% else %>
+    <div class="col-sm-6">
+      <%= form.select "match_level", jsonmodel_definition(:archival_object).options_for(form, "significance", false), :default => 'standard' %>
+    </div>
+  <% end %>
+</div>
+
+<div class="form-group">
+  <div class="control-label col-sm-2"><%= I18n.t("batch_action_types.significance_level.change_to_level") %></div>
+  <% if form.readonly? %>
+    <div class="label-only col-sm-6">
+      <%= I18n.t("enumerations.runcorn_significance.#{form.obj['change_to_level']}") %>
+    </div>
+  <% else %>
+    <div class="col-sm-6">
+      <%= form.select "change_to_level", jsonmodel_definition(:archival_object).options_for(form, "significance", false), :default => 'standard' %>
+    </div>
+  <% end %>
+</div>
+
+<div class="form-group">
+  <div class="control-label col-sm-2"><%= I18n.t("batch_action_types.significance_level.make_sticky") %></div>
+  <% if form.readonly? %>
+    <div class="label-only col-sm-6">
+      <%= !!form.obj['make_sticky'] %>
+    </div>
+  <% else %>
+    <div class="col-sm-6 checkbox">
+      <%= form.checkbox "make_sticky", {}, !!form.obj['make_sticky'] %>
+    </div>
+  <% end %>
+</div>

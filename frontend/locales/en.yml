@@ -513,6 +513,7 @@ en:
     action_types:
       no_action: "-- no action --"
       functional_move: Functional Move
+      significance_level: Significance Level
 
   batch_assigned_objects:
     _plural: Objects
@@ -521,3 +522,8 @@ en:
     functional_move:
       label: Functional Move
       location: Location
+    significance_level:
+      label: Significance Level
+      match_level: Match level
+      change_to_level: Change to level
+      make_sticky: Don't inherit
