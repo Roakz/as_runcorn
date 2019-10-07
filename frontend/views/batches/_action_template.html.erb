@@ -37,7 +37,7 @@
           </div>
         </section>
 
-        <% if form.readonly? %>
+        <% if form.readonly? && form.obj['last_report'] && !form.obj['last_report'].empty? %>
           <section id="action_result" class="subrecord-form-dummy">
             <h4 class="subrecord-form-heading"><%= I18n.t("batch_action.last_report") %></h4>
             <div class="subrecord-form-container">
