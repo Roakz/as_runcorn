@@ -12,7 +12,7 @@ class BatchesController < ApplicationController
                                            :add_action_form, :add_action,
                                            :submit_for_review, :approve,
                                            :revert_to_draft, :delete_action,
-                                           :perform_action,
+                                           :dry_run, :perform_action,
                                            :csv]
 
   helper_method :batch_action_types
@@ -95,6 +95,13 @@ class BatchesController < ApplicationController
     JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/delete_action")
 
     flash[:success] = I18n.t("batch._frontend.messages.action_deleted")
+    return redirect_to :controller => :batches, :action => :show
+  end
+
+  def dry_run
+    JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/dry_run")
+
+    flash[:success] = I18n.t("batch._frontend.messages.dry_run_performed")
     return redirect_to :controller => :batches, :action => :show
   end
 

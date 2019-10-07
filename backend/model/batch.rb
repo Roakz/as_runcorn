@@ -373,14 +373,16 @@ class Batch < Sequel::Model(:batch)
   end
 
 
-  def perform_action
+  def perform_action(opts = {})
+    opts[:commit] = false unless opts.has_key?(:commit)
+
     action = current_action
 
     unless action
       raise InvalidAction.new('Batch does not have a current action to perform.')
     end
 
-    if BatchActionHandler.action_requires_approval?(action['action_type'])
+    if opts[:commit] && BatchActionHandler.action_requires_approval?(action['action_type'])
       unless action['action_status'] == 'approved'
         raise OperationNotPermitted.new("Action nust be approved before it can be performed.")
       end
@@ -388,11 +390,25 @@ class Batch < Sequel::Model(:batch)
 
     handler = BatchActionHandler.handler_for_type(action['action_type'])
 
-    handler.perform_action(ASUtils.json_parse(action['action_params']), action['action_user'], action['uri'], self.object_refs)
+    report = ''
 
-    action['action_status'] = 'executed'
-    action['action_time'] = Time.now
-    BatchAction.get_or_die(JSONModel.parse_reference(action['uri'])[:id]).update_from_json(action)
+    begin
+      DB.transaction(:savepoint => true) do
+        action['action_time'] = Time.now
+        report = handler.perform_action(ASUtils.json_parse(action['action_params']), action['action_user'], action['uri'], self.object_refs)
+
+        if opts[:commit]
+          action['action_status'] = 'executed'
+        else
+          report = "Dry run report (no changes made):\n\n" + report
+          raise Sequel::Rollback
+        end
+      end
+    rescue Sequel::Rollback
+      # no need to propagate
+    end
+
+    BatchAction.get_or_die(JSONModel.parse_reference(action['uri'])[:id]).update_from_json(action, :last_report => report)
   end
 
 

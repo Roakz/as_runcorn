@@ -57,6 +57,7 @@ ArchivesSpace::Application.routes.draw do
       match('batches/:id/clear_assigned_objects' => 'batches#clear_assigned_objects', :via => [:post])
       match('batches/:id/add_action_form' => 'batches#add_action_form', :via => [:get])
       match('batches/:id/add_action' => 'batches#add_action', :via => [:post])
+      match('batches/:id/dry_run' => 'batches#dry_run', :via => [:post])
       match('batches/:id/perform_action' => 'batches#perform_action', :via => [:post])
       match('batches/:id/delete_action' => 'batches#delete_action', :via => [:post])
       match('batches/:id/submit_for_review' => 'batches#submit_for_review', :via => [:post])

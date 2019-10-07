@@ -35,15 +35,20 @@ class FunctionalMove < BatchActionHandler
 
     models = ASModel.all_models.select {|model| model.included_modules.include?(Movements)}
 
+    count = 0
+
     begin
       uris.each do |uri|
         ref = JSONModel.parse_reference(uri)
         model = models.select{|model| model.my_jsonmodel.record_type == ref[:type]}.first
         model[ref[:id]].move(opts)
+        count += 1
       end
     rescue => e
       # FIXME: think about exception handling
       raise e
     end
+
+    "#{count} object#{count == 1 ? '' : 's'} moved to #{I18n.t('enumerations.runcorn_location.' + params['location'])}."
   end
 end

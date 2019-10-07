@@ -303,6 +303,21 @@ class ArchivesSpaceService < Sinatra::Base
   end
 
 
+  Endpoint.post('/repositories/:repo_id/batches/:id/dry_run')
+    .description("Perform a dry run of the current action for a batch")
+    .params(["repo_id", :repo_id],
+            ["id", :id])
+    .permissions([])
+    .returns([200, :updated]) \
+  do
+    batch = Batch.get_or_die(params[:id])
+
+    batch.perform_action(:commit => false)
+
+    json_response("status" => "OK")
+  end
+
+
   Endpoint.post('/repositories/:repo_id/batches/:id/perform_action')
     .description("Perform the current action for a batch")
     .params(["repo_id", :repo_id],
@@ -312,7 +327,7 @@ class ArchivesSpaceService < Sinatra::Base
   do
     batch = Batch.get_or_die(params[:id])
 
-    batch.perform_action
+    batch.perform_action(:commit => true)
 
     json_response("status" => "OK")
   end

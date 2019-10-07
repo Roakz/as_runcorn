@@ -474,6 +474,7 @@ en:
         submit_for_review: Submit action for approval
         revert_to_draft: Revert action to draft
         approve: Approve action to be performed
+        dry_run: Dry run
         perform_action: Perform action
         delete_action: Delete action
         assign_objects: Assign objects
@@ -493,6 +494,7 @@ en:
         submitted_for_review: Action submitted for review
         reverted_to_draft: Action reverted to draft
         approved: Action approved to be performed
+        dry_run_performed: Dry run successful
         action_performed: Action successfully performed
         action_deleted: Action successfully deleted
 
@@ -501,6 +503,7 @@ en:
     action_type: Type
     action_user: By
     action_time: At
+    last_report: Result
     approved_user: Approved by
     approved_time: Approved at
     action_params: Parameters 

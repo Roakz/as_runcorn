@@ -9,6 +9,8 @@
 
       "note" => {"type" => "string"},
 
+      "last_report" => {"type" => "string", "readonly" => "true"},
+
       "action_status" => {
         "type" => "string",
         "dynamic_enum" => "runcorn_batch_action_status",

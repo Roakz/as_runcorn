@@ -50,6 +50,13 @@
           </div>
         <% end %>
 
+        <%# dry run is always an option if there is an action %>
+        <div class="btn-group">
+          <%= form_tag({:controller => :batches, :action => :dry_run}) do |f| %>
+            <button class="btn btn-sm btn-success"><%= I18n.t("batch._frontend.action.dry_run") %></button>
+          <% end %>
+        </div>
+
         <%# workflow buttons for actions that need to be approved before they can be performed %>
         <% unless approval_perm == 'no_approval_required' %>
 
