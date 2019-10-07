@@ -25,36 +25,38 @@
         <div>
           <% batch_action_types.each do |type| %>
             <% unsupported_models = (@batch.model_counts.keys - type['models']) %>
-            <%= form_tag({:controller => :batches, :action => :add_action}) do |f| %>
-              <input type="hidden" name="action_type" value="<%= type['type'] %>">
 
-              <% if unsupported_models.empty? %>
-                <div class="batch-action-type-panel batch-action-type-available" onclick="$(this).closest('form').submit();">
-              <% else %>
-                <div class="batch-action-type-panel batch-action-type-unavailable"
-                     title="Unsupported models in batch: <%= unsupported_models.map{|m| I18n.t("#{m}._singular") }.join(', ') %>">
+            <% if unsupported_models.empty? %>
+              <div class="batch-action-type-panel batch-action-type-available" onclick="$(this).find('form').submit();">
+            <% else %>
+              <div class="batch-action-type-panel batch-action-type-unavailable"
+                   title="Unsupported types in batch: <%= unsupported_models.map{|m| I18n.t("#{m}._singular") }.join(', ') %>">
+            <% end %>
+
+              <%= form_tag({:controller => :batches, :action => :add_action}) do |f| %>
+                <input type="hidden" name="action_type" value="<%= type['type'] %>">
               <% end %>
 
-                <div class="pull-right">
-                 <% if type['approval'] == 'no_approval_required' %>
-                   <div class="label label-success"><%= I18n.t('batch_action.no_approval_required') %></div>
-                 <% else %>
-                   <div class="label label-warning"><%= I18n.t('batch_action.approval_required') %></div>
-                 <% end %>
-                </div>
-
-                <h4><%= I18n.t("batch_action_types.#{type['type']}.label") %></h4>
-
-                <div><%= type['description'] %></div>
-
-                <div class="batch-action-supported-types-panel">
-                  <strong>Supported types:</strong>
-                  <% type['models'].each do |model| %>
-                    <span class="label label-info"><%= I18n.t("#{model}._singular") %></span>
-                  <% end %>
-                </div>
+              <div class="pull-right">
+                <% if type['approval'] == 'no_approval_required' %>
+                  <div class="label label-success"><%= I18n.t('batch_action.no_approval_required') %></div>
+                <% else %>
+                  <div class="label label-warning"><%= I18n.t('batch_action.approval_required') %></div>
+                <% end %>
               </div>
-            <% end %>
+
+              <h4><%= I18n.t("batch_action_types.#{type['type']}.label") %></h4>
+
+              <div><%= type['description'] %></div>
+
+              <div class="batch-action-supported-types-panel">
+                <strong>Supported types:</strong>
+                <% type['models'].each do |model| %>
+                  <span class="label label-info"><%= I18n.t("#{model}._singular") %></span>
+                <% end %>
+              </div>
+            </div>
+
           <% end %>
         </div>
 
