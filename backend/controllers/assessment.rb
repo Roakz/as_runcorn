@@ -44,15 +44,17 @@ class ArchivesSpaceService < Sinatra::Base
     .description("Generate a treatment subrecord on the provided representations")
     .params(["repo_id", :repo_id],
             ["id", :id],
-            ["representation_id", [Integer], "Representation QSA IDs"])
+            ["representation_id", [Integer], "Representation QSA IDs"],
+            ["conservation_treatment", String, "Conservation Treatment template"])
     .permissions([])
     .returns([200, :updated]) \
   do
     assessment = Assessment.get_or_die(params[:id])
+    treatment_template = ASUtils.json_parse(params[:conservation_treatment] || {})
 
     if assessment.check_if_assessed?(params[:representation_id])
       begin
-        PhysicalRepresentation.generate_treatments!(params[:representation_id], assessment.id)
+        PhysicalRepresentation.generate_treatments!(params[:representation_id], assessment.id, treatment_template)
         json_response({:status => 'success', :errors => []})
       rescue
         json_response({:status => 'error', :errors => ["Error generating treatments: #{$!}"]})

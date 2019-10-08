@@ -80,7 +80,10 @@ AssessmentsController.class_eval do
           @errors = ['Representation IDs are required']
         else
           response = JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/assessments/#{params[:id]}/generate_treatments",
-                                               {'representation_id[]' => representation_ids})
+                                               {
+                                                 'representation_id[]' => representation_ids,
+                                                 'conservation_treatment' => params[:assessment][:conservation_treatment].to_json
+                                               })
           result = ASUtils.json_parse(response.body)
 
           unless result['errors'].blank?

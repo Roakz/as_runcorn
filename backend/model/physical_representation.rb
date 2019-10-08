@@ -211,15 +211,17 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
     ArchivalObject[self.archival_object_id].deaccessioned?
   end
 
-  def self.generate_treatments!(qsa_ids, assessment_id = nil)
+  def self.generate_treatments!(qsa_ids, assessment_id = nil, treatment_template = {})
     username = RequestContext.get(:current_username)
     user_agent_id = User[:username => username][:agent_record_id]
+    treatment_template = treatment_template.select{|k,v| v && !v.empty?}
+    status = ConservationTreatment.calculate_status(treatment_template)
 
     now = Time.now
 
     treatment_row = {
       :physical_representation_id => 'SETME',
-      :status => 'awaiting_treatment',
+      :status => status,
       :json_schema_version => 1,
       :lock_version => 0,
       :created_by => username,
@@ -227,7 +229,7 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
       :create_time => now,
       :system_mtime => now,
       :user_mtime => now,
-    }
+    }.merge(treatment_template)
 
     user_rlshp_row = {
       :conservation_treatment_id => 'SETME',

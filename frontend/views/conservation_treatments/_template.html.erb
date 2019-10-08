@@ -1,5 +1,8 @@
 <% define_template "conservation_treatment", jsonmodel_definition(:conservation_treatment) do |form| %>
   <div class="subrecord-form-fields">
+
+    <% if !defined?(generating_from_assessment) %>
+
     <div class="form-group">
       <%= form.label('status', {}, ['col-sm-2']) %>
       <div class="col-sm-9 label-only">
@@ -11,6 +14,8 @@
       </div>
     </div>
 
+    <% end %>
+
     <%= form.label_and_textarea "treatment_process", {:field_opts => {:clean => true, :escape => false}} %>
 
     <%= form.label_and_date "start_date" %>
@@ -19,6 +24,8 @@
     <%= form.label_and_textarea "materials_used_consumables", {:field_opts => {:clean => true, :escape => false}} %>
     <%= form.label_and_textarea "materials_used_staff_time", {:field_opts => {:clean => true, :escape => false}} %>
     <%= form.label_and_textfield "external_reference" %>
+
+    <% if !defined?(generating_from_assessment) %>
 
     <% if form.readonly? %>
       <% if form.obj["user"] %>
@@ -102,6 +109,7 @@
           </div>
         </div>
       <% end %>
+    <% end %>
     <% end %>
   </div>
 <% end %>
