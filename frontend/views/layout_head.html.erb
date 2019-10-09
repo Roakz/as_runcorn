@@ -79,39 +79,39 @@
       setupButton("chargeableServiceButtonTemplate");
 
       // Put agency browse in Repo menu
-      $('.repository-header .navbar-nav .browse-container .dropdown-menu').prepend(AS.renderTemplate("browseAgenciesTemplate"))
+      $('.repository-header .navbar-nav .browse-container > .dropdown-menu').prepend(AS.renderTemplate("browseAgenciesTemplate"))
 
       // Put representation browse in Repo menu
-      $('.repository-header .navbar-nav .browse-container .dropdown-menu .divider:first').before(AS.renderTemplate("browseRepresentationsTemplate"))
+      $('.repository-header .navbar-nav .browse-container > .dropdown-menu .divider:first').before(AS.renderTemplate("browseRepresentationsTemplate"))
 
       // And significant items browse
-      $('.repository-header .navbar-nav .browse-container .dropdown-menu .divider').eq(1).before(AS.renderTemplate("browseSignificantItemsTemplate"))
+      $('.repository-header .navbar-nav .browse-container > .dropdown-menu .divider').eq(1).before(AS.renderTemplate("browseSignificantItemsTemplate"))
 
       // Conservation requests sit before assessments in browse ... after moving assessments up some
-      $('.repository-header .navbar-nav .browse-container .dropdown-menu a[href="/assessments"]').parent().detach().insertBefore($('.repository-header .navbar-nav .browse-container .dropdown-menu .divider').eq(1))
-      $('.repository-header .navbar-nav .browse-container .dropdown-menu a[href="/assessments"]').parent().before(AS.renderTemplate("browseConservationRequestTemplate"))
+      $('.repository-header .navbar-nav .browse-container > .dropdown-menu a[href="/assessments"]').parent().detach().insertBefore($('.repository-header .navbar-nav .browse-container > .dropdown-menu .divider').eq(1))
+      $('.repository-header .navbar-nav .browse-container > .dropdown-menu a[href="/assessments"]').parent().before(AS.renderTemplate("browseConservationRequestTemplate"))
 
       // Add top container link to browse
-      $('.repository-header .navbar-nav .browse-container .dropdown-menu a[href="/locations"]').parent().before(AS.renderTemplate("browseTopContainersTemplate"))
+      $('.repository-header .navbar-nav .browse-container > .dropdown-menu a[href="/locations"]').parent().before(AS.renderTemplate("browseTopContainersTemplate"))
 
       // Add batch link to browse
-      $('.repository-header .navbar-nav .browse-container .dropdown-menu a[href="/locations"]').parent().after(AS.renderTemplate("browseBatchesTemplate"))
+      $('.repository-header .navbar-nav .browse-container > .dropdown-menu a[href="/locations"]').parent().after(AS.renderTemplate("browseBatchesTemplate"))
 
       // Add batch link to create
-      $('.repository-header .navbar-nav .create-container .dropdown-menu a[href="/functions/new"]').parent().after(AS.renderTemplate("createBatchTemplate"))
+      $('.repository-header .navbar-nav .create-container > .dropdown-menu a[href="/functions/new"]').parent().after(AS.renderTemplate("createBatchTemplate"))
 
       // And replaces them in create
-      $('.repository-header .navbar-nav .create-container .dropdown-menu a[href="/assessments/new"]').parent().replaceWith(AS.renderTemplate("createConservationRequestTemplate"))
+      $('.repository-header .navbar-nav .create-container > .dropdown-menu a[href="/assessments/new"]').parent().replaceWith(AS.renderTemplate("createConservationRequestTemplate"))
 
       // Remove unused menu options
-      $('.repository-header .navbar-nav .browse-container .dropdown-menu a[href="/events"]').parent().remove();
-      $('.repository-header .navbar-nav .create-container .dropdown-menu a[href="/events/new"]').parent().remove();
-      $('.repository-header .navbar-nav .browse-container .dropdown-menu a[href="/collection_management"]').parent().remove();
-      $('.repository-header .navbar-nav .browse-container .dropdown-menu a[href="/classifications"]').parent().remove();
-      $('.repository-header .navbar-nav .create-container .dropdown-menu a[href="/classifications/new"]').parent().remove();
-      $('.repository-header .navbar-nav .browse-container .dropdown-menu a[href="/jobs"]').parent().next().remove();
-      $('.repository-header .navbar-nav .browse-container .dropdown-menu a[href="/jobs"]').parent().remove();
-      $('.repository-header .navbar-nav .browse-container .dropdown-menu .divider:last').remove();
+      $('.repository-header .navbar-nav .browse-container > .dropdown-menu a[href="/events"]').parent().remove();
+      $('.repository-header .navbar-nav .create-container > .dropdown-menu a[href="/events/new"]').parent().remove();
+      $('.repository-header .navbar-nav .browse-container > .dropdown-menu a[href="/collection_management"]').parent().remove();
+      $('.repository-header .navbar-nav .browse-container > .dropdown-menu a[href="/classifications"]').parent().remove();
+      $('.repository-header .navbar-nav .create-container > .dropdown-menu a[href="/classifications/new"]').parent().remove();
+      $('.repository-header .navbar-nav .browse-container > .dropdown-menu a[href="/jobs"]').parent().next().remove();
+      $('.repository-header .navbar-nav .browse-container > .dropdown-menu a[href="/jobs"]').parent().remove();
+      $('.repository-header .navbar-nav .browse-container > .dropdown-menu .divider:last').remove();
 
     });
 </script>
