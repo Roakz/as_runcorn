@@ -12,6 +12,7 @@
       "treatment_process" => {"type" => "string"},
       "materials_used_consumables" => {"type" => "string"},
       "materials_used_staff_time" => {"type" => "string"},
+      "treatments_applied" => {"type" => "string"},
 
       "external_reference" => {"type" => "string"},
 

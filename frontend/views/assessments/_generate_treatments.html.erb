@@ -52,9 +52,10 @@
           </div>
         </div>
 
+        <% treatments_applied = @assessment['formats'].select{|fmt| fmt['value']}.map{|fmt| fmt['label']}.join(', ') %>
         <div class="row">
           <div class="subrecord-form-container">
-            <% form.push("conservation_treatment", {}) do %>
+                   <% form.push("conservation_treatment", {'treatments_applied' => treatments_applied}) do %>
               <% form.emit_template('conservation_treatment') %>
               <% end %>
             </div>

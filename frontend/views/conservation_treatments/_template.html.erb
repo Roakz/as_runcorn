@@ -23,6 +23,9 @@
 
     <%= form.label_and_textarea "materials_used_consumables", {:field_opts => {:clean => true, :escape => false}} %>
     <%= form.label_and_textarea "materials_used_staff_time", {:field_opts => {:clean => true, :escape => false}} %>
+
+    <%= form.label_and_textarea "treatments_applied", {:field_opts => {:clean => true, :escape => false}} %>
+
     <%= form.label_and_textfield "external_reference" %>
 
     <% if !defined?(generating_from_assessment) %>
