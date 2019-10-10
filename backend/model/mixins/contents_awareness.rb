@@ -1,5 +1,7 @@
 module ContentsAwareness
 
+  ABSENT_CONTENTS_DISPLAY_LIMIT = 10
+
   def self.included(base)
     base.extend(ClassMethods)
   end
@@ -18,25 +20,10 @@ module ContentsAwareness
     def sequel_to_jsonmodel(objs, opts = {})
       jsons = super
 
-      # Skip this for indexing: it's not used and the payloads are currently way too big.
-      if RequestContext.get(:current_username) == AppConfig[:search_username]
-        return jsons
-      end
-
-      location_enum_map = BackendEnumSource.values_for('runcorn_location').map{|value|
-        [BackendEnumSource.id_for_value('runcorn_location', value), value]
-      }.to_h
-      home_id = BackendEnumSource.id_for_value('runcorn_location', 'HOME')
-
       objs.zip(jsons).each do |obj, json|
         json['contents_count'] = contents_count(obj)
-        json['absent_contents'] = absent_contents(obj, home_id).map do |ac|
-          {
-            'ref' => JSONModel(:physical_representation).uri_for(ac[:id], :repo_id => obj.repo_id),
-            'current_location' => location_enum_map.fetch(ac[:current_location_id]),
-            'title' => ac[:title]
-          }
-        end
+        json['absent_contents_count'] = absent_contents_count(obj)
+        json['absent_contents'] = absent_contents(obj)
       end
 
       jsons
@@ -48,22 +35,32 @@ module ContentsAwareness
     end
 
 
-    def absent_contents(obj, runcorn_location_home_enum_id)
+    def absent_contents_ds(obj)
       db[:representation_container_rlshp]
-        .join(:physical_representation, Sequel.qualify(:physical_representation, :id) => Sequel.qualify(:representation_container_rlshp, :physical_representation_id))
-        .filter(Sequel.qualify(:representation_container_rlshp, :top_container_id) => obj.id)
-        .filter(Sequel.~(Sequel.qualify(:physical_representation, :current_location_id) => runcorn_location_home_enum_id))
+        .join(:physical_representation, :physical_representation__id => :representation_container_rlshp__physical_representation_id)
+        .filter(:representation_container_rlshp__top_container_id => obj.id)
+        .filter(Sequel.~(:physical_representation__current_location_id => BackendEnumSource.id_for_value('runcorn_location', 'HOME')))
+    end
+
+
+    def absent_contents_count(obj)
+      absent_contents_ds(obj).count
+    end
+
+
+    def absent_contents(obj)
+      absent_contents_ds(obj)
+        .limit(ABSENT_CONTENTS_DISPLAY_LIMIT)
         .select(Sequel.qualify(:representation_container_rlshp, :physical_representation_id),
                 Sequel.qualify(:physical_representation, :current_location_id),
                 Sequel.qualify(:physical_representation, :title))
         .map do |row|
-          {
-            :id => row[:physical_representation_id],
-            :current_location_id => row[:current_location_id],
-            :title => row[:title]
-          }
-        end
+        {
+          :ref => JSONModel(:physical_representation).uri_for(row[:physical_representation_id], :repo_id => obj.repo_id),
+          :current_location => BackendEnumSource.value_for_id('runcorn_location', row[:current_location_id]),
+          :title => row[:title]
+        }
+      end
     end
-
   end
 end

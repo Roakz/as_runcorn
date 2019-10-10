@@ -25,6 +25,11 @@
                                :uri => ac['ref'],
                                :placement => "top" %>
             <% end %>
+
+            <% if form['absent_contents'].length < form['absent_contents_count'] %>
+              <span class="label label-default"> ... and <%= form['absent_contents_count'] - form['absent_contents'].length %> more</span>
+            <% end %>
+
         </div>
     </div>
 <% end %>
