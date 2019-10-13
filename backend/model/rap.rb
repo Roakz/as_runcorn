@@ -229,18 +229,18 @@ class RAP < Sequel::Model(:rap)
         #
         # This deliberately casts a wide net so there may be false positives.
         # For example, we add one to the end date to compensate for cabinet
-        # matters that will round up to January 1 of the following year. 
+        # matters that will round up to January 1 of the following year.
         possibly_unpublishable =
           db[:rap_applied]
             .join(:rap, Sequel.qualify(:rap, :id) => Sequel.qualify(:rap_applied, :rap_id))
             .join(:archival_object, Sequel.qualify(:archival_object, :id) => Sequel.qualify(:rap_applied, :archival_object_id))
-            .join(:date,
-                  Sequel.qualify(:archival_object, :id) => Sequel.qualify(:date, :archival_object_id),
-                  Sequel.qualify(:date, :label_id) => existence_label_id)
+            .left_join(:date,
+                       Sequel.qualify(:archival_object, :id) => Sequel.qualify(:date, :archival_object_id),
+                       Sequel.qualify(:date, :label_id) => existence_label_id)
             .filter(Sequel.qualify(:archival_object, :publish) => 1)
             .filter(Sequel.qualify(:rap_applied, :is_active) => 1)
             .filter(Sequel.qualify(:rap, :id) => rap_id)
-            .where { Sequel.qualify(:rap, :years) != 0 }
+            .filter(Sequel.~(Sequel.qualify(:rap, :years) => 0))
             .filter(Sequel.qualify(:rap, :open_access_metadata) => 0)
             .where {
           Sequel.|({ Sequel.qualify(:date, :end) => nil },
