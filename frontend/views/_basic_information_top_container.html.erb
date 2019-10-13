@@ -1,4 +1,5 @@
 <%= form.label_and_readonly "current_location" %>
+<%= form.hidden_input("contents_count") %>
 
 <% unless @top_container['container_locations'].empty? %>
     <div class="form-group">
