@@ -5,6 +5,11 @@ module RAPsPublishable
   end
 
   def reset_publish_based_on_rap_applied!
+    if AppConfig[:plugins].include?('qsa_migration_adapter')
+      # Nothing to do if we're in migration land
+      return
+    end
+
     self.refresh
 
     return if self.publish == 0 # do nothing if unpublished
