@@ -192,7 +192,7 @@ class BatchesController < ApplicationController
   end
 
   def clear_assigned_objects
-    JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/clear_assigned_objects")
+    JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/remove_all_objects")
 
     redirect_to(:controller => :batches, :action => :assign_objects_form)
   end
