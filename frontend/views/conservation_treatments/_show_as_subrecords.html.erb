@@ -4,6 +4,9 @@
    section_id = "conservation_treatments" if section_id.blank?
 %>
 
+<%# we're nested so uniquify our section_id using the context object's uri %>
+<% section_id += '_' + context.obj['uri'].split('/')[-2,2].join('_') %>
+
 <section id="<%= section_id %>" class="subrecord-form-dummy">
   <h3><%= I18n.t("conservation_treatment._plural") %></h3>
   <div class="subrecord-form-container">
