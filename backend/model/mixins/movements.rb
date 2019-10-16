@@ -22,6 +22,11 @@ module Movements
   def move(opts)
     json = self.class.to_jsonmodel(self)
 
+    unless opts[:user]
+      current_user = User[:username => RequestContext.get(:current_username)]
+      opts[:user] = User.uri_for(current_user.agent_record_type, current_user.agent_record_id)
+    end
+
     mvmt = {
       'user' => {'ref' => opts[:user]},
       'move_date' => opts.fetch(:date, Date.today.strftime('%Y-%m-%d')),
