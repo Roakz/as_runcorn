@@ -1,3 +1,5 @@
+# WARNING: as written this only supports being mixed in by archival objects
+
 module Significance
 
   def self.included(base)
@@ -19,23 +21,31 @@ module Significance
 
 
   def apply_significance!(sig_id)
-    PhysicalRepresentation.filter(:archival_object_id => self.id)
-                          .filter(Sequel.~(:significance_id => sig_id))
-                          .filter(:significance_is_sticky => 0)
-                          .update(:significance_id => sig_id,
-                                  :system_mtime => Time.now)
+    counts = {}
+
+    counts['physical_representation'] = 
+      PhysicalRepresentation.filter(:archival_object_id => self.id)
+      .filter(Sequel.~(:significance_id => sig_id))
+      .filter(:significance_is_sticky => 0)
+      .update(:significance_id => sig_id,
+              :system_mtime => Time.now)
 
     changing_children = self.children.filter(Sequel.~(:significance_id => sig_id)).filter(:significance_is_sticky => 0)
 
     changing_ids = changing_children.select(:id).all.map{|r| r[:id]}
 
     unless changing_ids.empty?
-      changing_children.update(:significance_id => sig_id,
-                               :lock_version => Sequel.expr(1) + :lock_version,
-                               :system_mtime => Time.now)
+      counts['archival_object'] =
+        changing_children.update(:significance_id => sig_id,
+                                 :lock_version => Sequel.expr(1) + :lock_version,
+                                 :system_mtime => Time.now)
 
-      self.class.filter(:id => changing_ids).each{|cc| cc.apply_significance!(sig_id)}
+      self.class.filter(:id => changing_ids).each do |cc|
+        cc.apply_significance!(sig_id).each{|m,c| counts[m] += c}
+      end
     end
+
+    counts
   end
 
 

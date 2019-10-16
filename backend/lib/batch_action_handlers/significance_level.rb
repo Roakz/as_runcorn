@@ -44,18 +44,31 @@ class SignificanceLevel < BatchActionHandler
         .group_by {|parsed| parsed[:parsed].fetch(:type)}
         .each do |type, type_refs|
 
-        ids = type_refs.map {|ref| ref[:parsed].fetch(:id)}
+        ids = db[type.intern].filter(:id => type_refs.map {|ref| ref[:parsed].fetch(:id)})
+                             .filter(:significance_id => match_level_id)
+                             .map{|row| row[:id]}
 
         counts[type] =
-
-        db[type.intern].filter(:id => ids)
-          .filter(:significance_id => match_level_id)
+          db[type.intern].filter(:id => ids)
           .update(:significance_id => change_to_level_id,
                   :significance_is_sticky => sticky,
                   :lock_version => Sequel.expr(1) + :lock_version,
                   :system_mtime => now,
                   :user_mtime => now,
                   :last_modified_by => user)
+
+        model = ASModel.all_models.select{|m| m.table_name == type.intern}.first
+
+        if model.ancestors.include?(Significance)
+          ids.each do |id|
+            model[id].apply_significance!(change_to_level_id).each do |m,c|
+              if c > 0
+                counts[m] ||= 0
+                counts[m] += c
+              end
+            end
+          end
+        end
       end
 
     end
@@ -64,8 +77,8 @@ class SignificanceLevel < BatchActionHandler
     out += I18n.t('enumerations.runcorn_significance.' + params['match_level'])
     out += "\n\nhad their significance changed to:\n    "
     out += I18n.t('enumerations.runcorn_significance.' + params['change_to_level'])
-    out += " (#{sticky ? 'not ' : ''}inheriting):\n"
-    out += "\n\nNumber of objects affected:\n"
+    out += " (#{sticky == 1 ? 'not ' : ''}inheriting):\n"
+    out += "\n\nNumber of objects affected (including inheriting children):\n"
     out += counts.map{|model, count| "    #{I18n.t(model + '._singular')}: #{count}"}.join("\n")
     out
   end
