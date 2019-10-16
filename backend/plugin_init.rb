@@ -1,6 +1,7 @@
 require_relative '../common/validations'
 require_relative '../common/qsa_id'
 require_relative '../common/qsa_id_registrations'
+require_relative '../common/movement_context_manager'
 
 require_relative 'lib/batch_action_handler'
 

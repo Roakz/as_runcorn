@@ -221,6 +221,9 @@ Rails.application.config.after_initialize do
   QSAId.mode(:frontend)
   require_relative '../common/qsa_id_registrations'
 
+  # allow other plugins to add models as movement contexts
+  require_relative '../common/movement_context_manager'
+
   # make sure the identifier column in search results shows qsa_ids where they exist
   module SearchHelper
     alias :identifier_for_search_result_orig :identifier_for_search_result
