@@ -13,6 +13,25 @@ module Representations
     ASUtils.wrap(@supported_models)
   end
 
+
+  def after_save
+    super
+
+    # Ensure the representations attached to this object have the same
+    # resource_id as the object's root_record_id.
+    # Generally this is not an issue, but it does get execised during
+    # a component transfer operation where an archival_object moves
+    # to a new resource.
+    DB.open do |db|
+      [:physical_representation, :digital_representation].each do |tbl|
+        db[tbl].filter(:archival_object_id => self.id)
+               .filter(Sequel.~(:resource_id => self.root_record_id))
+               .update(:resource_id => self.root_record_id)
+      end
+    end
+  end
+
+
   def reindex_representations!
     DB.open do |db|
       ao_ids = [self.id]
