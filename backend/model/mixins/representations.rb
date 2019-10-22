@@ -22,11 +22,13 @@ module Representations
     # Generally this is not an issue, but it does get execised during
     # a component transfer operation where an archival_object moves
     # to a new resource.
-    DB.open do |db|
-      [:physical_representation, :digital_representation].each do |tbl|
-        db[tbl].filter(:archival_object_id => self.id)
-               .filter(Sequel.~(:resource_id => self.root_record_id))
-               .update(:resource_id => self.root_record_id)
+    unless AppConfig[:plugins].include?('qsa_migration_adapter')
+      DB.open do |db|
+        [:physical_representation, :digital_representation].each do |tbl|
+          db[tbl].filter(:archival_object_id => self.id)
+                 .filter(Sequel.~(:resource_id => self.root_record_id))
+                 .update(:resource_id => self.root_record_id)
+        end
       end
     end
   end
