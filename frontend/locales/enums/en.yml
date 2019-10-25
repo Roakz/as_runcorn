@@ -290,6 +290,10 @@ en:
       legislation_establish: Legislation - Establish
       legislation_abolish: Legislation - Abolish
       legislation_administered: Legislation - Administered
+      how_to_use: How to use
+      general: General
+    date_certainty:
+      exact: Exact
   enumeration_names:
     runcorn_access_category: Runcorn Plugin - Access Category
     runcorn_access_clearance_procedure: Runcorn Plugin - Runcorn Access Clearance Procedure
