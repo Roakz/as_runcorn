@@ -59,7 +59,7 @@ module ControlGapsCalculator
             .select(:id, :qsa_id, :title)
             .each do |row|
             metadata[reference(Resource, row[:id])] = {
-              :qsa_id => QSAId.prefixed_id_for(Resource, row[:id]),
+              :qsa_id => QSAId.prefixed_id_for(Resource, row[:qsa_id]),
               :display_string => row[:title],
             }
           end
@@ -69,7 +69,7 @@ module ControlGapsCalculator
             .select(:id, :qsa_id, :display_string)
             .each do |row|
             metadata[reference(record_model, row[:id])] = {
-              :qsa_id => QSAId.prefixed_id_for(record_model, row[:id]),
+              :qsa_id => QSAId.prefixed_id_for(record_model, row[:qsa_id]),
               :display_string => row[:display_string],
             }
           end

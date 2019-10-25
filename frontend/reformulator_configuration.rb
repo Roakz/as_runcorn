@@ -41,10 +41,6 @@ Reformulator.configure(
           "hideClosestSelector" => '.form-group'
         },
         {
-          "selector" => 'select[name="resource[language]"]',
-          "hideClosestSelector" => '.form-group'
-        },
-        {
           "selector" => '.extent-calculator-btn',
         },
         {
@@ -142,7 +138,11 @@ Reformulator.configure(
           "value" => 'eng',
         },
         {
-          "selector" => 'input[name="archival_object[language]"]',
+            "selector" => 'select[name="archival_object[level]"]',
+            "value" => 'item',
+        },
+        {
+          "selector" => 'select[name="archival_object[language]"]',
           "value" => 'eng',
         },
         {

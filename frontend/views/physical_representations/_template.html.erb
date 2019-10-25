@@ -85,6 +85,8 @@
     <%= form.label_and_textarea "processing_handling_notes" %>
     <%= form.label_and_textarea "remarks" %>
     <%= form.label_and_boolean "sterilised_status" %>
+    <%= form.label_and_textarea "previous_system_identifiers" %>
+    <%= form.label_and_boolean "archivist_approved" %>
 
     <% if form.obj['publishable'] == false %>
       <div class="form-group">

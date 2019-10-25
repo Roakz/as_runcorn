@@ -298,7 +298,14 @@
       "publishable" => {
         "type" => "boolean",
         "readonly" => "true"
-      }
+      },
+
+      "archivist_approved" => {"type" => "boolean"},
+      "container_profile" => {"type" => "string"},
+      "container_type" => {"type" => "string"},
+      "indicator" => {"type" => "string"},
+      "barcode" => {"type" => "string"},
+      "previous_system_identifiers" => {"type" => "string"}
     },
   },
 }

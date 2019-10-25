@@ -148,6 +148,7 @@ en:
       VAULT2: "MF Vault QSA2"
       TFR: "Transfer in progress"
       HOME: "Home"
+      Repository: "Repository"
     runcorn_access_clearance_procedure:
       ADMIN: "Permission to access restricted material by responsible agency"
       BLANK: ""
@@ -275,6 +276,20 @@ en:
       physical_representation: Physical Representation
       digital_representation: Digital Representation
       top_container: Top Container
+    runcorn_note_singlepart_type:
+      remarks: Remarks
+      description: Description
+      agency_control_number: Agency Control Number
+      preferred_citation: Preferred Citation
+      archivists notes: "Archivists' Notes"
+      system_of_arrangement: System of Arrangement
+      other_restrictions: Other Restrictions
+      legacy_metadata_item: A1 Item Legacy Metadata
+      legacy_metadata_agency: A1 Agency Legacy Metadata
+      information_sources: Information Sources
+      legislation_establish: Legislation - Establish
+      legislation_abolish: Legislation - Abolish
+      legislation_administered: Legislation - Administered
   enumeration_names:
     runcorn_access_category: Runcorn Plugin - Access Category
     runcorn_access_clearance_procedure: Runcorn Plugin - Runcorn Access Clearance Procedure
@@ -296,3 +311,4 @@ en:
     runcorn_batch_action_status: Runcorn Batch Action Status
     runcorn_batch_status: Runcorn Batch Status
     runcorn_batch_model: Runcorn Batch Model
+    runcorn_note_singlepart_type: Runcorn Singlepart Note Type

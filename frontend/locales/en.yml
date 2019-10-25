@@ -44,7 +44,7 @@ en:
     original_registration_date_tooltip: ...
     information_sources: Information Sources
     information_sources_tooltip: ...
-    repository_processing_note:  Previous System Identifiers
+    repository_processing_note: Previous System Identifiers
     repository_processing_note_tooltip: ...
     serialised: Serialised?
     serialised_tooltip: ...
@@ -63,8 +63,13 @@ en:
     approval_date: Approval Date
     approved_by: Approved By
     deaccessioned: This record has been deaccessioned
-    agency_assigned_id: Agency Assigned ID
+    agency_assigned_id: Agency Control Number
     rap_access_status: Access Status
+    archivist_approved: Archivist Approved?
+    copyright_status: Copyright Status
+    original_registration_date: Original Registration Date
+    previous_system_identifiers: Previous System Identifiers
+    accessioned_status: Accessioned Status
     _singular: Item
     _plural: Items
     _frontend:
@@ -158,7 +163,7 @@ en:
     current_location: Current Location
     normal_location: Normal Location
     accessioned_status: Accessioned Status
-    agency_assigned_id: Agency Assigned ID
+    agency_assigned_id: Agency Control Number
     approval_date: Approved Date
     approved_by: Approved By
     colour: Colour
@@ -190,6 +195,12 @@ en:
     availability: Availability
     calculated_availability: Calculated Availability
     rap_access_status: Access Status
+    archivist_approved: Archivist approved
+    container_profile: Container profile
+    container_type: Container type
+    indicator: Indicator
+    barcode: Barcode
+    previous_system_identifiers: Previous System Identifiers
     _plural: Physical Representations
     _singular: Physical Representation
     _frontend:
@@ -207,7 +218,7 @@ en:
     access_category: Access Status
     normal_location: Normal Location
     accessioned_status: Accessioned Status
-    agency_assigned_id: Agency Assigned ID
+    agency_assigned_id: Agency Control Number
     approval_date: Approved Date
     approved_by: Approved By
     colour: Colour
@@ -507,7 +518,7 @@ en:
     last_report: Result
     approved_user: Approved by
     approved_time: Approved at
-    action_params: Parameters 
+    action_params: Parameters
     note: Note
     approval_required: Approval required
     no_approval_required: No approval required

@@ -100,5 +100,11 @@
   "publishable" => {
     "type" => "boolean",
     "readonly" => "true"
-  }
+  },
+
+  "archivist_approved" => {"type" => "boolean"},
+  "copyright_status" => {"type" => "string", "dynamic_enum" => "runcorn_copyright_status"},
+  "original_registration_date" => {"type" => "string"},
+  "previous_system_identifiers" => {"type" => "string"},
+  "accessioned_status" => {"type" => "string", "dynamic_enum" => "runcorn_accessioned_status"}
 }
