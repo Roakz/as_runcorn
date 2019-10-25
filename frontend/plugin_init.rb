@@ -293,4 +293,12 @@ Rails.application.config.after_initialize do
     end
 
   end
+
+  Plugins.register_note_types_handler(proc {|jsonmodel_type, note_types, context|
+    if jsonmodel_type.to_s =~ /agent/
+      note_types = context.singlepart_notes
+    end
+
+    note_types
+  })
 end
