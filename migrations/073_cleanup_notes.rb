@@ -15,6 +15,7 @@ Sequel.migration do
                                    Sequel.~(:agent_software_id => nil),
                                    Sequel.like(:notes, '{"jsonmodel_type":"note_singlepart"%')))
                   .select(:id)
+                  .map {|row| row[:id]}
 
     self[:note_persistent_id]
       .filter(:note_id => note_ids)
