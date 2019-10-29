@@ -104,7 +104,7 @@ class RAP < Sequel::Model(:rap)
   def self.apply_forever_is_too_long_access_categories(json)
     # if access_category = 1-8 and years is empty, default years to 100
     if json['years'].nil?
-      if !AppConfig[:as_runcorn_forever_closed_access_categories].include?(json['access_category']) && json['access_category'] != RAP::ACCESS_CATEGORY_NA
+      if !AppConfig[:as_runcorn_forever_closed_access_categories].include?(json['access_category']) && json['access_category'] != RAP::ACCESS_CATEGORY_NA && !json['access_category'].nil?
         json['years'] = 100
       end
     end

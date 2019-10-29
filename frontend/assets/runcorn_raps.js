@@ -28,14 +28,19 @@
 
         $yearsInput.after('<small id="rapYearsHelp" class="form-text text-muted"></small>');
         $openAccessMetadataInput.after('<small id="rapOpenAccessMetadataHelp" class="help-inline text-muted"></small>');
+        $accessCategoryInput.after('<small id="rapAccessCategoryHelp" class="form-text text-muted"></small>');
 
         var $yearsHint = $('#rapYearsHelp', $form);
         var $openAccessMetadataHint = $('#rapOpenAccessMetadataHelp', $form);
+        var $accessCategoryHint = $('#rapAccessCategoryHelp', $form);
 
         function applyMagic() {
             if (self.opts.forever_closed_access_categories.indexOf($accessCategoryInput.val()) >= 0 || $accessCategoryInput.val() === 'N/A') {
                 $yearsHint.text('Years cannot be set as Access Category implies closed permanently');
                 $yearsInput.val("").prop('disabled', true);
+            } else if ($accessCategoryInput.val() === '') {
+                $yearsHint.text('Leave empty if closed permanently; Set to 0 if open; otherwise provide a value from 1 to 100');
+                $yearsInput.prop('disabled', false);
             } else {
                 $yearsHint.text('Set to 0 if open; otherwise provide a value from 1 to 100 (default 100)');
                 $yearsInput.prop('disabled', false);
@@ -47,6 +52,12 @@
             } else {
                 $openAccessMetadataHint.text('');
                 $openAccessMetadataInput.prop('disabled', false);
+            }
+
+            if ($accessCategoryInput.val() === '') {
+                $accessCategoryHint.text('An empty category implies the RAP is incomplete but Open Access Metadata and Years/RAP expiry will still apply if provided');
+            } else {
+                $accessCategoryHint.text('');
             }
         }
 
