@@ -1,6 +1,10 @@
 <% define_template "rap", jsonmodel_definition(:rap) do |form| %>
   <%= form.label_with_field 'open_access_metadata', form.checkbox('open_access_metadata'), :controls_class => 'checkbox' %>
-  <%= form.label_and_select 'access_category', form.possible_options_for("access_category", false) %>
+  <% if form.readonly? && form.obj['access_category'].nil? %>
+    <%= form.label_and_readonly 'access_category', "<span class='text-danger'>Not yet provided</span>".html_safe %>
+  <% else %>
+    <%= form.label_and_select 'access_category', form.possible_options_for("access_category", true) %>
+  <% end %>
   <%
     if form.obj['years']
       form.obj['years'] = form.obj['years'].to_s

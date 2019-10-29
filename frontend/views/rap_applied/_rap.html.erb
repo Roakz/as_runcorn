@@ -34,7 +34,7 @@
               <% end %>
             </div>
           <% end %>
-          <% if rap['_resolved']['is_repository_default'] || rap['_resolved']['access_category'] == 'N/A' %>
+          <% if rap['_resolved']['is_repository_default'] || rap['_resolved']['access_category'] == 'N/A' || rap['_resolved']['access_category'].nil? %>
             <div class="badge badge-info" title="RAP is the system default restriction">DEFAULT RESTRICTION</div>
           <% else %>
             <div style="display: inline-block" title="RAP Summary"><%= rap['_resolved']['display_string'] %></div>
@@ -66,7 +66,7 @@
             Default Restriction is in effect. Access is closed indefinitely. 
           </div>
         <% else %>
-          <% if rap['_resolved']['access_category'] == 'N/A' %>
+          <% if rap['_resolved']['access_category'] == 'N/A' || rap['_resolved']['access_category'].nil? %>
             <div class="alert alert-info">
               Default Restriction is in effect. Access is closed indefinitely.
             </div>

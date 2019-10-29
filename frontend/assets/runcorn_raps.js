@@ -28,9 +28,11 @@
 
         $yearsInput.after('<small id="rapYearsHelp" class="form-text text-muted"></small>');
         $openAccessMetadataInput.after('<small id="rapOpenAccessMetadataHelp" class="help-inline text-muted"></small>');
+        $accessCategoryInput.after('<small id="rapAccessCategoryHelp" class="form-text text-muted"></small>');
 
         var $yearsHint = $('#rapYearsHelp', $form);
         var $openAccessMetadataHint = $('#rapOpenAccessMetadataHelp', $form);
+        var $accessCategoryHint = $('#rapAccessCategoryHelp', $form);
 
         function applyMagic() {
             if (self.opts.forever_closed_access_categories.indexOf($accessCategoryInput.val()) >= 0 || $accessCategoryInput.val() === 'N/A') {
@@ -47,6 +49,12 @@
             } else {
                 $openAccessMetadataHint.text('');
                 $openAccessMetadataInput.prop('disabled', false);
+            }
+
+            if ($accessCategoryInput.val() === '') {
+                $accessCategoryHint.text('An empty category implies the RAP is incomplete and therefore closed permanently');
+            } else {
+                $accessCategoryHint.text('');
             }
         }
 

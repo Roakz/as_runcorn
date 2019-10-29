@@ -9,7 +9,7 @@
 
       "open_access_metadata" => {"type" => "boolean"},
 
-      "access_category" => {"type" => "string", "dynamic_enum" => "runcorn_rap_access_category", "ifmissing" => "error"},
+      "access_category" => {"type" => "string", "dynamic_enum" => "runcorn_rap_access_category"},
 
       "years" => {"type" => "non_negative_integer"},
 
