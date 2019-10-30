@@ -282,13 +282,6 @@
         "type" => "string",
         "readonly" => "true",
       },
-      "calculated_availability_context" => {
-        "type" => "array",
-        "readonly" => "true",
-        "items" => {
-          "type" => "string",
-        },
-      },
       "calculated_availability_overrides_availability" => {
         "type" => "boolean",
         "readonly" => "true",

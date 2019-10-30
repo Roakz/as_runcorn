@@ -12,7 +12,7 @@
       </div>
     <% end %>
 
-    <% if form.obj['availability'] && form.obj['calculated_availability'] && form.obj['calculated_availability'] != form.obj['availability'] %>
+    <% if form.obj['availability'] && form.obj['calculated_availability'] && form.obj['calculated_availability'] != form.obj['availability'] && form.obj['calculated_availability_overrides_availability'] %>
       <div class="alert alert-warning">
         <p><%= I18n.t('physical_representation._frontend.messages.calculated_availability_preamble') %></p>
         <%= form.label_and_readonly "availability" %>
@@ -24,16 +24,6 @@
             <%= I18n.t("enumerations.runcorn_physical_representation_availability.#{form.obj['calculated_availability']}", :default => form.obj['calculated_availability']) %>
           </div>
         </div>
-        <% unless ASUtils.wrap(form.obj['calculated_availability_context']).empty? %>
-          <div class="form-group">
-            <label class="col-sm-2 control-label">
-              <%= I18n.t('physical_representation._frontend.messages.calculated_availability_context_preamble') %>
-            </label>
-            <div class="col-sm-9 label-only">
-              <%= ASUtils.wrap(form.obj['calculated_availability_context']).map{|context| I18n.t("physical_representation._frontend.messages.calculated_availability_context.#{context}", :default => context)}.join('; ') %>
-            </div>
-          </div>
-        <% end %>
       </div>
     <% end %>
 
@@ -51,9 +41,9 @@
         <div class="col-sm-9 label-only">
           <%= I18n.t("enumerations.runcorn_physical_representation_availability.#{form.obj['calculated_availability']}", :default => form.obj['calculated_availability']) %>
           <% if form.obj['availability'] %>
-            <div><small class="text-muted">Overrides availability set by user: "<%= I18n.t("enumerations.runcorn_physical_representation_availability.#{form.obj['availability']}", :default => form.obj['availability']) %>"</small></div>
+            <div><small class="text-muted">Overrides availability set by archivist: "<%= I18n.t("enumerations.runcorn_physical_representation_availability.#{form.obj['availability']}", :default => form.obj['availability']) %>"</small></div>
           <% else %>
-            <div><small class="text-muted">Overrides availability (not currently set by user)</small></div>
+            <div><small class="text-muted">Overrides empty availability (not currently set by archivist)</small></div>
           <% end %>
         </div>
       </div>

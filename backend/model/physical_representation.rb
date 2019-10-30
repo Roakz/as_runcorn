@@ -155,49 +155,52 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
     result
   end
 
+  AVAILABILITIES = {
+    'available' => 0,                         # 1
+    'unavailable_temporarily' => 400,         # 2
+    'unavailable_due_to_conservation' => 500, # 3 requestable!
+    'unavailable_due_to_condition' => 600,    # 4
+    'unavailable_due_to_format' => 600,       # 5
+    'unavailable_due_to_deaccession' => 999,  # 6 overrides all
+    'unavailable_due_to_date_range' => 200,   # 7 requestable!
+    'unavailable_contact_qsa' => 300,         # 8 requestable!
+  }
+
   def self.set_calculated_availability!(json, assessments_for_representation, controlling_record_end_date, availability_options)
-    override = nil
-    override_context = []
+    candidate_availabilies = ['available', json['availability']].uniq.compact
 
-    # check for unavailable_due_to_deaccession
     if json['deaccessioned']
-      override = 'unavailable_due_to_deaccession'
-      override_context << 'deaccession'
-    elsif controlling_record_end_date.nil?
-      override = 'unavailable_due_to_date_range'
-      override_context << 'controlling_record_missing_end_date'
-    else
-      # check conservation requests to determine if unavailable_due_to_conservation
-      #  - conservation_request.status == 'Ready For Review'
-      if ASUtils.wrap(json['conservation_requests']).any?{|cr| cr['status'] == 'Ready For Review'}
-        override = 'unavailable_due_to_conservation'
-        override_context << 'conservation_request'
-      end
-
-      # check assessments to determine if unavailable_due_to_conservation
-      #  - assessment.survey_begin == not null (active)
-      if assessments_for_representation.any?{|assessment_blob| assessment_blob.fetch(:active)}
-        override = 'unavailable_due_to_conservation'
-        override_context << 'assessment'
-      end
-
-      # check conservation treatments to determine if unavailable_due_to_conservation
-      if json['conservation_treatments'].any?{|treatment| treatment['status'] != ConservationTreatment::STATUS_COMPLETED}
-        override = 'unavailable_due_to_conservation'
-        override_context << "conservation_treatment"
-      end
-
-      # check for unavailable_temporarily
-      if override.nil? && json['current_location'] != 'HOME'
-        override = 'unavailable_temporarily'
-      end
+      candidate_availabilies << 'unavailable_due_to_deaccession'
     end
 
-    override ||= json['availability'] || 'available'
+    if controlling_record_end_date.nil?
+      candidate_availabilies << 'unavailable_due_to_date_range'
+    end
 
-    json['calculated_availability'] = override
-    json['calculated_availability_context'] = override_context
-    json['calculated_availability_overrides_availability'] = json['availability'].nil? || availability_options.index(override) > availability_options.index(json['availability'])
+    # check conservation requests to determine if unavailable_due_to_conservation
+    #  - conservation_request.status == 'Ready For Review'
+    if ASUtils.wrap(json['conservation_requests']).any?{|cr| cr['status'] == 'Ready For Review'}
+      candidate_availabilies << 'unavailable_due_to_conservation'
+    end
+
+    # check assessments to determine if unavailable_due_to_conservation
+    #  - assessment.survey_begin == not null (active)
+    if assessments_for_representation.any?{|assessment_blob| assessment_blob.fetch(:active)}
+      candidate_availabilies << 'unavailable_due_to_conservation'
+    end
+
+    # check conservation treatments to determine if unavailable_due_to_conservation
+    if json['conservation_treatments'].any?{|treatment| treatment['status'] != ConservationTreatment::STATUS_COMPLETED}
+      candidate_availabilies << 'unavailable_due_to_conservation'
+    end
+
+    # check for unavailable_temporarily
+    if json['current_location'] != 'HOME'
+      candidate_availabilies << 'unavailable_temporarily'
+    end
+
+    json['calculated_availability'] = candidate_availabilies.max_by{|candidate| AVAILABILITIES.fetch(candidate)}
+    json['calculated_availability_overrides_availability'] = json['availability'] != json['calculated_availability']
   end
 
   def self.build_display_string(json)

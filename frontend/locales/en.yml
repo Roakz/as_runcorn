@@ -208,13 +208,6 @@ en:
         add: Add Physical Representation
       messages:
         calculated_availability_preamble: "The calculated availability differs to its normal value:"
-        calculated_availability_context_preamble: "Reason(s) for change"
-        calculated_availability_context:
-          deaccession: Record is marked as deaccessioned
-          conservation_treatment: Active conservation treatment detected
-          assessment: Active assessment  detected
-          conservation_request: Active conservation request detected
-          controlling_record_missing_end_date: Controlling record does not have an end date
 
   digital_representation: &digital_representation
     access_category: Access Status
