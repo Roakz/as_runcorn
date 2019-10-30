@@ -15,7 +15,7 @@
     <% if form.obj['availability'] && form.obj['calculated_availability'] && form.obj['calculated_availability'] != form.obj['availability'] %>
       <div class="alert alert-warning">
         <p><%= I18n.t('physical_representation._frontend.messages.calculated_availability_preamble') %></p>
-        <%= form.label_and_readonly "calculated_availability" %>
+        <%= form.label_and_readonly "availability" %>
         <div class="form-group">
           <label class="col-sm-2 control-label">
             <%= I18n.t('physical_representation.calculated_availability') %>

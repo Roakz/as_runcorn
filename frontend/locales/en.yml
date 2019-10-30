@@ -214,6 +214,8 @@ en:
           conservation_treatment: Active conservation treatment detected
           assessment: Active assessment  detected
           conservation_request: Active conservation request detected
+          controlling_record_missing_end_date: Controlling record does not have an end date
+
   digital_representation: &digital_representation
     access_category: Access Status
     normal_location: Normal Location

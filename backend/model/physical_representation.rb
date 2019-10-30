@@ -132,7 +132,7 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
 
       json['assessments'] = assessments_map.fetch(obj.id, []).map{|assessment_blob| { 'ref' => assessment_blob.fetch(:uri) }}
 
-      set_calculated_availability!(json, assessments_map.fetch(obj.id, []), availability_options)
+      set_calculated_availability!(json, assessments_map.fetch(obj.id, []), controlling_records_dates_map.fetch(controlling_record.id, {}).fetch(:end, nil), availability_options)
     end
 
     jsons
@@ -155,7 +155,7 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
     result
   end
 
-  def self.set_calculated_availability!(json, assessments_for_representation, availability_options)
+  def self.set_calculated_availability!(json, assessments_for_representation, controlling_record_end_date, availability_options)
     override = nil
     override_context = []
 
@@ -163,6 +163,9 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
     if json['deaccessioned']
       override = 'unavailable_due_to_deaccession'
       override_context << 'deaccession'
+    elsif controlling_record_end_date.nil?
+      override = 'unavailable_due_to_date_range'
+      override_context << 'controlling_record_missing_end_date'
     else
       # check conservation requests to determine if unavailable_due_to_conservation
       #  - conservation_request.status == 'Ready For Review'
