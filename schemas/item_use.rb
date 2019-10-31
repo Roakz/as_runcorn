@@ -26,6 +26,8 @@
       "used_by" => {"type" => "string", "maxLength" => 255, "ifmissing" => "error"},
       "start_date" => {"type" => "string", "maxLength" => 255, "ifmissing" => "error"},
       "end_date" => {"type" => "string", "maxLength" => 255},
+
+      "display_string" => {"type" => "string", "readonly" => "true"},
     },
   },
 }

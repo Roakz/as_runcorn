@@ -9,6 +9,11 @@ class ItemUse < Sequel::Model(:item_use)
 
     objs.zip(jsons).each do |obj, json|
       json['physical_representation'] = {'ref' => JSONModel(:physical_representation).uri_for(obj.physical_representation_id, :repo_id => obj.repo_id)}
+      json['display_string'] = "%s used in %s (%s) at %s" % [QSAId.prefixed_id_for(PhysicalRepresentation, obj.physical_representation_id),
+                                                             obj.use_identifier,
+                                                             obj.status,
+                                                             [obj.start_date, obj.end_date].compact.join('--')
+                                                            ]
     end
 
     jsons
