@@ -19,6 +19,8 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
   include ConservationRequests
   include ConservationTreatments
 
+  include UsedItem
+
   define_relationship(:name => :representation_approved_by,
                       :json_property => 'approved_by',
                       :contains_references_to_types => proc {[AgentPerson]},
