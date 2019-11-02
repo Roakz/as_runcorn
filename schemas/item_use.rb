@@ -13,6 +13,7 @@
         "subtype" => "ref",
         "properties" => {
           "ref" => {"type" => "JSONModel(:physical_representation) uri"},
+          "qsa_id" => {"type" => "string", "readonly" => "true"},
           "_resolved" => {
             "type" => "object",
             "readonly" => "true"
