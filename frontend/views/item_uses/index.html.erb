@@ -1,0 +1,58 @@
+<%= setup_context(:title => I18n.t("item_use._plural")) %>
+
+<%
+  @no_title = true
+
+  add_column(I18n.t("item_use.physical_representation"),
+             proc {|record|
+               QSAIdHelper.id(record['item_qsa_id_u_ssort'])
+             }, :sortable => true, :sort_by => 'item_qsa_id_u_sort', :class => 'col-sm-1')
+
+  add_column(I18n.t("item_use.use_identifier"),
+             proc {|record|
+               QSAIdHelper.id(record['use_qsa_id_u_ssort'])
+             }, :sortable => true, :sort_by => 'use_qsa_id_u_sort', :class => 'col-sm-1')
+
+  add_column(I18n.t("item_use.status"),
+             proc {|record| record.fetch('item_use_status_u_ssort')},
+             :sortable => true, :sort_by => 'item_use_status_u_ssort')
+
+  add_column(I18n.t("item_use.used_by"),
+             proc {|record| record.fetch('item_use_used_by_u_ssort').sub(/\s*\<.+\>$/, '')},
+             :sortable => true, :sort_by => 'item_use_used_by_u_ssort')
+
+  add_column(I18n.t("item_use.start_date"),
+             proc {|record| record.fetch('item_use_start_date_u_ssort')},
+             :sortable => true, :sort_by => 'item_use_start_date_u_ssort')
+
+  add_column(I18n.t("item_use.end_date"),
+             proc {|record| record.fetch('item_use_end_date_u_ssort', '')},
+             :sortable => true, :sort_by => 'item_use_end_date_u_ssort')
+
+%>
+
+<div class="row">
+  <div class="col-md-3">
+    <div class="sidebar">
+      <%= render_aspace_partial :partial => "search/filter" %>
+    </div>
+  </div>
+  <div class="col-md-9">
+    <div class="record-toolbar">
+      <div class="btn-group pull-right">
+        <%= link_to I18n.t("actions.export_csv"), request.parameters.merge({ :format => :csv}), id: "searchExport",  class:  "btn btn-sm btn-info" %> 
+      </div>
+      <br style="clear:both" />
+    </div>
+
+    <div class="record-pane">
+      <%= link_to_help :topic => "search" %>
+
+      <h2><%= I18n.t("item_use._plural") %></h2>
+
+      <%= render_aspace_partial :partial => "shared/flash_messages" %>
+
+      <%= render_aspace_partial :partial => "search/listing" %>
+    </div>
+  </div>
+</div>

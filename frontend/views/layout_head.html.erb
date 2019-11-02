@@ -38,6 +38,10 @@
   <li><%= link_to I18n.t("as_runcorn.significant_item._plural"), {:controller => :significant_items, :action => :index} %></li>
 </script>
 
+<script type="text/template" id="browseItemUsesTemplate">
+  <li><%= link_to I18n.t("item_use._plural"), {:controller => :item_uses, :action => :index} %></li>
+</script>
+
 <script type="text/template" id="browseConservationRequestTemplate">
   <li class="divider"></li>
   <li><%= link_to I18n.t("conservation_request._plural"), {:controller => :conservation_requests, :action => :index} %></li>
@@ -86,6 +90,9 @@
 
       // And significant items browse
       $('.repository-header .navbar-nav .browse-container > .dropdown-menu .divider').eq(1).before(AS.renderTemplate("browseSignificantItemsTemplate"))
+
+      // And item uses browse
+      $('.repository-header .navbar-nav .browse-container > .dropdown-menu .divider').eq(2).before(AS.renderTemplate("browseItemUsesTemplate"))
 
       // Conservation requests sit before assessments in browse ... after moving assessments up some
       $('.repository-header .navbar-nav .browse-container > .dropdown-menu a[href="/assessments"]').parent().detach().insertBefore($('.repository-header .navbar-nav .browse-container > .dropdown-menu .divider').eq(1))

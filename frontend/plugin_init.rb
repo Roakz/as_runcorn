@@ -208,6 +208,11 @@ Rails.application.config.after_initialize do
   Plugins.add_facet_group_i18n("batch_status_u_ssort",
                                proc {|facet| "enumerations.runcorn_batch_status.#{facet}" })
 
+  Plugins.add_facet_group_i18n('item_use_status_u_ssort',
+                               proc {|facet| "reading_room_requests.statuses.#{facet}" })
+  Plugins.add_facet_group_i18n('item_use_type_u_ssort',
+                               proc {|facet| "item_use.item_use_type_values.#{facet}" })
+
   # Eager load all JSON schemas
   Dir.glob(File.join(File.dirname(__FILE__), "..", "schemas", "*.rb")).each do |schema|
     next if schema.end_with?('_ext.rb')

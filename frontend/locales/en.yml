@@ -312,6 +312,12 @@ en:
     batch_status_u_ssort: Status
     batch_latest_action_u_ssort: Latest Action
     title: Title
+    item_qsa_id_u_sort: Item Identifier
+    use_qsa_id_u_sort: Use Identifier
+    item_use_status_u_ssort: Status
+    item_use_used_by_u_ssort: Used By
+    item_use_start_date_u_ssort: Start Date
+    item_use_end_date_u_ssort: End Date
 
   search_results:
     filter:
@@ -325,6 +331,8 @@ en:
       rap_expiring_within: RAP expiry days
       conservation_awaiting_treatment_u_sbool: Awaiting Treatment?
       conservation_treatment_in_progress_u_sbool: Treatment In Progress?
+      item_use_status_u_ssort: Status
+      item_use_type_u_ssort: Use Type
 
   runcorn_agency:
     agency_category: Agency Category
@@ -534,3 +542,16 @@ en:
       match_level: Match level
       change_to_level: Change to level
       make_sticky: Don't inherit
+
+  item_use:
+    _singular: Item Use
+    _plural: Item Uses
+    physical_representation: Item
+    status: Status
+    use_identifier: Use
+    used_by: Used By
+    start_date: Start Date
+    end_date: End Date
+    item_use_type_values:
+      reading_room_request: Reading Room Request
+      file_issue: File Issue
