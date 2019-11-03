@@ -10,7 +10,12 @@ class ItemUsesController < ApplicationController
   def index
     respond_to do |format|
       format.html {
-        @search_data = Search.for_type(session[:repo_id], "item_use", params_for_backend_search.merge({"facet[]" => ITEM_USE_FACETS}))
+        @search_data = Search.for_type(session[:repo_id],
+                                       "item_use",
+                                       {
+                                         "facet[]" => ITEM_USE_FACETS,
+                                         "sort" => "user_mtime desc"
+                                       }.merge(params_for_backend_search))
       }
       format.csv {
         search_params = params_for_backend_search.merge({"facet[]" => ITEM_USE_FACETS})
