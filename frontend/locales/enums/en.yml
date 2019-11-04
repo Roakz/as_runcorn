@@ -260,6 +260,15 @@ en:
       unavailable_due_to_deaccession: "This is unavailable because it has been deaccessioned or destroyed."
       unavailable_due_to_date_range: "As the date range of this item is uncertain, contact QSA to confirm availability."
       unavailable_contact_qsa: "Availability needs to be determined by an archivist. Contact QSA for more information."
+    runcorn_physical_representation_availability_concise:
+      available: Available
+      unavailable_temporarily: "Unavailable: Temporary"
+      unavailable_due_to_conservation: "Unavailable: Conservation"
+      unavailable_due_to_condition: "Unavailable: Condition"
+      unavailable_due_to_format: "Unavailable: Format"
+      unavailable_due_to_deaccession: "Unavailable: Deaccession"
+      unavailable_due_to_date_range: "Unavailable: Uncertain Dates"
+      unavailable_contact_qsa: "Unavailable: Contact QSA"
     runcorn_copyright_status:
       copyright_expired: Copyright expired
       copyright_state_of_queensland: Copyright State of Queensland
