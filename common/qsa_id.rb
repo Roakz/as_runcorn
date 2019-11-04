@@ -25,6 +25,18 @@ class QSAId
   end
 
 
+  def self.model_for(prefix)
+    models_hash.select{|k,v| v[:prefix] == prefix}.keys.first
+  end
+
+
+  def self.parse_prefixed_id(prefixed_id)
+    out = [:prefix, :id].zip(prefixed_id.scan(/([^\d]+)?(\d+)/)[0]).to_h
+    out[:model] = self.model_for(out[:prefix])
+    out
+  end
+
+
   def self.mode(mode = false)
     @mode ||= :backend
     @mode = mode if mode
