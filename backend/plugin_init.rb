@@ -230,8 +230,3 @@ ArchivesSpaceService.plugins_loaded_hook do
     end
   end
 end
-
-
-ArchivesSpaceService.settings.scheduler.every("%sm" % [AppConfig[:rap_expiration_minutes]], :allow_overlapping => false) do
-  RapExpirationJob.call
-end
