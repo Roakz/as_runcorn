@@ -7,12 +7,12 @@
 
   add_column(I18n.t("item_use.physical_representation"),
              proc {|record|
-               QSAIdHelper.id(record['item_qsa_id_u_ssort'])
+               QSAIdHelper.id(record['item_qsa_id_u_ssort'], :link => true)
              }, :sortable => true, :sort_by => 'item_qsa_id_u_sort', :class => 'col-sm-1')
 
   add_column(I18n.t("item_use.use_identifier"),
              proc {|record|
-               QSAIdHelper.id(record['use_qsa_id_u_ssort'])
+               QSAIdHelper.id(record['use_qsa_id_u_ssort'], :link => true)
              }, :sortable => true, :sort_by => 'use_qsa_id_u_sort', :class => 'col-sm-1')
 
   add_column(I18n.t("item_use.status"),
