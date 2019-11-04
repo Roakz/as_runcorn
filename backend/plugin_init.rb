@@ -229,19 +229,6 @@ ArchivesSpaceService.plugins_loaded_hook do
       resource.propagate_raps!
     end
   end
-
-  ASModel.all_models.each do |model|
-    if model.ancestors.include?(ItemUses)
-      model.each do |row|
-        qsa_id = QSAId.prefixed_id_for(model, row[:id])
-        if ItemUse.filter(:use_identifier => qsa_id).empty?
-          $stderr.puts("Creating item uses for #{qsa_id}")
-          ItemUse.save_uses(model.to_item_uses(model.to_jsonmodel(row)))
-        end
-      end
-    end
-  end
-
 end
 
 
