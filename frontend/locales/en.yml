@@ -201,6 +201,8 @@ en:
     indicator: Indicator
     barcode: Barcode
     previous_system_identifiers: Previous System Identifiers
+    usage: Usage
+    usage_link_label: View usage history
     _plural: Physical Representations
     _singular: Physical Representation
     _frontend:

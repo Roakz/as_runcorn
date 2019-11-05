@@ -98,11 +98,26 @@
         <div class="form-group">
           <div class="control-label col-sm-2"><%= I18n.t("archival_object.significance") %></div>
           <div class="controls col-sm-10">
-            <%= SignificanceHelper.display(form.obj['significance']) %>
-            <%= I18n.t('as_runcorn.sticky_significance_message') if form.obj['significance_is_sticky'] %>
+            <div class="label-only">
+              <%= SignificanceHelper.display(form.obj['significance']) %>
+              <%= I18n.t('as_runcorn.sticky_significance_message') if form.obj['significance_is_sticky'] %>
+            </div>
           </div>
         </div>
       <% end %>
+
+      <div class="form-group">
+        <div class="control-label col-sm-2"><%= I18n.t("physical_representation.usage") %></div>
+        <div class="controls col-sm-10">
+          <div class="label-only">
+            <%= link_to I18n.t('physical_representation.usage_link_label'),
+                 :controller => 'item_uses',
+                 :action => 'index',
+                 :'filter_term[]' => {"item_qsa_id_u_ssort" => form.obj['qsa_id_prefixed']}.to_json %>
+          </div>
+        </div>
+      </div>
+
     <% else %>
       <%= form.label_and_select "significance", form.possible_options_for("significance") %>
       <%= form.label_and_boolean "significance_is_sticky" %>
