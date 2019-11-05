@@ -313,7 +313,9 @@ en:
     batch_latest_action_u_ssort: Latest Action
     title: Title
     item_qsa_id_u_sort: Item Identifier
+    item_qsa_id_u_ssort: Item Identifier
     use_qsa_id_u_sort: Use Identifier
+    use_qsa_id_u_ssort: Use Identifier
     item_use_status_u_ssort: Status
     item_use_used_by_u_ssort: Used By
     item_use_start_date_u_ssort: Start Date
