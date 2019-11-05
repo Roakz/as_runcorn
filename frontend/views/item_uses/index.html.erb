@@ -76,7 +76,8 @@
         <ul>
           <% values.each do |value| %>
             <li>
-              <%= link_to value, build_search_params({}).merge("filter_term[]" => {filter => value}.to_json) %>
+              <%= link_to (filter == 'item_use_used_by_u_ssort' ? value.sub(/\s*\<.+\>$/, '') : value),
+                          build_search_params({}).merge("filter_term[]" => {filter => value}.to_json) %>
             </li>
           <% end %>
         </ul>
