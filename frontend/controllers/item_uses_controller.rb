@@ -2,6 +2,8 @@ class ItemUsesController < ApplicationController
 
   set_access_control  "view_repository" => [:index]
 
+#  include ExportHelper
+
   ITEM_USE_FACETS = [
                      'item_use_status_u_ssort',
                      'item_use_type_u_ssort',
