@@ -91,8 +91,8 @@
                   <td>
                     <strong><%= link_to item['label'], {:controller => :resolver, :action => :resolve_readonly, :uri => item['uri']} %></strong>
                   </td>
-                  <td style="white-space:nowrap;"><%= item['format'] %></td>
-                  <td style="white-space:nowrap;"><strong>
+                  <td><%= item['format'] %></td>
+                  <td><strong>
                     <% if item['current_location']['uri'] %>
                       <%= link_to item['current_location']['location'], {:controller => :resolver, :action => :resolve_readonly, :uri => item['current_location']['uri']} %>
                     <% else %>
