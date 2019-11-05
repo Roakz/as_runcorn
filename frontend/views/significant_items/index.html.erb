@@ -124,6 +124,16 @@
                           </td>
                         </tr>
                       <% end %>
+                      <tr>
+                        <td><%= I18n.t("physical_representation.usage") %>:</td>
+                        <td></td>
+                        <td>
+                          <%= link_to I18n.t('physical_representation.usage_link_label'),
+                                      :controller => 'item_uses',
+                                      :action => 'index',
+                                      :'filter_term[]' => {"item_qsa_id_u_ssort" => item['qsa_id']}.to_json %>
+                        </td>
+                      </tr>
                     </table>
                   </td>
                 </tr>
