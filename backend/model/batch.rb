@@ -395,7 +395,10 @@ class Batch < Sequel::Model(:batch)
     begin
       DB.transaction(:savepoint => true) do
         action['action_time'] = Time.now
-        report = handler.perform_action(ASUtils.json_parse(action['action_params']), action['action_user'], action['uri'], self.object_refs)
+        report = handler.perform_action(ASUtils.json_parse(action['action_params'] || '{}'),
+                                        action['action_user'],
+                                        action['uri'],
+                                        self.object_refs)
 
         if opts[:commit]
           action['action_status'] = 'executed'
