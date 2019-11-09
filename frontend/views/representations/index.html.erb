@@ -57,6 +57,16 @@ end
     </div>
   </div>
   <div class="col-md-9">
+    <div class="record-toolbar">
+      <div class="btn-group pull-right">
+      <%= form_tag({:controller => :representations, :action => :create_batch}.merge(params.select{|k,v| !['controller', 'action'].include?(k)})) do |f| %>
+        <button class="btn btn-sm btn-primary"><%= I18n.t("batch._frontend.action.create_from_search") %></button>
+      <% end %>
+
+      </div>
+      <br style="clear:both" />
+    </div>
+
     <div class="record-pane">
       <%= link_to_help :topic => "search" %>
 
