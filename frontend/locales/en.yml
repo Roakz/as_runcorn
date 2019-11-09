@@ -533,6 +533,7 @@ en:
       no_action: "-- no action --"
       functional_move: Functional Move
       significance_level: Significance Level
+      publisher: "Publish/Unpublish"
 
   batch_assigned_objects:
     _plural: Objects
@@ -546,6 +547,9 @@ en:
       match_level: Match level
       change_to_level: Change to level
       make_sticky: Don't inherit
+    publisher:
+      label: "Publish/Unpublish"
+      publish: "Publish?"
 
   item_use:
     _singular: Item Use
