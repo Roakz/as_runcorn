@@ -10,9 +10,13 @@ module RAPsPublishable
       return
     end
 
+    # If RAP propagation is deferred, we're in an import and don't want to
+    # monkey with the publish flag anyway.
+    return if RAP.deferred_propagations_active?
+
     self.refresh
 
-    return if self.publish == 0 # do nothing if unpublished
+    return if self.publish != 1 # do nothing if unpublished
 
     rap_data = RAPsApplied::RAPApplications.new([self])
 

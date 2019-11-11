@@ -198,6 +198,10 @@ class RAP < Sequel::Model(:rap)
     changed
   end
 
+  def self.deferred_propagations_active?
+    RequestContext.active? && !!RequestContext.get(:deferred_rap_propagation_resource_ids)
+  end
+
   def self.with_deferred_propagations(&block)
     RequestContext.open(:deferred_rap_propagation_resource_ids => Set.new) do
       result = block.call
