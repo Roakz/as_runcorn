@@ -10,7 +10,6 @@ class DigitalRepresentation < Sequel::Model(:digital_representation)
 
   include RAPs
   include RAPsApplied
-  include RAPsPublishable
 
   define_relationship(:name => :representation_approved_by,
                       :json_property => 'approved_by',

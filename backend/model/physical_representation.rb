@@ -14,7 +14,6 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
 
   include RAPs
   include RAPsApplied
-  include RAPsPublishable
 
   include ConservationRequests
   include ConservationTreatments
