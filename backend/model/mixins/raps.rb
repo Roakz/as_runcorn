@@ -103,8 +103,10 @@ module RAPs
       end
     end
 
-    # publish check...
-    obj.reset_publish_based_on_rap_applied!
+    # publish check for records with applied RAPs...
+    unless obj.is_a?(Resource)
+      obj.reset_publish_based_on_rap_applied!
+    end
   end
 
 end
