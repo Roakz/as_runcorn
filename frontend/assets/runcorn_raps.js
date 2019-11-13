@@ -1,18 +1,18 @@
 (function(exports) {
-    function RuncornRAPs($container, opts) {
+    function RuncornRAPs($target, opts) {
         this.opts = opts;
         var self = this;
 
-        this.$form = $container.find('.record-pane:first');
-        if (this.$form.data('RuncornRAPs')) {
+        this.$container = $target.find('.record-pane:first');
+        if (this.$container.data('RuncornRAPs')) {
             return;
         }
-        this.$form.data('RuncornRAPs', this);
+        this.$container.data('RuncornRAPs', this);
 
-        $('.attach-rap-button', this.$form).each(function() {
+        $('.attach-rap-button', this.$container).each(function() {
             new RuncornRAPAttachWorkflow($(this), self);
         });
-        $('.edit-rap-button', this.$form).each(function() {
+        $('.edit-rap-button', this.$container).each(function() {
             new RuncornRAPEditWorkflow($(this), self);
         });
 
@@ -78,7 +78,29 @@
                 $form.find('#rap-counts-summary').html(html);
             }
         });
-    }
+    };
+
+    RuncornRAPs.prototype.hasFormChanged = function() {
+        var $form = $(this.$container).closest('form');
+        if ($form.length > 0) {
+            return $form.data('form_changed');
+        } else {
+            // no form, no change!
+            return false;
+        }
+    };
+
+    RuncornRAPs.prototype.onFormChange = function(callback) {
+        var self = this;
+        var $form = $(self.$container).closest('form');
+        if ($form.length > 0) {
+            $form.on('formchanged.aspace', function() {
+                callback();
+            });
+        } else {
+            // no form, nothing to do!
+        }
+    };
 
     function RuncornRAPAttachWorkflow($button, runcornRAPs) {
         this.$button = $button;
@@ -90,7 +112,17 @@
             event.stopImmediatePropagation();
             event.preventDefault();
 
+            if (runcornRAPs.hasFormChanged(this)) {
+                return;
+            }
+
+
             self.showModal();
+        });
+
+        runcornRAPs.onFormChange(function() {
+            self.$button.prop('disabled', true);
+            self.$button.closest('section').find('.raps-form-changed-warning').show();
         });
     };
 
@@ -149,7 +181,15 @@
             event.stopImmediatePropagation();
             event.preventDefault();
 
+            if (runcornRAPs.hasFormChanged(this)) {
+                return;
+            }
+
             self.showModal();
+        });
+
+        runcornRAPs.onFormChange(function() {
+            self.$button.prop('disabled', true);
         });
     };
 

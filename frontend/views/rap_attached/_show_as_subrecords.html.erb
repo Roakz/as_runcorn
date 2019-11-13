@@ -6,6 +6,9 @@
     <button class="attach-rap-button btn btn-sm btn-default pull-right" data-uri="<%= record['uri'] %>">Attach RAP</button>
   </h3>
   <div class="subrecord-form-container">
+    <div class="alert alert-info raps-form-changed-warning" style="display: none;">
+      You have unsaved changes - Save or Revert to access RAP actions
+    </div>
     <div class="subrecord-form-fields">
       <% if record['rap_attached'].nil? %>
         <div class="alert alert-info">No RAP attached; representations will inherit their RAP from up the hierarchy.</div>
