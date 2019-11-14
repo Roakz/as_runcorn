@@ -195,8 +195,10 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
       candidate_availabilies << 'unavailable_due_to_conservation'
     end
 
-    # check for unavailable_temporarily
-    if json['current_location'] != 'HOME'
+    # check location!
+    if ['CONS', 'SEE CON'].include?(json['current_location'])
+      candidate_availabilies << 'unavailable_due_to_conservation'
+    elsif json['current_location'] != 'HOME'
       candidate_availabilies << 'unavailable_temporarily'
     end
 
