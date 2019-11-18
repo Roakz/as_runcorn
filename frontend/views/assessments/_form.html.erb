@@ -146,6 +146,10 @@
       <div class="subrecord-form-fields">
         <%= form.label_and_textarea 'general_assessment_note' %>
 
+        <div class="alert alert-info"><%= I18n.t('assessment._frontend.message.rating_scale')  %></div>
+
+        <br/>
+
         <% if form.readonly? %>
           <% if ASUtils.wrap(form.obj['ratings']).none? {|rating| rating['value'] || rating['note']} %>
             <p><%= I18n.t("assessment._frontend.section.rating_attributes_empty") %></p>

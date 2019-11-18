@@ -112,6 +112,8 @@ en:
         format_attributes_empty: No Proposed Treatments entered
       action:
         generate_treatments: Generate Treatments
+      message:
+        rating_scale: "Assessment attribute scale: 1 - minimal to 5 - severe."
   validation_errors:
     unable_to_publish_when_in_draft: Draft agencies cannot be published
     is_required_unless_a_begin_date_is_given: Property is required if no end date is set
