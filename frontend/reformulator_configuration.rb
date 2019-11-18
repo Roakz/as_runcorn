@@ -68,6 +68,10 @@ Reformulator.configure(
           "hideClosestSelector" => '.form-group'
         },
         {
+          "selector" => 'select[name*="[deaccessions]"][name$="[date][certainty_end]"]',
+          "hideClosestSelector" => '.form-group'
+        },
+        {
           "selector" => 'input[name="location[temporary_question]"]',
           "hideClosestSelector" => '.form-group'
         },
