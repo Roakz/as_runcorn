@@ -58,6 +58,11 @@ class BatchActionHandler
   end
 
 
+  def self.process_form_params(params)
+    params
+  end
+
+
   def self.perform_action(params, user, action_uri, uris)
     raise NotImplementedError.new("This method must be overriden by the implementing class")
   end

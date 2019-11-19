@@ -432,7 +432,8 @@ class Batch < Sequel::Model(:batch)
 
         if current_action['action_params'] != ca_json['action_params']
           extra_values['last_report'] = nil
-          current_action['action_params'] = ca_json['action_params']
+          handler = BatchActionHandler.handler_for_type(current_action['action_type'])
+          current_action['action_params'] = handler.process_form_params(ASUtils.json_parse(ca_json['action_params'])).to_json
         end
 
         current_action['note'] = ca_json['note']

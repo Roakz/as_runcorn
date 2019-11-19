@@ -536,6 +536,7 @@ en:
       functional_move: Functional Move
       significance_level: Significance Level
       publisher: "Publish/Unpublish"
+      item_approval: Item Approval
 
   batch_assigned_objects:
     _plural: Objects
@@ -552,6 +553,13 @@ en:
     publisher:
       label: "Publish/Unpublish"
       publish: "Publish?"
+    item_approval:
+      label: Item Approval
+      approved_by: Approved By
+      approval_date: Approval Date
+      archivist_approved: Archivist Approved?
+      no_approved_by: "-- No Approver --"
+      no_approval_date: "-- No Date --"
 
   item_use:
     _singular: Item Use

@@ -1,0 +1,79 @@
+<div class="form-group">
+  <div class="control-label col-sm-2"><%= I18n.t("physical_representation.archivist_approved") %></div>
+  <% if form.readonly? %>
+    <div class="label-only col-sm-6">
+      <%= !!form.obj['approved'] %>
+    </div>
+  <% else %>
+    <div class="col-sm-6 checkbox">
+      <%= form.checkbox "approved", {}, !!form.obj['approved'] %>
+    </div>
+  <% end %>
+</div>
+
+<div class="form-group">
+  <div class="control-label col-sm-2"><%= I18n.t("batch_action_types.item_approval.approved_by") %></div>
+  <% if form.readonly? %>
+    <div class="controls token-list col-sm-6">
+      <% if form.obj['approver_uri'] %>
+        <%= render_token :object => form.obj,
+                         :label => form.obj['approver_label'],
+                         :type => 'agent_person',
+                         :uri => form.obj['approver_uri'],
+                         :placement => "top" %>
+      <% else %>
+        <div class="controls label-only">
+          <%= I18n.t('batch_action_types.item_approval.no_approved_by') %>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <% agent = form.obj['approver_uri'] ? {:title => form.obj['approver_label'], :uri => form.obj['approver_uri'], :jsonmodel_type => 'agent_person'} : {} %>
+    <div class="controls col-sm-6">
+      <div class="input-group linker-wrapper">
+        <input type="text" class="linker"
+               id="item_approved_by"
+               data-label="<%= I18n.t("physical_representation.approved_by") %>"
+               data-label_plural="<%= I18n.t("physical_representation.approved_by") %>"
+               data-path="<%= form.path %>"
+               data-name="approver_uri"
+               data-url="<%= url_for :controller => :search, :action => :do_search, :format => :json %>"
+               data-browse-url="<%= url_for :controller => :search, :action => :do_search, :format => :js, :facets => [], :display_identifier => true %>"
+               data-selected="<%= ASUtils.to_json(agent) %>"
+               data-format_property="title"
+               data-multiplicity="one"
+               data-types='["agent_with_user"]'
+        />
+
+        <div class="input-group-btn">
+          <a class="btn btn-default dropdown-toggle last" data-toggle="dropdown" href="javascript:void(0);"><span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="javascript:void(0);" class="linker-browse-btn"><%= I18n.t("actions.browse") %></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<div class="form-group">
+  <div class="control-label col-sm-2"><%= I18n.t("batch_action_types.item_approval.approval_date") %></div>
+  <div class="controls label-only col-sm-4">
+    <% if form.readonly? && form.obj['date'].empty? %>
+      <%= I18n.t('batch_action_types.item_approval.no_approval_date') %>
+    <% else %>
+      <%= form.textfield('date', form.obj['date'], {:class => "date-field form-control",
+                                                    :"data-format" => "yyyy-mm-dd",
+                                                    :"data-date" => form.obj['date'],
+                                                    :"data-autoclose" => true,
+                                                    :"data-force-parse" => false,
+                                                    :col_size => 4}) %>
+    <% end %>
+  </div>
+</div>
+
+<script>
+ $(function() {
+     $(".linker:not(.initialised)").linker();
+ });
+</script>
