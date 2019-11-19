@@ -124,7 +124,8 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
                                             'qsa_id' => controlling_records_qsa_id_map.fetch(resource_uri).fetch(:qsa_id),
                                             'qsa_id_prefixed' => controlling_records_qsa_id_map.fetch(resource_uri).fetch(:qsa_id_prefixed),
                                           }
-      json['responsible_agency'] = { 'ref' => controlling_record.responsible_agency }
+      json['responsible_agency'] = { 'ref' => controlling_record.responsible_agency.fetch(:uri),
+                                     'start_date' => controlling_record.responsible_agency.fetch(:start_date)}
       json['recent_responsible_agencies'] = controlling_record.recent_responsible_agencies
 
       json['deaccessioned'] = !json['deaccessions'].empty? || deaccessioned_map.fetch(controlling_record.id)

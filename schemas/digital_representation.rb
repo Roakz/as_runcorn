@@ -117,6 +117,10 @@
             "type" => [{"type" => "JSONModel(:agent_corporate_entity) uri"}],
             "readonly" => "true"
           },
+          "start_date" => {
+            "type" => "string",
+            "readonly" => "true"
+          },
           "_resolved" => {
             "type" => "object",
             "readonly" => "true"

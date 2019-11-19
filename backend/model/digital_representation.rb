@@ -55,7 +55,8 @@ class DigitalRepresentation < Sequel::Model(:digital_representation)
 
       controlling_record = controlling_records_by_representation_id.fetch(obj.id)
       json['controlling_record'] = { 'ref' => controlling_record.uri }
-      json['responsible_agency'] = { 'ref' => controlling_record.responsible_agency }
+      json['responsible_agency'] = { 'ref' => controlling_record.responsible_agency.fetch(:uri),
+                                     'start_date' => controlling_record.responsible_agency.fetch(:start_date)}
       json['recent_responsible_agencies'] = controlling_record.recent_responsible_agencies
 
       json['deaccessioned'] = !json['deaccessions'].empty? || deaccessioned_map.fetch(controlling_record.id)
