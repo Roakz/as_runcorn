@@ -1,4 +1,7 @@
 <% define_template "rap", jsonmodel_definition(:rap) do |form| %>
+  <% if form.readonly? && form.obj['years_default_applied'] %>
+    <div class="alert alert-warning">Years is empty but a default of 100 years has been applied</div>
+  <% end %>
   <%= form.label_with_field 'open_access_metadata', form.checkbox('open_access_metadata'), :controls_class => 'checkbox' %>
   <% if form.readonly? && form.obj['access_category'].nil? %>
     <%= form.label_and_readonly 'access_category', "<span class='text-danger'>Not yet provided</span>".html_safe %>
@@ -10,7 +13,11 @@
       form.obj['years'] = form.obj['years'].to_s
     end
   %>
-  <%= form.label_and_textfield 'years' %>
+  <% if form.readonly? || !form.obj['years_default_applied'] %>
+    <%= form.label_and_textfield 'years' %>
+  <% else %>
+    <%= form.label_and_textfield 'years', {:field_opts => {:value => ''}} %>
+  <% end %>
   <%= form.label_and_textarea 'justification' %>
   <%= form.label_and_textfield 'notice_date' %>
   <%= form.label_and_textfield 'internal_reference' %>

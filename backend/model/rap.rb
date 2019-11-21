@@ -106,7 +106,12 @@ class RAP < Sequel::Model(:rap)
     if json['years'].nil?
       if !AppConfig[:as_runcorn_forever_closed_access_categories].include?(json['access_category']) && json['access_category'] != RAP::ACCESS_CATEGORY_NA && !json['access_category'].nil?
         json['years'] = 100
+        json['years_default_applied'] = true
+      else
+        json['years_default_applied'] = false
       end
+    else
+      json['years_default_applied'] = false
     end
   end
 

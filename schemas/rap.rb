@@ -23,6 +23,8 @@
 
       "is_repository_default" => {"type" => "boolean", "readonly" => "true"},
 
+      "years_default_applied" => {"type" => "boolean", "readonly" => "true"},
+
       "attached_to" => {
         "type" => "object",
         "subtype" => "ref",
