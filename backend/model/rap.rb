@@ -227,6 +227,17 @@ class RAP < Sequel::Model(:rap)
                    db[:rap].filter(:resource_id => id).select(:id).first[:id]
                  end
 
+        # check resource first
+        resource_id = model_class == Resource ? id : model_class[id][:root_record_id]
+        if Resource[resource_id][:publish] == 1
+          unless Resource.calculate_unpublishable([resource_id]).empty?
+            Resource
+              .filter(:id => resource_id)
+              .update(:system_mtime => Time.now,
+                      :publish => 0,
+                      :lock_version => Sequel.expr(1) + :lock_version)
+          end
+        end
 
         # Return a set of AO/RAP applied rows that might now be unpublishable
         # after the RAP changes.
@@ -284,6 +295,19 @@ class RAP < Sequel::Model(:rap)
 
       elsif model_class == PhysicalRepresentation || model_class == DigitalRepresentation
         representation = model_class[id]
+
+        # check resource first
+        resource_id = representation[:resource_id]
+        if Resource[resource_id][:publish] == 1
+          unless Resource.calculate_unpublishable([resource_id]).empty?
+            Resource
+              .filter(:id => resource_id)
+              .update(:system_mtime => Time.now,
+                      :publish => 0,
+                      :lock_version => Sequel.expr(1) + :lock_version)
+          end
+        end
+
         return if representation.publish == 0
 
         backlink_col = :"#{model_class.table_name}_id"

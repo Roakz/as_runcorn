@@ -60,15 +60,20 @@ module RAPs
 
     return if self.publish != 1 # do nothing if unpublished
 
-    rap_data = RAPsApplied::RAPApplications.new([self])
+    if self.is_a?(Resource)
+      # do nothing if the resource is publishable
+      return if self.rap_publishable?
+    else
+      rap_data = RAPsApplied::RAPApplications.new([self])
 
-    rap = rap_data.rap_json_for_rap_applied(self.id)
+      rap = rap_data.rap_json_for_rap_applied(self.id)
 
-    return if rap.open_access_metadata
+      return if rap.open_access_metadata
 
-    rap_expiry = rap_data.rap_expiration_for_rap_applied(self.id)
+      rap_expiry = rap_data.rap_expiration_for_rap_applied(self.id)
 
-    return if rap_expiry.fetch('expired')
+      return if rap_expiry.fetch('expired')
+    end
 
     # Ok, the RAP implies that the record cannot be published
     self.publish = 0
@@ -104,9 +109,7 @@ module RAPs
     end
 
     # publish check for records with applied RAPs...
-    unless obj.is_a?(Resource)
-      obj.reset_publish_based_on_rap_applied!
-    end
+    obj.reset_publish_based_on_rap_applied!
   end
 
 end
