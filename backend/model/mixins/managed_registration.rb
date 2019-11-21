@@ -12,7 +12,7 @@ module ManagedRegistration
                                   " Withdraw submission to edit the draft.")
     end
 
-    if AppConfig[:plugins].include?('qsa_migration_adapter')
+    if ASUtils.migration_mode?
       # You're the boss.  Monkey away!
     else
       # no monkeying with registration state!
@@ -24,7 +24,7 @@ module ManagedRegistration
 
   module ClassMethods
     def create_from_json(json, opts = {})
-      if AppConfig[:plugins].include?('qsa_migration_adapter')
+      if ASUtils.migration_mode?
         # You're the boss.  Monkey away!
       else
         # these are the defaults, but just in case someone is trying to break the rules!

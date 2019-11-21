@@ -52,7 +52,9 @@ module Significance
   module ClassMethods
     def create_from_json(json, extra_values = {})
       obj = super
-      obj.apply_significance!(obj.significance_id)
+      unless ASUtils.migration_mode?
+        obj.apply_significance!(obj.significance_id)
+      end
       obj
     end
   end
