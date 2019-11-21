@@ -333,9 +333,8 @@
 
     function RAPsPublishable(runcornRAPs) {
         this.RuncornRAPs = runcornRAPs;
-        var jsonmodel_type = $('#object_container > form').attr('id') === 'resource_form' ? 'resource' : 'archival_object';
-        var $checkbox = $(':checkbox[name="'+jsonmodel_type+'[publish]"]', runcornRAPs.$container);
-        var $publishable = $(':hidden[name="'+jsonmodel_type+'[publishable]"]', runcornRAPs.$container);
+        var $checkbox = $(':checkbox[name="archival_object[publish]"]', runcornRAPs.$container);
+        var $publishable = $(':hidden[name="archival_object[publishable]"]', runcornRAPs.$container);
         if ($publishable.length > 0 && $checkbox.length > 0) {
             if ($publishable.val() === 'false') {
                 $checkbox.prop('checked', false).prop('disabled', true);

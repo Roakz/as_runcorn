@@ -5,7 +5,6 @@ Resource.include(RuncornDeaccession)
 Resource.include(RAPs)
 Resource.include(ControlGapsCalculator)
 Resource.include(Deaccessioned)
-Resource.include(ResourcePublishable)
 
 class Resource
   define_relationship(:name => :representation_approved_by,

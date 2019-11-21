@@ -29,5 +29,3 @@
 <% end %>
 
 <%= render_aspace_partial :partial => 'shared/qsa_id_form', :locals => {:form => form, :model => :resource} %>
-
-<%= form.hidden_input 'publishable', form.obj['publishable'] || false, :readonly => true %>

@@ -37,10 +37,5 @@
   "serialised" => {"type" => "boolean"},
   "information_sources" => {"type" => "string"},
   "abstract" => {"type" => "string"},
-  "description" => {"type" => "string"},
-
-  "publishable" => {
-    "type" => "boolean",
-    "readonly" => "true"
-  },
+  "description" => {"type" => "string"}
 }
