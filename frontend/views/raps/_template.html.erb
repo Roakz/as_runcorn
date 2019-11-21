@@ -1,6 +1,6 @@
 <% define_template "rap", jsonmodel_definition(:rap) do |form| %>
   <% if form.readonly? && form.obj['years_default_applied'] %>
-    <div class="alert alert-warning">Years is empty but a default of 100 years has been applied</div>
+    <div class="alert alert-warning">Restricted Access Period not originally defined. A default maximum of 100 years for this Access Category has been applied.</div>
   <% end %>
   <%= form.label_with_field 'open_access_metadata', form.checkbox('open_access_metadata'), :controls_class => 'checkbox' %>
   <% if form.readonly? && form.obj['access_category'].nil? %>
