@@ -88,6 +88,10 @@
         "properties" => {
           "ref" => {"type" => [{"type" => "JSONModel(:archival_object) uri"}],
                     "ifmissing" => "error"},
+          "qsa_id" => {"type" => "number", "readonly" => "true"},
+          "qsa_id_prefixed" => {"type" => "string", "readonly" => "true"},
+          "begin_date" => {"type" => "string", "readonly" => "true"},
+          "end_date" => {"type" => "string", "readonly" => "true"},
           "_resolved" => {
             "type" => "object",
             "readonly" => "true"

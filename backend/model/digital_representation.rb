@@ -47,6 +47,10 @@ class DigitalRepresentation < Sequel::Model(:digital_representation)
 
     controlling_records_by_representation_id = self.build_controlling_record_map(objs)
 
+    controlling_records_qsa_id_map = build_controlling_records_qsa_id_map(controlling_records_by_representation_id)
+
+    controlling_records_dates_map = build_controlling_records_dates_map(controlling_records_by_representation_id)
+
     deaccessioned_map = Deaccessioned.build_deaccessioned_map(controlling_records_by_representation_id.values.map(&:id))
 
     objs.zip(jsons).each do |obj, json|
@@ -54,7 +58,13 @@ class DigitalRepresentation < Sequel::Model(:digital_representation)
       json['display_string'] = build_display_string(json)
 
       controlling_record = controlling_records_by_representation_id.fetch(obj.id)
-      json['controlling_record'] = { 'ref' => controlling_record.uri }
+      json['controlling_record'] = {
+        'ref' => controlling_record.uri,
+        'qsa_id' => controlling_records_qsa_id_map.fetch(controlling_record.uri).fetch(:qsa_id),
+        'qsa_id_prefixed' => controlling_records_qsa_id_map.fetch(controlling_record.uri).fetch(:qsa_id_prefixed),
+        'begin_date' => controlling_records_dates_map.fetch(controlling_record.id, {}).fetch(:begin, nil),
+        'end_date' => controlling_records_dates_map.fetch(controlling_record.id, {}).fetch(:end, nil),
+      }
       json['responsible_agency'] = { 'ref' => controlling_record.responsible_agency.fetch(:uri),
                                      'start_date' => controlling_record.responsible_agency.fetch(:start_date)}
       json['recent_responsible_agencies'] = controlling_record.recent_responsible_agencies
