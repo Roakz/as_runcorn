@@ -58,12 +58,12 @@ TreeReordering.add_after_reorder_hook do |target_class, child_class, target_id, 
               RAP[applied_rap_id]
             end
 
-      return if rap.nil? || rap[:default_for_repo_id]
-
-      if rap[:archival_object_id]
-        RAP.force_unpublish_for_restricted(ArchivalObject, rap[:archival_object_id])
-      elsif rap[:resource_id]
-        RAP.force_unpublish_for_restricted(Resource, rap[:resource_id])
+      unless rap.nil? || rap[:default_for_repo_id]
+        if rap[:archival_object_id]
+          RAP.force_unpublish_for_restricted(ArchivalObject, rap[:archival_object_id])
+        elsif rap[:resource_id]
+          RAP.force_unpublish_for_restricted(Resource, rap[:resource_id])
+        end
       end
     end
   end
