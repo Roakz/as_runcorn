@@ -5,7 +5,7 @@ class RapProvisioner
       RequestContext.open(:repo_id => row[:id]) do
         Resource.filter(:repo_id => row[:id]).each do |resource|
           p "Provisioning RAPs for resource: #{resource.id}"
-          resource.propagate_raps!
+          Resource.rap_needs_propagate(resource.id)
         end
       end
     end

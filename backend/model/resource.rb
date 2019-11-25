@@ -462,14 +462,13 @@ class Resource
   end
 
 
-  # Returns a count of inserted rows.
-  def propagate_raps!(subtree_ao_id = nil)
+  def self.rap_needs_propagate(resource_id, subtree_ao_id = nil)
     if RequestContext.active? && RequestContext.get(:deferred_rap_propagation_resource_ids)
       # Defer propagating.  Used for things like batch import.
-      RequestContext.get(:deferred_rap_propagation_resource_ids) << self.id
+      RequestContext.get(:deferred_rap_propagation_resource_ids) << resource_id
     else
       # Propagate immediately
-      self.class.propagate_raps!(self.id, subtree_ao_id)
+      self.propagate_raps!(resource_id, subtree_ao_id)
     end
   end
 

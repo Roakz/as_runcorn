@@ -21,7 +21,8 @@ class RAP < Sequel::Model(:rap)
     # everything gets reindexed and versioned.
     DB.open do |db|
       db[:rap_applied].filter(:rap_id => self.id).delete
-      self.attached_root_record.propagate_raps!
+      root_record = self.attached_root_record
+      Resource.rap_needs_propagate(root_record.id)
     end
 
     attached = attached_record

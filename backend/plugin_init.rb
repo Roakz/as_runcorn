@@ -43,7 +43,8 @@ TreeReordering.add_after_reorder_hook do |target_class, child_class, target_id, 
                  Resource.get_or_die(ao.root_record_id)
                end
 
-    resource.propagate_raps!
+    Resource.rap_needs_propagate(resource.id)
+
     DB.open do |db|
       rap = if target_class == Resource
               db[:rap]
@@ -225,7 +226,7 @@ ArchivesSpaceService.plugins_loaded_hook do
         end
       end
 
-      resource.propagate_raps!
+      Resource.rap_needs_propagate(resource.id)
     end
   end
 end

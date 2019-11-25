@@ -93,13 +93,13 @@ module RAPs
 
     if needs_rap_created || action == :create
       if obj.is_a?(ArchivalObject)
-        Resource[obj.root_record_id].propagate_raps!
+        Resource.rap_needs_propagate(obj.root_record_id)
       elsif obj.is_a?(Resource)
-        obj.propagate_raps!
+        Resource.rap_needs_propagate(obj.id)
       else
         # Representations
         ao = ArchivalObject[obj.archival_object_id]
-        Resource[ao.root_record_id].propagate_raps!(obj.archival_object_id)
+        Resource.rap_needs_propagate(ao.root_record_id, obj.archival_object_id)
       end
     end
 

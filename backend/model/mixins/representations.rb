@@ -159,7 +159,7 @@ module Representations
     end
 
     # Make sure our RAPs are up to date
-    Resource.new(id: obj.root_record_id).propagate_raps!(obj.id)
+    Resource.rap_needs_propagate(obj.root_record_id, obj.id)
   end
 
 end
