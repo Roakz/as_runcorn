@@ -87,7 +87,9 @@ ArchivesSpaceService.plugins_loaded_hook do
     end
   end
 
-  RapProvisioner.doit!
+  unless AppConfig.has_key?(:qsa_skip_rap_provisioning) && AppConfig[:qsa_skip_rap_provisioning]
+    RapProvisioner.doit!
+  end
 
   if AppConfig.has_key?(:create_big_series)
     series_count = AppConfig[:create_big_series]
