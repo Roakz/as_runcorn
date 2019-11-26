@@ -40,11 +40,13 @@ en:
     archivist_approved_tooltip: ...
     copyright_status: Copyright Status
     copyright_status_tooltip: ...
+    retention_status: Retention Status
+    retention_status_tooltip: ...
     original_registration_date: Original Registration Date
     original_registration_date_tooltip: ...
     information_sources: Information Sources
     information_sources_tooltip: ...
-    repository_processing_note: Previous System Identifiers
+    repository_processing_note: Previous System Locations
     repository_processing_note_tooltip: ...
     serialised: Serialised?
     serialised_tooltip: ...
@@ -91,7 +93,7 @@ en:
   location:
     building: Repository
     barcode: Repository ID
-    classification: Location Storage Type
+    location_storage_type: Location Storage Type
   location_batch:
     building: Repository
     barcode: Repository ID

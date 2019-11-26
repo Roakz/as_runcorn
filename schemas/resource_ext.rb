@@ -37,5 +37,6 @@
   "serialised" => {"type" => "boolean"},
   "information_sources" => {"type" => "string"},
   "abstract" => {"type" => "string"},
-  "description" => {"type" => "string"}
+  "description" => {"type" => "string"},
+  "retention_status" => {"type" => "string", "dynamic_enum" => "runcorn_retention_status"}
 }

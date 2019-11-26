@@ -131,6 +131,7 @@ en:
       TFR: "Transfer in progress"
       HOME: "Home"
       TODESK: "TO DESK"
+      Repository: "Repository"
     runcorn_access_clearance_procedure:
       ADMIN: "Permission to access restricted material by responsible agency"
       BLANK: ""
@@ -254,6 +255,14 @@ en:
     runcorn_copyright_status:
       copyright_expired: Copyright expired
       copyright_state_of_queensland: Copyright State of Queensland
+    runcorn_retention_status:
+      long_term_temporary: Long Term Temporary
+      mixed: Mixed
+      not_available: Not Available
+      permanent: Permanent
+      temporary: Temporary
+      unappraised: Unappraised
+      unsentenced: Unsentenced
     runcorn_batch_action_status: &batch_action_statuses
       draft: Draft
       proposed: Proposed
@@ -274,11 +283,12 @@ en:
       description: Description
       agency_control_number: Agency Control Number
       preferred_citation: Preferred Citation
-      archivists notes: "Archivists' Notes"
+      archivists_notes: "Archivists' Notes"
       system_of_arrangement: System of Arrangement
       other_restrictions: Other Restrictions
       legacy_metadata_item: A1 Item Legacy Metadata
       legacy_metadata_agency: A1 Agency Legacy Metadata
+      legacy_metadata_series: A1 Series Legacy Metadata
       information_sources: Information Sources
       legislation_establish: Legislation - Establish
       legislation_abolish: Legislation - Abolish
@@ -305,6 +315,7 @@ en:
     runcorn_significance: Runcorn Plugin - Runcorn Significance
     runcorn_physical_representation_availability: Runcorn Plugin - Physical Representation Availability
     runcorn_copyright_status: Runcorn Plugin - Copyright Status
+    runcorn_retention_status: Runcorn Plugin - Retention Status
     runcorn_batch_action_status: Runcorn Batch Action Status
     runcorn_batch_status: Runcorn Batch Status
     runcorn_batch_model: Runcorn Batch Model

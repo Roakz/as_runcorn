@@ -1,5 +1,5 @@
 QSAId.register(:resource, :existing_id_field => :id_0, :prefix => 'S')
-QSAId.register(:archival_object, :existing_id_field => :ref_id, :prefix => 'R')
+QSAId.register(:archival_object, :existing_id_field => :ref_id, :prefix => 'ITM')
 QSAId.register(:digital_object, :existing_id_field => :digital_object_id, :prefix => 'D')
 QSAId.register(:function, :prefix => 'F')
 QSAId.register(:mandate, :prefix => 'M')
