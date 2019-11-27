@@ -2,7 +2,7 @@ class ItemApproval < BatchActionHandler
 
   register(:item_approval,
            'Set approval fields on Items and Representations.',
-           [:archival_object, :physical_representation, :digital_representation])
+           [:archival_object, :physical_representation])
 
 
   def self.default_params
