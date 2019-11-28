@@ -1,4 +1,7 @@
-<%= setup_context :object => @batch, :title => @batch.display_string %>
+<%= setup_context :title => "Assign objects", :trail => [[I18n.t('batch._plural'), {:controller => :batches, :action => :index}],
+                                                         [@batch.display_string, {:controller => :batches, :action => :show}]] %>
+
+<%= render_aspace_partial :partial => "shared/form_messages", :locals => {:object => @batch} %>
 
 <div id="clear_batch_modal_template" data-title="Clear This Batch?"><!--
    <div class="modal-body">

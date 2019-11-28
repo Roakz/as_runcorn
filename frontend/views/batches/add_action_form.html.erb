@@ -1,6 +1,8 @@
 <%= setup_context :title => "Add draft action", :trail => [[I18n.t('batch._plural'), {:controller => :batches, :action => :index}],
                                                            [@batch.display_string, {:controller => :batches, :action => :show}]] %>
 
+<%= render_aspace_partial :partial => "shared/form_messages", :locals => {:object => @batch} %>
+
 <div class="row">
     <div class="record-pane batch_add_action col-sm-12">
         <div class="pull-right">

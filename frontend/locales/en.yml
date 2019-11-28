@@ -511,6 +511,7 @@ en:
         no_current_action: "No current action. Create one by clicking the 'Add draft action' button above"
         no_actions: Batch has no action history
         objects_assigned: Objects successfully assigned
+        batch_cleared: Batch successfully cleared
         action_added: Draft action successfully added
         submitted_for_review: Action submitted for review
         reverted_to_draft: Action reverted to draft
@@ -518,6 +519,7 @@ en:
         dry_run_performed: Dry run successful
         action_performed: Action successfully performed
         action_deleted: Action successfully deleted
+        error: "We encountered a problem while attempting: "
 
   batch_action:
     action_status: Status

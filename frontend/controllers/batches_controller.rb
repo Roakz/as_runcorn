@@ -49,14 +49,19 @@ class BatchesController < ApplicationController
   end
 
   def assign_objects
-    JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/assign_objects",
-                              'model' => params[:model],
-                              'adds[]' => Array(params.dig(:batch_adds, 'ref')),
-                              'removes[]' => Array(params.dig(:batch_removes, 'ref')),
-                              'include_deaccessioned' => params[:include_deaccessioned])
+    resp = JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/assign_objects",
+                                     'model' => params[:model],
+                                     'adds[]' => Array(params.dig(:batch_adds, 'ref')),
+                                     'removes[]' => Array(params.dig(:batch_removes, 'ref')),
+                                     'include_deaccessioned' => params[:include_deaccessioned])
 
-    flash[:success] = I18n.t("batch._frontend.messages.objects_assigned")
-    return redirect_to :controller => :batches, :action => :show
+    if resp.code === "200"
+      flash[:success] = I18n.t("batch._frontend.messages.objects_assigned")
+      redirect_to :controller => :batches, :action => :show
+    else
+      flash[:error] = error_message(:assign_objects, resp.body)
+      redirect_to :controller => :batches, :action => :assign_objects_form
+    end
   end
 
   def add_action_form
@@ -64,52 +69,87 @@ class BatchesController < ApplicationController
   end
 
   def add_action
-    JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/add_action/#{params[:action_type]}")
+    resp = JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/add_action/#{params[:action_type]}")
 
-    flash[:success] = I18n.t("batch._frontend.messages.action_added")
-    return redirect_to :controller => :batches, :action => :show
+    if resp.code === "200"
+      flash[:success] = I18n.t("batch._frontend.messages.action_added")
+      redirect_to :controller => :batches, :action => :show
+    else
+      flash[:error] = error_message(:add_action, resp.body)
+      redirect_to :controller => :batches, :action => :add_action_form
+    end
   end
 
   def submit_for_review
-    JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/propose")
+    resp = JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/propose")
 
-    flash[:success] = I18n.t("batch._frontend.messages.submitted_for_review")
-    return redirect_to :controller => :batches, :action => :show
+    if resp.code === "200"
+      flash[:success] = I18n.t("batch._frontend.messages.submitted_for_review")
+    else
+      flash[:error] = error_message(:submit_for_review, resp.body)
+    end
+
+    redirect_to :controller => :batches, :action => :show
   end
 
   def revert_to_draft
-    JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/revert_to_draft")
+    resp = JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/revert_to_draft")
 
-    flash[:success] = I18n.t("batch._frontend.messages.reverted_to_draft")
-    return redirect_to :controller => :batches, :action => :show
+    if resp.code === "200"
+      flash[:success] = I18n.t("batch._frontend.messages.reverted_to_draft")
+    else
+      flash[:error] = error_message(:revert_to_draft, resp.body)
+    end
+
+    redirect_to :controller => :batches, :action => :show
   end
 
   def approve
-    JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/approve")
+    resp = JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/approve")
 
-    flash[:success] = I18n.t("batch._frontend.messages.approved")
-    return redirect_to :controller => :batches, :action => :show
+    if resp.code === "200"
+      flash[:success] = I18n.t("batch._frontend.messages.approved")
+    else
+      flash[:error] = error_message(:approve, resp.body)
+    end
+
+    redirect_to :controller => :batches, :action => :show
   end
 
   def delete_action
-    JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/delete_action")
+    resp = JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/delete_action")
 
-    flash[:success] = I18n.t("batch._frontend.messages.action_deleted")
-    return redirect_to :controller => :batches, :action => :show
+    if resp.code === "200"
+      flash[:success] = I18n.t("batch._frontend.messages.action_deleted")
+    else
+      flash[:error] = error_message(:delete_action, resp.body)
+    end
+
+    redirect_to :controller => :batches, :action => :show
   end
 
   def dry_run
-    JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/dry_run")
+    resp = JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/dry_run")
 
-    flash[:success] = I18n.t("batch._frontend.messages.dry_run_performed")
-    return redirect_to :controller => :batches, :action => :show
+    if resp.code === "200"
+      flash[:success] = I18n.t("batch._frontend.messages.dry_run_performed")
+    else
+      flash[:error] = error_message(:dry_run, resp.body)
+    end
+
+    redirect_to :controller => :batches, :action => :show
   end
 
   def perform_action
-    JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/perform_action")
+    resp = JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/perform_action")
 
-    flash[:success] = I18n.t("batch._frontend.messages.action_performed")
-    return redirect_to :controller => :batches, :action => :show
+    if resp.code === "200"
+      flash[:success] = I18n.t("batch._frontend.messages.action_performed")
+    else
+      flash[:error] = error_message(:perform_action, resp.body)
+    end
+
+    redirect_to :controller => :batches, :action => :show
   end
 
   def edit
@@ -192,9 +232,15 @@ class BatchesController < ApplicationController
   end
 
   def clear_assigned_objects
-    JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/remove_all_objects")
+    resp = JSONModel::HTTP.post_form("/repositories/#{session[:repo_id]}/batches/#{params[:id]}/remove_all_objects")
 
-    redirect_to(:controller => :batches, :action => :assign_objects_form)
+    if resp.code === "200"
+      flash[:success] = I18n.t("batch._frontend.messages.batch_cleared")
+    else
+      flash[:error] = error_message(:clear, resp.body)
+    end
+
+    redirect_to :controller => :batches, :action => :assign_objects_form
   end
 
 
@@ -210,6 +256,15 @@ class BatchesController < ApplicationController
         end
       end
     end
+  end
+
+
+  def error_message(action, error)
+    out = I18n.t("batch._frontend.messages.error")
+    out <<  I18n.t("batch._frontend.action.#{action}")
+    out << " -- "
+    out << error
+    out
   end
 
 
