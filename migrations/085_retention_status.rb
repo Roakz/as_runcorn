@@ -6,6 +6,7 @@ Sequel.migration do
     alter_table(:resource) do
       add_column(:retention_status_id, Integer, :null => true)
       add_foreign_key([:retention_status_id], :enumeration_value, :key => :id, :name => 'runcorn_retention_status_fk')
+      set_column_type(:description, :text)
     end
 
     create_enum('runcorn_retention_status', [
