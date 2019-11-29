@@ -163,7 +163,6 @@ en:
         withdraw: You have withdrawn the submission of this draft.
       error: There was a problem with your action.
   physical_representation:
-    access_category: Access Status
     current_location: Current Location
     normal_location: Normal Location
     accessioned_status: Accessioned Status

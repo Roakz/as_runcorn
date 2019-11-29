@@ -9,6 +9,14 @@ Sequel.migration do
       set_column_type(:description, :text)
     end
 
+    alter_table(:physical_representation) do
+      drop_column(:access_category)
+    end
+
+    alter_table(:archival_object) do
+      add_column(:original_registration_date, String, :null => true)
+    end
+
     create_enum('runcorn_retention_status', [
       'long_term_temporary',
       'mixed',

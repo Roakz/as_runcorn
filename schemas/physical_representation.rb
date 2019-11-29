@@ -10,8 +10,6 @@
       "existing_ref" => { "type" => "JSONModel(:physical_representation) uri"},
       "display_string" => {"type" => "string", "maxLength" => 8192, "readonly" => true},
 
-      "access_category" => {"type" => "string", "dynamic_enum" => "runcorn_access_category"},
-
       "current_location" => {"type" => "string", "dynamic_enum" => "runcorn_location", "ifmissing" => "error"},
 
       "normal_location" => {"type" => "string", "dynamic_enum" => "runcorn_location", "ifmissing" => "error"},
