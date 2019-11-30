@@ -17,6 +17,11 @@ Sequel.migration do
       add_column(:original_registration_date, String, :null => true)
     end
 
+    alter_table(:location) do
+      add_column(:storage_type_id, Integer, :null => true)
+      add_foreign_key([storage_type_id, :enumeration_value, :key => :id, :name => 'runcorn_storage_type_fk'])
+    end
+
     create_enum('runcorn_retention_status', [
       'long_term_temporary',
       'mixed',
@@ -25,6 +30,28 @@ Sequel.migration do
       'temporary',
       'unappraised',
       'unsentenced'
+    ])
+
+    create_enum('runcorn_storage_type', [
+      'BAY',
+      'BMS',
+      'CAR',
+      'DSH',
+      'FLT',
+      'HAN',
+      'LDR',
+      'LGP',
+      'MDP',
+      'MDR',
+      'PDR',
+      'SMP',
+      'XLD',
+      'CDRL',
+      'CDRM',
+      'CDRS',
+      'HANG',
+      'FDR',
+      'NAA'
     ])
   end
 

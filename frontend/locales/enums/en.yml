@@ -297,6 +297,26 @@ en:
       general: General
     date_certainty:
       exact: Exact
+    runcorn_storage_type:
+      BAY: Bay - standard shelving,
+      BMS: Bay - microfilm shelving,
+      CAR: CAR,
+      DSH: Bay - deep shelving,
+      FLT: Flat shelving,
+      HAN: HAN,
+      LDR: LDR,
+      LGP: Pigeon hole - large,
+      MDP: Pigeon hole - medium,
+      MDR: Pigeon hole - small,
+      PDR: Plan drawer,
+      SMP: SMP,
+      XLD: XLD,
+      CDRL: Card drawer - large,
+      CDRM: Card drawer - medium,
+      CDRS: Card drawer - small,
+      HANG: Hanging cage,
+      FDR: Microfiche drawer,
+      NAA: N/A,
   enumeration_names:
     runcorn_access_category: Runcorn Plugin - Access Category
     runcorn_access_clearance_procedure: Runcorn Plugin - Runcorn Access Clearance Procedure
@@ -320,3 +340,4 @@ en:
     runcorn_batch_status: Runcorn Batch Status
     runcorn_batch_model: Runcorn Batch Model
     runcorn_note_singlepart_type: Runcorn Singlepart Note Type
+    runcorn_storage_type: Runcorn Storage Type
