@@ -19,7 +19,7 @@ Sequel.migration do
 
     alter_table(:location) do
       add_column(:storage_type_id, Integer, :null => true)
-      add_foreign_key([:storage_type_id, :enumeration_value, :key => :id, :name => 'runcorn_storage_type_fk'])
+      add_foreign_key([:storage_type_id], :enumeration_value, :key => :id, :name => 'runcorn_storage_type_fk')
     end
 
     create_enum('runcorn_retention_status', [
