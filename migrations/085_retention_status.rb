@@ -10,7 +10,7 @@ Sequel.migration do
     end
 
     alter_table(:physical_representation) do
-      drop_column(:access_category_id)
+      drop_foreign_key(:access_category_id)
     end
 
     alter_table(:archival_object) do
