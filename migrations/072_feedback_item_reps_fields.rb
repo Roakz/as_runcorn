@@ -36,10 +36,13 @@ Sequel.migration do
       'other_restrictions',
       'legacy_metadata_item',
       'legacy_metadata_agency',
+      'legacy_metadata_series',
       'information_sources',
       'legislation_establish',
       'legislation_abolish',
-      'legislation_administered'
+      'legislation_administered',
+      'how_to_use',
+      'general'
     ])
   end
 
