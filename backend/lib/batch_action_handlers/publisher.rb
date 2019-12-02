@@ -62,16 +62,16 @@ class Publisher < BatchActionHandler
 
     state = "#{publish == 1 ? '' : 'un'}published"
 
-    out = "Number of objects #{state}:\n    "
+    out = "Number of objects #{state}:\n"
     out += counts.map{|model, count| "    #{I18n.t(model + '._singular')}: #{count}" }.join("\n")
 
     unless unpublishable.empty?
-      out += "\n\nNumber of objects not published due to RAP restrictions:\n    "
+      out += "\n\nNumber of objects not published due to RAP restrictions:\n"
       out += unpublishable.map{|model, count| "    #{I18n.t(model + '._singular')}: #{count}" }.join("\n")
     end
 
     unless already.empty?
-      out += "\n\nNumber of objects not updated because they are already #{state}:\n    "
+      out += "\n\nNumber of objects not updated because they are already #{state}:\n"
       out += already.map{|model, count| "    #{I18n.t(model + '._singular')}: #{count}" }.join("\n")
     end
 
