@@ -301,13 +301,14 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
       .each do |relationship|
         assessment_id = relationship[:assessment_id]
         result[relationship[:physical_representation_id]] ||= []
-        blob = {
-          uri: JSONModel(:assessment).uri_for(assessment_id, :repo_id => RequestContext.get(:repo_id)),
-          id: assessment_id,
-          active: false,
-        }
-        result[relationship[:physical_representation_id]] << blob
-        blob_by_id[assessment_id] = blob
+
+        blob_by_id[assessment_id] ||=
+          {
+            uri: JSONModel(:assessment).uri_for(assessment_id, :repo_id => RequestContext.get(:repo_id)),
+            id: assessment_id,
+            active: false,
+          }
+        result[relationship[:physical_representation_id]] << blob_by_id[assessment_id]
     end
 
     Assessment
