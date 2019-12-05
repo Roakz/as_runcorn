@@ -89,6 +89,10 @@ Reformulator.configure(
           "hideClosestSelector" => '.form-group'
         },
         {
+          "selector" => 'input[name="location[classification]"]',
+          "hideClosestSelector" => '.form-group'
+        },
+        {
           "selector" => 'input[name="location_batch[temporary_question]"]',
           "hideClosestSelector" => '.form-group'
         },
