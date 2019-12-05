@@ -99,7 +99,7 @@ module JSONModel
           if years < 0 || years > 100
             errors << ['years', 'must be in range 0-100 inclusive']
           end
-        rescue ArgumentException
+        rescue ArgumentError
           errors << ['years', 'must be an integer']
         end
       end
