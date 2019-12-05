@@ -384,7 +384,7 @@ class Batch < Sequel::Model(:batch)
 
     if opts[:commit] && BatchActionHandler.action_requires_approval?(action['action_type'])
       unless action['action_status'] == 'approved'
-        raise OperationNotPermitted.new("Action nust be approved before it can be performed.")
+        raise OperationNotPermitted.new("Action must be approved before it can be performed.")
       end
     end
 
