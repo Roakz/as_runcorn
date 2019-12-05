@@ -392,23 +392,19 @@ class Batch < Sequel::Model(:batch)
 
     report = ''
 
-    begin
-      DB.transaction(:savepoint => true) do
-        action['action_time'] = Time.now
-        report = handler.perform_action(ASUtils.json_parse(action['action_params'] || '{}'),
-                                        action['action_user'],
-                                        action['uri'],
-                                        self.object_refs)
+    DB.transaction(:savepoint => true) do
+      action['action_time'] = Time.now
+      report = handler.perform_action(ASUtils.json_parse(action['action_params'] || '{}'),
+                                      action['action_user'],
+                                      action['uri'],
+                                      self.object_refs)
 
-        if opts[:commit]
-          action['action_status'] = 'executed'
-        else
-          report = "Dry run report (no changes made):\n\n" + report
-          raise Sequel::Rollback
-        end
+      if opts[:commit]
+        action['action_status'] = 'executed'
+      else
+        report = "Dry run report (no changes made):\n\n" + report
+        raise Sequel::Rollback
       end
-    rescue Sequel::Rollback
-      # no need to propagate
     end
 
     BatchAction.get_or_die(JSONModel.parse_reference(action['uri'])[:id]).update_from_json(action, :last_report => report)
