@@ -263,7 +263,11 @@ class BatchesController < ApplicationController
     out = I18n.t("batch._frontend.messages.error")
     out <<  I18n.t("batch._frontend.action.#{action}")
     out << " -- "
-    out << error
+    begin
+      out << ASUtils.json_parse(error)['error']
+    rescue
+      out << error
+    end
     out
   end
 
