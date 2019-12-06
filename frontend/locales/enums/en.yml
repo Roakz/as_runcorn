@@ -214,12 +214,6 @@ en:
       POL: Police/Law Enforcement Agency
       ESA: Emergency Services Agency
       PAR: Parliament
-    runcorn_sensitivity_label:
-      published: Public Access / Published
-      cultural_sensitivity: Cultural Sensitivity Warning
-      secret_and_sacred: Secret and Sacred
-      distressing: This record may contain information or photographs which some people may find distressing
-      atsi_cultural: These records may contain terms or images which Aboriginal and Torres Strait Islander people may find distressing or offensive
     runcorn_charge_quantity_unit:
       order: Order
       record: Record
