@@ -536,18 +536,13 @@ en:
     note: Note
     approval_required: Approval required
     no_approval_required: No approval required
-    action_types:
-      no_action: "-- no action --"
-      functional_move: Functional Move
-      significance_level: Significance Level
-      publisher: "Publish/Unpublish"
-      item_approval: Item Approval
-      attach_rap: Attach RAP
 
   batch_assigned_objects:
     _plural: Objects
 
   batch_action_types:
+    no_action:
+      label: "-- no action --"
     functional_move:
       label: Functional Move
       location: Location
