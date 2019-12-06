@@ -429,7 +429,11 @@ class Batch < Sequel::Model(:batch)
         if current_action['action_params'] != ca_json['action_params']
           extra_values['last_report'] = nil
           handler = BatchActionHandler.handler_for_type(current_action['action_type'])
-          current_action['action_params'] = handler.process_form_params(ASUtils.json_parse(ca_json.fetch('action_params', '{}'))).to_json
+          params = handler.process_form_params(ASUtils.json_parse(ca_json.fetch('action_params', '{}')))
+          # FIXME: Currently not validating params on update because the frontend
+          #        isn't set up to handle failures gracefully.
+          #handler.validate_params(params)
+          current_action['action_params'] = params.to_json
         end
 
         current_action['note'] = ca_json['note']
