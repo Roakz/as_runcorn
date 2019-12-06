@@ -542,6 +542,7 @@ en:
       significance_level: Significance Level
       publisher: "Publish/Unpublish"
       item_approval: Item Approval
+      attach_rap: Attach RAP
 
   batch_assigned_objects:
     _plural: Objects
@@ -565,6 +566,8 @@ en:
       archivist_approved: Archivist Approved?
       no_approved_by: "-- No Approver --"
       no_approval_date: "-- No Date --"
+    attach_rap:
+      label: Attach RAP
 
   item_use:
     _singular: Item Use
