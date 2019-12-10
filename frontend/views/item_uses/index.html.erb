@@ -23,7 +23,11 @@
 
   add_column(I18n.t("item_use.used_by"),
              proc {|record|
-               record.fetch('item_use_used_by_u_ssort').sub(/\s*\<.+\>$/, '')
+               if (qsa_id = QSAIdHelper.id(record['item_use_used_by_u_ssort'], :link => true))
+                 qsa_id
+               else
+                 record.fetch('item_use_used_by_u_ssort').sub(/\s*\<.+\>$/, '')
+               end
              },
              :sortable => true, :sort_by => 'item_use_used_by_u_ssort')
 
