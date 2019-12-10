@@ -212,11 +212,14 @@ class IndexerCommon
 
     indexer.add_document_prepare_hook {|doc, record|
       if ['resource', 'archival_object'].include?(doc['primary_type'])
-        summary = [
-          [record['record']['items_count'], "#{record['record']['items_count']} items"],
+
+        summary = []
+        summary << [record['record']['items_count'], "#{record['record']['items_count']} items"] if doc['primary_type'] == 'resource'
+
+        (summary + [
           [record['record']['physical_representations_count'], "#{record['record']['physical_representations_count']} physical representations"],
           [record['record']['digital_representations_count'], "#{record['record']['digital_representations_count']} digital representations"]
-        ].select{|counts| counts[0] > 0}.map(&:last).join(', ')
+        ]).select{|counts| counts[0] > 0}.map(&:last).join(', ')
 
         doc['title'] += " - #{summary}" unless summary.empty?
       end
