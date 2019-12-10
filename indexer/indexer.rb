@@ -137,6 +137,10 @@ class IndexerCommon
         doc['rap_access_category_u_ssort'] = applied['access_category']
       end
 
+      if record['record']['rap_access_status'] && !doc['rap_access_status_u_ssort']
+        doc['rap_access_status_u_ssort'] = record['record']['rap_access_status']
+      end
+
     end
 
 
