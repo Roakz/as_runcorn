@@ -74,3 +74,9 @@
 <%= form.label_and_date "original_registration_date" %>
 <%= form.label_and_textarea "information_sources" %>
 <%= form.label_and_textfield "abstract" %>
+
+<% if form.readonly? %>
+  <%= form.label_and_readonly "items_count" %>
+  <%= form.label_and_readonly "physical_representations_count" %>
+  <%= form.label_and_readonly "digital_representations_count" %>
+<% end %>

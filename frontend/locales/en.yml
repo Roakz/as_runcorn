@@ -54,6 +54,9 @@ en:
     description_tooltip: ...
     abstract: Abstract
     abstract_tooltip: ...
+    items_count: Number of Items
+    physical_representations_count: Number of Physical Representations
+    digital_representations_count: Number of Digital Representations
   archival_object:
     description: Description
     access_clearance_procedure: Access Clearance Procedure

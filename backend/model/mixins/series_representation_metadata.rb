@@ -11,14 +11,15 @@ module SeriesRepresentationMetadata
       jsons = super
 
 
-      representations_counts = prepare_counts(objs)
+      counts = prepare_counts(objs)
 
       conservation_status = prepare_conservation_status(objs)
 
       objs.zip(jsons).each do |obj, json|
-        json['physical_representations_count'] = representations_counts.fetch(obj.id, {}).fetch('physical_representations_count', 0)
-        json['digital_representations_count'] = representations_counts.fetch(obj.id, {}).fetch('digital_representations_count', 0)
-        json['significant_representations_counts'] = representations_counts.fetch(obj.id, {}).fetch('significant_representations_counts')
+        json['items_count'] = counts.fetch(obj.id, {}).fetch('items_count', 0)
+        json['physical_representations_count'] = counts.fetch(obj.id, {}).fetch('physical_representations_count', 0)
+        json['digital_representations_count'] = counts.fetch(obj.id, {}).fetch('digital_representations_count', 0)
+        json['significant_representations_counts'] = counts.fetch(obj.id, {}).fetch('significant_representations_counts')
         json['has_conservation_treatments_awaiting'] = conservation_status.fetch(obj.id, false)
       end
 
@@ -141,10 +142,23 @@ module SeriesRepresentationMetadata
         to_process = ArchivalObject.filter(:parent_id => to_process).select(:id)
       end
 
+
+      # item counts
+      item_counts = {}
+      items = ArchivalObject
+        .filter(:root_record_id => root_ids)
+        .left_join(:deaccession, Sequel.qualify(:deaccession, :archival_object_id) => Sequel.qualify(:archival_object, :id))
+        .exclude(Sequel.~(Sequel.qualify(:deaccession, :archival_object_id) => nil))
+        .group_and_count(Sequel.qualify(:archival_object, :root_record_id)).each do |row|
+        item_counts[row[:root_record_id]] = row[:count]
+      end
+
+
       result = {}
 
       root_ids.each do |root_id|
         result[root_id] = {
+          'items_count' => item_counts.fetch(root_id, 0),
           'physical_representations_count' => representation_counts.fetch(root_id).physical_count,
           'digital_representations_count' => representation_counts.fetch(root_id).digital_count,
           'significant_representations_counts' => representation_counts.fetch(root_id).significance_counts

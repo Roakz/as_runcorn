@@ -18,6 +18,7 @@
     }
   },
 
+  "items_count" => {"type"=> "number", "readonly" => "true"},
   "physical_representations_count" => {"type"=> "number", "readonly" => "true"},
   "digital_representations_count" => {"type"=> "number", "readonly" => "true"},
 
