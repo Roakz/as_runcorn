@@ -345,6 +345,7 @@ en:
       conservation_treatment_in_progress_u_sbool: Treatment In Progress?
       item_use_status_u_ssort: Status
       item_use_type_u_ssort: Use Type
+      archivist_approved_u_sbool: "Archivist Approved?"
 
   runcorn_agency:
     agency_category: Agency Category

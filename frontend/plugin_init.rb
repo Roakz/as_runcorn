@@ -194,7 +194,11 @@ Rails.application.config.after_initialize do
 
   Plugins.add_search_base_facets("representation_intended_use_u_sstr",
                                  "rap_access_status_u_ssort",
-                                 "publish")
+                                 "publish",
+                                 "archivist_approved_u_sbool")
+
+  Plugins.add_facet_group_i18n("archivist_approved_u_sbool",
+                               proc {|facet| "boolean.#{facet}" })
 
   Plugins.add_facet_group_i18n("representation_intended_use_u_sstr",
                                proc {|facet| "enumerations.runcorn_intended_use.#{facet}" })

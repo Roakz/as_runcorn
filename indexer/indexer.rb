@@ -265,5 +265,11 @@ class IndexerCommon
         doc['item_use_used_by_u_ssort'] = record['record']['used_by']
       end
     end
+
+    indexer.add_document_prepare_hook do |doc, record|
+      if record['record'].has_key?('archivist_approved')
+        doc['archivist_approved_u_sbool'] = record['record']['archivist_approved']
+      end
+    end
   end
 end
