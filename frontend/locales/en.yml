@@ -580,3 +580,7 @@ en:
     item_use_type_values:
       reading_room_request: Reading Room Request
       file_issue: File Issue
+
+  advanced_search:
+    boolean:
+      deaccessioned: Deaccessioned records
