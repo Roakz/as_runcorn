@@ -193,7 +193,8 @@ Rails.application.config.after_initialize do
                              'assessment'])
 
   Plugins.add_search_base_facets("representation_intended_use_u_sstr",
-                                 "rap_access_status_u_ssort")
+                                 "rap_access_status_u_ssort",
+                                 "publish")
 
   Plugins.add_facet_group_i18n("representation_intended_use_u_sstr",
                                proc {|facet| "enumerations.runcorn_intended_use.#{facet}" })
