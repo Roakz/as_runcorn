@@ -208,10 +208,12 @@ class IndexerCommon
     indexer.add_document_prepare_hook do |doc, record|
       if record['record'].has_key?('qsa_id')
         doc['qsa_id_u_sint'] = record['record']['qsa_id']
+        doc['qsa_id_u_stext'] = [record['record']['qsa_id']]
 
         if record['record']['qsa_id_prefixed']
           doc['qsa_id_u_sort'] = IndexerCommon.sort_value_for_qsa_id(record['record']['qsa_id_prefixed'])
           doc['qsa_id_u_ssort'] = record['record']['qsa_id_prefixed']
+          doc['qsa_id_u_stext'] << record['record']['qsa_id_prefixed']
         end
       end
     end
@@ -257,7 +259,7 @@ class IndexerCommon
         doc['title'] = record['record']['display_string']
         doc['item_use_item_uri_u_sstr'] = prep['ref']
         doc['item_qsa_id_u_sort'] = IndexerCommon.sort_value_for_qsa_id(prep['qsa_id'])
-        doc['item_qsa_id_u_ssort'] = prep['qsa_id']
+        doc['item_qsa_id_u_ssort'] = prep['qsa_id']<
         doc['use_qsa_id_u_sort'] = IndexerCommon.sort_value_for_qsa_id(record['record']['use_identifier'])
         doc['use_qsa_id_u_ssort'] = record['record']['use_identifier']
         doc['item_use_status_u_ssort'] = record['record']['status']
