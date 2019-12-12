@@ -56,6 +56,10 @@ class IndexerCommon
     indexer.add_document_prepare_hook {|doc, record|
       doc['deaccessioned_u_sbool'] = !!record['record']['deaccessioned']
 
+      if record['record']['conservation_treatments']
+        doc['conservation_treatment_u_stext'] = ASUtils.extract_nested_strings(record['record']['conservation_treatments']).join(" ")
+      end
+
       if record['record']['current_location']
         doc['current_location_u_sstr'] = record['record']['current_location']
       end
