@@ -173,7 +173,7 @@ class BatchesController < ApplicationController
     obj = JSONModel(:batch).find(params[:id])
 
     batch = params[:batch].to_hash
-    if (cap = batch['current_action']['action_params'])
+    if (cap = batch.dig('current_action', 'action_params'))
       batch['current_action']['action_params'] = ASUtils.to_json(cap)
       params[:batch] = batch
     end
