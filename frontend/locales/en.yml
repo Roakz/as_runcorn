@@ -582,5 +582,7 @@ en:
       file_issue: File Issue
 
   advanced_search:
+    enum:
+      runcorn_location: Current location
     boolean:
       deaccessioned: Deaccessioned records

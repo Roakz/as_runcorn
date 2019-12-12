@@ -56,6 +56,10 @@ class IndexerCommon
     indexer.add_document_prepare_hook {|doc, record|
       doc['deaccessioned_u_sbool'] = !!record['record']['deaccessioned']
 
+      if record['record']['current_location']
+        doc['current_location_u_sstr'] = record['record']['current_location']
+      end
+
       if doc['primary_type'] == 'physical_representation'
         doc['title'] = record['record']['display_string']
         doc['representation_intended_use_u_sstr'] = record['record']['intended_use']
