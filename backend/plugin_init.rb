@@ -2,6 +2,7 @@ require_relative '../common/validations'
 require_relative '../common/qsa_id'
 require_relative '../common/qsa_id_registrations'
 require_relative '../common/movement_context_manager'
+require_relative '../common/search_utils'
 
 require_relative 'lib/batch_action_handler'
 
@@ -230,5 +231,13 @@ ArchivesSpaceService.plugins_loaded_hook do
 
       Resource.rap_needs_propagate(resource.id)
     end
+  end
+
+  Search.add_search_hook do |params|
+    if params[:aq]
+      params[:aq] = SearchUtils.rewrite_top_container_identifier_queries(params[:aq])
+    end
+
+    params
   end
 end

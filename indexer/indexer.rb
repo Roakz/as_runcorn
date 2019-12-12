@@ -64,11 +64,19 @@ class IndexerCommon
         doc['current_location_u_sstr'] = record['record']['current_location']
       end
 
+      if doc['primary_type'] == 'top_container'
+        doc['top_container_identifier_u_ssort'] = SearchUtils.pad_top_container_identifier(record['record']['indicator'])
+      end
+
       if doc['primary_type'] == 'physical_representation'
         doc['title'] = record['record']['display_string']
         doc['representation_intended_use_u_sstr'] = record['record']['intended_use']
 
         doc['top_container_uri_u_sstr'] = record['record'].fetch('container', {}).fetch('ref', nil)
+
+        top_container_indicator = record['record'].dig('container', '_resolved', 'indicator')
+        doc['top_container_identifier_u_ssort'] = SearchUtils.pad_top_container_identifier(top_container_indicator)
+
 
         doc['top_container_title_u_sstr'] = record.dig('record', 'container', '_resolved', 'display_string')
         doc['top_container_location_u_sstr'] = record.dig('record', 'container', '_resolved', 'current_location')
