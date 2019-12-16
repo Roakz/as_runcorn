@@ -6,3 +6,5 @@ AdvancedSearch.define_field(:name => 'top_container_identifier', :type => :range
 AdvancedSearch.define_field(:name => 'agency_assigned_id', :type => :text, :visibility => [:staff], :solr_field => 'agency_assigned_id_u_stext')
 AdvancedSearch.define_field(:name => 'runcorn_format', :type => :enum, :visibility => [:staff], :solr_field => 'representation_format_u_sstr')
 AdvancedSearch.define_field(:name => 'archivist_approved', :type => :boolean, :visibility => [:staff], :solr_field => 'archivist_approved_u_sbool')
+AdvancedSearch.define_field(:name => 'is_open_access', :type => :boolean, :visibility => [:staff], :solr_field => 'rap_is_open_access_u_sbool')
+AdvancedSearch.remove_field('suppressed')

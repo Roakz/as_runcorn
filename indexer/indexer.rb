@@ -72,7 +72,9 @@ class IndexerCommon
         doc['agency_assigned_id_u_stext'] = record['record']['agency_assigned_id']
       end
 
-      doc['archivist_approved_u_sbool'] = !!record['record']['archivist_approved']
+      unless record['record']['archivist_approved'].nil?
+        doc['archivist_approved_u_sbool'] = !!record['record']['archivist_approved']
+      end
 
       if doc['primary_type'] == 'physical_representation'
         doc['title'] = record['record']['display_string']
@@ -163,6 +165,10 @@ class IndexerCommon
 
       if record['record']['rap_access_status'] && !doc['rap_access_status_u_ssort']
         doc['rap_access_status_u_ssort'] = record['record']['rap_access_status']
+      end
+
+      unless doc['rap_access_status_u_ssort'].nil?
+        doc['rap_is_open_access_u_sbool'] = doc['rap_access_status_u_ssort'] == 'Open Access'
       end
 
     end

@@ -588,6 +588,7 @@ en:
     boolean:
       deaccessioned: Deaccessioned records
       archivist_approved: Archivist approved
+      is_open_access: Open access
     range:
       top_container_identifier: Top Container
     text:
