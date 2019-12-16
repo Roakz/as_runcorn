@@ -51,12 +51,22 @@ class Publisher < BatchActionHandler
           end
         end
 
-        counts[type] = db[type.intern].filter(:id => jsons.map {|json| JSONModel.parse_reference(json[:uri]).fetch(:id)})
+        ids = jsons.map {|json| JSONModel.parse_reference(json[:uri]).fetch(:id)}
+
+        counts[type] = db[type.intern].filter(:id => ids)
                                       .update(:publish => publish,
                                               :lock_version => Sequel.expr(1) + :lock_version,
                                               :system_mtime => now,
                                               :user_mtime => now,
                                               :last_modified_by => user)
+
+        # for archival_objects, touch any attached representations to ensure they get reindexed
+        if type.intern == :archival_object
+          [:physical_representation, :digital_representation].each do |rep_model|
+            db[rep_model].filter(:archival_object_id => ids)
+                         .update(:system_mtime => now)
+          end
+        end
       end
     end
 
