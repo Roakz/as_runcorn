@@ -72,6 +72,8 @@ class IndexerCommon
         doc['agency_assigned_id_u_stext'] = record['record']['agency_assigned_id']
       end
 
+      doc['archivist_approved_u_sbool'] = !!record['record']['archivist_approved']
+
       if doc['primary_type'] == 'physical_representation'
         doc['title'] = record['record']['display_string']
         doc['representation_intended_use_u_sstr'] = record['record']['intended_use']

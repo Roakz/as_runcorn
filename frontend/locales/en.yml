@@ -587,6 +587,7 @@ en:
       runcorn_format: Format
     boolean:
       deaccessioned: Deaccessioned records
+      archivist_approved: Archivist approved
     range:
       top_container_identifier: Top Container
     text:
