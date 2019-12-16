@@ -303,5 +303,28 @@ class IndexerCommon
         doc['archivist_approved_u_sbool'] = record['record']['archivist_approved']
       end
     end
+
+    indexer.add_document_prepare_hook do |doc, record|
+      date = if Array(record['record']['dates']).length > 0
+               # Resources, AOs
+               Array(record['record']['dates']).first
+             elsif record['record']['date']
+               # Mandates, functions
+               record['record']['date']
+             elsif Array(record['record']['dates_of_existence']).length > 0
+               # Agencies
+               Array(record['record']['dates_of_existence']).first
+             else
+               nil
+             end
+      if date
+        doc['date_start_u_ssort'] = DateRangeOverlap.date_pad_start(date['begin'])
+        doc['date_end_u_ssort'] = DateRangeOverlap.date_pad_end(date['end'])
+        doc['date_start_u_sstr'] = date['begin']
+        doc['date_end_u_sstr'] = date['end']
+
+      end
+    end
+
   end
 end

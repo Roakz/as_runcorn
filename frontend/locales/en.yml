@@ -591,6 +591,14 @@ en:
       is_open_access: Open access
     range:
       top_container_identifier: Top Container
+      date: Record Dates
     text:
       agency_assigned_id: Agency Control No
       conservation_treatment: Conservation Treatment
+    type:
+      date: System Metadata
+      range: Value Range
+    date:
+      create_time: Record Create Time
+      user_mtime: Record Last Modified Time
+
