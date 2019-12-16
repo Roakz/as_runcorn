@@ -584,6 +584,7 @@ en:
   advanced_search:
     enum:
       runcorn_location: Current location
+      runcorn_format: Format
     boolean:
       deaccessioned: Deaccessioned records
     range:

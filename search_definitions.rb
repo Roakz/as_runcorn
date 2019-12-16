@@ -4,3 +4,4 @@ AdvancedSearch.define_field(:name => 'runcorn_location', :type => :enum, :visibi
 AdvancedSearch.define_field(:name => 'conservation_treatment', :type => :text, :visibility => [:staff], :solr_field => 'conservation_treatment_u_stext')
 AdvancedSearch.define_field(:name => 'top_container_identifier', :type => :range, :visibility => [:staff], :solr_field => 'top_container_identifier_u_ssort')
 AdvancedSearch.define_field(:name => 'agency_assigned_id', :type => :text, :visibility => [:staff], :solr_field => 'agency_assigned_id_u_stext')
+AdvancedSearch.define_field(:name => 'runcorn_format', :type => :enum, :visibility => [:staff], :solr_field => 'representation_format_u_sstr')
