@@ -588,3 +588,6 @@ en:
       deaccessioned: Deaccessioned records
     range:
       top_container_identifier: Top Container
+    text:
+      agency_assigned_id: Agency Control No
+      conservation_treatment: Conservation Treatment

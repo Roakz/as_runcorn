@@ -68,6 +68,10 @@ class IndexerCommon
         doc['top_container_identifier_u_ssort'] = SearchUtils.pad_top_container_identifier(record['record']['indicator'])
       end
 
+      if record['record']['agency_assigned_id']
+        doc['agency_assigned_id_u_stext'] = record['record']['agency_assigned_id']
+      end
+
       if doc['primary_type'] == 'physical_representation'
         doc['title'] = record['record']['display_string']
         doc['representation_intended_use_u_sstr'] = record['record']['intended_use']
