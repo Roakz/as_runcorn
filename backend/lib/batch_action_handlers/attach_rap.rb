@@ -11,7 +11,7 @@ class AttachRAP < BatchActionHandler
     {
       'open_access_metadata' => true,
       'years' =>  nil,
-      'access_category' => nil,
+      'access_category' => '',
       'notes' => '',
       'notice_date' => '',
       'internal_reference' => '',
@@ -20,6 +20,31 @@ class AttachRAP < BatchActionHandler
 
 
   def self.validate_params(params)
+    @rap_closed_cats ||= AppConfig[:as_runcorn_forever_closed_access_categories]
+
+    if @rap_closed_cats.include?(params['access_category']) || params['access_category'] === 'N/A'
+      if params['years']
+        raise InvalidParams.new('Years cannot have a value for permanently closed access categories')
+      end
+    elsif params['access_category'] === ''
+      # no wuckahs
+    else
+      unless params['years']
+        raise InvalidParams.new('Years must have a value: 0 for open; or 1 - 100 years')
+      end
+    end
+
+    if params['access_category'] === 'N/A' && params['open_access_metadata']
+        raise InvalidParams.new('Publish Details cannot be true if Access Category is N/A')
+    end
+
+    if params['years']
+      years_i = params['years'].to_i
+      unless params['years'] == years_i.to_s && years_i >= 0 && years_i <= 100
+        raise InvalidParams.new('If years is set it must have a value from 0 to 100')
+      end
+    end
+
     begin
       JSONModel::JSONModel(:rap).from_hash(params)
     rescue JSONModel::ValidationException => e
@@ -32,6 +57,7 @@ class AttachRAP < BatchActionHandler
 
   def self.process_form_params(params)
     params['open_access_metadata'] = params['open_access_metadata'] == '1' ? true : false
+    params['years'] = nil if params['years'].empty?
 
     params
   end
