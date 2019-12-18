@@ -248,14 +248,21 @@ class IndexerCommon
 
     indexer.add_document_prepare_hook {|doc, record|
       if ['resource', 'archival_object'].include?(doc['primary_type'])
+        counts = []
 
-        summary = []
-        summary << [record['record']['items_count'], "#{record['record']['items_count']} items"] if doc['primary_type'] == 'resource'
+        if doc['primary_type'] == 'resource'
+          counts << [record['record']['items_count'], "#{record['record']['items_count']} items"]
+        end
 
-        (summary + [
-          [record['record']['physical_representations_count'], "#{record['record']['physical_representations_count']} physical representations"],
-          [record['record']['digital_representations_count'], "#{record['record']['digital_representations_count']} digital representations"]
-        ]).select{|counts| counts[0] > 0}.map(&:last).join(', ')
+        if record['record']['physical_representations_count']
+          counts << [record['record']['physical_representations_count'], "#{record['record']['physical_representations_count']} physical representations"]
+        end
+
+        if record['record']['digital_representations_count']
+          counts << [record['record']['digital_representations_count'], "#{record['record']['digital_representations_count']} digital representations"]
+        end
+
+        summary = counts.map{|count, label| label if count > 0}.compact.join(', ')
 
         doc['title'] += " - #{summary}" unless summary.empty?
       end
