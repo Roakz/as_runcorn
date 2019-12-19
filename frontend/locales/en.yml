@@ -598,7 +598,11 @@ en:
     type:
       date: System Metadata
       range: Value Range
+      series_system: Series System Relationship
     date:
       create_time: Record Create Time
       user_mtime: Record Last Modified Time
+    series_system:
+      series_system_agency_rlshp: Series System Agency Relationships
+      series_system_series_rlshp: Series System Series Relationships
 
