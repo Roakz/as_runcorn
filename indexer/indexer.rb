@@ -321,6 +321,11 @@ class IndexerCommon
              elsif Array(record['record']['dates_of_existence']).length > 0
                # Agencies
                Array(record['record']['dates_of_existence']).first
+             elsif ['physical_representation', 'digital_representation'].include?(record['record']['jsonmodel_type'])
+               {
+                'begin' => record.dig('record', 'controlling_record', 'begin_date'),
+                'end' => record.dig('record', 'controlling_record', 'end_date'),
+               }
              else
                nil
              end
