@@ -11,15 +11,38 @@ Sequel.migration do
                   },
                   {
                     :copy_from => false,
-                    :code => 'repository-archivists-other',
-                    :description => 'Archivists - Other',
-                  },
-                  {
-                    :copy_from => false,
-                    :code => 'reading-room-staff',
+                    :code => 'repository-reading-room-staff',
                     :description => 'Reading room staff',
                   },
+                  {
+                    :copy_from => 'repository-managers',
+                    :code => 'repository-preservation-team',
+                    :description => 'Preservation Team',
+                  },
                  ]
+
+    modified_groups = {
+      'repository-managers' => {
+        :code => 'repository-senior-archivists',
+        :description => 'Senior Archivists'
+      },
+      'repository-project-managers' => {
+        :code => 'repository-collection-managers',
+        :description => 'Managers of Collection Enrichment and Discovery'
+      },
+      'repository-advanced-data-entry' => {
+        :code => 'repository-transfer-file-issue',
+        :description => 'Repository/ transfer/file issue'
+      },
+      'repository-basic-data-entry' => {
+        :code => 'repository-data-entry-volunteers',
+        :description => 'Data Entry/ Volunteers'
+      },
+      'repository-archivists' => {
+        :code => 'repository-archivists-other',
+        :description => 'Archivists - Other'
+      },
+    }
 
     # applying these groups to all repos, ie repo_id > 1
 
@@ -52,6 +75,18 @@ Sequel.migration do
           end
         end
       end
+
+      modified_groups.each do |old_code, group|
+        self[:group]
+          .filter(:repo_id => repo_id, :group_code_norm => old_code)
+          .update(
+                  :group_code => group[:code],
+                  :group_code_norm => group[:code].downcase,
+                  :description => "%s of the %s repository" % [group[:description], repo_code],
+                  :system_mtime => now
+                  )
+      end
+
     end
   end
 
