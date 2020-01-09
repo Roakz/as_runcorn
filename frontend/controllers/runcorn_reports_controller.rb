@@ -21,6 +21,17 @@ class RuncornReportsController < ApplicationController
           end
         end
       end
+    when 'agency_transfers_report'
+      self.response_body = Enumerator.new do |stream|
+        JSONModel::HTTP::stream('/runcorn_reports/transfers', {
+          :date_from => params[:date_from],
+          :date_to => params[:date_to],
+        }) do |response|
+          response.read_body do |chunk|
+            stream << chunk
+          end
+        end
+      end
     end
   end
 end
