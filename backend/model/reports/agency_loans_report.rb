@@ -53,17 +53,33 @@ class AgencyLoansReport
       }.to_h
   end
 
-  def file_issue_physical_dataset(aspacedb, mapdb)
+  def file_issue_dataset(aspacedb, mapdb, issue_type)
     counts = mapdb[:file_issue]
-               .filter(:issue_type => 'PHYSICAL')
+               .filter(:issue_type => issue_type)
                .left_join(:file_issue_item, Sequel.qualify(:file_issue_item, :file_issue_id) => Sequel.qualify(:file_issue, :id))
-               .group_and_count(Sequel.qualify(:file_issue, :id))
+               .group_by(Sequel.qualify(:file_issue, :id))
+               .select(Sequel.qualify(:file_issue, :id),
+                       Sequel.as(Sequel.lit('count(*)'), :count),
+                       Sequel.as(Sequel.lit('min(expiry_date)'), :min_expiry_date),
+                       Sequel.as(Sequel.lit('max(expiry_date)'), :max_expiry_date))
                .map {|row|
-                 [row[:id], row[:count]]
+                 [row[:id], row]
                }.to_h
 
+    overdue_file_issue_ids = mapdb[:file_issue]
+                             .filter(:issue_type => issue_type)
+                             .join(:file_issue_item, Sequel.qualify(:file_issue_item, :file_issue_id) => Sequel.qualify(:file_issue, :id))
+                             .filter(:not_returned => 0)
+                             .filter(:returned_date => nil)
+                             .filter(Sequel.~(:expiry_date => nil))
+                             .where { expiry_date < Date.today }
+                             .select(Sequel.qualify(:file_issue, :id))
+                             .map {|row|
+                               [row[:id], true]
+                             }.to_h
+
     aspace_agency_ids = mapdb[:file_issue]
-                          .filter(:issue_type => 'PHYSICAL')
+                          .filter(:issue_type => issue_type)
                           .join(:agency, Sequel.qualify(:agency, :id) => Sequel.qualify(:file_issue, :agency_id))
                           .select(:aspace_agency_id)
                           .map {|row| row[:aspace_agency_id]}
@@ -71,48 +87,19 @@ class AgencyLoansReport
     aspace_agency_map = build_aspace_agency_map(aspacedb, aspace_agency_ids)
 
     mapdb[:file_issue]
-      .filter(:issue_type => 'PHYSICAL')
+      .filter(:issue_type => issue_type)
       .join(:agency, Sequel.qualify(:agency, :id) => Sequel.qualify(:file_issue, :agency_id))
       .join(:agency_location, Sequel.qualify(:agency_location, :id) => Sequel.qualify(:file_issue, :agency_location_id))
       .select_all(:file_issue)
       .select_append(Sequel.qualify(:agency, :aspace_agency_id))
       .select_append(Sequel.as(Sequel.qualify(:agency_location, :name), :agency_location_name))
       .each do |row|
-      row[:count] = counts.fetch(row[:id], 0)
+      row[:count] = counts.fetch(row[:id], {}).fetch(:count, 0)
+      row[:min_expiry_date] = counts.fetch(row[:id], {}).fetch(:min_expiry_date, nil)
+      row[:max_expiry_date] = counts.fetch(row[:id], {}).fetch(:max_expiry_date, nil)
       row[:agency_qsa_id] = QSAId.prefixed_id_for(AgentCorporateEntity, aspace_agency_map.fetch(row[:aspace_agency_id]).fetch(:qsa_id))
       row[:agency_name] = aspace_agency_map.fetch(row[:aspace_agency_id]).fetch(:sort_name)
-      yield row
-    end
-  end
-
-  def file_issue_digital_dataset(aspacedb, mapdb)
-    counts = mapdb[:file_issue]
-               .filter(:issue_type => 'DIGITAL')
-               .left_join(:file_issue_item, Sequel.qualify(:file_issue_item, :file_issue_id) => Sequel.qualify(:file_issue, :id))
-               .group_and_count(Sequel.qualify(:file_issue, :id))
-               .map {|row|
-                 [row[:id], row[:count]]
-               }.to_h
-
-    aspace_agency_ids = mapdb[:file_issue]
-                          .filter(:issue_type => 'DIGITAL')
-                          .join(:agency, Sequel.qualify(:agency, :id) => Sequel.qualify(:file_issue, :agency_id))
-                          .select(:aspace_agency_id)
-                          .map {|row| row[:aspace_agency_id]}
-
-    aspace_agency_map = build_aspace_agency_map(aspacedb, aspace_agency_ids)
-
-    mapdb[:file_issue]
-      .filter(:issue_type => 'DIGITAL')
-      .join(:agency, Sequel.qualify(:agency, :id) => Sequel.qualify(:file_issue, :agency_id))
-      .join(:agency_location, Sequel.qualify(:agency_location, :id) => Sequel.qualify(:file_issue, :agency_location_id))
-      .select_all(:file_issue)
-      .select_append(Sequel.qualify(:agency, :aspace_agency_id))
-      .select_append(Sequel.as(Sequel.qualify(:agency_location, :name), :agency_location_name))
-      .each do |row|
-      row[:count] = counts.fetch(row[:id], 0)
-      row[:agency_qsa_id] = QSAId.prefixed_id_for(AgentCorporateEntity, aspace_agency_map.fetch(row[:aspace_agency_id]).fetch(:qsa_id))
-      row[:agency_name] = aspace_agency_map.fetch(row[:aspace_agency_id]).fetch(:sort_name)
+      row[:has_overdue] = overdue_file_issue_ids.fetch(row[:id], false)
       yield row
     end
   end
@@ -162,7 +149,7 @@ class AgencyLoansReport
             ]
           end
 
-          file_issue_physical_dataset(aspacedb, mapdb) do |row|
+          file_issue_dataset(aspacedb, mapdb, 'PHYSICAL') do |row|
             csv << [
               "%s%s%s" % [QSAId.prefix_for(FileIssue), 'P', row[:id]],
               row[:count],
@@ -172,12 +159,12 @@ class AgencyLoansReport
               row[:request_type],
               row[:agency_location_name],
               row[:delivery_location],
-              'FIXME',
-              'FIXME',
+              [row[:min_expiry_date], row[:max_expiry_date]].compact.uniq.join(' - '),
+              row[:has_overdue] ? 'true' : '',
             ]
           end
 
-          file_issue_digital_dataset(aspacedb, mapdb) do |row|
+          file_issue_dataset(aspacedb, mapdb, 'DIGITAL') do |row|
             csv << [
               "%s%s%s" % [QSAId.prefix_for(FileIssue), 'D', row[:id]],
               row[:count],
@@ -187,8 +174,8 @@ class AgencyLoansReport
               row[:request_type],
               row[:agency_location_name],
               row[:delivery_location],
-              'FIXME',
-              'FIXME',
+              [row[:min_expiry_date], row[:max_expiry_date]].compact.uniq.join(' - '),
+              '',
             ]
           end
 
