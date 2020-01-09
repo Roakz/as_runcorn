@@ -9,24 +9,34 @@ class AgencyLoansReport
   end
 
   def file_issue_request_dataset(aspacedb, mapdb)
-    counts = mapdb[:file_issue_request]
-               .filter(:draft => 0)
+    base_ds = mapdb[:file_issue_request]
+                .filter(:draft => 0)
+
+    if @from_date
+      from_time = @from_date.to_time.to_i * 1000
+      base_ds = base_ds.where { Sequel.qualify(:file_issue_request, :create_time) >= from_time }
+    end
+
+    if @to_date
+      to_time = @to_date.to_time.to_i * 1000
+      base_ds = base_ds.where { Sequel.qualify(:file_issue_request, :create_time) <= to_time }
+    end
+
+    counts = base_ds
                .left_join(:file_issue_request_item, Sequel.qualify(:file_issue_request_item, :file_issue_request_id) => Sequel.qualify(:file_issue_request, :id))
                .group_and_count(Sequel.qualify(:file_issue_request, :id))
                .map {|row|
                  [row[:id], row[:count]]
                }.to_h
 
-    aspace_agency_ids = mapdb[:file_issue_request]
-                          .filter(:draft => 0)
+    aspace_agency_ids = base_ds
                           .join(:agency, Sequel.qualify(:agency, :id) => Sequel.qualify(:file_issue_request, :agency_id))
                           .select(:aspace_agency_id)
                           .map {|row| row[:aspace_agency_id]}
 
     aspace_agency_map = build_aspace_agency_map(aspacedb, aspace_agency_ids)
 
-    mapdb[:file_issue_request]
-      .filter(:draft => 0)
+    base_ds
       .join(:agency, Sequel.qualify(:agency, :id) => Sequel.qualify(:file_issue_request, :agency_id))
       .join(:agency_location, Sequel.qualify(:agency_location, :id) => Sequel.qualify(:file_issue_request, :agency_location_id))
       .select_all(:file_issue_request)
@@ -54,8 +64,20 @@ class AgencyLoansReport
   end
 
   def file_issue_dataset(aspacedb, mapdb, issue_type)
-    counts = mapdb[:file_issue]
+    base_ds = mapdb[:file_issue]
                .filter(:issue_type => issue_type)
+
+    if @from_date
+      from_time = @from_date.to_time.to_i * 1000
+      base_ds = base_ds.where { Sequel.qualify(:file_issue, :create_time) >= from_time }
+    end
+
+    if @to_date
+      to_time = @to_date.to_time.to_i * 1000
+      base_ds = base_ds.where { Sequel.qualify(:file_issue, :create_time) <= to_time }
+    end
+
+    counts = base_ds
                .left_join(:file_issue_item, Sequel.qualify(:file_issue_item, :file_issue_id) => Sequel.qualify(:file_issue, :id))
                .group_by(Sequel.qualify(:file_issue, :id))
                .select(Sequel.qualify(:file_issue, :id),
@@ -66,8 +88,7 @@ class AgencyLoansReport
                  [row[:id], row]
                }.to_h
 
-    overdue_file_issue_ids = mapdb[:file_issue]
-                             .filter(:issue_type => issue_type)
+    overdue_file_issue_ids = base_ds
                              .join(:file_issue_item, Sequel.qualify(:file_issue_item, :file_issue_id) => Sequel.qualify(:file_issue, :id))
                              .filter(:not_returned => 0)
                              .filter(:returned_date => nil)
@@ -78,16 +99,15 @@ class AgencyLoansReport
                                [row[:id], true]
                              }.to_h
 
-    aspace_agency_ids = mapdb[:file_issue]
-                          .filter(:issue_type => issue_type)
+    aspace_agency_ids = base_ds
                           .join(:agency, Sequel.qualify(:agency, :id) => Sequel.qualify(:file_issue, :agency_id))
                           .select(:aspace_agency_id)
                           .map {|row| row[:aspace_agency_id]}
 
     aspace_agency_map = build_aspace_agency_map(aspacedb, aspace_agency_ids)
 
-    mapdb[:file_issue]
-      .filter(:issue_type => issue_type)
+
+    base_ds
       .join(:agency, Sequel.qualify(:agency, :id) => Sequel.qualify(:file_issue, :agency_id))
       .join(:agency_location, Sequel.qualify(:agency_location, :id) => Sequel.qualify(:file_issue, :agency_location_id))
       .select_all(:file_issue)
@@ -105,16 +125,27 @@ class AgencyLoansReport
   end
 
   def search_request_dataset(aspacedb, mapdb)
-    aspace_agency_ids = mapdb[:search_request]
-                          .filter(:draft => 0)
+    base_ds = mapdb[:search_request]
+                .filter(:draft => 0)
+
+    if @from_date
+      from_time = @from_date.to_time.to_i * 1000
+      base_ds = base_ds.where { Sequel.qualify(:search_request, :create_time) >= from_time }
+    end
+
+    if @to_date
+      to_time = @to_date.to_time.to_i * 1000
+      base_ds = base_ds.where { Sequel.qualify(:search_request, :create_time) <= to_time }
+    end
+
+    aspace_agency_ids = base_ds
                           .join(:agency, Sequel.qualify(:agency, :id) => Sequel.qualify(:search_request, :agency_id))
                           .select(:aspace_agency_id)
                           .map {|row| row[:aspace_agency_id]}
 
     aspace_agency_map = build_aspace_agency_map(aspacedb, aspace_agency_ids)
 
-    mapdb[:search_request]
-      .filter(:draft => 0)
+    base_ds
       .join(:agency, Sequel.qualify(:agency, :id) => Sequel.qualify(:search_request, :agency_id))
       .join(:agency_location, Sequel.qualify(:agency_location, :id) => Sequel.qualify(:search_request, :agency_location_id))
       .select_all(:search_request)
