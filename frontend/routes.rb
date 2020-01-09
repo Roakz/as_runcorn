@@ -70,6 +70,9 @@ ArchivesSpace::Application.routes.draw do
       match('batch_actions/show/:id' => 'batch_actions#show', :via => [:get])
 
       match('item_uses/index' => 'item_uses#index', :via => [:get])
+
+      match('runcorn_reports' => 'runcorn_reports#index', :via => [:get])
+      match('runcorn_reports/generate_report' => 'runcorn_reports#generate_report', :via => [:post])
     end
   end
 end

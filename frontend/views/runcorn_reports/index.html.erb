@@ -1,0 +1,26 @@
+<div class="record-pane">
+  <div class="row">
+    <div class="col-md-12">
+      <h1>Reports</h1>
+      <%= form_tag({:controller => :runcorn_reports, :action => :generate_report}, {:method => 'POST'}) do %>
+        <div class="form-group">
+          <label for="report">Report</label>
+          <select name="report" class="form-control" id="report">
+            <option value="agency_loans_report">File Issue and Loans</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="from_date">From</label>
+          <input type="date" name="from_date" id="from_date" class="form-control" placeholder="YYYY-MM-DD"/>
+        </div>
+        <div class="form-group">
+          <label for="to_date">To</label>
+          <input type="date" name="to_date" id="to_date" class="form-control" placeholder="YYYY-MM-DD"/>
+        </div>
+        <div class="form-group">
+          <input class="btn btn-primary" type="submit" value="Generate Report"/>
+        </div>
+    <% end %>
+    </div>
+  </div>
+</div>
