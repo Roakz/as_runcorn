@@ -104,6 +104,12 @@ en:
   group:
     permission_types:
       manage_agency_registration: manage agency registration workflow
+      manage_publication: manage the publication of records to the public website
+      set_raps: set Restricted Access Periods on records
+      manage_conservation_assessment: manage conservation requests and assessments
+      manage_fee_schedules: manage fee schedules
+      approve_closed_records: mark closed records approved from agency
+      manage_agency_deletion: delete agency records
   assessment:
     conservation_note: Condition Rating
     treatment_priority: Treatment Priority
