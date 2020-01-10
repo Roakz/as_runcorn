@@ -5,7 +5,7 @@ class ArchivesSpaceService < Sinatra::Base
     .params(["repo_id", :repo_id], 
             ["id", :id],
             ["rap", JSONModel(:rap), "The RAP record", :body =>true])
-    .permissions([])
+    .permissions([:set_raps])
     .returns([200, :created]) \
   do
     RAP.attach_rap(ArchivalObject, params[:id], params[:rap])
@@ -17,7 +17,7 @@ class ArchivesSpaceService < Sinatra::Base
     .params(["repo_id", :repo_id],
             ["id", :id],
             ["rap", JSONModel(:rap), "The RAP record", :body =>true])
-    .permissions([])
+    .permissions([:set_raps])
     .returns([200, :created]) \
   do
     RAP.attach_rap(PhysicalRepresentation, params[:id], params[:rap])
@@ -29,7 +29,7 @@ class ArchivesSpaceService < Sinatra::Base
     .params(["repo_id", :repo_id],
             ["id", :id],
             ["rap", JSONModel(:rap), "The RAP record", :body =>true])
-    .permissions([])
+    .permissions([:set_raps])
     .returns([200, :created]) \
   do
     RAP.attach_rap(DigitalRepresentation, params[:id], params[:rap])
@@ -41,7 +41,7 @@ class ArchivesSpaceService < Sinatra::Base
     .params(["repo_id", :repo_id],
             ["id", :id],
             ["rap", JSONModel(:rap), "The RAP record", :body =>true])
-    .permissions([])
+    .permissions([:set_raps])
     .returns([200, :created]) \
   do
     RAP.attach_rap(Resource, params[:id], params[:rap])
@@ -53,7 +53,7 @@ class ArchivesSpaceService < Sinatra::Base
     .params(["repo_id", :repo_id],
             ["id", :id],
             ["resolve", :resolve])
-    .permissions([])
+    .permissions([:view_repository])
     .returns([200, "JSONModel(:rap_summary)"]) \
   do
     obj = Resource.get_or_die(params[:id])
@@ -65,7 +65,7 @@ class ArchivesSpaceService < Sinatra::Base
     .description("RAP")
     .params(["repo_id", :repo_id],
             ["id", :id])
-    .permissions([])
+    .permissions([:view_repository])
     .returns([200, "JSONModel(:rap_summary)"]) \
   do
     json_response(RAP.to_jsonmodel(params[:id]))
@@ -76,7 +76,7 @@ class ArchivesSpaceService < Sinatra::Base
     .params(["repo_id", :repo_id],
             ["id", :id],
             ["rap", JSONModel(:rap), "The RAP record", :body =>true])
-    .permissions([])
+    .permissions([:set_raps])
     .returns([200, "JSONModel(:rap_summary)"]) \
   do
     handle_update(RAP, params[:id], params[:rap])
@@ -84,7 +84,7 @@ class ArchivesSpaceService < Sinatra::Base
 
   Endpoint.post('/raps/repositories/:repo_id/check_tree_moves')
     .description("Check whether a given tree move would change RAP assignments")
-    .permissions([])
+    .permissions([:set_raps])
     .use_transaction(false)
     .params(["repo_id", :repo_id],
             ["parent_uri", String, "A resource or AO uri"],
@@ -100,7 +100,7 @@ class ArchivesSpaceService < Sinatra::Base
   Endpoint.get('/raps/attach_summary')
     .description("RAPs and Representation counts")
     .params(["uri", String, "URI of record RAP will be attached to"])
-    .permissions([])
+    .permissions([:set_raps])
     .use_transaction(false)
     .returns([200, "JSON"]) \
   do

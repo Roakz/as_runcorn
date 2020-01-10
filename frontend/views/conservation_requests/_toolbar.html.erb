@@ -5,7 +5,9 @@
     </div>
   <% else %>
     <div class="btn-group pull-left">
-      <%= link_to I18n.t("actions.edit"), {:controller => :conservation_requests, :action => :edit, :id => @conservation_request.id}, :class => "btn btn-sm btn-primary" %>
+      <% if user_can?('manage_conservation_assessment') %>
+        <%= link_to I18n.t("actions.edit"), {:controller => :conservation_requests, :action => :edit, :id => @conservation_request.id}, :class => "btn btn-sm btn-primary" %>
+      <% end %>
     </div>
     <div class="pull-right">
       <%# Drafts with records can be submitted for review %>

@@ -1,6 +1,7 @@
 class RapsController < ApplicationController
 
-  set_access_control  "view_repository" => [:attach_and_apply, :attach_form, :summary, :edit, :update, :check_tree_move, :attach_summary]
+  set_access_control  "set_raps" => [:attach_and_apply, :attach_form, :edit, :update, :attach_summary],
+                      "view_repository" => [:summary, :check_tree_move]
 
   def attach_and_apply
     rap_data = cleanup_params_for_schema(params[:rap], JSONModel(:rap).schema)

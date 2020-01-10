@@ -3,7 +3,9 @@
 <section id="<%= section_id %>" class="subrecord-form-dummy">
   <h3>
     <%= I18n.t("rap_applied._plural") %>
-    <button class="attach-rap-button btn btn-sm btn-default pull-right" data-uri="<%= record['uri'] %>">Attach RAP</button>
+    <% if user_can?('set_raps') %>
+      <button class="attach-rap-button btn btn-sm btn-default pull-right" data-uri="<%= record['uri'] %>">Attach RAP</button>
+    <% end %>
   </h3>
   <div class="subrecord-form-container">
 

@@ -2,16 +2,13 @@ class ConservationRequestsController < ApplicationController
 
   RESOLVES = []
 
-  # FIXME: Who should be able to create/edit conservation requests?  Assuming
-  # any logged in user here.
-  set_access_control "view_repository" => [:new, :edit, :create, :update, :delete,
-                                           :index, :show, :linked_representations,
-                                           :assign_records_form, :assign_records,
-                                           :clear_assigned_records,
-                                           :submit_for_review,
-                                           :revert_to_draft,
-                                           :spawn_assessment,
-                                           :csv]
+  set_access_control "manage_conservation_assessment" => [:new, :edit, :create, :update, :delete,
+                                                          :assign_records_form, :assign_records,
+                                                          :clear_assigned_records,
+                                                          :submit_for_review,
+                                                          :revert_to_draft,
+                                                          :spawn_assessment],
+                     "view_repository" => [:index, :show, :linked_representations, :csv]
 
   def index
     @search_data = Search.for_type(

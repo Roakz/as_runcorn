@@ -2,7 +2,7 @@ class ArchivesSpaceService < Sinatra::Base
   Endpoint.post('/chargeable_items')
     .description("Create a Chargeable Item")
     .params(["chargeable_item", JSONModel(:chargeable_item), "The updated record", :body => true])
-    .permissions([])
+    .permissions([:update_charges])
     .returns([200, :created]) \
   do
     handle_create(ChargeableItem, params[:chargeable_item])
@@ -12,7 +12,7 @@ class ArchivesSpaceService < Sinatra::Base
     .description("Update a Chargeable Item")
     .params(["id", :id],
             ["chargeable_item", JSONModel(:chargeable_item), "The updated record", :body => true])
-    .permissions([])
+    .permissions([:update_charges])
     .returns([200, :updated]) \
   do
     handle_update(ChargeableItem, params[:id], params[:chargeable_item])
@@ -21,7 +21,7 @@ class ArchivesSpaceService < Sinatra::Base
   Endpoint.delete('/chargeable_items/:id')
     .description("Delete a Chargeable Item")
     .params(["id", :id])
-    .permissions([])
+    .permissions([:update_charges])
     .returns([200, :deleted]) \
   do
     handle_delete(ChargeableItem, params[:id])

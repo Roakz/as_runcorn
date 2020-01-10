@@ -2,7 +2,8 @@ class ChargeableServicesController < ApplicationController
 
   RESOLVES = ['service_items']
 
-  set_access_control  "administer_system" => [:edit, :create, :update],
+  set_access_control  "administer_system" => [:create],
+                      "update_charges" => [:edit, :update],
                       "view_repository" => [:index, :show]
 
   def index

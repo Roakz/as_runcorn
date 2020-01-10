@@ -3,7 +3,9 @@
 <section id="<%= section_id %>" class="subrecord-form-dummy">
   <h3>
     <%= I18n.t("rap_attached._plural") %>
-    <button class="attach-rap-button btn btn-sm btn-default pull-right" data-uri="<%= record['uri'] %>">Attach RAP</button>
+    <% if user_can?('set_raps') %>
+      <button class="attach-rap-button btn btn-sm btn-default pull-right" data-uri="<%= record['uri'] %>">Attach RAP</button>
+    <% end %>
   </h3>
   <div class="subrecord-form-container">
     <div class="alert alert-info raps-form-changed-warning" style="display: none;">
@@ -23,7 +25,9 @@
                 <span class="glyphicon"></span>
                 <div class="badge badge-info">Attached</div>
                 <%= record['rap_attached']['display_string'] %>
-                <button class="edit-rap-button btn btn-default btn-xs pull-right" data-attached-uri="<%= record['uri'] %>" data-rap-uri="<%= record['rap_attached']['uri'] %>">Edit RAP</button>
+                <% if user_can?('set_raps') %>
+                  <button class="edit-rap-button btn btn-default btn-xs pull-right" data-attached-uri="<%= record['uri'] %>" data-rap-uri="<%= record['rap_attached']['uri'] %>">Edit RAP</button>
+                <% end %>
               </div>
             </div>
           </div>

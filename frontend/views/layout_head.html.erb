@@ -48,8 +48,10 @@
 </script>
 
 <script type="text/template" id="createConservationRequestTemplate">
-  <li class="divider"></li>
-  <li><%= link_to I18n.t("conservation_request._singular"), {:controller => :conservation_requests, :action => :new} %></li>
+  <% if user_can?('manage_conservation_assessment') %>
+    <li class="divider"></li>
+    <li><%= link_to I18n.t("conservation_request._singular"), {:controller => :conservation_requests, :action => :new} %></li>
+  <% end %>
 </script>
 
 <script type="text/template" id="browseTopContainersTemplate">
@@ -79,8 +81,10 @@
       };
 
       setupButton("managedRegistrationButtonTemplate", true);
-      setupButton("chargeableItemButtonTemplate", true);
-      setupButton("chargeableServiceButtonTemplate");
+      <% if user_can?('update_charges') %>
+        setupButton("chargeableItemButtonTemplate", true);
+        setupButton("chargeableServiceButtonTemplate");
+      <% end %>
 
       // Put agency browse in Repo menu
       $('.repository-header .navbar-nav .browse-container > .dropdown-menu').prepend(AS.renderTemplate("browseAgenciesTemplate"))

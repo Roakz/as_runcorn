@@ -1,7 +1,7 @@
 AssessmentsController.class_eval do
 
   @permission_mappings.fetch("update_assessment_record") << :from_conservation_request
-  @permission_mappings.fetch("update_assessment_record") << :linked_representations
+  @permission_mappings.fetch("view_repository") << :linked_representations
   @permission_mappings.fetch("update_assessment_record") << :csv
   @permission_mappings["update_resource_record"] ||= []
   @permission_mappings.fetch("update_resource_record") << :generate_treatments

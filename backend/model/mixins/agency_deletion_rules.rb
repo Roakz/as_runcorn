@@ -1,5 +1,12 @@
 module AgencyDeletionRules
   def delete
+    # There is a speical permission required for deleting agencies.
+    # Checking here as a last resort
+    current_user = User[:username => RequestContext.get(:current_username)]
+    unless current_user.can?('delete_agency')
+      raise AccessDeniedException.new('Insufficient privileges to delete agency')
+    end
+
     # check for series system relationships
     if self.trace_all.any? { |_, relationships| !relationships.empty? }
       raise ConflictException.new("This agent has series system relationships and cannot be removed")

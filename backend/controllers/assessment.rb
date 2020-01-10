@@ -5,7 +5,7 @@ class ArchivesSpaceService < Sinatra::Base
             ["id", :id],
             *ArchivesSpaceService::BASE_SEARCH_PARAMS)
     .paginated(true)
-    .permissions([])
+    .permissions([:view_repository])
     .returns([200, :updated]) \
   do
     # See the corresponding `search` method in conservation_request.rb for an
@@ -27,7 +27,7 @@ class ArchivesSpaceService < Sinatra::Base
     .description("Download assessment representations as a CSV document")
     .params(["repo_id", :repo_id],
             ["id", :id])
-    .permissions([])
+    .permissions([:view_repository])
     .returns([200, "(csv)"]) \
   do
     assessment = Assessment.get_or_die(params[:id])
@@ -46,7 +46,7 @@ class ArchivesSpaceService < Sinatra::Base
             ["id", :id],
             ["representation_id", [Integer], "Representation QSA IDs"],
             ["conservation_treatment", String, "Conservation Treatment template"])
-    .permissions([])
+    .permissions([:manage_conservation_assessment])
     .returns([200, :updated]) \
   do
     assessment = Assessment.get_or_die(params[:id])

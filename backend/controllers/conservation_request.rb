@@ -14,7 +14,7 @@ class ArchivesSpaceService < Sinatra::Base
     .description("Create a Conservation Request")
     .params(["repo_id", :repo_id],
             ["conservation_request", JSONModel(:conservation_request), "The updated record", :body => true])
-    .permissions([])
+    .permissions([:manage_conservation_assessment])
     .returns([200, :created]) \
   do
     handle_create(ConservationRequest, params[:conservation_request])
@@ -25,7 +25,7 @@ class ArchivesSpaceService < Sinatra::Base
     .params(["repo_id", :repo_id],
             ["id", :id],
             ["conservation_request", JSONModel(:conservation_request), "The updated record", :body => true])
-    .permissions([])
+    .permissions([:manage_conservation_assessment])
     .returns([200, :updated]) \
   do
     handle_update(ConservationRequest, params[:id], params[:conservation_request])
@@ -35,7 +35,7 @@ class ArchivesSpaceService < Sinatra::Base
     .description("Delete a Conservation Request")
     .params(["repo_id", :repo_id],
             ["id", :id])
-    .permissions([])
+    .permissions([:manage_conservation_assessment])
     .returns([200, :deleted]) \
   do
     handle_delete(ConservationRequest, params[:id])
@@ -46,7 +46,7 @@ class ArchivesSpaceService < Sinatra::Base
     .params(["repo_id", :repo_id],
             ["id", :id],
             ["resolve", :resolve])
-    .permissions([])
+    .permissions([:view_repository])
     .returns([200, "(:conservation_request)"]) \
   do
 
@@ -60,7 +60,7 @@ class ArchivesSpaceService < Sinatra::Base
             ["adds", [String], "List of references to add", :optional => true],
             ["removes", [String], "List of references to remove", :optional => true],
             ["id", :id])
-    .permissions([])
+    .permissions([:manage_conservation_assessment])
     .returns([200, :updated]) \
   do
     conservation_request = ConservationRequest.get_or_die(params[:id])
@@ -77,7 +77,7 @@ class ArchivesSpaceService < Sinatra::Base
             ["id", :id],
             *ArchivesSpaceService::BASE_SEARCH_PARAMS)
     .paginated(true)
-    .permissions([])
+    .permissions([:view_repository])
     .returns([200, :updated]) \
   do
     # This endpoint is here to show the user the (potentially many thousand)
@@ -128,7 +128,7 @@ class ArchivesSpaceService < Sinatra::Base
     .description("Clear all records assigned to a conservation request")
     .params(["repo_id", :repo_id],
             ["id", :id])
-    .permissions([])
+    .permissions([:manage_conservation_assessment])
     .returns([200, :updated]) \
   do
     conservation_request = ConservationRequest.get_or_die(params[:id])
@@ -140,7 +140,7 @@ class ArchivesSpaceService < Sinatra::Base
     .description("Download conservation request as a CSV document")
     .params(["repo_id", :repo_id],
             ["id", :id])
-    .permissions([])
+    .permissions([:view_repository])
     .returns([200, "(csv)"]) \
   do
     conservation_request = ConservationRequest.get_or_die(params[:id])

@@ -39,7 +39,7 @@
           <% else %>
             <div style="display: inline-block" title="RAP Summary"><%= rap['_resolved']['display_string'] %></div>
           <% end %>
-          <% if record['rap_attached'] && rap['ref'] === record['rap_attached']['uri'] %>
+          <% if user_can?('set_raps') && record['rap_attached'] && rap['ref'] === record['rap_attached']['uri'] %>
             <button class="edit-rap-button btn btn-default btn-xs pull-right" data-attached-uri="<%= record['uri'] %>" data-rap-uri="<%= record['rap_attached']['uri'] %>">Edit RAP</button>
           <% end %>
         </div>
