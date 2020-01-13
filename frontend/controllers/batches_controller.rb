@@ -201,6 +201,25 @@ class BatchesController < ApplicationController
   def create_from_search
     post_uri = URI("/repositories/#{session[:repo_id]}/batches/create_from_search")
     criteria = params_for_backend_search
+
+    if params[:advanced]
+      queries = advanced_search_queries
+
+      queries = queries.reject{|field|
+        if field['type'] === 'range'
+          field['from'].nil? && field['to'].nil?
+        elsif field['type'] === 'series_system'
+          false
+        else
+          (field["value"].nil? || field["value"] == "") && !field["empty"]
+        end
+      }
+
+      unless queries.empty?
+        criteria["aq"] = AdvancedQueryBuilder.build_query_from_form(queries).to_json
+      end
+    end
+
     Search.build_filters(criteria)
     response = JSONModel::HTTP.post_form(post_uri, criteria)
     result = ASUtils.json_parse(response.body)
