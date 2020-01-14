@@ -110,7 +110,7 @@ en:
       manage_fee_schedules: manage fee schedules
       approve_closed_records: mark closed records approved from agency
       manage_agency_deletion: delete agency records
-      update_resource_record: create/update series records in this repository      
+      update_resource_record: create/update series, item and representation records in this repository      
   assessment:
     conservation_note: Condition Rating
     treatment_priority: Treatment Priority
