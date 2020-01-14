@@ -24,6 +24,11 @@ Permission.define('manage_publication',
                   'The ability to publish and unpublish records to the public website',
                   :level => "repository")
 
+Permission.define('update_publish_flag',
+                  'The ability to publish and unpublish records to the public website',
+                  :implied_by => "manage_publication",
+                  :level => "global")
+
 Permission.define('set_raps',
                   'The ability to set Restricted Access Periods on records',
                   :level => "repository")

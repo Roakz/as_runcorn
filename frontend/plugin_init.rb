@@ -18,7 +18,7 @@ Rails.application.config.after_initialize do
         # FIXME: sheesh, there must be a better way!
         parent = self.instance_variable_get(:'@parent')
 
-        unless name == 'publish' && !parent.user_can?('manage_publication')
+        unless name == 'publish' && !parent.user_can?('update_publish_flag')
           return checkbox_orig(name, opts, default, force_checked)
         end
 
