@@ -7,6 +7,27 @@ require_relative 'helpers/field_helper'
 
 Rails.application.config.after_initialize do
 
+  # Override #checkbox to to ensure users without the 'manage_publication'
+  # permission can't change publish flags. Doing it this way to avoid having
+  # to override lots and lots of templates.
+  module AspaceFormHelper
+    class FormContext
+      alias_method :checkbox_orig, :checkbox
+
+      def checkbox(name, opts = {}, default = true, force_checked = false)
+        # FIXME: sheesh, there must be a better way!
+        parent = self.instance_variable_get(:'@parent')
+
+        unless name == 'publish' && !parent.user_can?('manage_publication')
+          return checkbox_orig(name, opts, default, force_checked)
+        end
+
+        options = {:id => "#{id_for(name)}", :type => "hidden", :name => path(name), :value => obj[name] ? 1 : 0}
+        @forms.tag("input", options) + I18n.t("boolean.#{obj[name]}")
+      end
+    end
+  end
+
   MemoryLeak::Resources.define(:batch_action_types, proc { JSONModel::HTTP.get_json('/batch_action_handler/action_types') }, 60)
 
   Plugins.register_plugin_section(
