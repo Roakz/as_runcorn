@@ -294,3 +294,9 @@ ArchivesSpaceService.plugins_loaded_hook do
     params
   end
 end
+
+ASModel.all_models.each do |model|
+  if model.included_modules.include?(Publishable)
+    model.include(PublicationPolice)
+  end
+end
