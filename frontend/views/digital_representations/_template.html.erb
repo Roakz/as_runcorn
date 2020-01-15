@@ -52,6 +52,7 @@
       <%= form.label_and_boolean "publish" %>
     <% end %>
 
+    <%= form.label_and_boolean "archivist_approved" %>
     <%= form.label_and_date "approval_date" %>
     <% if form.readonly? %>
       <% if form['approved_by']  %>
@@ -195,6 +196,8 @@
     <%= form.label_and_select "normal_location", form.possible_options_for("normal_location", false), :field_opts => {:default => 'DIG'} %>
     <%= form.label_and_select "contained_within", form.possible_options_for("contained_within", false), :field_opts => {:default => 'Network Attached Storage (NAS)'} %>
     <%= form.label_and_boolean "publish" %>
+
+    <%= form.label_and_boolean "archivist_approved" %>
     <%= form.label_and_date "approval_date", :default => Date.today.iso8601 %>
     <% form.push("approved_by", form.obj["approved_by"] || {}) do %>
       <div class="form-group">

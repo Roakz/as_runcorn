@@ -74,7 +74,6 @@
     <%= form.label_and_textarea "processing_handling_notes" %>
     <%= form.label_and_textarea "remarks" %>
     <%= form.label_and_textarea "previous_system_identifiers" %>
-    <%= form.label_and_boolean "archivist_approved" %>
 
     <% if form.obj['publishable'] == false %>
       <div class="form-group">
@@ -124,6 +123,7 @@
     <%= form.label_and_textfield "monetary_value" %>
     <%= form.label_and_textarea "monetary_value_note" %>
 
+    <%= form.label_and_boolean "archivist_approved" %>
     <%= form.label_and_date "approval_date" %>
     <% if form.readonly? %>
       <% if form['approved_by']  %>

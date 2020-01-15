@@ -255,6 +255,7 @@ en:
     title: Title
     deaccessioned: This record has been deaccessioned
     rap_access_status: Access Status
+    archivist_approved: Archivist Approved?
     _plural: Digital Representations
     _singular: Digital Representation
     _frontend:

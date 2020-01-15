@@ -201,7 +201,9 @@
       "publishable" => {
         "type" => "boolean",
         "readonly" => "true"
-      }
+      },
+
+      "archivist_approved" => {"type" => "boolean"},
     },
   },
 }
