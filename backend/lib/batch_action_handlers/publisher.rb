@@ -23,6 +23,7 @@ class Publisher < BatchActionHandler
     counts = {}
     already = {}
     unpublishable = {}
+    unapproved = []
 
     publish = params['publish'] ? 1 : 0
     now = Time.now
@@ -48,6 +49,10 @@ class Publisher < BatchActionHandler
           jsons = jsons.select{|json| json['publishable']}
           if all_count > jsons.length
             unpublishable[type] = all_count - jsons.length
+          end
+
+          if (unapproved_jsons = jsons.select{|json| !json['archivist_approved']}).length > 0
+            unapproved.concat(unapproved_jsons.map{|json| json['qsa_id_prefixed']})
           end
         end
 
@@ -83,6 +88,12 @@ class Publisher < BatchActionHandler
     unless already.empty?
       out += "\n\nNumber of objects not updated because they are already #{state}:\n"
       out += already.map{|model, count| "    #{I18n.t(model + '._singular')}: #{count}" }.join("\n")
+    end
+
+    unless unapproved.empty?
+      out += "\n\n** WARNING **\n"
+      out += "Objects published but not yet approved by a senior archivist:\n    "
+      out += unapproved.join("\n    ")
     end
 
     out
