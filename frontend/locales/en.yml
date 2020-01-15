@@ -108,7 +108,6 @@ en:
       set_raps: set Restricted Access Periods on records
       manage_conservation_assessment: manage conservation requests and assessments
       manage_fee_schedules: manage fee schedules
-      approve_closed_records: mark closed records approved from agency
       manage_agency_deletion: delete agency records
       update_resource_record: create/update series, item and representation records in this repository      
   assessment:

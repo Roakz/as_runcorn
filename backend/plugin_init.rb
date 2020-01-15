@@ -46,10 +46,6 @@ Permission.define('update_charges',
                   :implied_by => "manage_fee_schedules",
                   :level => "global")
 
-Permission.define('approve_closed_records',
-                  'The ability to mark closed records approved from agency',
-                  :level => "repository")
-
 Permission.define('manage_agency_deletion',
                   'The ability to manage the deletion of agency records',
                   :level => "repository")
