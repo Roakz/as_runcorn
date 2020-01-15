@@ -20,11 +20,11 @@ class ServiceQuote < Sequel::Model(:service_quote)
     # initialize lines from predefined chargeable items
     json['line_items'].each do |item|
       if item['chargeable_item']
-
         chargeable_item = ServiceQuote.chargeable_item(item['chargeable_item']['ref'])
 
         item['description'] ||= chargeable_item['description']
         item['charge_quantity_unit'] ||= chargeable_item['charge_quantity_unit']
+        item['charge_category'] ||= chargeable_item['charge_category']
         item['charge_per_unit_cents'] ||= chargeable_item['price_cents']
       end
     end

@@ -11,6 +11,7 @@
       "price_cents" => {"type" => "integer"},
       "price_dollars" => {"type" => "string", "ifmissing" => "error", "pattern" => "^\\$\\d+\\.\\d\\d$"},
       "charge_quantity_unit" => {"type" => "string", "dynamic_enum" => "runcorn_charge_quantity_unit"},
+      "charge_category" => {"type" => "string", "dynamic_enum" => "runcorn_charge_category"},
     },
   },
 }
