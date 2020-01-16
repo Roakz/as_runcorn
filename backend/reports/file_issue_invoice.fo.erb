@@ -1,0 +1,193 @@
+<?xml version="1.1" encoding="utf-8"?>
+
+<%
+# Utilities
+
+def format_price(cents_or_na)
+  if cents_or_na.is_a?(Integer)
+    (dollars, cents) = BigDecimal.new(cents_or_na).divmod(100)
+
+    sprintf("$%s.%02d", add_commas(dollars.to_i.to_s), cents.to_i)
+  else
+    cents_or_na
+  end
+end
+
+def add_commas(s)
+  if s.length <= 3
+    s
+  else
+    add_commas(s[0...-3]) + "," + s[-3..-1]
+  end
+end
+
+# Put in zero-width spaces to allow us to wrap wherever needed, but don't break
+# an XML special character in half.
+def allow_wrapping(s)
+  chars = s.chars
+
+  result = ""
+
+  while !chars.empty?
+    ch = chars.shift
+
+    result << ch
+
+    if ch == '&'
+      while !chars.empty? && nextch = chars.shift
+        result << nextch
+        break if nextch == ';'
+      end
+    else
+      result << "&#x200b;"
+    end
+  end
+
+  result
+end
+
+
+%>
+
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" font-size="10px">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="content"
+                           margin="1.5cm"
+                           page-height="210mm"
+                           page-width="297mm">
+      <fo:region-body region-name="body" margin-top="5mm" />
+      <fo:region-before extent="1.0cm" region-name="header"/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+
+  <fo:page-sequence master-reference="content">
+    <fo:static-content flow-name="header">
+      <fo:block>
+        <fo:retrieve-marker retrieve-class-name="page-header-text" />
+      </fo:block>
+    </fo:static-content>
+
+    <fo:flow flow-name="body">
+
+      <% @tables.each_with_index do |(agency_location, rows), idx| %>
+        <!-- logo -->
+        <fo:block <% if idx > 0 %>page-break-before="always"<% end %> >
+          <fo:table>
+            <fo:table-body>
+              <fo:table-cell>
+                <fo:block><fo:external-graphic width="10cm" src="<%= @report_logo_path %>" content-height="scale-to-fit" /></fo:block>
+              </fo:table-cell>
+              <fo:table-cell text-align="right" display-align="center">
+                <fo:block font-variant="small-caps" font-weight="bold">FILE ISSUE ACCOUNTS</fo:block>
+              </fo:table-cell>
+            </fo:table-body>
+          </fo:table>
+        </fo:block>
+
+        <fo:block>
+          <fo:leader leader-pattern="rule" leader-length="100%" rule-style="solid" color="#aaa" rule-thickness="1pt"/>
+        </fo:block>
+
+        <fo:block margin-top="5mm" margin-bottom="5mm">
+          <fo:marker marker-class-name="page-header-text">
+            <fo:block />
+          </fo:marker>
+
+          <fo:table>
+            <fo:table-column column-width="60%" />
+            <fo:table-column column-width="40%" />
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:table border-collapse="separate" border-spacing="0pt 3pt">
+                    <fo:table-body>
+                      <fo:table-row>
+                        <fo:table-cell width="4cm"><fo:block font-weight="bold">Responsible Agency:</fo:block></fo:table-cell>
+                        <fo:table-cell><fo:block font-weight="bold"><%= agency_location.agency_name.encode(:xml => :text) %></fo:block></fo:table-cell>
+                      </fo:table-row>
+
+                      <fo:table-row>
+                        <fo:table-cell width="4cm"><fo:block font-weight="bold">Agency Location:</fo:block></fo:table-cell>
+                        <fo:table-cell><fo:block font-weight="bold"><%= agency_location.location_name.encode(:xml => :text) %></fo:block></fo:table-cell>
+                      </fo:table-row>
+                    </fo:table-body>
+                  </fo:table>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:table border-collapse="separate" border-spacing="0pt 3pt">
+                    <fo:table-body>
+                      <fo:table-row>
+                        <fo:table-cell text-align="right"><fo:block font-weight="bold" font-variant="small-caps">ISSUED FROM:</fo:block></fo:table-cell>
+                        <fo:table-cell width="10em" text-align="right"><fo:block font-weight="bold">FIXME</fo:block></fo:table-cell>
+                      </fo:table-row>
+
+                      <fo:table-row>
+                        <fo:table-cell text-align="right"><fo:block font-weight="bold" font-variant="small-caps">ISSUED TO:</fo:block></fo:table-cell>
+                        <fo:table-cell width="3cm" text-align="right"><fo:block font-weight="bold">FIXME</fo:block></fo:table-cell>
+                      </fo:table-row>
+                    </fo:table-body>
+                  </fo:table>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:block>
+
+        <fo:block>
+          <fo:marker marker-class-name="page-header-text">
+            <fo:block font-size="8pt" text-align="right" color="#333"><%= agency_location.agency_name.encode(:xml => :text) %>; <%= agency_location.location_name.encode(:xml => :text) %></fo:block>
+          </fo:marker>
+        </fo:block>
+
+        <fo:block-container font-size="8pt">
+          <fo:table>
+            <fo:table-header>
+              <fo:table-row border-top-width="2pt" border-top-style="solid" border-bottom-width="2pt" border-bottom-style="solid">
+                <fo:table-cell padding-top="1mm" padding-bottom="2mm" padding-right="5mm"><fo:block wrap-option="wrap" font-weight="bold" font-variant="small-caps">FILE ISSUE DATE</fo:block></fo:table-cell>
+                <fo:table-cell padding-top="1mm" padding-bottom="2mm" padding-right="5mm"><fo:block wrap-option="wrap" font-weight="bold" font-variant="small-caps">FILE ISSUE REQUEST ID</fo:block></fo:table-cell>
+                <fo:table-cell padding-top="1mm" padding-bottom="2mm" padding-right="5mm"><fo:block wrap-option="wrap" font-weight="bold" font-variant="small-caps">FILE ISSUE ID</fo:block></fo:table-cell>
+                <fo:table-cell padding-top="1mm" padding-bottom="2mm" padding-right="5mm"><fo:block wrap-option="wrap" font-weight="bold" font-variant="small-caps">CONTACT</fo:block></fo:table-cell>
+                <fo:table-cell padding-top="1mm" padding-bottom="2mm" padding-right="5mm"><fo:block text-align="right" wrap-option="wrap" font-weight="bold" font-variant="small-caps"># FILES</fo:block></fo:table-cell>
+                <fo:table-cell padding-top="1mm" padding-bottom="2mm" padding-right="5mm"><fo:block text-align="right" wrap-option="wrap" font-weight="bold" font-variant="small-caps">RETRIEVAL CHARGE</fo:block></fo:table-cell>
+                <fo:table-cell padding-top="1mm" padding-bottom="2mm" padding-right="5mm"><fo:block text-align="right" wrap-option="wrap" font-weight="bold" font-variant="small-caps">DELIVERY CHARGE</fo:block></fo:table-cell>
+                <fo:table-cell padding-top="1mm" padding-bottom="2mm" padding-right="5mm"><fo:block text-align="right" wrap-option="wrap" font-weight="bold" font-variant="small-caps">SEARCH CHARGE</fo:block></fo:table-cell>
+                <fo:table-cell padding-top="1mm" padding-bottom="2mm" padding-right="5mm"><fo:block text-align="right" wrap-option="wrap" font-weight="bold" font-variant="small-caps">SCAN CHARGE</fo:block></fo:table-cell>
+                <fo:table-cell padding-top="1mm" padding-bottom="2mm" padding-right="5mm"><fo:block text-align="right" wrap-option="wrap" font-weight="bold" font-variant="small-caps">OTHER</fo:block></fo:table-cell>
+                <fo:table-cell padding-top="1mm" padding-bottom="2mm"><fo:block text-align="right" wrap-option="wrap" font-weight="bold" font-variant="small-caps">SUB TOTAL</fo:block></fo:table-cell>
+              </fo:table-row>
+            </fo:table-header>
+
+            <fo:table-body>
+              <% grand_total_cents = 0 %>
+              <% rows.each do |row| %>
+                <fo:table-row border-bottom-width="1px" border-bottom-style="solid" border-bottom-color="#aaa">
+                  <fo:table-cell display-align="center" padding="1mm 0 0.5mm 0"><fo:block wrap-option="wrap"><%= row.fetch('Date').strftime('%d/%m/%Y') %></fo:block></fo:table-cell>
+                  <fo:table-cell display-align="center" padding="1mm 0 0.5mm 0"><fo:block wrap-option="wrap"><%= row.fetch('File Issue Request ID') %></fo:block></fo:table-cell>
+                  <fo:table-cell display-align="center" padding="1mm 0 0.5mm 0"><fo:block wrap-option="wrap"><%= row.fetch('File Issue ID') %></fo:block></fo:table-cell>
+                  <fo:table-cell display-align="center" padding="1mm 0 0.5mm 0"><fo:block wrap-option="wrap"><%= allow_wrapping(row.fetch('Contact', '').encode(:xml => :text)) %></fo:block></fo:table-cell>
+                  <fo:table-cell display-align="center" padding="1mm 5mm 0.5mm 0"><fo:block text-align="right" wrap-option="wrap"><%= row.fetch('# Files') %></fo:block></fo:table-cell>
+
+                  <% ['Retrieval Charges', 'Delivery Charges', 'Search Charges', 'Scan Charges', 'Other Charges'].each do |charge| %>
+                    <fo:table-cell display-align="center" padding="1mm 5mm 0.5mm 0"><fo:block text-align="right" wrap-option="wrap"><%= format_price(row.fetch(charge)) %></fo:block></fo:table-cell>
+                  <% end %>
+
+                  <fo:table-cell display-align="center" padding="1mm 0 0.5mm 0"><fo:block text-align="right" wrap-option="wrap"><%= format_price(row.fetch('Subtotal')) %></fo:block></fo:table-cell>
+
+                  <% if row.fetch('Subtotal').is_a?(Integer) %>
+                    <% grand_total_cents += row.fetch('Subtotal') %>
+                  <% end %>
+                </fo:table-row>
+              <% end %>
+
+              <fo:table-row>
+                <fo:table-cell padding-top="5mm" number-columns-spanned="10"><fo:block font-weight="bold" font-size="12pt">Total Charges</fo:block></fo:table-cell>
+                <fo:table-cell padding-top="5mm" text-align="right"><fo:block font-weight="bold" font-size="12pt"><%= format_price(grand_total_cents) %></fo:block></fo:table-cell>
+              </fo:table-row>
+
+            </fo:table-body>
+          </fo:table>
+        </fo:block-container>
+      <% end %>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
