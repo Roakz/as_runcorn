@@ -6,6 +6,11 @@ class AgencyTransferProposalsReport < RuncornReport
   def initialize(from_date, to_date)
     @from_date = from_date
     @to_date = to_date
+
+    # Reverse dates if they're backwards.
+    if @from_date && @to_date && @from_date > @to_date
+      @from_date, @to_date = @to_date, @from_date
+    end
   end
 
   def transfer_dataset(aspacedb, mapdb)

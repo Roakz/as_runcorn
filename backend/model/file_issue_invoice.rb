@@ -16,6 +16,11 @@ class FileIssueInvoice
     @location_id = params[:location_id]
     @from_date = DateParse.date_parse_down(params[:from_date])
     @to_date = DateParse.date_parse_up(params[:to_date])
+
+    # Reverse dates if they're backwards.
+    if @from_date && @to_date && @from_date > @to_date
+      @from_date, @to_date = @to_date, @from_date
+    end
   end
 
   AgencyLocation = Struct.new(:aspace_agency_id, :location_id, :agency_name, :location_name)
