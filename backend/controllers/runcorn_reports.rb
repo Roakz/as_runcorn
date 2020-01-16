@@ -68,4 +68,14 @@ class ArchivesSpaceService < Sinatra::Base
     ]
   end
 
+  Endpoint.get('/runcorn_reports/locations_for_agency')
+    .description("Locations for an agency")
+    .params(["agency_ref", String, "URI of agent_corporate_entity"])
+    .permissions([]) # FIXME
+    .returns([200, "(:json)"]) \
+  do
+    agency_id = JSONModel.parse_reference(params[:agency_ref]).fetch(:id)
+    agency = AgentCorporateEntity.get_or_die(agency_id)
+    json_response(agency.fetch_map_agency_locations)
+  end
 end

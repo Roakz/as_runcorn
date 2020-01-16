@@ -7,22 +7,106 @@
           <label for="report">Report</label>
           <select name="report" class="form-control" id="report">
             <option value="agency_loans_report">File Issue and Loans</option>
+            <option value="file_issue_invoices">File Issue Invoices</option>
             <option value="agency_transfer_proposals_report">Transfer Proposals</option>
             <option value="agency_transfers_report">Transfers</option>
           </select>
         </div>
-        <div class="form-group">
-          <label for="from_date">From</label>
-          <input type="date" name="from_date" id="from_date" class="form-control" placeholder="YYYY-MM-DD"/>
-        </div>
-        <div class="form-group">
-          <label for="to_date">To</label>
-          <input type="date" name="to_date" id="to_date" class="form-control" placeholder="YYYY-MM-DD"/>
+        <div id="report-inputs">
+          <div class="form-group">
+            <label for="agency_ref">Agency</label>
+            <div class="input-group linker-wrapper">
+              <input type="text" class="linker"
+                     id="agency_ref"
+                     data-label="Agency"
+                     data-label_plural="Agencies"
+                     data-path=""
+                     data-name="agency_ref"
+                     data-url="<%= url_for :controller => :search, :action => :do_search, :format => :json %>"
+                     data-browse-url="<%= url_for :controller => :search, :action => :do_search, :format => :js, :facets => [], :display_identifier => true %>"
+                     data-selected="{}"
+                     data-format_property="display_string"
+                     data-multiplicity="one"
+                     data-types='["agent_corporate_entity"]'
+                />
+              <div class="input-group-btn">
+                <a class="btn btn-default dropdown-toggle last" data-toggle="dropdown" href="javascript:void(0);"><span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="javascript:void(0);" class="linker-browse-btn"><%= I18n.t("actions.browse") %></a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="agency_location">Agency Location</label>
+            <select id="agency_location" name="location_id" class="form-control">
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="from_date">From</label>
+            <input type="date" name="from_date" id="from_date" class="form-control" placeholder="YYYY-MM-DD"/>
+          </div>
+          <div class="form-group">
+            <label for="to_date">To</label>
+            <input type="date" name="to_date" id="to_date" class="form-control" placeholder="YYYY-MM-DD"/>
+          </div>
         </div>
         <div class="form-group">
           <input class="btn btn-primary" type="submit" value="Generate Report"/>
         </div>
-    <% end %>
+      <% end %>
+      <div id="disabled-form-elements" class="hide"></div>
     </div>
   </div>
 </div>
+
+
+<script>
+  SUPPORTED_INPUTS = {
+    agency_loans_report: ['from_date', 'to_date'],
+    file_issue_invoices: ['agency_ref', 'agency_location', 'from_date', 'to_date'],
+    agency_transfer_proposals_report: ['from_date', 'to_date'],
+    agency_transfers_report: ['from_date', 'to_date'],
+  }
+
+  $(function() {
+    $('.linker:not(.initialised)').linker();
+
+    var $emptyLocationOption = $('<option value="" selected>-- All Locations --</option>');
+    $('#agency_ref').on('change', function(event) {
+      $('#agency_location').empty();
+      if ($(event.target).val() !== '') {
+        // populate the agency location dropdown
+        $.getJSON(APP_PATH + 'runcorn_reports/locations_for_agency',
+                  {
+                    agency_ref: $(event.target).val(),
+                  },
+                  function(json) {
+                    json.forEach(function(location) {
+                      var $option = $('<option>');
+                      $option.val(location.id);
+                      $option.text(location.name);
+                      $('#agency_location').append($option);
+                    });
+                  });
+      }
+      $('#agency_location').prepend($emptyLocationOption);
+    });
+    $('#agency_location').prepend($emptyLocationOption);
+
+    function updateInputs() {
+      var report = $('#report').val();
+
+      $('#report-inputs :input').each(function() {
+        $('#disabled-form-elements').append($(this).closest('.form-group'));
+      });
+
+      SUPPORTED_INPUTS[report].forEach(function(inputId) {
+       $('#report-inputs').append($('#disabled-form-elements').find('#' + inputId).closest('.form-group'));
+      });
+    }
+
+    $('#report').on('change', updateInputs);
+    updateInputs();
+  });
+</script>
