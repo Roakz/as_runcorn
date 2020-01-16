@@ -37,7 +37,7 @@
     <%= form.label_and_textarea "processing_handling_notes" %>
     <%= form.label_and_textarea "remarks" %>
 
-    <% if form.obj['publishable'] == false %>
+    <% if !form.readonly? && form.obj['publishable'] == false %>
       <div class="form-group">
         <label class="control-label col-sm-2" for="<%= form.id_for('publish') %>">Publish?</label>
         <div class="checkbox col-sm-9">
@@ -52,55 +52,7 @@
       <%= form.label_and_boolean "publish" %>
     <% end %>
 
-    <%= form.label_and_boolean "archivist_approved" %>
-    <%= form.label_and_date "approval_date" %>
-    <% if form.readonly? %>
-      <% if form['approved_by']  %>
-        <div class="form-group">
-          <div class="control-label col-sm-2"><%= I18n.t("digital_representation.approved_by") %></div>
-          <div class="controls token-list col-sm-10">
-            <% ASUtils.wrap(form['approved_by']).each do |record| %>
-              <%= render_token :object => record['_resolved'],
-                               :label => record['_resolved']['title'] || record['_resolved']['display_string'],
-                               :type => record['_resolved']['jsonmodel_type'],
-                               :uri => record['ref'],
-                               :placement => "top" %>
-            <% end %>
-          </div>
-        </div>
-      <% end %>
-    <% else %>
-      <% form.push("approved_by", form.obj["approved_by"] || {}) do %>
-        <div class="form-group">
-          <%= form.label('approved_by', {:for => 'approved_by_linker'}, ['col-sm-2']) %>
-          <div class="col-sm-9">
-            <div class="form-group required">
-              <div class="input-group linker-wrapper">
-                <input type="text" class="linker"
-                       id="approved_by_linker"
-                       data-label="<%= I18n.t("digital_representation.approved_by") %>"
-                       data-label_plural="<%= I18n.t("digital_representation.approved_by") %>"
-                       data-path="<%= form.path %>"
-                       data-name="ref"
-                       data-url="<%= url_for :controller => :search, :action => :do_search, :format => :json %>"
-                       data-browse-url="<%= url_for :controller => :search, :action => :do_search, :format => :js, :facets => [], :display_identifier => true %>"
-                       data-selected="<%= ASUtils.to_json(form.obj['_resolved'] || {}) %>"
-                       data-format_property="display_string"
-                       data-multiplicity="one"
-                       data-types='["agent_with_user"]'
-                  />
-                <div class="input-group-btn">
-                  <a class="btn btn-default dropdown-toggle last" data-toggle="dropdown" href="javascript:void(0);"><span class="caret"></span></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="javascript:void(0);" class="linker-browse-btn"><%= I18n.t("actions.browse") %></a></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      <% end %>
-    <% end %>
+    <%= render_aspace_partial :partial => 'shared/archivist_approval_fields', :locals => {:form => form} %>
 
     <% form.push('representation_file', (form.obj['representation_file'] || {})) do |form| %>
       <% if form.readonly? %>
@@ -197,38 +149,8 @@
     <%= form.label_and_select "contained_within", form.possible_options_for("contained_within", false), :field_opts => {:default => 'Network Attached Storage (NAS)'} %>
     <%= form.label_and_boolean "publish" %>
 
-    <%= form.label_and_boolean "archivist_approved" %>
-    <%= form.label_and_date "approval_date", :default => Date.today.iso8601 %>
-    <% form.push("approved_by", form.obj["approved_by"] || {}) do %>
-      <div class="form-group">
-        <%= form.label('approved_by', {:for => 'approved_by_linker'}, ['col-sm-2']) %>
-        <div class="col-sm-9">
-          <div class="form-group required">
-            <div class="input-group linker-wrapper">
-              <input type="text" class="linker"
-                     id="approved_by_linker"
-                     data-label="<%= I18n.t("digital_representation.approved_by") %>"
-                     data-label_plural="<%= I18n.t("digital_representation.approved_by") %>"
-                     data-path="<%= form.path %>"
-                     data-name="ref"
-                     data-url="<%= url_for :controller => :search, :action => :do_search, :format => :json %>"
-                     data-browse-url="<%= url_for :controller => :search, :action => :do_search, :format => :js, :facets => [], :display_identifier => true %>"
-                     data-selected="<%= ASUtils.to_json(form.obj['_resolved'] || {}) %>"
-                     data-format_property="display_string"
-                     data-multiplicity="one"
-                     data-types='["agent_with_user"]'
-                />
-              <div class="input-group-btn">
-                <a class="btn btn-default dropdown-toggle last" data-toggle="dropdown" href="javascript:void(0);"><span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                  <li><a href="javascript:void(0);" class="linker-browse-btn"><%= I18n.t("actions.browse") %></a></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    <% end %>
+    <%= render_aspace_partial :partial => 'shared/archivist_approval_fields', :locals => {:form => form} %>
+
     <% form.push('representation_file', (form.obj['representation_file'] || {})) do |form| %>
       <div class="representation-file-widget form-group">
         <label class="col-sm-2 control-label"><%= I18n.t('representation_file.attached_file') %></label>

@@ -1,0 +1,70 @@
+<% if form.readonly? %>
+  <%= form.label_and_boolean "archivist_approved" %>
+  <%= form.label_and_date "approval_date" %>
+  <% if form['approval_date'] %>
+    <div class="form-group">
+      <div class="control-label col-sm-2"><%= I18n.t("archival_object.approved_by") %></div>
+      <div class="controls token-list col-sm-10">
+        <%= form.hidden_input('approved_by', form['approved_by']) %>
+        <% ASUtils.wrap(form['approved_by']).each do |record| %>
+          <%= render_token :object => record['_resolved'],
+                           :label => record['_resolved']['title'] || record['_resolved']['display_string'],
+                           :type => record['_resolved']['jsonmodel_type'],
+                           :uri => record['ref'],
+                           :placement => "top" %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+<% elsif !user_can?('approve_records') %>
+    <%= form.label_and_readonly "archivist_approved" %>
+    <%= form.hidden_input('archivist_approved', form['archivist_approved'] ? 1 : 0) %>
+    <%= form.label_and_readonly "approval_date" %>
+  <%= form.hidden_input('approval_date', form['approval_date']) %>
+    <div class="form-group">
+      <div class="control-label col-sm-2"><%= I18n.t("archival_object.approved_by") %></div>
+      <div class="controls token-list col-sm-10">
+        <%= form.hidden_input('approved_by', form['approved_by']) %>
+        <% ASUtils.wrap(form['approved_by']).each do |record| %>
+          <%= render_token :object => record['_resolved'],
+                           :label => record['_resolved']['title'] || record['_resolved']['display_string'],
+                           :type => record['_resolved']['jsonmodel_type'],
+                           :uri => record['ref'],
+                           :placement => "top" %>
+        <% end %>
+      </div>
+    </div>
+<% else %>
+  <%= form.label_and_boolean "archivist_approved" %>
+  <%= form.label_and_date "approval_date" %>
+  <% form.push("approved_by", form.obj["approved_by"] || {}) do %>
+    <div class="form-group">
+      <%= form.label('approved_by', {:for => 'approved_by_linker'}, ['col-sm-2']) %>
+      <div class="col-sm-9">
+        <div class="form-group required">
+          <div class="input-group linker-wrapper">
+            <input type="text" class="linker"
+                   id="approved_by_linker"
+                   data-label="<%= I18n.t("archival_object.approved_by") %>"
+                   data-label_plural="<%= I18n.t("archival_object.approved_by") %>"
+                   data-path="<%= form.path %>"
+                   data-name="ref"
+                   data-url="<%= url_for :controller => :search, :action => :do_search, :format => :json %>"
+                   data-browse-url="<%= url_for :controller => :search, :action => :do_search, :format => :js, :facets => [], :display_identifier => true %>"
+                   data-selected="<%= ASUtils.to_json(form.obj['_resolved'] || {}) %>"
+                   data-format_property="display_string"
+                   data-multiplicity="one"
+                   data-types='["agent_with_user"]'
+              />
+            <div class="input-group-btn">
+              <a class="btn btn-default dropdown-toggle last" data-toggle="dropdown" href="javascript:void(0);"><span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="javascript:void(0);" class="linker-browse-btn"><%= I18n.t("actions.browse") %></a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% end %>

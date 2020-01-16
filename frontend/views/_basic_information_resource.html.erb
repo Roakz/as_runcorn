@@ -1,20 +1,6 @@
-<%= form.label_and_date "approval_date" %>
-<% if form.readonly? %>
-  <% if form['approved_by']  %>
-    <div class="form-group">
-      <div class="control-label col-sm-2"><%= I18n.t("resource.approved_by") %></div>
-      <div class="controls token-list col-sm-10">
-        <% ASUtils.wrap(form['approved_by']).each do |record| %>
-          <%= render_token :object => record['_resolved'],
-                           :label => record['_resolved']['title'] || record['_resolved']['display_string'],
-                           :type => record['_resolved']['jsonmodel_type'],
-                           :uri => record['ref'],
-                           :placement => "top" %>
-        <% end %>
-      </div>
-    </div>
-  <% end %>
+<%= render_aspace_partial :partial => 'shared/archivist_approval_fields', :locals => {:form => form} %>
 
+<% if form.readonly? %>
   <% unless form['significant_representations_counts'].values.all?{|v| v == 0} %>
     <div class="form-group">
       <div class="control-label col-sm-2"><%= I18n.t("resource.significant_representations_counts") %></div>
@@ -30,38 +16,6 @@
       </div>
     </div>
   <% end %>
-
-<% else %>
-  <% form.push("approved_by", form.obj["approved_by"] || {}) do %>
-    <div class="form-group">
-      <%= form.label('approved_by', {:for => 'approved_by_linker'}, ['col-sm-2']) %>
-      <div class="col-sm-9">
-        <div class="form-group required">
-          <div class="input-group linker-wrapper">
-            <input type="text" class="linker"
-                   id="approved_by_linker"
-                   data-label="<%= I18n.t("resource.approved_by") %>"
-                   data-label_plural="<%= I18n.t("resource.approved_by") %>"
-                   data-path="<%= form.path %>"
-                   data-name="ref"
-                   data-url="<%= url_for :controller => :search, :action => :do_search, :format => :json %>"
-                   data-browse-url="<%= url_for :controller => :search, :action => :do_search, :format => :js, :facets => [], :display_identifier => true %>"
-                   data-selected="<%= ASUtils.to_json(form.obj['_resolved'] || {}) %>"
-                   data-format_property="display_string"
-                   data-multiplicity="one"
-                   data-types='["agent_with_user"]'
-              />
-            <div class="input-group-btn">
-              <a class="btn btn-default dropdown-toggle last" data-toggle="dropdown" href="javascript:void(0);"><span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="javascript:void(0);" class="linker-browse-btn"><%= I18n.t("actions.browse") %></a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  <% end %>
 <% end %>
 
 <%= form.label_and_textfield "description" %>
@@ -70,7 +24,6 @@
 <%= form.label_and_select "copyright_status", form.possible_options_for('copyright_status', true) %>
 <%= form.label_and_select "retention_status", form.possible_options_for('retention_status', true) %>
 <%= form.label_and_boolean "serialised" %>
-<%= form.label_and_boolean "archivist_approved" %>
 <%= form.label_and_date "original_registration_date" %>
 <%= form.label_and_textarea "information_sources" %>
 <%= form.label_and_textfield "abstract" %>

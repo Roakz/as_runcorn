@@ -6,6 +6,7 @@ ArchivalObject.include(RAPs)
 ArchivalObject.include(RAPsApplied)
 ArchivalObject.include(Significance)
 ArchivalObject.include(Deaccessioned)
+ArchivalObject.include(ArchivistApproval)
 
 class ArchivalObject
   define_relationship(:name => :representation_approved_by,
