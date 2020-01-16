@@ -44,6 +44,7 @@ class RuncornReportsController < ApplicationController
         end
       end
     when 'file_issue_invoices'
+      self.response.headers["Content-Type"] = 'text/pdf'
       self.response.headers['Content-Disposition'] = "attachment; filename=\"#{params[:report]}.#{Date.today.iso8601}.pdf\""
       self.response_body = Enumerator.new do |stream|
         JSONModel::HTTP::stream('/runcorn_reports/file_issue_invoices', {
