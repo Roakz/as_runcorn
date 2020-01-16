@@ -109,7 +109,8 @@ en:
       manage_conservation_assessment: manage conservation requests and assessments
       manage_fee_schedules: manage fee schedules
       manage_agency_deletion: delete agency records
-      update_resource_record: create/update series, item and representation records in this repository      
+      update_resource_record: create/update series, item and representation records in this repository
+      approve_records: archivist approve a record
   assessment:
     conservation_note: Condition Rating
     treatment_priority: Treatment Priority

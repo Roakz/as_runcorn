@@ -212,6 +212,12 @@ Sequel.migration do
                    :groups => ['repository-senior-archivists', 'repository-collection-managers',
                                'repository-archivists-other']
                  },
+                 {
+                   :code => 'approve_records',
+                   :description => 'The ability to archivist approve a record',
+                   :groups => ['repository-senior-archivists', 'repository-collection-managers',
+                               'repository-collection-archivists', 'repository-archivists-other']
+                 },
                 ]
 
     now = Time.now
