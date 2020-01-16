@@ -69,6 +69,10 @@ end
 
     <fo:flow flow-name="body">
 
+      <% if @tables.empty? %>
+        <fo:block>No matching file issue records were found</fo:block>
+      <% end %>
+
       <% @tables.each_with_index do |(agency_location, rows), idx| %>
         <!-- logo -->
         <fo:block <% if idx > 0 %>page-break-before="always"<% end %> >
@@ -114,19 +118,27 @@ end
                   </fo:table>
                 </fo:table-cell>
                 <fo:table-cell>
-                  <fo:table border-collapse="separate" border-spacing="0pt 3pt">
-                    <fo:table-body>
-                      <fo:table-row>
-                        <fo:table-cell text-align="right"><fo:block font-weight="bold" font-variant="small-caps">ISSUED FROM:</fo:block></fo:table-cell>
-                        <fo:table-cell width="10em" text-align="right"><fo:block font-weight="bold">FIXME</fo:block></fo:table-cell>
-                      </fo:table-row>
+                  <% if @from_date || @to_date %>
+                    <fo:table border-collapse="separate" border-spacing="0pt 3pt">
+                      <fo:table-body>
+                        <% if @from_date %>
+                          <fo:table-row>
+                            <fo:table-cell text-align="right"><fo:block font-weight="bold" font-variant="small-caps">ISSUED FROM:</fo:block></fo:table-cell>
+                            <fo:table-cell width="10em" text-align="right"><fo:block font-weight="bold"><%= @from_date.strftime('%d/%m/%Y') %></fo:block></fo:table-cell>
+                          </fo:table-row>
+                        <% end %>
 
-                      <fo:table-row>
-                        <fo:table-cell text-align="right"><fo:block font-weight="bold" font-variant="small-caps">ISSUED TO:</fo:block></fo:table-cell>
-                        <fo:table-cell width="3cm" text-align="right"><fo:block font-weight="bold">FIXME</fo:block></fo:table-cell>
-                      </fo:table-row>
-                    </fo:table-body>
-                  </fo:table>
+                        <% if @to_date %>
+                          <fo:table-row>
+                            <fo:table-cell text-align="right"><fo:block font-weight="bold" font-variant="small-caps">ISSUED TO:</fo:block></fo:table-cell>
+                            <fo:table-cell width="3cm" text-align="right"><fo:block font-weight="bold"><%= @to_date.strftime('%d/%m/%Y') %></fo:block></fo:table-cell>
+                          </fo:table-row>
+                        <% end %>
+                      </fo:table-body>
+                    </fo:table>
+                  <% else %>
+                    <fo:block />
+                  <% end %>
                 </fo:table-cell>
               </fo:table-row>
             </fo:table-body>

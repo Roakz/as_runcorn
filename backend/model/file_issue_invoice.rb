@@ -7,10 +7,15 @@ class FileIssueInvoice
   import javax.xml.transform.TransformerFactory
   import javax.xml.transform.sax.SAXResult
 
-  attr_reader :params
-
   def initialize(params)
-    @params = params
+    if params[:agency_ref]
+      parsed_aspace_agency = JSONModel.parse_reference(params[:agency_ref])
+      @aspace_agency_id = parsed_aspace_agency.fetch(:id)
+    end
+
+    @location_id = params[:location_id]
+    @from_date = DateParse.date_parse_down(params[:from_date])
+    @to_date = DateParse.date_parse_up(params[:to_date])
   end
 
   AgencyLocation = Struct.new(:aspace_agency_id, :location_id, :agency_name, :location_name)
@@ -172,28 +177,29 @@ class FileIssueInvoice
                        Sequel.qualify(:file_issue, :agency_location_id),
                        Sequel.qualify(:file_issue, :create_time))
 
-    if params['agency_uri']
-      parsed_aspace_agency = JSONModel.parse_reference(params['agency_uri'])
-      aspace_agency_id = parsed_aspace_agency.fetch(:id)
-
-      base_ds = base_ds
-                  .filter(Sequel.qualify(:file_issue, :agency_id) =>
-                          mapdb[:agency]
-                            .filter(:aspace_agency_id => aspace_agency_id)
-                            .select(:id))
+    if @aspace_agency_id
+      base_ds = base_ds.filter(Sequel.qualify(:agency, :aspace_agency_id) => @aspace_agency_id)
     end
 
-    # FIXME location & dates too
+    if @location_id
+      base_ds = base_ds.filter(Sequel.qualify(:file_issue, :agency_location_id) => @location_id)
+    end
 
-    result = ""
+    if @from_date
+      from_date = @from_date
+      base_ds = base_ds.where { Sequel.qualify(:file_issue, :create_time) >= from_date.to_time.to_i * 1000 }
+    end
+
+    if @to_date
+      to_date = @to_date
+      base_ds = base_ds.where { Sequel.qualify(:file_issue, :create_time) <= to_date.to_time.to_i * 1000 }
+    end
 
     base_ds.extension(:pagination).each_page(500) do |page_ds|
       page_ds.each do |row|
         yield row
       end
     end
-
-    result
   end
 
 end
