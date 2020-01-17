@@ -16,6 +16,9 @@
         <th class="col title sortable <% if @search_data.sorted_by === "title_sort"%>sort-<%= @search_data.current_sort_direction %><% end %>">
           <%= link_to title_column_header_label, build_search_params("sort" => @search_data.sort_filter_for("title_sort")) %>
         </th>
+        <th class="col">
+          Treatments Summary
+        </th>
         <th class="col actions"><!-- actions --></th>
       </tr>
     </thead>
@@ -33,6 +36,11 @@
           </td>
           <td>
             <%= result['title'] %>
+          </td>
+          <td>
+            <% ASUtils.json_parse(result['treatments_summary'] || '{}').each do |treatment_status, count| %>
+              <span class="badge"><%= count %> <%= I18n.t("conservation_treatment._status.#{treatment_status}").downcase %></span>
+            <% end %>
           </td>
           <td class="table-record-actions">
             <div class="btn-group">

@@ -223,15 +223,20 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
     ArchivalObject[self.archival_object_id].deaccessioned?
   end
 
-  def self.generate_treatments!(qsa_ids, assessment_id = nil, treatment_template = {})
+  def self.generate_treatments!(qsa_ids, assessment_id, treatment_template)
     username = RequestContext.get(:current_username)
     user_agent_id = User[:username => username][:agent_record_id]
     treatment_template = treatment_template.select{|k,v| v && !v.empty?}
     status = ConservationTreatment.calculate_status(treatment_template)
 
+    # All subrecords in this set will store the treatment batch id.  We'll use
+    # this to link together instances of the same treatment.
+    treatment_batch_id = Sequence.get("QSA_ASSESSMENT_TREATMENT_BATCH_ID")
+
     now = Time.now
 
     treatment_row = {
+      :treatment_batch_id => treatment_batch_id,
       :physical_representation_id => 'SETME',
       :status => status,
       :json_schema_version => 1,
@@ -275,10 +280,8 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
       user_rlshp_row[:conservation_treatment_id] = treatment_id
       db[:conservation_treatment_user_rlshp].insert(user_rlshp_row)
 
-      if assessment_id
-        assessment_rlshp_row[:conservation_treatment_id] = treatment_id
-        db[:conservation_treatment_assessment_rlshp].insert(assessment_rlshp_row)
-      end
+      assessment_rlshp_row[:conservation_treatment_id] = treatment_id
+      db[:conservation_treatment_assessment_rlshp].insert(assessment_rlshp_row)
     end
 
     # trigger a reindex of all representations

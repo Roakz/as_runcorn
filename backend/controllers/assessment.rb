@@ -20,7 +20,11 @@ class ArchivesSpaceService < Sinatra::Base
 
     params[:q] = query
 
-    json_response(Search.search(params, params[:repo_id]))
+    results = Search.search(params, params[:repo_id])
+
+    Assessment.add_treatment_summaries_to_search_results(assessment.id, results)
+
+    json_response(results)
   end
 
   Endpoint.get('/repositories/:repo_id/assessments/:id/csv')
