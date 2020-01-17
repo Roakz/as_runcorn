@@ -16,6 +16,8 @@
 
       "external_reference" => {"type" => "string"},
 
+      "treatment_batch_id" => {"type" => "string"},
+
       "user" => {
         "type" => "object",
         "subtype" => "ref",

@@ -19,12 +19,19 @@ class ConservationTreatment < Sequel::Model(:conservation_treatment)
                       :is_array => false)
 
   def self.create_from_json(json, opts = {})
-    super(json, opts.merge(:status => calculate_status(json)))
+    extras = {
+      :status => calculate_status(json),
+    }
+
+    if !json.treatment_batch_id
+      extras[:treatment_batch_id] = Sequence.get("QSA_ASSESSMENT_TREATMENT_BATCH_ID").to_s
+    end
+
+    super(json, opts.merge(extras))
   end
 
   def update_from_json(json, opts = {}, apply_nested_records = true)
     self[:status] = self.class.calculate_status(json)
-    super
   end
 
   def self.calculate_status(json)

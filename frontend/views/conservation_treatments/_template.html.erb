@@ -16,6 +16,8 @@
 
     <% end %>
 
+    <%= form.hidden_input "treatment_batch_id" %>
+
     <%= form.label_and_textarea "treatment_process", {:field_opts => {:clean => true, :escape => false}} %>
 
     <%= form.label_and_date "start_date" %>

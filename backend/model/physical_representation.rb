@@ -231,7 +231,7 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
 
     # All subrecords in this set will store the treatment batch id.  We'll use
     # this to link together instances of the same treatment.
-    treatment_batch_id = Sequence.get("QSA_ASSESSMENT_TREATMENT_BATCH_ID")
+    treatment_batch_id = Sequence.get("QSA_ASSESSMENT_TREATMENT_BATCH_ID").to_s
 
     now = Time.now
 
