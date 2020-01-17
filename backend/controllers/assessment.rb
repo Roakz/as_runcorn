@@ -39,7 +39,7 @@ class ArchivesSpaceService < Sinatra::Base
     [
       200,
       {"Content-Type" => "text/csv"},
-      ConservationCSV.for_refs(assessment.connected_record_refs).to_enum(:each_chunk)
+      AssessmentCSV.for_refs(assessment.id, assessment.connected_record_refs).to_enum(:each_chunk)
     ]
   end
 

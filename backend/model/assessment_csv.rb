@@ -1,6 +1,6 @@
 require 'csv'
 
-class ConservationCSV
+class AssessmentCSV
 
   HEADERS = [
     'Representation ID',
@@ -15,13 +15,17 @@ class ConservationCSV
     'Container Title',
     'Container Location',
     'Container Location - Description',
+    '# Awaiting Treatment',
+    '# Treatments In Progress',
+    '# Treatments Completed',
   ]
 
-  def self.for_refs(many_many_refs)
-    new(many_many_refs)
+  def self.for_refs(assessment_id, many_many_refs)
+    new(assessment_id, many_many_refs)
   end
 
-  def initialize(refs)
+  def initialize(assessment_id, refs)
+    @assessment_id = assessment_id
     @refs = refs
   end
 
@@ -41,8 +45,11 @@ class ConservationCSV
     @refs.each_slice(AppConfig[:max_page_size]) do |slice|
       results = search_by_refs(slice)
 
+      Assessment.add_treatment_summaries_to_search_results(@assessment_id, results)
+
       block.call(
         results['results'].map {|result|
+          treatments_summary = ASUtils.json_parse(result.fetch('treatments_summary'))
           [
             result['qsa_id_u_ssort'],
             result['title'],
@@ -56,6 +63,9 @@ class ConservationCSV
             result.dig('top_container_title_u_sstr', 0),
             result.dig('top_container_location_u_sstr', 0),
             result.dig('top_container_home_location_u_sstr', 0),
+            treatments_summary.fetch('awaiting_treatment', 0),
+            treatments_summary.fetch('in_progress', 0),
+            treatments_summary.fetch('completed', 0),
           ].map {|e| e || ''}.to_csv
         }.join("")
       )
