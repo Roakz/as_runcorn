@@ -1,5 +1,7 @@
 class FileIssueInvoice
 
+  BATCH_SIZE = 500
+
   java_import Java::org::apache::fop::apps::FopFactory
   java_import Java::org::apache::fop::apps::Fop
   java_import Java::org::apache::fop::apps::MimeConstants
@@ -60,15 +62,30 @@ class FileIssueInvoice
         agencies = {}
         location_names = {}
 
-        while row = begin
-                      iterator.next
-                    rescue StopIteration
-                      :end
-                    end
+        loop do
+          row = begin
+                  iterator.peek
+                rescue StopIteration
+                  nil
+                end
 
-          if (row == :end && !agencies.empty?) ||
-             (row != :end && !agencies.include?(row[:aspace_agency_id]) && agencies.length == 500)
+          if row && agencies.include?(row[:aspace_agency_id])
+            # A location for an agency we're already processing.  Consume the
+            # entry and store it.
+            iterator.next
 
+            agencies[row[:aspace_agency_id]] ||= {}
+            agencies[row[:aspace_agency_id]][row[:agency_location_id]] ||= []
+            agencies[row[:aspace_agency_id]][row[:agency_location_id]] << row
+
+            location_names[row[:agency_location_id]] = row[:location_name]
+
+            next
+          end
+
+          if agencies.length == BATCH_SIZE || (!row && !agencies.empty?)
+            # We have a batch of agencies to process...
+            #
             # Pull back agency names in one hit
             agency_names = {}
             db[:name_corporate_entity]
@@ -145,14 +162,11 @@ class FileIssueInvoice
             location_names.clear
           end
 
-          if row == :end
-            break
+          if row
+            # Start working on the next agency
+            agencies[row[:aspace_agency_id]] = {}
           else
-            agencies[row[:aspace_agency_id]] ||= {}
-            agencies[row[:aspace_agency_id]][row[:agency_location_id]] ||= []
-            agencies[row[:aspace_agency_id]][row[:agency_location_id]] << row
-
-            location_names[row[:agency_location_id]] = row[:location_name]
+            break
           end
         end
 
@@ -200,7 +214,7 @@ class FileIssueInvoice
       base_ds = base_ds.where { Sequel.qualify(:file_issue, :create_time) <= to_date.to_time.to_i * 1000 }
     end
 
-    base_ds.extension(:pagination).each_page(500) do |page_ds|
+    base_ds.extension(:pagination).each_page(BATCH_SIZE) do |page_ds|
       page_ds.each do |row|
         yield row
       end
