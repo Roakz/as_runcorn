@@ -37,3 +37,18 @@
     position: absolute;
     bottom: 20px;
 }
+
+.token-input-dropdown .digital_representation .icon-token:before,
+.token-input-list .digital_representation .icon-token:before,
+.token-list .digital_representation .icon-token:before {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    content: "\f56d";
+}
+.token-input-dropdown .physical_representation .icon-token:before,
+.token-input-list .physical_representation .icon-token:before,
+.token-list .physical_representation .icon-token:before {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    content: "\f70e";
+}
