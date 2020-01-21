@@ -18,12 +18,12 @@ class AgencyTransferProposalsReport < RuncornReport
 
     if @from_date
       from_time = @from_date.to_time.to_i * 1000
-      base_ds = base_ds.where { Sequel.qualify(:transfer, :create_time) >= from_time }
+      base_ds = base_ds.where { Sequel.qualify(:transfer_proposal, :create_time) >= from_time }
     end
 
     if @to_date
       to_time = @to_date.to_time.to_i * 1000
-      base_ds = base_ds.where { Sequel.qualify(:transfer, :create_time) <= to_time }
+      base_ds = base_ds.where { Sequel.qualify(:transfer_proposal, :create_time) <= to_time }
     end
 
     aspace_agency_ids = base_ds
