@@ -70,6 +70,7 @@ class IndexerCommon
 
       if record['record']['agency_assigned_id']
         doc['agency_assigned_id_u_stext'] = record['record']['agency_assigned_id']
+        doc['agency_assigned_id_u_sort'] = record['record']['agency_assigned_id']
       end
 
       unless record['record']['archivist_approved'].nil?
