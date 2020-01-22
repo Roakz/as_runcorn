@@ -337,5 +337,11 @@ class IndexerCommon
         doc['date_end_u_sstr'] = date['end']
       end
     end
+
+    indexer.add_document_prepare_hook do |doc, record|
+      if record['record'].has_key?('within')
+        doc['runcorn_set_u_ustr'] = record['record']['within'].map{|qsa_id| [qsa_id.upcase, qsa_id.downcase]}.flatten
+      end
+    end
   end
 end

@@ -204,6 +204,14 @@
       },
 
       "archivist_approved" => {"type" => "boolean"},
+
+      "within" => {
+        "type" => "array",
+        "readonly" => "true",
+        "items" => {
+          "type" => "string",
+        }
+      },
     },
   },
 }

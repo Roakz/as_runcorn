@@ -300,7 +300,15 @@
       "container_type" => {"type" => "string"},
       "indicator" => {"type" => "string"},
       "barcode" => {"type" => "string"},
-      "previous_system_identifiers" => {"type" => "string"}
+      "previous_system_identifiers" => {"type" => "string"},
+
+      "within" => {
+        "type" => "array",
+        "readonly" => "true",
+        "items" => {
+          "type" => "string",
+        }
+      },
     },
   },
 }

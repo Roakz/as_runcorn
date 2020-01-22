@@ -107,6 +107,19 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
 
     deaccessioned_map = Deaccessioned.build_deaccessioned_map(controlling_records_by_representation_id.values.map(&:id))
 
+    within_sets = {}
+    MAPDB.open do |mapdb|
+      mapdb[:file_issue_item]
+        .join(:file_issue, Sequel.qualify(:file_issue, :id) => Sequel.qualify(:file_issue_item, :file_issue_id))
+        .filter(:aspace_record_type => 'physical_representation')
+        .filter(:aspace_record_id => objs.map(&:id))
+        .select(:file_issue_id, :aspace_record_id, :issue_type)
+        .map do |row|
+        within_sets[row[:aspace_record_id].to_i] ||= []
+        within_sets[row[:aspace_record_id].to_i] << "%s%s%s" % [QSAId.prefix_for(FileIssue), row[:issue_type][0].upcase, row[:file_issue_id]]
+      end
+    end
+
     objs.zip(jsons).each do |obj, json|
       json['existing_ref'] = obj.uri
       json['display_string'] = build_display_string(json)
@@ -137,6 +150,9 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
       json['assessments'] = assessments_map.fetch(obj.id, []).map{|assessment_blob| { 'ref' => assessment_blob.fetch(:uri) }}
 
       set_calculated_availability!(json, assessments_map.fetch(obj.id, []), controlling_records_dates_map.fetch(controlling_record.id, {}).fetch(:end, nil), availability_options)
+
+      json['within'] = within_sets.fetch(obj.id, [])
+      json['within'] << controlling_records_qsa_id_map.fetch(resource_uri).fetch(:qsa_id_prefixed)
     end
 
     jsons

@@ -106,5 +106,13 @@
   "copyright_status" => {"type" => "string", "dynamic_enum" => "runcorn_copyright_status"},
   "original_registration_date" => {"type" => "string"},
   "previous_system_identifiers" => {"type" => "string"},
-  "accessioned_status" => {"type" => "string", "dynamic_enum" => "runcorn_accessioned_status"}
+  "accessioned_status" => {"type" => "string", "dynamic_enum" => "runcorn_accessioned_status"},
+
+  "within" => {
+    "type" => "array",
+    "readonly" => "true",
+    "items" => {
+      "type" => "string",
+    }
+  },
 }

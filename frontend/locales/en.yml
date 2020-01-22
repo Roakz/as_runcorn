@@ -605,6 +605,7 @@ en:
     text:
       agency_assigned_id: Agency Control No
       conservation_treatment: Conservation Treatment
+      within_set: Within Series/File Issue/Transfer (by QSA ID)
     type:
       date: System Metadata
       range: Value Range
