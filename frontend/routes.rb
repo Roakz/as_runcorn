@@ -77,6 +77,13 @@ ArchivesSpace::Application.routes.draw do
       match('runcorn_reports/locations_for_agency' => 'runcorn_reports#locations_for_agency', :via => [:get])
 
       match('runcorn_notifications' => 'runcorn_notifications#list', :via => [:get])
+
+      match('bulk_changes/index' => 'bulk_changes#index', :via => [:get])
+      match('bulk_changes/new' => 'bulk_changes#new', :via => [:get])
+      match('bulk_changes/download_template' => 'bulk_changes#download_template', :via => [:get])
+      match('bulk_changes/run' => 'bulk_changes#run', :via => [:post])
+      match('bulk_changes/show/:id' => 'bulk_changes#show', :via => [:get])
+      match('bulk_changes/download_file' => 'bulk_changes#download_file', :via => [:get])
     end
   end
 end

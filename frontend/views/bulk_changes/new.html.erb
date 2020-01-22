@@ -1,0 +1,73 @@
+<%
+  breadcrumbs = [
+    [I18n.t("bulk_change._plural"), {:controller => :bulk_changes, :action => :index}],
+  ]
+%>
+
+<%= setup_context(:title => I18n.t("bulk_change.new"), :trail => breadcrumbs) %>
+
+<div class="row">
+  <div class="col-md-3">
+    <div class="sidebar">
+    </div>
+  </div>
+
+  <div class="col-md-9">
+    <div class="record-toolbar">
+      <div class="btn-group pull-right">
+          <%= link_to I18n.t("actions.create"), {:controller => :bulk_changes, :action => :new}, :class => "btn btn-sm btn-default" %>
+      </div>
+      <br style="clear:both" />
+    </div>
+
+    <div class="record-pane">
+      <h2><%= I18n.t("bulk_change._plural") %></h2>
+
+      <%= render_aspace_partial :partial => "shared/flash_messages" %>
+
+      <p>
+          You can use this form to create and update item and representation
+          records by loading data from an Excel spreadsheet.
+      </p>
+
+      <p>Download the Excel template to get started: <%= link_to "Download Template", {:controller => :bulk_changes, :action => :download_template}, :class => "btn btn-primary" %></p>
+
+      <h3>Apply your changes</h3>
+
+      <p>
+        Once you have downloaded and completed the template spreadsheet, import
+        it into ArchivesSpace by uploading it below:
+      </p>
+
+      <%= form_tag({:controller => :bulk_changes, :action => :run},
+                   {
+                     :method => 'POST',
+                     :authenticity_token => true,
+                     :multipart => true,
+                   }) do |f| %>
+        <div class="form-group">
+          <label for="import_data">Excel file to apply</label>
+          <input id="import_data_input" type="file" accept=".xlsx" name="import_data" required>
+        </div>
+
+        <br>
+
+        <div class="btn-submit-group">
+          <button type="submit" id="import_data_submit" class="btn btn-primary" disabled>Apply all changes</button>
+          <%= link_to I18n.t("actions.cancel"), {:controller => :bulk_changes, :action => :index}, :class => "btn btn-sm btn-default" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script>
+ $('#import_data_input').on('change', function () {
+   if (this.files.length > 0) {
+     $('#import_data_submit').attr('disabled', null);
+   } else {
+     $('#import_data_submit').attr('disabled', 'disabled');
+   }
+ });
+</script>
+

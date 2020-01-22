@@ -1,0 +1,76 @@
+<%= javascript_include_tag "jobs.show" %>
+
+<%
+breadcrumbs = [
+    [I18n.t("bulk_change._plural"), {:controller => :bulk_changes, :action => :index}],
+]
+%>
+
+<%= setup_context(:title => "Bulk Change #{@job.id}", :trail => breadcrumbs) %>
+
+<%= render_aspace_partial :partial => "jobs/show_templates" %>
+
+<div class="row job-status-<%= @job.status %>">
+  <div class="col-md-3">
+    <%= render_aspace_partial :partial => "sidebar" %>
+  </div>
+  <div class="col-md-9">
+
+    <div class="record-toolbar">
+      <div class="btn-group btn-toolbar pull-right">
+        <%= link_to "Create another", {:controller => :bulk_changes, :action => :new}, :class => 'btn btn-primary' %>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+
+    <div class="record-pane">
+
+      <%= readonly_context :job, @job do |readonly| %>
+        <h2><%= I18n.t("#{@job['job_type']}._singular", :default => @job["job_type"]) %> [<%= @job.id %>] <span class="label label-info"><%= I18n.t("job._singular") %></span></h2>
+
+        <%= render_aspace_partial :partial => "shared/flash_messages" %>
+
+        <% if @job.status === "queued" %>
+          <div class="alert alert-warning" id="queueMessage"></div>
+        <% end %>
+
+        <%= readonly.emit_template "job_status", @job %>
+        <%= readonly.emit_template "job", @job %>
+
+        <% unless @files.empty? %>
+          <section id="files" class="subrecord-form-dummy" >
+            <h3 class="subrecord-form-heading">
+              <%= I18n.t("job._frontend.section.files") %>
+            </h3>
+            <div class="subrecord-form-container">
+              <br/ >
+              <ul>
+                 <% @files.each do |file| %>
+                   <li><%= link_to "Excel Spreadsheet", :controller => :bulk_changes, :action => :download_file, :id => file, :job_id => @job.id %></li>
+                <% end %>
+              </ul>
+            </div>
+          </section>
+
+        <% end %>
+        <% if !["queued"].include?(@job.status) %>
+          <section id="logs" class="subrecord-form-dummy" data-poll-url="<%= url_for(:controller => :jobs, :action => :log, :id => @job.id) %>">
+            <h3 class="subrecord-form-heading">
+              <%= I18n.t("job._frontend.section.logs") %>
+              <% if @job.status === "running" %>
+                <div class="btn-group pull-right">
+                  <button class="btn btn-sm active btn-follow-log"><%= I18n.t("job._frontend.actions.follow_log") %></button>
+                </div>
+              <% end %>
+            </h3>
+            <div class="subrecord-form-container">
+              <div class="alert alert-info"><%= I18n.t("actions.loading") %></div>
+              <pre id="logSpool" style="display: none; min-height: 40vh;"></pre>
+            </div>
+          </section>
+        <% end %>
+
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -633,3 +633,10 @@ en:
       series_system_agency_rlshp: Agency Relationships
       series_system_series_rlshp: Series to Series Relationships
 
+  bulk_change:
+    _singular: Bulk Create/Update Record
+    _plural: Bulk Create/Update Records
+    new: New Bulk Change
+
+  bulk_change_job:
+    _singular: Bulk Create/Update Record Job

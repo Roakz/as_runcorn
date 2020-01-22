@@ -68,6 +68,12 @@
   <li><%= link_to I18n.t("batch._singular"), {:controller => :batches, :action => :new} %></li>
 </script>
 
+<script type="text/template" id="bulkChangeTemplate">
+  <li class="divider"></li>
+  <li><%= link_to I18n.t("bulk_change._plural"), {:controller => :bulk_changes, :action => :index} %></li>
+</script>
+
+
 <script>
     // put link in the System menu
     $(function() {
@@ -111,6 +117,11 @@
       // Add batch link to create
       <% if user_can?('create_batch') %>
         $('.repository-header .navbar-nav .create-container > .dropdown-menu a[href="/functions/new"]').parent().after(AS.renderTemplate("createBatchTemplate"))
+      <% end %>
+
+      // Add batch link to run record bulk add/updates
+      <% if user_can?('create_batch') %>
+        $('.repository-header .navbar-nav .repo-container .dropdown-menu').append(AS.renderTemplate("bulkChangeTemplate"));
       <% end %>
 
       // And replaces them in create

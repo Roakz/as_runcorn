@@ -1,0 +1,62 @@
+<%= setup_context(:title => I18n.t("bulk_change._plural")) %>
+
+<div class="row">
+  <div class="col-md-3">
+    <div class="sidebar">
+    </div>
+  </div>
+
+  <div class="col-md-9">
+    <div class="record-toolbar">
+      <div class="btn-group pull-right">
+          <%= link_to I18n.t("actions.create"), {:controller => :bulk_changes, :action => :new}, :class => "btn btn-sm btn-default" %>
+      </div>
+      <br style="clear:both" />
+    </div>
+
+    <div class="record-pane">
+      <h2><%= I18n.t("bulk_change._plural") %></h2>
+
+      <%= render_aspace_partial :partial => "shared/flash_messages" %>
+
+      <p>
+          You can use this form to create and update item and representation records by loading data from an Excel spreadsheet.
+      </p>
+
+      <p>
+          Click <%= link_to I18n.t("actions.create"), {:controller => :bulk_changes, :action => :new}, :class => "btn btn-sm btn-primary" %> to get started.
+      </p>
+
+      <h3>Recently run bulk create/updates</h3>
+
+      <table class="table table-bordered">
+          <tr>
+            <th>ID</th>
+            <th>Submitted Time</th>
+            <th>Run by</th>
+            <th>Status</th>
+            <th>Summary of changes</th>
+            <th></th>
+          </tr>
+          <% @recent_jobs.each do |job| %>
+              <tr>
+                  <td><%= job['id'] %></td>
+                  <td><%= job['time_submitted'] %></td>
+                  <td><%= job['owner'] %></td>
+                  <td><%= job['status'] %></td>
+                  <td><%= job['summary'] %></td>
+                  <td>
+                    <%= link_to "View",
+                     {:controller => :bulk_changes, :action => :show, :id => job['id']},
+                     :class => "btn btn-sm btn-default" %>
+                  </td>
+              </tr>
+
+          <% end %>
+
+      </table>
+
+    </div>
+  </div>
+</div>
+
