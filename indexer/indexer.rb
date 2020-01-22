@@ -290,12 +290,12 @@ class IndexerCommon
 
     indexer.add_document_prepare_hook do |doc, record|
       if doc['primary_type'] == 'item_use'
-        prep = record['record'].fetch('physical_representation', {})
+        rep = record['record'].fetch('representation', {})
 
         doc['title'] = record['record']['display_string']
-        doc['item_use_item_uri_u_sstr'] = prep['ref']
-        doc['item_qsa_id_u_sort'] = IndexerCommon.sort_value_for_qsa_id(prep['qsa_id'])
-        doc['item_qsa_id_u_ssort'] = prep['qsa_id']
+        doc['item_use_item_uri_u_sstr'] = rep['ref']
+        doc['item_qsa_id_u_sort'] = IndexerCommon.sort_value_for_qsa_id(rep['qsa_id'])
+        doc['item_qsa_id_u_ssort'] = rep['qsa_id']
         doc['use_qsa_id_u_sort'] = IndexerCommon.sort_value_for_qsa_id(record['record']['use_identifier'])
         doc['use_qsa_id_u_ssort'] = record['record']['use_identifier']
         doc['item_use_status_u_ssort'] = record['record']['status']

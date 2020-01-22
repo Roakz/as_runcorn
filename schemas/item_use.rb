@@ -7,12 +7,15 @@
 
     "properties" => {
       "uri" => {"type" => "string"},
-      
-      "physical_representation" => {
+
+      "representation" => {
         "type" => "object",
         "subtype" => "ref",
         "properties" => {
-          "ref" => {"type" => "JSONModel(:physical_representation) uri"},
+          "ref" => {
+            "type" => [{"type" => "JSONModel(:digital_representation) uri"},
+                       {"type" => "JSONModel(:physical_representation) uri"}]
+          },
           "qsa_id" => {"type" => "string", "readonly" => "true"},
           "_resolved" => {
             "type" => "object",
