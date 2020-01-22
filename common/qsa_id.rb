@@ -26,7 +26,19 @@ class QSAId
 
 
   def self.model_for(prefix)
-    models_hash.select{|k,v| v[:prefix] == prefix}.keys.first
+    # this carbunkle honours the dreadful situation with file_issues
+    # where the prefix is extended depending on the issue_type
+    # qsa_id was not designed to handle prefix variations based on
+    # properties of individual objects, so here we are. sad. alone.
+    #
+    # if the prefix provided doesn't match any of the registered models
+    # then keep trimming the last character off until it does.
+    # it's a liberal, inclusive approach.
+    while !prefix.empty?
+      model = models_hash.select{|k,v| v[:prefix] == prefix}.keys.first
+      return model if model
+      prefix = prefix[0..-2]
+    end
   end
 
 
