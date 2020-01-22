@@ -616,6 +616,6 @@ en:
       create_time: Record Create Time
       user_mtime: Record Last Modified Time
     series_system:
-      series_system_agency_rlshp: Series System Agency Relationships
-      series_system_series_rlshp: Series System Series Relationships
+      series_system_agency_rlshp: Agency Relationships
+      series_system_series_rlshp: Series to Series Relationships
 
