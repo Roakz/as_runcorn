@@ -331,13 +331,11 @@ class IndexerCommon
                nil
              end
       if date
-        doc['date_start_u_ssort'] = DateRangeOverlap.date_pad_start(date['begin'])
-        doc['date_end_u_ssort'] = DateRangeOverlap.date_pad_end(date['end'])
+        doc['date_start_u_ssort'] = DateRangeQuery.date_pad_start(date['begin'])
+        doc['date_end_u_ssort'] = DateRangeQuery.date_pad_end(date['end'])
         doc['date_start_u_sstr'] = date['begin']
         doc['date_end_u_sstr'] = date['end']
-
       end
     end
-
   end
 end

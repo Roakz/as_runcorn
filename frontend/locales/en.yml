@@ -600,7 +600,8 @@ en:
       is_open_access: Open access
     range:
       top_container_identifier: Top Container
-      date: Record Dates
+      start_date: Record Begin Date
+      end_date: Record End Date
     text:
       agency_assigned_id: Agency Control No
       conservation_treatment: Conservation Treatment

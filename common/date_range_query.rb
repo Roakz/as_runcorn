@@ -1,11 +1,11 @@
-DateRangeOverlap = Struct.new(:start_range_field, :end_range_field) do
+DateRangeQuery = Struct.new(:date_field) do
   def to_solr_s(query)
     start_date, end_date = [query['from'] || '0000-01-01', query['to'] || '9999-12-31'].sort
 
-    "(%s:* OR %s:*) AND -(%s:[* TO %s} OR %s:{%s TO *])" % [
-      self.start_range_field, self.end_range_field,
-      self.end_range_field, self.class.date_pad_start(start_date),
-      self.start_range_field, self.class.date_pad_end(end_date),
+    "(%s:[%s TO %s])" % [
+      self.date_field,
+      self.class.date_pad_start(start_date),
+      self.class.date_pad_end(end_date),
     ]
   end
 
