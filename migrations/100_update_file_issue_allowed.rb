@@ -4,6 +4,7 @@ Sequel.migration do
     enum_id = self[:enumeration].filter(:name => 'runcorn_file_issue_allowed').get(:id)
     true_id = self[:enumeration_value].filter(:enumeration_id => enum_id, :value => 'allowed_true').get(:id)
     false_id = self[:enumeration_value].filter(:enumeration_id => enum_id, :value => 'allowed_true').get(:id)
+    create_enum('runcorn_file_issue_allowed', ['allowed_true', 'allowed_false', 'allowed_contact_qsa'])
 
     ['digital', 'physical'].each do |table|
       alter_table("#{table}_representation".intern) do
@@ -24,6 +25,5 @@ Sequel.migration do
       end
     end
 
-    create_enum('runcorn_file_issue_allowed', ['allowed_true', 'allowed_false', 'allowed_contact_qsa'])
   end
 end
