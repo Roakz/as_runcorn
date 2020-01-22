@@ -12,4 +12,3 @@ AdvancedSearch.define_field(:name => 'is_open_access', :type => :boolean, :visib
 AdvancedSearch.remove_field('suppressed')
 AdvancedSearch.define_field(:name => 'date', :type => :range, :visibility => [:staff], :solr_field => DateRangeOverlap.new('date_start_u_ssort', 'date_end_u_ssort'))
 AdvancedSearch.remove_field('creators')
-
