@@ -22,6 +22,8 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
 
   include ArchivistApproval
 
+  include ItemUses
+
   define_relationship(:name => :representation_approved_by,
                       :json_property => 'approved_by',
                       :contains_references_to_types => proc {[AgentPerson]},
@@ -310,6 +312,35 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
     linked_ao_ids = self.filter(:qsa_id => qsa_ids).select(:archival_object_id)
     ArchivalObject.filter(:id => linked_ao_ids).update(:lock_version => Sequel.expr(1) + :lock_version, :system_mtime => now)
   end
+
+
+  def self.to_item_uses(json)
+    exhibitions = []
+    on_exhibition = false
+
+    json['movements'].select{|m| m.has_key?('functional_location')}.sort{|a,b| a['move_date'] <=> b['move_date']}.each do |move|
+      if move['functional_location'] == 'EXH'
+        exhibitions.push({:start_date => move['move_date']})
+        on_exhibition = true
+      elsif on_exhibition
+        exhibitions.last[:end_date] = move['move_date']
+        on_exhibition = false
+      end
+    end
+
+    exhibitions.map do |exh|
+      JSONModel(:item_use).from_hash({
+                                       'representation' => {'ref' => json['existing_ref']},
+                                       'item_use_type' => 'exhibition',
+                                       'use_identifier' => "EXHIBITION #{exh[:start_date]}",
+                                       'status' => exh[:end_date] ? 'RETURNED' : 'EXHIBITION',
+                                       'used_by' => RequestContext.get(:current_username),
+                                       'start_date' => exh[:start_date],
+                                       'end_date' => exh[:end_date],
+                                     })
+    end
+  end
+
 
   private
 

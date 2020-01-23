@@ -12,7 +12,7 @@
 
   add_column(I18n.t("item_use.use_identifier"),
              proc {|record|
-               QSAIdHelper.id(record['use_qsa_id_u_ssort'], :link => true)
+               QSAIdHelper.id(record['use_qsa_id_u_ssort'], :link => true) || record['use_qsa_id_u_ssort']
              }, :sortable => true, :sort_by => 'use_qsa_id_u_sort', :class => 'col-sm-1')
 
   add_column(I18n.t("item_use.status"),

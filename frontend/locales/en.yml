@@ -588,7 +588,9 @@ en:
     end_date: End Date
     item_use_type_values:
       reading_room_request: Reading Room Request
+      agency_reading_room_request: Agency Reading Room Request
       file_issue: File Issue
+      exhibition: Exhibition
 
   advanced_search:
     enum:
