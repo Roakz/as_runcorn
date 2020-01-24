@@ -6,6 +6,7 @@
         <div class="form-group">
           <label for="report">Report</label>
           <select name="report" class="form-control" id="report">
+            <option value="archives_search_user_activity">Archives Search User Activity</option>
             <option value="agency_loans_report">File Issue and Loans</option>
             <option value="file_issue_invoices">File Issue Invoices</option>
             <option value="agency_transfer_proposals_report">Transfer Proposals</option>
@@ -44,11 +45,11 @@
           </div>
           <div class="form-group">
             <label for="from_date">From</label>
-            <input type="date" name="from_date" id="from_date" class="form-control" placeholder="YYYY-MM-DD"/>
+            <input type="date" name="from_date" id="from_date" class="form-control" placeholder="YYYY-MM-DD" style="width: auto"/>
           </div>
           <div class="form-group">
             <label for="to_date">To</label>
-            <input type="date" name="to_date" id="to_date" class="form-control" placeholder="YYYY-MM-DD"/>
+            <input type="date" name="to_date" id="to_date" class="form-control" placeholder="YYYY-MM-DD" style="width: auto"/>
           </div>
         </div>
         <div class="form-group">
@@ -63,6 +64,7 @@
 
 <script>
   SUPPORTED_INPUTS = {
+    archives_search_user_activity: ['from_date', 'to_date'],
     agency_loans_report: ['from_date', 'to_date'],
     file_issue_invoices: ['agency_ref', 'agency_location', 'from_date', 'to_date'],
     agency_transfer_proposals_report: ['from_date', 'to_date'],

@@ -23,7 +23,7 @@ class AgencyLoansReport < RuncornReport
     end
 
     if @to_date
-      to_time = @to_date.to_time.to_i * 1000
+      to_time = (@to_date + 1).to_time.to_i * 1000 - 1
       base_ds = base_ds.where { Sequel.qualify(:file_issue_request, :create_time) <= to_time }
     end
 

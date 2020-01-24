@@ -58,6 +58,17 @@ class RuncornReportsController < ApplicationController
           end
         end
       end
+    when 'archives_search_user_activity'
+      self.response_body = Enumerator.new do |stream|
+        JSONModel::HTTP::stream('/runcorn_reports/archives_search_user_activity', {
+          :from_date => params[:from_date],
+          :to_date => params[:to_date],
+        }) do |response|
+          response.read_body do |chunk|
+            stream << chunk
+          end
+        end
+      end
     else
       raise "Report not supported: #{params[:report]}"
     end

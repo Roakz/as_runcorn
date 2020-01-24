@@ -95,4 +95,21 @@ class ArchivesSpaceService < Sinatra::Base
     agency = AgentCorporateEntity.get_or_die(agency_id)
     json_response(agency.fetch_map_agency_locations)
   end
+
+  Endpoint.get_or_post('/runcorn_reports/archives_search_user_activity')
+    .description("Report on Archives Search User Activity")
+    .params(["from_date", String, "From date in range", :optional => true],
+            ["to_date", String, "To date in range", :optional => true])
+    .permissions([]) # FIXME
+    .returns([200, "(:csv)"]) \
+  do
+    [
+      200,
+      {
+        "Content-Type" => "text/csv",
+        "Content-Disposition" => "attachment; filename=\"archives_search_user_activity.#{Date.today.iso8601}.csv\""
+      },
+      ArchivesSearchUserActivityReport.new(DateParse.date_parse_down(params[:from_date]), DateParse.date_parse_up(params[:to_date])).to_stream
+    ]
+  end
 end
