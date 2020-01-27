@@ -136,6 +136,22 @@ class IndexerCommon
         doc['representation_intended_use_u_sstr'] = record['record']['intended_use']
         doc['controlling_record_u_sstr'] = record['record']['controlling_record']['ref']
         doc['file_issue_allowed_u_sbool'] = [record['record']['file_issue_allowed'] && !record['record']['deaccessioned']]
+
+        doc['significance_u_sstr'] = record['record']['significance']
+
+        doc['responsible_agency_title_u_sstr'] = record.dig('record', 'responsible_agency', '_resolved', 'display_name', 'sort_name')
+        doc['responsible_agency_qsa_id_u_sstr'] = record.dig('record', 'responsible_agency', '_resolved', 'qsa_id_prefixed')
+
+        doc['controlling_record_qsa_id_u_sint'] = record['record']['controlling_record']['qsa_id']
+        doc['controlling_record_qsa_id_u_sort'] = record['record']['controlling_record']['qsa_id'].to_s.rjust(9, '0')
+        doc['controlling_record_qsa_id_u_ssort'] = record['record']['controlling_record']['qsa_id_prefixed']
+
+        doc['controlling_record_begin_date_u_ssort'] = record.dig('record', 'controlling_record', 'begin_date')
+        doc['controlling_record_end_date_u_ssort'] = record.dig('record', 'controlling_record', 'end_date')
+
+        doc['controlling_record_series_qsa_id_u_sint'] = record['record']['controlling_record_series']['qsa_id']
+        doc['controlling_record_series_qsa_id_u_sort'] = record['record']['controlling_record_series']['qsa_id'].to_s.rjust(9, '0')
+        doc['controlling_record_series_qsa_id_u_ssort'] = record['record']['controlling_record_series']['qsa_id_prefixed']
       end
     }
 

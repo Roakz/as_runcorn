@@ -80,6 +80,14 @@ class DigitalRepresentation < Sequel::Model(:digital_representation)
         'begin_date' => controlling_records_dates_map.fetch(controlling_record.id, {}).fetch(:begin, nil),
         'end_date' => controlling_records_dates_map.fetch(controlling_record.id, {}).fetch(:end, nil),
       }
+
+      resource_uri = JSONModel(:resource).uri_for(controlling_record.root_record_id, :repo_id => controlling_record.repo_id)
+      json['controlling_record_series'] = {
+          'ref' => resource_uri,
+          'qsa_id' => controlling_records_qsa_id_map.fetch(resource_uri).fetch(:qsa_id),
+          'qsa_id_prefixed' => controlling_records_qsa_id_map.fetch(resource_uri).fetch(:qsa_id_prefixed),
+      }
+
       json['responsible_agency'] = { 'ref' => controlling_record.responsible_agency.fetch(:uri),
                                      'start_date' => controlling_record.responsible_agency.fetch(:start_date)}
       json['recent_responsible_agencies'] = controlling_record.recent_responsible_agencies
