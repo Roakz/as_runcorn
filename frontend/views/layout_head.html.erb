@@ -54,10 +54,6 @@
   <% end %>
 </script>
 
-<script type="text/template" id="browseTopContainersTemplate">
-  <li><%= link_to I18n.t("top_container._plural"), {:controller => :top_containers, :action => :index} %></li>
-</script>
-
 <script type="text/template" id="browseBatchesTemplate">
   <li class="divider"></li>
   <li><%= link_to I18n.t("batch._plural"), {:controller => :batches, :action => :index} %></li>
@@ -102,9 +98,6 @@
       $('.repository-header .navbar-nav .browse-container > .dropdown-menu a[href="/assessments"]').parent().detach().insertBefore($('.repository-header .navbar-nav .browse-container > .dropdown-menu .divider').eq(1))
       $('.repository-header .navbar-nav .browse-container > .dropdown-menu a[href="/assessments"]').parent().before(AS.renderTemplate("browseConservationRequestTemplate"))
 
-      // Add top container link to browse
-      $('.repository-header .navbar-nav .browse-container > .dropdown-menu a[href="/locations"]').parent().before(AS.renderTemplate("browseTopContainersTemplate"))
-
       // Add batch link to browse
       $('.repository-header .navbar-nav .browse-container > .dropdown-menu a[href="/locations"]').parent().after(AS.renderTemplate("browseBatchesTemplate"))
 
@@ -123,7 +116,7 @@
       $('.repository-header .navbar-nav .browse-container > .dropdown-menu a[href="/jobs"]').parent().next().remove();
       $('.repository-header .navbar-nav .browse-container > .dropdown-menu a[href="/jobs"]').parent().remove();
       $('.repository-header .navbar-nav .browse-container > .dropdown-menu .divider:last').remove();
-
+      $('.repository-header .navbar-nav .repo-container .dropdown-menu a[href="/top_containers"]').parent().remove();
     });
 </script>
 
