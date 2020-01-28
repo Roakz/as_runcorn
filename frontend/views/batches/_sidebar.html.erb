@@ -4,7 +4,7 @@
                :record => @batch,
            }) do |sidebar| %>
 
-      <% if @batch.object_count && @batch.object_count > 0 %>
+      <% if (@batch.object_count && @batch.object_count > 0) || @batch.actions.length > 0 %>
         <%= sidebar.render_for_view_and_edit(:subrecord_type => 'current_action', :property => :none) %>
         <%= sidebar.render_for_view_only(:subrecord_type => 'action_history', :property => :none) %>
       <% end %>
