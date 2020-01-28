@@ -1,0 +1,18 @@
+<%= setup_context :title => "Home", :suppress_breadcrumb => true %>
+
+<div class="row">
+  <div class="col-md-12">
+    <%= render_aspace_partial :partial => "shared/flash_messages" %>
+  </div>
+
+   <div class="col-md-12" style="padding: 30px;">
+      <h2><%= I18n.t "welcome.heading" %></h2>
+      <%= welcome_message %>
+
+      <div>
+        <h3>Notifications</h3>
+        <div id="runcorn-notifications">Loading...</div>
+      </div>
+     <%= javascript_include_tag 'runcorn_notifications' %>
+    </div>
+</div>

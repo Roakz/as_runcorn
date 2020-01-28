@@ -1,0 +1,27 @@
+<small class="pull-right">Showing notifications from last 7 days</small>
+<% if Array(notifications).empty? %>
+  <div class="alert alert-info">No new messages</div>
+<% else  %>
+  <table class="table table-bordered table-condensed table-striped">
+    <thead>
+      <tr>
+        <th>QSA ID</th>
+        <th>Notice</th>
+        <th>Timestamp</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% notifications.each do |notification| %>
+        <tr>
+          <td><%= notification['qsa_id'] %></td>
+          <td>A new comment was received from <%= notification['by'] %></td>
+          <td><%= notification['at'] %></td>
+          <td>
+            <%= link_to 'View', :controller => :resolver, :action => :resolve_readonly, :uri => notification['uri'] %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
