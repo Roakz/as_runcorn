@@ -558,7 +558,11 @@ en:
       label: "-- no action --"
     functional_move:
       label: Functional Move
-      location: Location
+      location: Functional location
+    home_move:
+      label: Home Move
+      location: Home location
+      no_location: "-- No Location --"
     significance_level:
       label: Significance Level
       match_level: Match level
