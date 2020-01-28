@@ -212,6 +212,22 @@
           "type" => "string",
         }
       },
+
+      "transfer_id" => {"type"=> "number"},
+      "transfer" => {
+          "type" => "object",
+          "subtype" => "ref",
+          "properties" => {
+              "ref" => {
+                  "type" => [{"type" => "JSONModel(:transfer) uri"}],
+                  "ifmissing" => "error"
+              },
+              "_resolved" => {
+                  "type" => "object",
+                  "readonly" => "true"
+              }
+          }
+      },
     },
   },
 }
