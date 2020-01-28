@@ -583,6 +583,10 @@ en:
       label: Attach RAP
     top_container_delete:
       label: Top Container Delete
+    container_profiler:
+      label: Update Container Profile
+      container_profile: Container profile
+      no_container_profile: "-- No Container Profile --"
 
   item_use:
     _singular: Item Use

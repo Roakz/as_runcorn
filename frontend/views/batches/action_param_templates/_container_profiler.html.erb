@@ -1,0 +1,55 @@
+<div class="form-group">
+  <div class="control-label col-sm-2"><%= I18n.t("batch_action_types.container_profiler.container_profile") %></div>
+
+  <% if form.readonly? %>
+    <div class="controls token-list col-sm-6">
+      <% if form.obj['container_profile'] %>
+        <%= render_token :object => form.obj,
+                         :label => ASUtils.json_parse(form.obj['container_profile']['_resolved'])['title'],
+                         :type => 'container_profile',
+                         :uri => form.obj['container_profile']['ref'],
+                         :placement => "top" %>
+      <% else %>
+        <div class="controls label-only">
+          <%= I18n.t('batch_action_types.container_profiler.no_container_profile') %>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="col-sm-6">
+      <% form.push("container_profile", form.obj['container_profile'] || {}) do %>
+        <div class="col-sm-9">
+          <div class="form-group conditionally-required">
+            <div class="input-group linker-wrapper">
+              <input type="text" class="linker"
+                     id="container_profile_linker"
+                     data-label="Container profile"
+                     data-label_plural="Container profiles"
+                     data-path="<%= form.path %>"
+                     data-name="ref"
+                     data-url="<%= url_for :controller => :search, :action => :do_search, :format => :json %>"
+                     data-browse-url="<%= url_for :controller => :search, :action => :do_search, :format => :js, :facets => [], :display_identifier => true %>"
+                     data-selected="<%= form.obj['_resolved'] || '{}' %>"
+                     data-format_property="display_string"
+                     data-multiplicity="one"
+                     data-types='["container_profile"]'
+              />
+              <div class="input-group-btn">
+                <a class="btn btn-default dropdown-toggle last" data-toggle="dropdown" href="javascript:void(0);"><span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="javascript:void(0);" class="linker-browse-btn"><%= I18n.t("actions.browse") %></a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+<script>
+ $(function() {
+     $(".linker:not(.initialised)").linker();
+ });
+</script>
