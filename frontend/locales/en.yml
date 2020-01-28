@@ -549,6 +549,7 @@ en:
     note: Note
     approval_required: Approval required
     no_approval_required: No approval required
+    no_params: This action takes no parameters
 
   batch_assigned_objects:
     _plural: Objects
@@ -580,6 +581,8 @@ en:
       no_approval_date: "-- No Date --"
     attach_rap:
       label: Attach RAP
+    top_container_delete:
+      label: Top Container Delete
 
   item_use:
     _singular: Item Use
