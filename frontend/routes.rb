@@ -74,6 +74,8 @@ ArchivesSpace::Application.routes.draw do
       match('runcorn_reports' => 'runcorn_reports#index', :via => [:get])
       match('runcorn_reports/generate_report' => 'runcorn_reports#generate_report', :via => [:post])
       match('runcorn_reports/locations_for_agency' => 'runcorn_reports#locations_for_agency', :via => [:get])
+
+      match('runcorn_notifications' => 'runcorn_notifications#list', :via => [:get])
     end
   end
 end
