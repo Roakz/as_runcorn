@@ -15,7 +15,9 @@
       <% notifications.each do |notification| %>
         <tr>
           <td><%= notification['qsa_id'] %></td>
-          <td>A comment was added by <%= notification['by'] %></td>
+          <td>
+            A comment was added by <%= notification['by'] %> <% if notification['source_system'] == 'ARCHIVES_GATEWAY' %>(Agency)<% else %>(QSA)<% end %>
+          </td>
           <td><%= Time.at(notification['at'] / 1000).strftime('%d/%m/%Y %H:%m:%S') %></td>
           <td>
             <%= link_to 'View', { :controller => :resolver, :action => :resolve_readonly, :uri => notification['uri'] }, { :class => 'btn btn-default btn-xs'} %>

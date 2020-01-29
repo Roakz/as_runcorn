@@ -6,7 +6,7 @@ class RuncornNotifications
     @from_date = DateParse.date_parse_down(from_date) || (Date.today - DEFAULT_NOTIFICATION_WINDOW_DAYS)
   end
 
-  Notification = Struct.new(:qsa_id, :uri, :message, :at, :by) do
+  Notification = Struct.new(:qsa_id, :uri, :message, :at, :by, :source_system) do
     def to_json(*args)
       to_h.to_json
     end
@@ -57,6 +57,9 @@ class RuncornNotifications
       from_time = @from_date.to_time.to_i * 1000
       mapdb[:conversation]
         .join(:handle, Sequel.qualify(:handle, :id) => Sequel.qualify(:conversation, :handle_id))
+        .filter(Sequel.|({ :source_system => 'ARCHIVES_GATEWAY' },
+                         Sequel.&({ :source_system => 'ARCHIVESSPACE' },
+                                  Sequel.~(:created_by => RequestContext.get(:current_username)))))
         .where{ create_time >= from_time }
         .order(Sequel.desc(:create_time))
         .map do |row|
@@ -70,7 +73,8 @@ class RuncornNotifications
                                      uri,
                                      nil,
                                      row[:create_time],
-                                     row[:created_by])
+                                     row[:created_by],
+                                     row[:source_system])
         end
     end
 
