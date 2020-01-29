@@ -53,7 +53,7 @@
 
       "external_ids" => {"type" => "array", "items" => {"type" => "JSONModel(:external_id) object"}},
 
-      "file_issue_allowed" => {"type" => "string", "dynamic_enum" => "runcorn_file_issue_allowed", "ifmissing" => "error"},
+      "file_issue_allowed" => {"type" => "string", "dynamic_enum" => "runcorn_file_issue_allowed", "default" => "allowed_true"},
 
       "file_size" => {"type" => "string"},
 
