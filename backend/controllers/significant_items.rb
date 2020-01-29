@@ -18,4 +18,14 @@ class ArchivesSpaceService < Sinatra::Base
       json_response({:error => "Unknown significance level: #{params[:level]}. Supported levels: #{levels.join(' ')}"}, 400)
     end
   end
+
+  Endpoint.get('/repositories/:repo_id/significant_item_counts')
+    .description("Get counts of significant items by level")
+    .params(["repo_id", :repo_id])
+    .permissions([])
+    .returns([200, '(counts)'],
+             [400, :error]) \
+  do
+    json_response(SignificantItems.counts)
+  end
 end

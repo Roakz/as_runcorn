@@ -124,4 +124,14 @@ class SignificantItems
                 )
     end
   end
+
+
+  def self.counts
+    DB.open do |db|
+      db[:physical_representation].exclude(:significance_id => BackendEnumSource.id_for_value('runcorn_significance', 'standard'))
+                                  .group_and_count(:significance_id)
+                                  .map{|level| [BackendEnumSource.value_for_id('runcorn_significance', level[:significance_id]), level[:count]]}.to_h
+    end
+  end
+
 end
