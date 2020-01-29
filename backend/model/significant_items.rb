@@ -79,8 +79,7 @@ class SignificantItems
     if loc_uri
       ds.filter(:prep_fn_loc__value => 'HOME', :tcon_fn_loc__value => 'HOME', :location_id => loc_uri[:id])
     else
-      ds.filter(:prep_fn_loc__value => 'HOME', :tcon_fn_loc__value => location)
-        .or(:prep_fn_loc__value => location)
+      ds.where(({prep_fn_loc__value: 'HOME'} & {tcon_fn_loc__value: location}) | {prep_fn_loc__value: location})
     end
   end
 
