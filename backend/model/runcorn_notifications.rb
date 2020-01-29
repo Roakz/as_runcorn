@@ -11,7 +11,7 @@ class RuncornNotifications
     @permissions_cache = {}
   end
 
-  Notification = Struct.new(:qsa_id, :uri, :message, :at, :by, :source_system) do
+  Notification = Struct.new(:qsa_id, :uri, :at, :by, :source_system) do
     def to_json(*args)
       to_h.to_json
     end
@@ -92,7 +92,6 @@ class RuncornNotifications
 
           result << Notification.new(qsa_id,
                                      uri,
-                                     nil,
                                      row[:create_time],
                                      row[:created_by],
                                      row[:source_system])
