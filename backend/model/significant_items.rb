@@ -3,7 +3,7 @@ class SignificantItems
   def self.list(opts = {})
     opts[:level] ||= 'all'
 
-    ds = base_query
+    ds = base_query.limit(opts[:page_size], ((opts[:page] - 1) * opts[:page_size]))
 
     ds = if opts[:level] == 'all'
            ds.filter(Sequel.~(:significance__value => 'standard'))
@@ -13,6 +13,10 @@ class SignificantItems
 
     if opts[:series]
       ds = ds.filter(:resource__id => opts[:series].map{|uri| JSONModel.parse_reference(uri).fetch(:id)})
+    end
+
+    if opts[:location]
+      ds = add_location_filter(ds, opts[:location])
     end
 
     ds.map{|row| format(row)}
@@ -53,8 +57,9 @@ class SignificantItems
 
 
   def self.current_location_for(row)
-    out = {:uri => false}
+    out = {:uri => false, :in_container => false}
     if row[:prep_fn_loc] == 'HOME'
+      out[:in_container] = true
       if row[:tcon_fn_loc] == 'HOME'
           out[:location] = row[:loc_label]
           out[:uri] = JSONModel::JSONModel(:location).uri_for(row[:loc_id], :repo_id => row[:repo_id]) if row[:loc_id]
@@ -65,6 +70,18 @@ class SignificantItems
       out[:location] = row[:prep_fn_loc]
     end
     out
+  end
+
+
+  def self.add_location_filter(ds, location)
+    loc_uri = JSONModel.parse_reference(location)
+
+    if loc_uri
+      ds.filter(:prep_fn_loc__value => 'HOME', :tcon_fn_loc__value => 'HOME', :location_id => loc_uri[:id])
+    else
+      ds.filter(:prep_fn_loc__value => 'HOME', :tcon_fn_loc__value => location)
+        .or(:prep_fn_loc__value => location)
+    end
   end
 
 
