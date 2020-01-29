@@ -1,9 +1,14 @@
 class RuncornNotifications
 
+  attr_accessor :current_username
+
   DEFAULT_NOTIFICATION_WINDOW_DAYS = 7
 
   def initialize(from_date = nil)
     @from_date = DateParse.date_parse_down(from_date) || (Date.today - DEFAULT_NOTIFICATION_WINDOW_DAYS)
+    @current_username = RequestContext.get(:current_username)
+    @user = User[:username => @current_username]
+    @permissions_cache = {}
   end
 
   Notification = Struct.new(:qsa_id, :uri, :message, :at, :by, :source_system) do
@@ -16,32 +21,47 @@ class RuncornNotifications
     to_hash.to_json
   end
 
-  def qsa_id_and_uri_for_row(row)
+  def can?(permission_code)
+    if @permissions_cache.has_key?(permission_code)
+      return @permissions_cache[permission_code]
+    end
+
+    result = @user.can?(permission_code)
+    @permissions_cache[permission_code] = result
+    result
+  end
+
+  def parse_record_from_row(row)
     if row[:file_issue_request_id]
       [
           QSAId.prefixed_id_for(FileIssueRequest, row[:file_issue_request_id]),
-          JSONModel::JSONModel(:file_issue_request).uri_for(row[:file_issue_request_id])
+          JSONModel::JSONModel(:file_issue_request).uri_for(row[:file_issue_request_id]),
+          :manage_file_issues,
       ]
     elsif row[:file_issue_id]
       [
           QSAId.prefixed_id_for(FileIssue, row[:file_issue_id]),
-          JSONModel::JSONModel(:file_issue).uri_for(row[:file_issue_id])
+          JSONModel::JSONModel(:file_issue).uri_for(row[:file_issue_id]),
+          :manage_file_issues,
       ]
     elsif row[:transfer_proposal_id]
       [
           QSAId.prefixed_id_for(TransferProposal, row[:transfer_proposal_id]),
-          JSONModel::JSONModel(:transfer_proposal).uri_for(row[:transfer_proposal_id])
+          JSONModel::JSONModel(:transfer_proposal).uri_for(row[:transfer_proposal_id]),
+          :manage_transfers,
       ]
     elsif row[:transfer_id]
       [
           QSAId.prefixed_id_for(Transfer, row[:transfer_id]),
-          JSONModel::JSONModel(:transfer).uri_for(row[:transfer_id])
+          JSONModel::JSONModel(:transfer).uri_for(row[:transfer_id]),
+          :manage_transfers,
       ]
 
     elsif row[:search_request_id]
       [
           QSAId.prefixed_id_for(SearchRequest, row[:search_request_id]),
-          JSONModel::JSONModel(:search_request).uri_for(row[:search_request_id])
+          JSONModel::JSONModel(:search_request).uri_for(row[:search_request_id]),
+          :view_repository, #FIXME needs real permission
       ]
     else
       nil
@@ -59,13 +79,14 @@ class RuncornNotifications
         .join(:handle, Sequel.qualify(:handle, :id) => Sequel.qualify(:conversation, :handle_id))
         .filter(Sequel.|({ :source_system => 'ARCHIVES_GATEWAY' },
                          Sequel.&({ :source_system => 'ARCHIVESSPACE' },
-                                  Sequel.~(:created_by => RequestContext.get(:current_username)))))
+                                  Sequel.~(:created_by => current_username))))
         .where{ create_time >= from_time }
         .order(Sequel.desc(:create_time))
         .map do |row|
-          qsa_id, uri = qsa_id_and_uri_for_row(row)
+          qsa_id, uri, required_permission = parse_record_from_row(row)
 
           next if qsa_id.nil? || seen[qsa_id]
+          next unless can?(required_permission)
 
           seen[qsa_id] = true
 
