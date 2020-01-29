@@ -29,6 +29,7 @@ class SignificantItems
       :functional_location => row[:prep_fn_loc],
       :uri => JSONModel::JSONModel(:physical_representation).uri_for(row[:prep_id], :repo_id => row[:repo_id]),
       :container => {
+        :qsa_id => QSAId.prefixed_id_for(TopContainer, row[:tcon_qsa_id]),
         :label => (row[:tcon_type] ? I18n.t('enumerations.container_type.' + row[:tcon_type]) + ': ' : '') + (row[:tcon_indicator] || '-- NO INDICATOR --'),
         :functional_location => row[:tcon_fn_loc],
         :uri => JSONModel::JSONModel(:top_container).uri_for(row[:tcon_id], :repo_id => row[:repo_id]),
@@ -93,6 +94,7 @@ class SignificantItems
                 Sequel.as(:prep_format__value, :prep_format),
                 Sequel.as(:top_container__id, :tcon_id),
                 Sequel.as(:top_container__indicator, :tcon_indicator),
+                Sequel.as(:top_container__id, :tcon_qsa_id),
                 Sequel.as(:tcon_fn_loc__value, :tcon_fn_loc),
                 Sequel.as(:tcon_type__value, :tcon_type),
                 Sequel.as(:location__id, :loc_id),
