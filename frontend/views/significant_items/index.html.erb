@@ -25,7 +25,7 @@
           <li>
             <br/>
             <a href="#<%= level %>">
-              <%= SignificanceHelper.display(level, @significant_items.select{|si| si['significance'] == level}.length) %>
+              <%= SignificanceHelper.display(level, @significant_items.select{|si| si['significance'] == level}.length, @counts[level]) %>
             </a>
           </li>
         <% end %>
