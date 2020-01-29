@@ -62,7 +62,7 @@
     <%= form.label_and_textarea "exhibition_history" %>
     <%= form.label_and_textarea "exhibition_notes" %>
     <%= form.label_and_boolean "exhibition_quality" %>
-    <%= form.label_and_boolean "file_issue_allowed", {}, true %>
+    <%= form.label_and_select "file_issue_allowed", form.possible_options_for("file_issue_allowed") %>
     <%= form.label_and_select "format", form.possible_options_for("format", true) %>
     <%= form.label_and_select "intended_use", form.possible_options_for("intended_use", true) %>
     <%= form.label_and_textfield "original_registration_date" %>

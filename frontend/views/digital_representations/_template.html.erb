@@ -25,7 +25,7 @@
     <%= form.label_and_textarea "exhibition_history" %>
     <%= form.label_and_textarea "exhibition_notes" %>
     <%= form.label_and_boolean "exhibition_quality" %>
-    <%= form.label_and_boolean "file_issue_allowed", {}, true %>
+    <%= form.label_and_select "file_issue_allowed", form.possible_options_for("file_issue_allowed") %>
     <%= form.label_and_textfield "file_size" %>
     <%= form.label_and_select "file_type", form.possible_options_for("file_type", true) %>
     <%= form.label_and_select "intended_use", form.possible_options_for("intended_use", true) %>
@@ -141,7 +141,7 @@
 
 <% define_template "digital_representation_quick_add", jsonmodel_definition(:digital_representation) do |form| %>
   <div class="subrecord-form-fields">
-    <%= form.hidden_input "file_issue_allowed", 1 %>
+    <%= form.hidden_input "file_issue_allowed", "allowed_true" %>
 
     <%= render_aspace_partial :partial => 'shared/qsa_id_form', :locals => {:form => form, :model => :digital_representation} %>
     <%= form.label_and_textfield "title" %>

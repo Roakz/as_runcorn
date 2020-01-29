@@ -317,6 +317,10 @@ en:
       HANG: Hanging cage
       FDR: Microfiche drawer
       NAA: N/A
+    runcorn_file_issue_allowed:
+      allowed_true: "True"
+      allowed_false: "False"
+      allowed_contact_qsa: "Contact QSA"
   enumeration_names:
     runcorn_access_category: Runcorn Plugin - Access Category
     runcorn_access_clearance_procedure: Runcorn Plugin - Runcorn Access Clearance Procedure
@@ -341,3 +345,4 @@ en:
     runcorn_batch_model: Runcorn Batch Model
     runcorn_note_singlepart_type: Runcorn Singlepart Note Type
     runcorn_storage_type: Runcorn Storage Type
+    runcorn_file_issue_allowed: Runcorn File Issue Allowed
