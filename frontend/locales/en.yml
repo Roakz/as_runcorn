@@ -14,9 +14,10 @@ en:
       in_container: "(item is with this container)"
       not_in_container: "(item is <strong>not</strong> currently with this container)"
       none_for_level: "-- none --"
-      all_button_label: Show for all series
+      all_button_label: Show all items
       series_button_label: "View >"
       for_series_message: "Showing items for series:"
+      at_location_message: "Showing items at location:"
       no_location_message: "-- CONTAINER LOCATION UNKNOWN --"
       _plural: Significant Items
   agent:

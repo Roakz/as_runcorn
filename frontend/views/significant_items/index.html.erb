@@ -30,28 +30,87 @@
           </li>
         <% end %>
       </ul>
+
+      <br/>
+
+        Show items at storage location:
+        <div class="input-group linker-wrapper" style="margin-left:10px">
+          <input type="text"
+                 class="linker"
+                 id="location_linker"
+                 data-label="<%= I18n.t("location._singular") %>"
+                 data-label_plural="<%= I18n.t("location._plural") %>"
+                 data-name="ref"
+                 data-path="location"
+                 data-url="<%= url_for :controller => :search, :action => :do_search, :format => :json %>"
+                 data-browse-url="<%= url_for :controller => :search, :action => :do_search, :format => :js, :facets => SearchResultData.LOCATION_FACETS %>"
+                 data-selected="{}"
+                 data-multiplicity="one"
+                 data-format_template="title"
+                 data-types='["location"]'
+          />
+          <div class="input-group-btn">
+            <a class="btn btn-default dropdown-toggle last locations" data-toggle="dropdown" href="javascript:void(0);"><span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="javascript:void(0);" class="linker-browse-btn"><%= I18n.t("actions.browse") %></a></li>
+            </ul>
+          </div>
+        </div>
+
+      <br/><br/>
+
+      Show items at functional location:
+      <br/>
+      <div style="margin-left:30px">
+      <ul class="list-group">
+        <% JSONModel.enum_values('runcorn_location').reject{|loc| loc =='HOME'}.each do |loc| %>
+          <li>
+            <%= link_to I18n.t('enumerations.runcorn_location.' + loc),
+                        {:controller => :significant_items,
+                         :action => :index,
+                         :series_uri => params[:series_uri],
+                         :location => loc } %>
+          </li>
+        <% end %>
+      </ul>
+      </div>
+
+
     </div>
   </div>
   <div class="col-md-9">
     <div class="record-toolbar">
-      <% if params['series_uri'] %>
-        <div class="btn-group pull-right">
+
+
+      <% if params['series_uri'] || params['location'] %>
+        <div class="btn-group pull-left">
           <%= link_to I18n.t("as_runcorn.significant_item.all_button_label"), {:controller => :significant_items, :action => :index}, :class => "btn btn-default" %>
         </div>
-        <br style="clear:both" />
       <% end %>
+
+        <br style="clear:both" />
     </div>
     <div class="record-pane">
       <h2><%= I18n.t("as_runcorn.significant_item._plural") %></h2>
 
       <% if params['series_uri'] %>
-      <div style="margin: 10px 2px 10px 6px;">
+        <div style="margin: 10px 2px 10px 6px;">
           <%= I18n.t("as_runcorn.significant_item.for_series_message") %>
           <% series = @significant_items.first['series'] %>
           &nbsp;
           <%= QSAIdHelper.id(series['qsa_id']) %>
           &nbsp;
           <strong><%= link_to series['label'], {:controller => :resolver, :action => :resolve_readonly, :uri => series['uri']} %></strong>
+        </div>
+      <% end %>
+
+      <% if params['location'] %>
+        <div style="margin: 10px 2px 10px 6px;">
+          <%= I18n.t("as_runcorn.significant_item.at_location_message") %>
+          <% location = @significant_items.first ? @significant_items.first['current_location']['location'] : params['location'] %>
+          <% location = I18n.t('enumerations.runcorn_location.' + location, location) %>
+          &nbsp;
+          <strong><%= location %></strong>
         </div>
       <% end %>
 
@@ -93,6 +152,7 @@
                   </td>
                   <td><%= item['format'] %></td>
                   <td><strong>
+                    <% known_location = true %>
                     <% if item['current_location']['uri'] %>
                       <%= link_to item['current_location']['location'], {:controller => :resolver, :action => :resolve_readonly, :uri => item['current_location']['uri']} %>
                     <% else %>
@@ -100,7 +160,16 @@
                         <%= I18n.t('enumerations.runcorn_location.' + item['current_location']['location']) %>
                       <% else %>
                         <%= I18n.t('as_runcorn.significant_item.no_location_message') %>
+                        <% known_location =  false %>
                       <% end %>
+                    <% end %>
+
+                    <% if known_location %>
+                      <%= link_to ' ', {:controller => :significant_items,
+                                        :action => :index,
+                                        :series_uri => params[:series_uri],
+                                        :location => (item['current_location']['uri'] || item['current_location']['location'])},
+                                       :class => 'glyphicon glyphicon-chevron-right', :title => 'Filter by this location' %>
                     <% end %>
                   </strong></td>
                 </tr>
@@ -145,3 +214,16 @@
     </div>
   </div>
 </div>
+
+<script>
+  $(function() {
+    $(".linker:not(.initialised)").linker();
+
+    $(".linker").on("change", function() {
+      if ($(this).tokenInput("get").length > 0) {
+        loc_uri = $(this).tokenInput("get")[0].id;
+        location.href = "/significant_items/index?location=" + loc_uri;
+      }
+    });
+  });
+</script>
