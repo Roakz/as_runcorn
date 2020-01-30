@@ -61,7 +61,7 @@ class RuncornNotifications
       [
           QSAId.prefixed_id_for(SearchRequest, row[:search_request_id]),
           JSONModel::JSONModel(:search_request).uri_for(row[:search_request_id]),
-          :view_repository, #FIXME needs real permission
+          :manage_search_requests,
       ]
     else
       nil
