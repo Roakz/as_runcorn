@@ -102,6 +102,11 @@ class FileIssueInvoice
               row[:"aspace_#{row[:issue_type].downcase}_quote_id"]
             }
 
+
+            search_requests = find_search_requests_for_batch(agencies, mapdb)
+
+            quote_ids.concat(search_requests.map{|_, locations| locations.values}.flatten.map{|sr| sr[:quote_id]})
+
             quote_totals = {}
 
             db[:service_quote_line].filter(:service_quote_id => quote_ids)
@@ -118,9 +123,6 @@ class FileIssueInvoice
             agencies.each do |aspace_agency_id, agency_locations|
               agency_locations.each do |location_id, rows|
                 rows.each do |row|
-                  quote_id = row[:"aspace_#{row[:issue_type].downcase}_quote_id"]
-                  line_item_totals = quote_totals.fetch(quote_id, Hash.new("N/A"))
-
                   report_row = {
                     'Date' => Time.at((row[:create_time] / 1000).to_i).to_date,
                     'File Issue Request ID' => "FIR#{row[:file_issue_request_id]}",
@@ -129,29 +131,32 @@ class FileIssueInvoice
                     '# Files' => row[:count],
                   }
 
-                  [['Retrieval Charges', 'Retrieval'],
-                   ['Delivery Charges', 'Delivery'],
-                   ['Search Charges', 'Search'],
-                   ['Scan Charges', 'Scan'],
-                   ['Other Charges', 'Other']].each do |(label, value)|
-                    enum_id = BackendEnumSource.id_for_value('runcorn_charge_category', value)
-                    amount = line_item_totals[enum_id] || 0
-
-                    report_row[label] = amount
-
-                    if amount.is_a?(Integer)
-                      report_row['Subtotal'] ||= 0
-                      report_row['Subtotal'] += amount
-                    end
-                  end
-
-                  # If all values were N/A, subtotal is N/A as well
-                  report_row['Subtotal'] ||= 'N/A'
+                  apply_line_item_subtotals!(report_row, row[:"aspace_#{row[:issue_type].downcase}_quote_id"], quote_totals)
 
                   key = AgencyLocation.new(aspace_agency_id,
                                            location_id,
                                            agency_names.fetch(aspace_agency_id, ""),
                                            location_names.fetch(location_id, ""))
+                  report_tables[key] ||= []
+                  report_tables[key] << report_row
+                end
+
+                search_requests.fetch(aspace_agency_id, {}).fetch(location_id, []).each do |row|
+                  key = AgencyLocation.new(aspace_agency_id,
+                                           location_id,
+                                           agency_names.fetch(aspace_agency_id, ""),
+                                           location_names.fetch(location_id, ""))
+
+                  report_row = {
+                    'Date' => Time.at((row[:create_time] / 1000).to_i).to_date,
+                    'File Issue Request ID' => row.fetch(:qsa_id),
+                    'File Issue ID' => '',
+                    'Contact' => row[:lodged_by] || '',
+                    '# Files' => '',
+                  }
+
+                  apply_line_item_subtotals!(report_row, report_row[:quote_id], quote_totals)
+
                   report_tables[key] ||= []
                   report_tables[key] << report_row
                 end
@@ -173,6 +178,75 @@ class FileIssueInvoice
         report_tables
       end
     end
+  end
+
+  def find_search_requests_for_batch(agencies_batch, mapdb)
+    result = {}
+
+    base_ds =  mapdb[:search_request]
+                 .join(:agency, Sequel.qualify(:agency, :id) => Sequel.qualify(:search_request, :agency_id))
+                 .filter(Sequel.qualify(:search_request, :agency_location_id) => agencies_batch.map{|_, locations| locations.map{|location_id, _| location_id}}.flatten)
+
+    if @aspace_agency_id
+      base_ds = base_ds.filter(Sequel.qualify(:agency, :aspace_agency_id) => @aspace_agency_id)
+    end
+
+    if @location_id
+      base_ds = base_ds.filter(Sequel.qualify(:search_request, :agency_location_id) => @location_id)
+    end
+
+    if @from_date
+      from_date = @from_date
+      base_ds = base_ds.where { Sequel.qualify(:search_request, :create_time) >= from_date.to_time.to_i * 1000 }
+    end
+
+    if @to_date
+      to_date = @to_date
+      base_ds = base_ds.where { Sequel.qualify(:search_request, :create_time) <= to_date.to_time.to_i * 1000 }
+    end
+
+    base_ds.filter(Sequel.~(Sequel.qualify(:search_request, :aspace_quote_id) => nil))
+      .select(Sequel.qualify(:agency, :aspace_agency_id),
+              Sequel.qualify(:search_request, :agency_location_id),
+              Sequel.qualify(:search_request, :id),
+              Sequel.qualify(:search_request, :aspace_quote_id),
+              Sequel.qualify(:search_request, :lodged_by),
+              Sequel.qualify(:search_request, :create_time))
+      .each do |row|
+      result[row[:aspace_agency_id]] ||= {}
+      result[row[:aspace_agency_id]][row[:agency_location_id]] ||= []
+      result[row[:aspace_agency_id]][row[:agency_location_id]] << {
+        :qsa_id => QSAId.prefixed_id_for(SearchRequest, row[:id]),
+        :quote_id => row[:aspace_quote_id],
+        :lodged_by => row[:lodged_by],
+        :create_time => row[:create_time],
+      }
+    end
+
+    result
+  end
+
+  def apply_line_item_subtotals!(report_row, quote_id, quote_totals)
+    line_item_totals = quote_totals.fetch(quote_id, Hash.new("N/A"))
+
+    [['Retrieval Charges', 'Retrieval'],
+     ['Delivery Charges', 'Delivery'],
+     ['Search Charges', 'Search'],
+     ['Scan Charges', 'Scan'],
+     ['Other Charges', 'Other']].each do |(label, value)|
+      enum_id = BackendEnumSource.id_for_value('runcorn_charge_category', value)
+      amount = line_item_totals[enum_id] || 0
+
+      report_row[label] = amount
+
+      if amount.is_a?(Integer)
+        report_row['Subtotal'] ||= 0
+        report_row['Subtotal'] += amount
+      end
+    end
+
+    # If all values were N/A, subtotal is N/A as well
+    report_row['Subtotal'] ||= 'N/A'
   end
 
   def file_issue_stream(mapdb)
