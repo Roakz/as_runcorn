@@ -34,7 +34,9 @@
   <div class="col-md-9">
     <div class="record-toolbar">
       <div class="btn-group pull-right">
-        <%= link_to I18n.t("actions.create"), {:controller => :batches, :action => :new}, :class => "btn btn-sm btn-default" %>
+        <% if user_can?('create_batch') %>
+          <%= link_to I18n.t("actions.create"), {:controller => :batches, :action => :new}, :class => "btn btn-sm btn-default" %>
+        <% end %>
       </div>
       <br style="clear:both" />
     </div>

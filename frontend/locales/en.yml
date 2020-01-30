@@ -112,6 +112,8 @@ en:
       manage_agency_deletion: delete agency records
       update_resource_record: create/update series, item and representation records in this repository
       approve_records: archivist approve a record
+      manage_search_requests: manage search requests
+      create_batch: create batches
   assessment:
     conservation_note: Condition Rating
     treatment_priority: Treatment Priority

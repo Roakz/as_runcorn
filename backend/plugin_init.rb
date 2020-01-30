@@ -55,6 +55,10 @@ Permission.define('delete_agency',
                   :implied_by => "manage_agency_deletion",
                   :level => "global")
 
+Permission.define('create_batch',
+                  'The ability to create batches',
+                  :level => "repository")
+
 # These permissions are not relevant the QSA, so hide them to avoid confusion
 [
  "update_accession_record",

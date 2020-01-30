@@ -102,7 +102,9 @@
       $('.repository-header .navbar-nav .browse-container > .dropdown-menu a[href="/locations"]').parent().after(AS.renderTemplate("browseBatchesTemplate"))
 
       // Add batch link to create
-      $('.repository-header .navbar-nav .create-container > .dropdown-menu a[href="/functions/new"]').parent().after(AS.renderTemplate("createBatchTemplate"))
+      <% if user_can?('create_batch') %>
+        $('.repository-header .navbar-nav .create-container > .dropdown-menu a[href="/functions/new"]').parent().after(AS.renderTemplate("createBatchTemplate"))
+      <% end %>
 
       // And replaces them in create
       $('.repository-header .navbar-nav .create-container > .dropdown-menu a[href="/assessments/new"]').parent().replaceWith(AS.renderTemplate("createConservationRequestTemplate"))
@@ -256,7 +258,7 @@
   <%= render_aspace_partial :partial => "top_containers/bulk_operations/bulk_action_extra_templates" %>
 <% end %>
 
-<% if controller.controller_name == 'search' %>
+<% if user_can?('create_batch') && controller.controller_name == 'search' %>
   <script type="text/template" id="createBatchFromSearchTemplate">
     <div class="btn-group">
       <%= form_tag({:controller => :batches, :action => :create_from_search}.merge(params.select{|k,v| !['controller', 'action'].include?(k)})) do |f| %>

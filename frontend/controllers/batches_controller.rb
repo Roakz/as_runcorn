@@ -2,18 +2,15 @@ class BatchesController < ApplicationController
 
   RESOLVES = ['actions']
 
-  # FIXME: Who should be able to create/edit batches?  Assuming
-  # any logged in user here.
-  set_access_control "view_repository" => [:new, :edit, :create, :update, :delete,
-                                           :create_from_search,
-                                           :index, :show, :assigned_objects,
-                                           :assign_objects_form, :assign_objects,
-                                           :clear_assigned_objects,
-                                           :add_action_form, :add_action,
-                                           :submit_for_review, :approve,
-                                           :revert_to_draft, :delete_action,
-                                           :dry_run, :perform_action,
-                                           :csv]
+  set_access_control "create_batch" => [:new, :edit, :create, :update, :delete,
+                                        :create_from_search,
+                                        :assign_objects_form, :assign_objects,
+                                        :clear_assigned_objects,
+                                        :add_action_form, :add_action,
+                                        :submit_for_review, :approve,
+                                        :revert_to_draft, :delete_action,
+                                        :dry_run, :perform_action],
+                     "view_repository" => [:index, :show, :assigned_objects, :csv]
 
   helper_method :batch_action_types
   def batch_action_types

@@ -23,7 +23,7 @@ class ArchivesSpaceService < Sinatra::Base
     .description("Create a Batch")
     .params(["repo_id", :repo_id],
             ["batch", JSONModel(:batch), "The new record", :body => true])
-    .permissions([])
+    .permissions([:create_batch])
     .returns([200, :created]) \
   do
     handle_create(Batch, params[:batch])
@@ -34,7 +34,7 @@ class ArchivesSpaceService < Sinatra::Base
     .params(["repo_id", :repo_id],
             ["include_deaccessioned", BooleanParam, "Whether to include deaccessioned objects", :default => false],
             *BASE_SEARCH_PARAMS)
-    .permissions([])
+    .permissions([:create_batch])
     .returns([200, :created]) \
   do
     note = 'Created from search results, excluding unspported models'
@@ -73,7 +73,7 @@ class ArchivesSpaceService < Sinatra::Base
     .params(["repo_id", :repo_id],
             ["id", :id],
             ["batch", JSONModel(:batch), "The updated record", :body => true])
-    .permissions([])
+    .permissions([:create_batch])
     .returns([200, :updated]) \
   do
     handle_update(Batch, params[:id], params[:batch])
@@ -125,7 +125,7 @@ class ArchivesSpaceService < Sinatra::Base
             ["removes", [String], "List of references to remove", :optional => true],
             ["include_deaccessioned", BooleanParam, "Whether to include deaccessioned objects", :default => false],
             ["id", :id])
-    .permissions([])
+    .permissions([:create_batch])
     .returns([200, :updated]) \
   do
     batch = Batch.get_or_die(params[:id])
@@ -215,7 +215,7 @@ class ArchivesSpaceService < Sinatra::Base
     .description("Clear all objects assigned to a batch")
     .params(["repo_id", :repo_id],
             ["id", :id])
-    .permissions([])
+    .permissions([:create_batch])
     .returns([200, :updated]) \
   do
     batch = Batch.get_or_die(params[:id])
@@ -231,7 +231,7 @@ class ArchivesSpaceService < Sinatra::Base
             ["id", :id],
             ["action_type", String, "The type of action to add"],
             ["action_params", String, "JSON containing the params for the action", :body => true])
-    .permissions([])
+    .permissions([:create_batch])
     .returns([200, :updated]) \
   do
     batch = Batch.get_or_die(params[:id])
@@ -247,7 +247,7 @@ class ArchivesSpaceService < Sinatra::Base
     .description("Propose the current action for a batch for approval")
     .params(["repo_id", :repo_id],
             ["id", :id])
-    .permissions([])
+    .permissions([:create_batch])
     .returns([200, :updated]) \
   do
     batch = Batch.get_or_die(params[:id])
@@ -262,7 +262,7 @@ class ArchivesSpaceService < Sinatra::Base
     .description("Revert the current action for a batch to draft state")
     .params(["repo_id", :repo_id],
             ["id", :id])
-    .permissions([])
+    .permissions([:create_batch])
     .returns([200, :updated]) \
   do
     batch = Batch.get_or_die(params[:id])
@@ -277,7 +277,7 @@ class ArchivesSpaceService < Sinatra::Base
     .description("Approve the current action for a batch to be performed")
     .params(["repo_id", :repo_id],
             ["id", :id])
-    .permissions([])
+    .permissions([:create_batch])
     .returns([200, :updated]) \
   do
     batch = Batch.get_or_die(params[:id])
@@ -292,7 +292,7 @@ class ArchivesSpaceService < Sinatra::Base
     .description("Delete the current action for a batch")
     .params(["repo_id", :repo_id],
             ["id", :id])
-    .permissions([])
+    .permissions([:create_batch])
     .returns([200, :updated]) \
   do
     batch = Batch.get_or_die(params[:id])
@@ -307,7 +307,7 @@ class ArchivesSpaceService < Sinatra::Base
     .description("Perform a dry run of the current action for a batch")
     .params(["repo_id", :repo_id],
             ["id", :id])
-    .permissions([])
+    .permissions([:create_batch])
     .returns([200, :updated]) \
   do
     batch = Batch.get_or_die(params[:id])
@@ -322,7 +322,7 @@ class ArchivesSpaceService < Sinatra::Base
     .description("Perform the current action for a batch")
     .params(["repo_id", :repo_id],
             ["id", :id])
-    .permissions([])
+    .permissions([:create_batch])
     .returns([200, :updated]) \
   do
     batch = Batch.get_or_die(params[:id])

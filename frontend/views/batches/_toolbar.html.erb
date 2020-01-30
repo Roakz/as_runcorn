@@ -4,7 +4,7 @@
     <div class="pull-left save-changes">
       <button type="submit" class="btn btn-primary btn-sm"><%= I18n.t("actions.save_prefix") %></button>
     </div>
-  <% else %>
+  <% elsif user_can?('create_batch') %>
 
     <%# toolbar buttons only available in show %>
 
