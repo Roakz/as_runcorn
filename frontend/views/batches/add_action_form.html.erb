@@ -44,7 +44,7 @@
                 <% if type['approval'] == 'no_approval_required' %>
                   <div class="label label-success"><%= I18n.t('batch_action.no_approval_required') %></div>
                 <% else %>
-                  <div class="label label-warning"><%= I18n.t('batch_action.approval_required') %></div>
+                  <div class="label label-warning" title="Requires approval by a user with '<%= I18n.t('group.permission_types.' + type['approval']) %>' permission"><%= I18n.t('batch_action.approval_required') %></div>
                 <% end %>
               </div>
 

@@ -2,7 +2,8 @@ class FunctionalMove < BatchActionHandler
 
   register(:functional_move,
            'Create a movement to a new functional location.',
-           [:top_container, :physical_representation])
+           [:top_container, :physical_representation],
+           :update_resource_record)
 
 
   def self.default_params

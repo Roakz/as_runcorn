@@ -3,7 +3,7 @@ class Publisher < BatchActionHandler
   register(:publisher,
            'Publish or unpublish items and representations. Objects already in the target state will not be updated',
            [:archival_object, :physical_representation, :digital_representation],
-           :manage_repository)
+           :manage_publication)
 
 
   def self.default_params

@@ -2,7 +2,8 @@ class HomeMove < BatchActionHandler
 
   register(:home_move,
            'Create a movement to a new home location.',
-           [:top_container])
+           [:top_container],
+           :manage_container_record)
 
 
   def self.default_params

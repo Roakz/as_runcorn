@@ -2,7 +2,8 @@ class TopContainerDelete < BatchActionHandler
 
   register(:top_container_delete,
            'Delete top containers.',
-           [:top_container])
+           [:top_container],
+           :manage_container_record)
 
 
   def self.default_params

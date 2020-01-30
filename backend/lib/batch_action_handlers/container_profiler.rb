@@ -2,7 +2,8 @@ class ContainerProfiler < BatchActionHandler
 
   register(:container_profiler,
            'Update container profile.',
-           [:top_container])
+           [:top_container],
+           :manage_container_record)
 
 
   def self.default_params

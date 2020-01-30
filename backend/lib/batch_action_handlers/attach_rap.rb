@@ -4,7 +4,8 @@ class AttachRAP < BatchActionHandler
            'Attach a new RAP to all of the objects in the batch. ' +
            'Descendents of objects in the batch, that are not themselves in the batch, ' +
            'but which have their own attached RAP will not be affected.',
-           [:archival_object, :physical_representation, :digital_representation])
+           [:archival_object, :physical_representation, :digital_representation],
+           :set_raps)
 
 
   def self.default_params
