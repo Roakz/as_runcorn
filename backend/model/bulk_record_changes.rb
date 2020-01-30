@@ -96,13 +96,24 @@ class BulkRecordChanges
       end
     end
 
-    def failed_row_for_field(error_field)
-      # error_field
-      require 'pp';$stderr.puts("\n*** @DEBUG #{(Time.now.to_f * 1000).to_i} [bulk_record_changes.rb:99 BeautifulBooby]: " + {%Q^error_field^ => error_field}.pretty_inspect + "\n")
+    # Map an error message back to a row in our spreadsheet.
+    #
+    # The trick here is that, for representations, the error message's index
+    # will be offset by how ever many representations were already present in
+    # the record being updated.
+    #
+    # For example, if our import sheet is adding a new physical representation
+    # to an existing record that has 4 representations already, our error
+    # message will reference `/physical_representations/4/somefield`, but that's
+    # actually row 0 in our spreadsheet (since those existing representations
+    # aren't in the spreadsheet).  We need to compensate for that case.
 
+    def failed_row_for_field(error_field, existing_subrecord_counts = {})
       if error_field =~ %r{\A(physical_representations|digital_representations)/([0-9]+)/}
         representation_type = $1
         representation_index = Integer($2)
+
+        representation_index -= existing_subrecord_counts.fetch(representation_type, 0)
 
         # FIXME: Might blow up?
         return @row_for_representation.fetch(representation_type, []).fetch(representation_index)
@@ -225,9 +236,12 @@ class BulkRecordChanges
 
       jsonmodel = JSONModel::JSONModel(:archival_object).from_hash(for_update[:record_hash])
 
+      existing_subrecord_counts = {}
+
       record.jsonmodel.each do |key, value|
         if ['physical_representations', 'digital_representations'].include?(key.to_s)
           jsonmodel[key] ||= []
+          existing_subrecord_counts[key.to_s] = jsonmodel[key].length
           jsonmodel[key].concat(value)
         else
           jsonmodel[key] = value
@@ -240,7 +254,7 @@ class BulkRecordChanges
       validate_result = jsonmodel._exceptions
 
       unless validate_result.empty?
-        errors << {:errors => validate_result, :record => record}
+        errors << {:errors => validate_result, :record => record, :existing_subrecord_counts => existing_subrecord_counts}
         next
       end
 
@@ -320,7 +334,7 @@ class BulkRecordChanges
 
       @errors.each do |error|
         error[:errors].fetch(:errors, []).each do |(json_field, error_messages)|
-          failed_row = error[:record].failed_row_for_field(json_field)
+          failed_row = error[:record].failed_row_for_field(json_field, error.fetch(:existing_subrecord_counts, {}))
 
           error_column = COLUMNS.find {|column| column.maps_to.include?(generify_property(json_field))}
           result[failed_row] ||= {}
