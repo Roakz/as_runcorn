@@ -1,3 +1,5 @@
+DUMMY_TOP_CONTAINER = "/repositories/2/top_containers/100"
+
 ColumnDef = Struct.new(:heading, :maps_to) do
   def initialize(heading, opts = {})
     self.heading = heading
@@ -28,6 +30,10 @@ COLUMNS = [
 
   COLUMN_REPRESENTATION_TYPE = ColumnDef.new('Representation Type'),
 
+  COLUMN_BOX_NUMBER = ColumnDef.new('Box Number',
+                                    :maps_to => [
+                                      'physical_representations/:index/container',
+                                    ])
 ]
 
 
@@ -61,31 +67,39 @@ class BulkRecordChanges
       @row_for_representation ||= {}
 
       rows.each do |row|
+        base_representation = {
+          :title => row.fetch(COLUMN_TITLE, self.jsonmodel.fetch(:title)),
+          :current_location => 'HOME',
+          :normal_location => 'HOME',
+          :contained_within => row.fetch(COLUMN_CONTAINED_WITHIN),
+          :format => row.fetch(COLUMN_FORMAT),
+        }
+
         if row.fetch(COLUMN_REPRESENTATION_TYPE) == 'PHYSICAL'
           @row_for_representation['physical_representations'] ||= []
           @row_for_representation['physical_representations'] << row.row_number
 
-          self.jsonmodel[:physical_representations] <<  {
-            :jsonmodel_type => 'physical_representation',
-            :title => 'foo',
-            :current_location => 'HOME',
-            :normal_location => 'HOME',
-          }
+          self.jsonmodel[:physical_representations] <<  base_representation.merge(
+            {
+              :jsonmodel_type => 'physical_representation',
+              :container => {'ref' => DUMMY_TOP_CONTAINER},
+            })
         else
           @row_for_representation['digital_representations'] ||= []
           @row_for_representation['digital_representations'] << row.row_number
 
-          self.jsonmodel[:digital_representations] << {
-            :jsonmodel_type => 'digital_representation',
-            :title => 'foo',
-            :current_location => 'HOME',
-            :normal_location => 'HOME',
-          }
+          self.jsonmodel[:digital_representations] <<  base_representation.merge(
+            {
+              :jsonmodel_type => 'digital_representation',
+            })
         end
       end
     end
 
     def failed_row_for_field(error_field)
+      # error_field
+      require 'pp';$stderr.puts("\n*** @DEBUG #{(Time.now.to_f * 1000).to_i} [bulk_record_changes.rb:99 BeautifulBooby]: " + {%Q^error_field^ => error_field}.pretty_inspect + "\n")
+
       if error_field =~ %r{\A(physical_representations|digital_representations)/([0-9]+)/}
         representation_type = $1
         representation_index = Integer($2)
@@ -170,6 +184,9 @@ class BulkRecordChanges
 
     errors = []
 
+    # records_to_create
+    require 'pp';$stderr.puts("\n*** @DEBUG #{(Time.now.to_f * 1000).to_i} [bulk_record_changes.rb:188 EachWhippet]: " + {%Q^records_to_create^ => records_to_create}.pretty_inspect + "\n")
+
     records_to_create.each do |record|
       jsonmodel = JSONModel::JSONModel(:archival_object).new(record.jsonmodel)
       validate_result = jsonmodel._exceptions
@@ -189,8 +206,37 @@ class BulkRecordChanges
 
     records_for_update = load_records_for_update(records_to_update.map {|record| record.row.fetch(COLUMN_ITEM_ID)})
 
+    # records_for_update
+    require 'pp';$stderr.puts("\n*** @DEBUG #{(Time.now.to_f * 1000).to_i} [bulk_record_changes.rb:193 BrilliantFalcon]: " + {%Q^records_for_update^ => records_for_update}.pretty_inspect + "\n")
+
     records_to_update.each do |record|
-      jsonmodel = JSONModel::JSONModel(:archival_object).new(record.jsonmodel)
+      ao_qsa_id = record.row.fetch(COLUMN_ITEM_ID)
+      unless records_for_update.include?(ao_qsa_id)
+        errors << {:errors => {"qsa_id" => ["Referenced record does not exist"]}, :record => record}
+      end
+    end
+
+    unless errors.empty?
+      raise BulkUpdateFailed.new(errors)
+    end
+
+    records_to_update.each do |record|
+      for_update = records_for_update.fetch(record.row.fetch(COLUMN_ITEM_ID))
+
+      jsonmodel = JSONModel::JSONModel(:archival_object).from_hash(for_update[:record_hash])
+
+      record.jsonmodel.each do |key, value|
+        if ['physical_representations', 'digital_representations'].include?(key.to_s)
+          jsonmodel[key] ||= []
+          jsonmodel[key].concat(value)
+        else
+          jsonmodel[key] = value
+        end
+      end
+
+      # "SENDING", jsonmodel
+      require 'pp';$stderr.puts("\n*** @DEBUG #{(Time.now.to_f * 1000).to_i} [bulk_record_changes.rb:238 DeadPig]: " + {%Q^"SENDING"^ => "SENDING", %Q^jsonmodel^ => jsonmodel}.pretty_inspect + "\n")
+
       validate_result = jsonmodel._exceptions
 
       unless validate_result.empty?
@@ -198,13 +244,24 @@ class BulkRecordChanges
         next
       end
 
+      unless errors.empty?
+        next
+      end
+
       begin
-        ArchivalObject.create_from_json(jsonmodel)
+        for_update[:obj].update_from_json(jsonmodel)
       rescue
         # Sequel errors, constraints?
         raise $!
       end
     end
+
+    # errors
+    require 'pp';$stderr.puts("\n*** @DEBUG #{(Time.now.to_f * 1000).to_i} [bulk_record_changes.rb:191 OldWoodpecker]: " + {%Q^errors^ => errors}.pretty_inspect + "\n")
+
+    # BulkUpdateFailed.new(errors).to_json
+    require 'pp';$stderr.puts("\n*** @DEBUG #{(Time.now.to_f * 1000).to_i} [bulk_record_changes.rb:202 DistantBarracuda]: " + {%Q^BulkUpdateFailed.new(errors).to_json^ => BulkUpdateFailed.new(errors).to_json}.pretty_inspect + "\n")
+
 
     unless errors.empty?
       # Important to raise an exception so we rollback the outer transaction.
@@ -213,14 +270,15 @@ class BulkRecordChanges
   end
 
   def self.load_records_for_update(ao_qsa_ids)
-    qsa_ids = ao_qsa_ids.map {|prefixed_qsa_id| QSAId.parse_prefixed_id(prefixed_qsa_id){:id]}
-                .map {|parsed| parsed[:id]}
+    qsa_ids = ao_qsa_ids.map {|prefixed_qsa_id| QSAId.parse_prefixed_id(prefixed_qsa_id)[:id]}
 
-    model.filter(:qsa_id => qsa_ids).select(:id, :qsa_id).map {|row|
-      [QSAId.prefixed_id_for(model, row[:qsa_id]),
-       model.uri_for(model.my_jsonmodel.record_type,
-                     row[:id],
-                     :repo_id => RequestContext.get(:repo_id))]
+    objs = ArchivalObject.filter(:qsa_id => qsa_ids).all
+
+    objs.zip(ArchivalObject.sequel_to_jsonmodel(objs)).map {|obj, json|
+      [
+        json.qsa_id_prefixed,
+        {record_hash: json.to_hash(:trusted), obj: obj},
+      ]
     }.to_h
   end
 
@@ -240,7 +298,7 @@ class BulkRecordChanges
       if idx == 0
         headers = row_values(row)
       else
-        yield Row.new(headers.zip(row_values(row)).to_h, idx)
+        yield Row.new(headers.zip(row_values(row)).to_h, idx + 1)
       end
     end
   end
