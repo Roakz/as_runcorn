@@ -155,8 +155,8 @@ end
           <fo:table>
             <fo:table-header>
               <fo:table-row border-top-width="2pt" border-top-style="solid" border-bottom-width="2pt" border-bottom-style="solid">
-                <fo:table-cell padding-top="1mm" padding-bottom="2mm" padding-right="5mm"><fo:block wrap-option="wrap" font-weight="bold" font-variant="small-caps">FILE ISSUE DATE</fo:block></fo:table-cell>
-                <fo:table-cell padding-top="1mm" padding-bottom="2mm" padding-right="5mm"><fo:block wrap-option="wrap" font-weight="bold" font-variant="small-caps">FILE ISSUE REQUEST ID</fo:block></fo:table-cell>
+                <fo:table-cell padding-top="1mm" padding-bottom="2mm" padding-right="5mm"><fo:block wrap-option="wrap" font-weight="bold" font-variant="small-caps">DATE</fo:block></fo:table-cell>
+                <fo:table-cell padding-top="1mm" padding-bottom="2mm" padding-right="5mm"><fo:block wrap-option="wrap" font-weight="bold" font-variant="small-caps">REQUEST ID</fo:block></fo:table-cell>
                 <fo:table-cell padding-top="1mm" padding-bottom="2mm" padding-right="5mm"><fo:block wrap-option="wrap" font-weight="bold" font-variant="small-caps">FILE ISSUE ID</fo:block></fo:table-cell>
                 <fo:table-cell padding-top="1mm" padding-bottom="2mm" padding-right="5mm"><fo:block wrap-option="wrap" font-weight="bold" font-variant="small-caps">CONTACT</fo:block></fo:table-cell>
                 <fo:table-cell padding-top="1mm" padding-bottom="2mm" padding-right="5mm"><fo:block text-align="right" wrap-option="wrap" font-weight="bold" font-variant="small-caps"># FILES</fo:block></fo:table-cell>
@@ -171,7 +171,7 @@ end
 
             <fo:table-body>
               <% grand_total_cents = 0 %>
-              <% rows.each do |row| %>
+              <% rows.sort{|a, b| a.fetch('Date') <=> b.fetch('Date')}.each do |row| %>
                 <fo:table-row border-bottom-width="1px" border-bottom-style="solid" border-bottom-color="#aaa">
                   <fo:table-cell display-align="center" padding="1mm 0 0.5mm 0"><fo:block wrap-option="wrap"><%= row.fetch('Date').strftime('%d/%m/%Y') %></fo:block></fo:table-cell>
                   <fo:table-cell display-align="center" padding="1mm 0 0.5mm 0"><fo:block wrap-option="wrap"><%= row.fetch('File Issue Request ID') %></fo:block></fo:table-cell>
