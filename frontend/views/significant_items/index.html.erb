@@ -1,3 +1,12 @@
+<%
+  link_hash = {
+    :controller => :significant_items,
+    :action => :index,
+    :series_uri => params[:series_uri],
+    :location => params[:location],
+  }
+%>
+
 <%= setup_context(:title => I18n.t("as_runcorn.significant_item._plural")) %>
 
 <% levels = JSONModel.enum_values('runcorn_significance').reject{|v| v == 'standard'}.reverse %>
@@ -20,19 +29,18 @@
 <div class="row">
   <div class="col-md-3">
     <div id="archivesSpaceSidebar" class="sidebar affix-top">
-      <ul class="nav list-group as-nav-list">
+
+      Showing on this page:
+
+      <ul class="nav list-group">
         <% levels.each do |level| %>
           <li>
-            <br/>
-            <a href="#<%= level %>">
-              <%= SignificanceHelper.display(level, @significant_items.select{|si| si['significance'] == level}.length, @counts[level]) %>
-            </a>
+            <%= link_to SignificanceHelper.display(level, @significant_items['items'].select{|si| si['significance'] == level}.length, @significant_items['counts']['levels'][level]), link_hash.merge(:page => @significant_items['counts']['first_page_for_levels'][level], :anchor => level) %>
           </li>
         <% end %>
       </ul>
 
-      <br/>
-
+      <div style="margin-top:20px">
         Show items at storage location:
         <div class="input-group linker-wrapper" style="margin-left:10px">
           <input type="text"
@@ -56,25 +64,20 @@
             </ul>
           </div>
         </div>
-
-      <br/><br/>
-
-      Show items at functional location:
-      <br/>
-      <div style="margin-left:30px">
-      <ul class="list-group">
-        <% JSONModel.enum_values('runcorn_location').reject{|loc| loc =='HOME'}.each do |loc| %>
-          <li>
-            <%= link_to I18n.t('enumerations.runcorn_location.' + loc),
-                        {:controller => :significant_items,
-                         :action => :index,
-                         :series_uri => params[:series_uri],
-                         :location => loc } %>
-          </li>
-        <% end %>
-      </ul>
       </div>
 
+      <div style="margin-top:20px">
+        Show items at functional location:
+        <div style="margin-left:30px">
+          <ul class="list-group">
+            <% JSONModel.enum_values('runcorn_location').reject{|loc| loc =='HOME'}.each do |loc| %>
+              <li>
+                <%= link_to I18n.t('enumerations.runcorn_location.' + loc), link_hash.merge(:location => loc) %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
 
     </div>
   </div>
@@ -88,7 +91,21 @@
         </div>
       <% end %>
 
-        <br style="clear:both" />
+      <div class="btn-group pull-right">
+        <% page = params[:page] ? params[:page].to_i : 1 %>
+        <% last_page = @significant_items['counts']['pages'] %>
+        <% disabled = page == 1 ? 'disabled' : '' %>
+        <%= link_to '|', link_hash.merge(:page => 1), :class => "btn btn-default #{disabled}" %>
+        <%= link_to '<', link_hash.merge(:page => page - 1), :class => "btn btn-default #{disabled}" %>
+
+        <span class="btn btn-default disabled">Page <%= page %> of <%= @significant_items['counts']['pages'] %></span>
+
+        <% disabled = page >= last_page ? 'disabled' : '' %>
+        <%= link_to '>', link_hash.merge(:page => page + 1), :class => "btn btn-default #{disabled}" %>
+        <%= link_to '|', link_hash.merge(:page => last_page), :class => "btn btn-default #{disabled}" %>
+      </div>
+
+      <br style="clear:both" />
     </div>
     <div class="record-pane">
       <h2><%= I18n.t("as_runcorn.significant_item._plural") %></h2>
@@ -96,7 +113,7 @@
       <% if params['series_uri'] %>
         <div style="margin: 10px 2px 10px 6px;">
           <%= I18n.t("as_runcorn.significant_item.for_series_message") %>
-          <% series = @significant_items.first['series'] %>
+          <% series = @significant_items['items'].first['series'] %>
           &nbsp;
           <%= QSAIdHelper.id(series['qsa_id']) %>
           &nbsp;
@@ -107,7 +124,7 @@
       <% if params['location'] %>
         <div style="margin: 10px 2px 10px 6px;">
           <%= I18n.t("as_runcorn.significant_item.at_location_message") %>
-          <% location = @significant_items.first ? @significant_items.first['current_location']['location'] : params['location'] %>
+          <% location = @significant_items['items'].first ? @significant_items['items'].first['current_location']['location'] : params['location'] %>
           <% location = I18n.t('enumerations.runcorn_location.' + location, location) %>
           &nbsp;
           <strong><%= location %></strong>
@@ -129,14 +146,14 @@
               </th>
             </tr>
 
-            <% items = @significant_items.select{|item| item['significance'] == level} %>
+            <% items = @significant_items['items'].select{|item| item['significance'] == level} %>
             <% if items.empty? %>
               <tr>
                 <td style="background:<%= levelcolor %>">&nbsp;</td>
                 <td colspan="5"><%= I18n.t('as_runcorn.significant_item.none_for_level') %></td>
               </tr>
             <% else %>
-              <% @significant_items.select{|item| item['significance'] == level}.each do |item| %>
+              <% @significant_items['items'].select{|item| item['significance'] == level}.each do |item| %>
                 <tr>
                   <td style="background:<%= levelcolor %>">&nbsp;</td>
                   <td style="white-space:nowrap;vertical-align:middle;">
@@ -165,10 +182,7 @@
                     <% end %>
 
                     <% if known_location %>
-                      <%= link_to ' ', {:controller => :significant_items,
-                                        :action => :index,
-                                        :series_uri => params[:series_uri],
-                                        :location => (item['current_location']['uri'] || item['current_location']['location'])},
+                      <%= link_to ' ', link_hash.merge(:location => (item['current_location']['uri'] || item['current_location']['location'])),
                                        :class => 'glyphicon glyphicon-chevron-right', :title => 'Filter by this location' %>
                     <% end %>
                   </strong></td>

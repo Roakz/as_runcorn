@@ -4,8 +4,9 @@ class SignificantItemsController < ApplicationController
 
   def index
     @significant_items = JSONModel::HTTP.get_json("/repositories/#{session[:repo_id]}/significant_items/all",
-                                                  'series[]' => [params[:series_uri]], 'location' => params[:location])
-    @counts = JSONModel::HTTP.get_json("/repositories/#{session[:repo_id]}/significant_item_counts")
+                                                  'series[]' => [params[:series_uri]],
+                                                  'location' => params[:location],
+                                                  'page' => params[:page])
   end
 
 end

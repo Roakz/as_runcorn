@@ -1,9 +1,12 @@
 class SignificantItems
 
+  PAGE_SIZE = AppConfig.has_key?(:significant_items_page_size) ? AppConfig[:significant_items_page_size] : 100
+
+
   def self.list(opts = {})
     opts[:level] ||= 'all'
 
-    ds = base_query.limit(opts[:page_size], ((opts[:page] - 1) * opts[:page_size]))
+    ds = base_query
 
     ds = if opts[:level] == 'all'
            ds.filter(Sequel.~(:significance__value => 'standard'))
@@ -19,7 +22,37 @@ class SignificantItems
       ds = add_location_filter(ds, opts[:location])
     end
 
-    ds.map{|row| format(row)}
+    {
+      :counts => summary(ds),
+      :items => selects(ds).limit(PAGE_SIZE, ((opts[:page] - 1) * PAGE_SIZE))
+                           .map{|row| format(row)}
+    }
+  end
+
+
+  def self.summary(ds)
+    levels = BackendEnumSource.values_for('runcorn_significance').reject{|level| level == 'standard'}.reverse
+
+    level_counts = ds.group_and_count(:physical_representation__significance_id)
+      .map{|level| [BackendEnumSource.value_for_id('runcorn_significance', level[:significance_id]), level[:count]]}.to_h
+
+    total = level_counts.values.reduce{|a,b| a+b}
+    pages = (total.to_f / PAGE_SIZE).ceil
+
+    running_count = 0
+    first_pages = levels.map{|level|
+                              count = level_counts.fetch(level, 0)
+                              running_count += count
+                              [level, ((1.0 + running_count - count)/PAGE_SIZE).ceil]
+                            }.to_h
+
+    {
+      :total => total,
+      :pages => pages,
+      :page_size => PAGE_SIZE,
+      :first_page_for_levels => first_pages,
+      :levels => level_counts
+    }
   end
 
 
@@ -100,38 +133,32 @@ class SignificantItems
         .left_join(:resource, :resource__id => :archival_object__root_record_id)
         .filter(Sequel.|({:top_container_housed_at_rlshp__status => 'current'}, {:top_container_housed_at_rlshp__status => nil}))
         .reverse(:significance__position)
-        .select(
-                Sequel.as(:physical_representation__repo_id, :repo_id),
-                Sequel.as(:physical_representation__id, :prep_id),
-                Sequel.as(:physical_representation__qsa_id, :prep_qsa_id),
-                Sequel.as(:physical_representation__title, :prep_label),
-                Sequel.as(:significance__value, :prep_significance),
-                Sequel.as(:prep_fn_loc__value, :prep_fn_loc),
-                Sequel.as(:prep_format__value, :prep_format),
-                Sequel.as(:top_container__id, :tcon_id),
-                Sequel.as(:top_container__indicator, :tcon_indicator),
-                Sequel.as(:top_container__id, :tcon_qsa_id),
-                Sequel.as(:tcon_fn_loc__value, :tcon_fn_loc),
-                Sequel.as(:tcon_type__value, :tcon_type),
-                Sequel.as(:location__id, :loc_id),
-                Sequel.as(:location__title, :loc_label),
-                Sequel.as(:archival_object__id, :record_id),
-                Sequel.as(:archival_object__qsa_id, :record_qsa_id),
-                Sequel.as(:archival_object__display_string, :record_label),
-                Sequel.as(:resource__id, :series_id),
-                Sequel.as(:resource__qsa_id, :series_qsa_id),
-                Sequel.as(:resource__title, :series_label)
-                )
     end
   end
 
 
-  def self.counts
-    DB.open do |db|
-      db[:physical_representation].exclude(:significance_id => BackendEnumSource.id_for_value('runcorn_significance', 'standard'))
-                                  .group_and_count(:significance_id)
-                                  .map{|level| [BackendEnumSource.value_for_id('runcorn_significance', level[:significance_id]), level[:count]]}.to_h
-    end
+  def self.selects(ds)
+    ds.select(
+              Sequel.as(:physical_representation__repo_id, :repo_id),
+              Sequel.as(:physical_representation__id, :prep_id),
+              Sequel.as(:physical_representation__qsa_id, :prep_qsa_id),
+              Sequel.as(:physical_representation__title, :prep_label),
+              Sequel.as(:significance__value, :prep_significance),
+              Sequel.as(:prep_fn_loc__value, :prep_fn_loc),
+              Sequel.as(:prep_format__value, :prep_format),
+              Sequel.as(:top_container__id, :tcon_id),
+              Sequel.as(:top_container__indicator, :tcon_indicator),
+              Sequel.as(:top_container__id, :tcon_qsa_id),
+              Sequel.as(:tcon_fn_loc__value, :tcon_fn_loc),
+              Sequel.as(:tcon_type__value, :tcon_type),
+              Sequel.as(:location__id, :loc_id),
+              Sequel.as(:location__title, :loc_label),
+              Sequel.as(:archival_object__id, :record_id),
+              Sequel.as(:archival_object__qsa_id, :record_qsa_id),
+              Sequel.as(:archival_object__display_string, :record_label),
+              Sequel.as(:resource__id, :series_id),
+              Sequel.as(:resource__qsa_id, :series_qsa_id),
+              Sequel.as(:resource__title, :series_label)
+              )
   end
-
 end
