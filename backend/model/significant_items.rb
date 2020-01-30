@@ -162,3 +162,45 @@ class SignificantItems
               )
   end
 end
+
+=begin
+
+Here is the raw SQL to get all non-standard significant items, with all the necessary columns
+
+SELECT `physical_representation`.`repo_id` AS `repo_id`,
+       `physical_representation`.`id` AS `prep_id`,
+       `physical_representation`.`qsa_id` AS `prep_qsa_id`,
+       `physical_representation`.`title` AS `prep_label`,
+       `significance`.`value` AS `prep_significance`,
+       `prep_fn_loc`.`value` AS `prep_fn_loc`,
+       `prep_format`.`value` AS `prep_format`,
+       `top_container`.`id` AS `tcon_id`,
+       `top_container`.`indicator` AS `tcon_indicator`,
+       `top_container`.`id` AS `tcon_qsa_id`,
+       `tcon_fn_loc`.`value` AS `tcon_fn_loc`,
+       `tcon_type`.`value` AS `tcon_type`,
+       `location`.`id` AS `loc_id`,
+       `location`.`title` AS `loc_label`,
+       `archival_object`.`id` AS `record_id`,
+       `archival_object`.`qsa_id` AS `record_qsa_id`,
+       `archival_object`.`display_string` AS `record_label`,
+       `resource`.`id` AS `series_id`,
+       `resource`.`qsa_id` AS `series_qsa_id`,
+       `resource`.`title` AS `series_label`
+FROM `physical_representation`
+LEFT JOIN `enumeration_value` AS `significance` ON (`significance`.`id` = `physical_representation`.`significance_id`)
+LEFT JOIN `enumeration_value` AS `prep_fn_loc` ON (`prep_fn_loc`.`id` = `physical_representation`.`current_location_id`)
+LEFT JOIN `enumeration_value` AS `prep_format` ON (`prep_format`.`id` = `physical_representation`.`format_id`)
+LEFT JOIN `representation_container_rlshp` ON (`representation_container_rlshp`.`physical_representation_id` = `physical_representation`.`id`)
+LEFT JOIN `top_container` ON (`top_container`.`id` = `representation_container_rlshp`.`top_container_id`)
+LEFT JOIN `top_container_housed_at_rlshp` ON (`top_container_housed_at_rlshp`.`top_container_id` = `top_container`.`id`)
+LEFT JOIN `enumeration_value` AS `tcon_fn_loc` ON (`tcon_fn_loc`.`id` = `top_container`.`current_location_id`)
+LEFT JOIN `enumeration_value` AS `tcon_type` ON (`tcon_type`.`id` = `top_container`.`type_id`)
+LEFT JOIN `location` ON (`location`.`id` = `top_container_housed_at_rlshp`.`location_id`)
+LEFT JOIN `archival_object` ON (`archival_object`.`id` = `physical_representation`.`archival_object_id`)
+LEFT JOIN `resource` ON (`resource`.`id` = `archival_object`.`root_record_id`)
+WHERE (((`top_container_housed_at_rlshp`.`status` = 'current') OR (`top_container_housed_at_rlshp`.`status` IS NULL))
+AND (`significance`.`value` != 'standard')) ORDER BY `significance`.`position` DESC
+
+=end
+
