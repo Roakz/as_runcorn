@@ -317,6 +317,7 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
 
 
   def self.to_item_uses(json)
+    return [] unless json['existing_ref']
     exhibitions = []
     on_exhibition = false
 
