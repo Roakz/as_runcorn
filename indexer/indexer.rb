@@ -216,6 +216,10 @@ class IndexerCommon
         doc['conservation_request_attached_u_sstr'] = record['record']['conservation_requests'].map {|ref| ref['ref']}
       end
 
+      if record['record']['date_of_request']
+        doc['date_start_u_ssort'] = record['record']['date_of_request']
+        doc['date_start_u_sstr'] = record['record']['date_of_request']
+      end
     end
 
 
@@ -245,6 +249,12 @@ class IndexerCommon
         pri = record['record']['treatment_priority']
         doc['assessment_treatment_priority_u_sort'] = ((vals.index(pri) || -1) + 1).to_s
         doc['assessment_treatment_priority_u_ssort'] = pri
+
+
+        doc['date_start_u_ssort'] = record['record']['survey_begin']
+        doc['date_start_u_sstr'] = record['record']['survey_begin']
+        doc['date_end_u_ssort'] = record['record']['survey_end']
+        doc['date_end_u_sstr'] = record['record']['survey_end']
       end
     }
 
@@ -320,6 +330,11 @@ class IndexerCommon
         doc['item_use_start_date_u_ssort'] = record['record']['start_date']
         doc['item_use_end_date_u_ssort'] = record['record']['end_date']
         doc['item_use_used_by_u_ssort'] = record['record']['used_by']
+
+        doc['date_start_u_ssort'] = record['record']['start_date']
+        doc['date_start_u_sstr'] = record['record']['start_date']
+        doc['date_end_u_ssort'] = record['record']['end_date']
+        doc['date_end_u_sstr'] = record['record']['end_date']
       end
     end
 
@@ -351,7 +366,9 @@ class IndexerCommon
         doc['date_start_u_ssort'] = DateRangeQuery.date_pad_start(date['begin'])
         doc['date_end_u_ssort'] = DateRangeQuery.date_pad_end(date['end'])
         doc['date_start_u_sstr'] = date['begin']
+        doc['date_start_certainty_u_sstr'] = date['certainty']
         doc['date_end_u_sstr'] = date['end']
+        doc['date_end_certainty_u_sstr'] = date['certainty_end']
       end
     end
 
