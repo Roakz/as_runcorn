@@ -259,6 +259,8 @@ class IndexerCommon
           doc['qsa_id_u_ssort'] = record['record']['qsa_id_prefixed']
           doc['qsa_id_u_stext'] << record['record']['qsa_id_prefixed']
         end
+      else
+        doc['qsa_id_u_sort'] = IndexerCommon.sort_value_for_qsa_id(JSONModel::JSONModel(doc['primary_type'].intern).id_for(record['record']['uri']).to_s)
       end
     end
 

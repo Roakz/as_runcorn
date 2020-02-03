@@ -303,6 +303,45 @@ Rails.application.config.after_initialize do
     end
   end
 
+  class SearchController
+    include SearchHelper
+    include ApplicationHelper
+
+    alias :as_runcorn_render_orig :render
+    def render(*args, &block)
+      @show_multiselect_column = true
+      @display_context = false
+      @show_search_result_identifier_column = false
+      @display_identifier = false
+      @context_column_header = false
+      @no_title = true
+
+      add_column('ID',
+         proc { |record|
+           record['_json_parsed_'] ||= ASUtils.json_parse(record['json'])
+           # show the QSA ID or just the ID if no QSA ID
+           record['_json_parsed_']['qsa_id_prefixed'] || JSONModel(record['_json_parsed_']['jsonmodel_type'].intern).id_for(record['id']).to_s
+         }, :sortable => true, :sort_by => 'qsa_id_u_sort')
+
+      add_column('Title',
+                 proc { |record|
+                   clean_mixed_content(record["title"] || record['display_string']).html_safe
+                 }, :sortable => true, :sort_by => 'title_sort')
+
+      add_column('Start Date',
+                 proc { |record|
+                   Array(record['date_start_u_sstr']).first
+                 }, :sortable => true, :sort_by => 'date_start_u_ssort')
+
+      add_column('End Date',
+                 proc { |record|
+                   Array(record['date_end_u_sstr']).first
+                 }, :sortable => true, :sort_by => 'date_end_u_ssort')
+
+      as_runcorn_render_orig(*args, &block)
+    end
+  end
+
   begin
     HistoryController.add_skip_field('move_to_storage_permitted')
     HistoryController.add_skip_field('normal_location')
