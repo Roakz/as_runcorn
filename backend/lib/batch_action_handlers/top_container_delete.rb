@@ -32,15 +32,21 @@ class TopContainerDelete < BatchActionHandler
 
         tc = TopContainer[ref[:id]]
 
-        begin
-          db[:batch_objects].filter(:top_container_id => tc.id).delete
-          tc.delete()
-          deletes.push(tc.qsa_id_prefixed + (' ' * ([10 - tc.qsa_id_prefixed.length, 1].max)) + tc.long_display_string)
-          count += 1
-        rescue => e
-          errors[e.to_s] ||= []
-          errors[e.to_s].push(tc.qsa_id_prefixed + (' ' * ([10 - tc.qsa_id_prefixed.length, 1].max)) + tc.long_display_string)
-          no_count += 1
+        # set a savepoint for each top container
+        # this allows us to rollback and recover batch-object
+        # relationships for top containers that couldn't be deleted
+        DB.transaction(:savepoint => true) do
+          begin
+            db[:batch_objects].filter(:top_container_id => tc.id).delete
+            tc.delete()
+            deletes.push(tc.qsa_id_prefixed + (' ' * ([10 - tc.qsa_id_prefixed.length, 1].max)) + tc.long_display_string)
+            count += 1
+          rescue => e
+            errors[e.to_s] ||= []
+            errors[e.to_s].push(tc.qsa_id_prefixed + (' ' * ([10 - tc.qsa_id_prefixed.length, 1].max)) + tc.long_display_string)
+            no_count += 1
+            raise Sequel::Rollback
+          end
         end
 
       end
