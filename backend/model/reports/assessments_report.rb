@@ -42,6 +42,7 @@ class AssessmentsReport < RuncornReport
         end
 
         resource_map = build_assessment_to_resources_map(base_ds)
+        treatment_counts_map = build_treatment_counts_map(base_ds)
         conservation_issues_map = build_conservation_issues_map(base_ds)
 
         base_ds
@@ -58,6 +59,12 @@ class AssessmentsReport < RuncornReport
 
           if resource_map.include?(row[:id])
             resource_map.fetch(row[:id]).each do |resource_data|
+              treatment_summary = nil
+
+              if (treatment_data = treatment_counts_map.dig(row[:id], resource_data.fetch(:id)))
+                treatment_summary = treatment_data.map {|status, count| '%d %s' % [count, status.gsub('_', ' ')]}.join('; ')
+              end
+
               csv << [
                 QSAId.prefixed_id_for(Assessment, row[:id]),
                 '%s %s' % [resource_data.fetch(:qsa_id), resource_data.fetch(:title)],
@@ -65,7 +72,7 @@ class AssessmentsReport < RuncornReport
                 row[:survey_begin],
                 row[:survey_end],
                 BackendEnumSource.value_for_id('runcorn_treatment_priority', row[:treatment_priority_id]),
-                'FIXME',
+                treatment_summary,
                 conservation_issues_map.fetch(row[:id], false) ? conservation_issues_map.fetch(row[:id]).join('; ') : nil,
                 row[:surveyed_duration],
                 resource_data.fetch(:count)
@@ -80,7 +87,7 @@ class AssessmentsReport < RuncornReport
               row[:survey_begin],
               row[:survey_end],
               BackendEnumSource.value_for_id('runcorn_treatment_priority', row[:treatment_priority_id]),
-              'FIXME',
+              nil,
               conservation_issues_map.fetch(row[:id], false) ? conservation_issues_map.fetch(row[:id]).join('; ') : nil,
               row[:surveyed_duration],
               nil
@@ -131,6 +138,25 @@ class AssessmentsReport < RuncornReport
       .each do |row|
       result[row[:id]] ||= []
       result[row[:id]] << row[:label]
+    end
+
+    result
+  end
+
+  def build_treatment_counts_map(base_ds)
+    result = {}
+
+    base_ds
+      .join(:assessment_rlshp, Sequel.qualify(:assessment_rlshp, :assessment_id) => Sequel.qualify(:assessment, :id))
+      .join(:physical_representation, Sequel.qualify(:physical_representation, :id) => Sequel.qualify(:assessment_rlshp, :physical_representation_id))
+      .join(:conservation_treatment, Sequel.qualify(:conservation_treatment, :physical_representation_id) => Sequel.qualify(:physical_representation, :id))
+      .group_and_count(Sequel.qualify(:assessment, :id),
+                       Sequel.qualify(:physical_representation, :resource_id),
+                       Sequel.qualify(:conservation_treatment, :status))
+      .each do |row|
+      result[row[:id]] ||= {}
+      result[row[:id]][row[:resource_id]] ||= {}
+      result[row[:id]][row[:resource_id]][row[:status]] = row[:count]
     end
 
     result
