@@ -10,6 +10,25 @@ class ArchivesSpaceService < Sinatra::Base
     handle_listing(ItemUse, params)
   end
 
+
+  Endpoint.get_or_post('/repositories/:repo_id/item_uses/csv')
+    .description("Download a CSV file containing a search result set")
+    .params(["repo_id", :repo_id],
+            *BASE_SEARCH_PARAMS)
+    .permissions([])
+    .returns([200, "(:csv)"]) \
+  do
+    [
+      200,
+      {
+        "Content-Type" => "text/csv",
+        "Content-Disposition" => "attachment; filename=\"item_use_summary.#{Date.today.iso8601}.csv\""
+      },
+      ItemUse.csv(params)
+    ]
+  end
+
+
   Endpoint.get('/repositories/:repo_id/item_uses/:id')
     .description("Get an Item Use by ID")
     .params(["repo_id", :repo_id],

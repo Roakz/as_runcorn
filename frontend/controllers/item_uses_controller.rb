@@ -2,7 +2,7 @@ class ItemUsesController < ApplicationController
 
   set_access_control  "view_repository" => [:index]
 
-#  include ExportHelper
+  include ExportHelper
 
   ITEM_USE_FACETS = [
                      'item_use_status_u_ssort',
@@ -20,9 +20,14 @@ class ItemUsesController < ApplicationController
                                        }.merge(params_for_backend_search))
       }
       format.csv {
-        search_params = params_for_backend_search.merge({"facet[]" => ITEM_USE_FACETS})
+        search_params = params_for_backend_search
+        search_params["facet[]"] = ITEM_USE_FACETS
         search_params["type[]"] = "item_use"
+        search_params["sort"] = "user_mtime desc"
         uri = "/repositories/#{session[:repo_id]}/search"
+#        uri = "/repositories/#{session[:repo_id]}/item_uses/csv"
+
+        Search.build_filters(search_params)
         csv_response( uri, search_params )
       }
     end

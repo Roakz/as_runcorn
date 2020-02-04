@@ -62,4 +62,9 @@ class ItemUse < Sequel::Model(:item_use)
       end
     end
   end
+
+
+  def self.csv(params)
+
+  end
 end
