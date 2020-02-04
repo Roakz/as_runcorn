@@ -1,0 +1,25 @@
+<%= setup_context :title => I18n.t("archival_object._plural") %>
+
+<%
+   add_browse_columns("archival_object", {"level" => "archival_record_level", "language" => "language_iso639_2"})
+   @display_context = true
+%>
+
+<div class="row">
+   <div class="col-md-3">
+     <div class="sidebar">
+       <%= render_aspace_partial :partial => "search/filter" %>
+     </div>
+   </div>
+   <div class="col-md-9">
+     <div class="record-pane">
+       <%= link_to_help :topic => "search" %>
+
+       <h2><%= I18n.t("archival_object._plural") %></h2>
+
+       <%= render_aspace_partial :partial => "shared/flash_messages" %>
+
+       <%= render_aspace_partial :partial => "search/listing" %>
+     </div>
+   </div>
+</div>

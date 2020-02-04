@@ -36,4 +36,20 @@ ArchivalObjectsController.class_eval do
     end
   end
 
+  def index
+    respond_to do |format|
+      format.html {
+        # THINKME: Do we need an ARCHIVAL_OBJECT_FACETS separate to RESOURCE_FACETS here?
+        @search_data = Search.for_type(session[:repo_id], ["archival_object"], params_for_backend_search.merge({"facet[]" => SearchResultData.RESOURCE_FACETS}))
+      }
+      format.csv {
+        search_params = params_for_backend_search.merge({"facet[]" => SearchResultData.RESOURCE_FACETS})
+        search_params["type[]"] = ["archival_object"]
+        uri = "/repositories/#{session[:repo_id]}/search"
+        csv_response( uri, search_params )
+      }
+    end
+  end
+
+
 end

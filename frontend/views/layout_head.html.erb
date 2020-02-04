@@ -29,6 +29,10 @@
   <%= link_to I18n.t("chargeable_service.button_label"), {:controller => :chargeable_services, :action => :index} %>
 </script>
 
+<script type="text/template" id="browseArchivalObjectsTemplate">
+  <li><%= link_to I18n.t("archival_object._plural"), {:controller => :archival_objects, :action => :index} %></li>
+</script>
+
 <script type="text/template" id="browseRepresentationsTemplate">
   <li><%= link_to I18n.t("representation._plural"), {:controller => :representations, :action => :index} %></li>
 </script>
@@ -84,6 +88,9 @@
 
       // Put agency browse in Repo menu
       $('.repository-header .navbar-nav .browse-container > .dropdown-menu').prepend(AS.renderTemplate("browseAgenciesTemplate"))
+
+      // Browse items too
+      $('.repository-header .navbar-nav .browse-container > .dropdown-menu .divider:first').before(AS.renderTemplate("browseArchivalObjectsTemplate"))
 
       // Put representation browse in Repo menu
       $('.repository-header .navbar-nav .browse-container > .dropdown-menu .divider:first').before(AS.renderTemplate("browseRepresentationsTemplate"))
