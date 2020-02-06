@@ -1,6 +1,6 @@
 class ItemUsesController < ApplicationController
 
-  set_access_control  "view_repository" => [:index]
+  set_access_control  "view_repository" => [:index, :show]
 
   include ExportHelper
 
@@ -31,5 +31,10 @@ class ItemUsesController < ApplicationController
         csv_response( uri, search_params )
       }
     end
+  end
+
+  def show
+    item_use = JSONModel(:item_use).find(params[:id])
+    redirect_to :controller => :resolver, :action => :resolve_readonly, :uri => item_use.representation['ref']
   end
 end
