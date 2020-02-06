@@ -113,7 +113,7 @@ class ArchivesSpaceService < Sinatra::Base
     ]
   end
 
-  Endpoint.get_or_post('/runcorn_reports/conservation_requests_report')
+  Endpoint.get_or_post('/runcorn_reports/conservation_requests')
       .description("Report on Conservation Requests")
       .params(["from_date", String, "From date in range", :optional => true],
               ["to_date", String, "To date in range", :optional => true])
@@ -130,7 +130,7 @@ class ArchivesSpaceService < Sinatra::Base
     ]
   end
 
-  Endpoint.get_or_post('/runcorn_reports/assessments_report')
+  Endpoint.get_or_post('/runcorn_reports/assessments')
       .description("Report on Assessments")
       .params(["from_date", String, "From date in range", :optional => true],
               ["to_date", String, "To date in range", :optional => true])
@@ -147,7 +147,7 @@ class ArchivesSpaceService < Sinatra::Base
     ]
   end
 
-  Endpoint.get_or_post('/runcorn_reports/conservation_treatments_report')
+  Endpoint.get_or_post('/runcorn_reports/conservation_treatments')
       .description("Report on Conservation Treatments")
       .params(["from_date", String, "From date in range", :optional => true],
               ["to_date", String, "To date in range", :optional => true])

@@ -40,13 +40,13 @@ class ConservationTreatmentsReport < RuncornReport
         base_ds = aspacedb[:conservation_treatment]
 
         if @from_date
-          from_time = @from_date.to_time.to_i * 1000
-          base_ds = base_ds.where { Sequel.qualify(:conservation_treatment, :create_time) >= from_time }
+          from_time = @from_date.to_time
+          base_ds = base_ds.where { Sequel.qualify(:conservation_treatment, :persistent_create_time) >= from_time }
         end
 
         if @to_date
-          to_time = (@to_date + 1).to_time.to_i * 1000 - 1
-          base_ds = base_ds.where { Sequel.qualify(:conservation_treatment, :create_time) <= to_time }
+          to_time = (@to_date + 1).to_time - 1
+          base_ds = base_ds.where { Sequel.qualify(:conservation_treatment, :persistent_create_time) <= to_time }
         end
 
         responsible_agency_map = build_responsible_agency_map(base_ds)
@@ -60,9 +60,8 @@ class ConservationTreatmentsReport < RuncornReport
           .join(:physical_representation, Sequel.qualify(:physical_representation, :id) => Sequel.qualify(:conservation_treatment, :physical_representation_id))
           .join(:resource, Sequel.qualify(:resource, :id) => Sequel.qualify(:physical_representation, :resource_id))
           .join(:archival_object, Sequel.qualify(:archival_object, :id) => Sequel.qualify(:physical_representation, :archival_object_id))
-          .join(:conservation_treatment_user_rlshp, Sequel.qualify(:conservation_treatment_user_rlshp, :conservation_treatment_id) => Sequel.qualify(:conservation_treatment, :id))
-          .join(:name_person, Sequel.qualify(:name_person, :agent_person_id) => Sequel.qualify(:conservation_treatment_user_rlshp, :agent_person_id))
-          .filter(Sequel.qualify(:name_person, :is_display_name) => 1)
+          .left_join(:conservation_treatment_user_rlshp, Sequel.qualify(:conservation_treatment_user_rlshp, :conservation_treatment_id) => Sequel.qualify(:conservation_treatment, :id))
+          .left_join(:name_person, Sequel.qualify(:name_person, :agent_person_id) => Sequel.qualify(:conservation_treatment_user_rlshp, :agent_person_id), Sequel.qualify(:name_person, :is_display_name) => 1)
           .select(
               Sequel.qualify(:conservation_request_assessment_rlshp, :conservation_request_id),
               Sequel.as(Sequel.qualify(:assessment, :id), :assessment_id),
@@ -74,7 +73,6 @@ class ConservationTreatmentsReport < RuncornReport
               Sequel.as(Sequel.qualify(:archival_object, :qsa_id), :controlling_record_qsa_id),
               Sequel.qualify(:conservation_treatment, :status),
               Sequel.qualify(:conservation_treatment, :treatment_process),
-              Sequel.qualify(:conservation_treatment, :treatments_applied),
               Sequel.qualify(:conservation_treatment, :materials_used_consumables),
               Sequel.qualify(:conservation_treatment, :materials_used_staff_time),
               Sequel.qualify(:conservation_request, :date_required_by),

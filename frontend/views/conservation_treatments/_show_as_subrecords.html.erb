@@ -15,14 +15,22 @@
         <div class="panel panel-<% if conservation_treatment['status'] == 'awaiting_treatment' %>default<% elsif conservation_treatment['status'] == 'in_progress'%>warning<% else %>success<% end %>">
           <div class="panel-heading">
             <div class="row accordion-toggle collapsed" data-toggle="collapse" data-parent="#<%= section_id %>_accordion" href="#<%= section_id %>_conservation_treatment_<%= index %>">
-              <div class="col-md-12">
+              <div class="col-xs-2">
                 <span class="glyphicon"></span>
                 <div class="badge badge-info"><%= I18n.t("conservation_treatment._status.#{conservation_treatment['status']}", :default => conservation_treatment['status']) %></div>
-                <div class="pull-right">
-                  <% if conservation_treatment['start_date'] || conservation_treatment['end_date'] %>
-                    <%= conservation_treatment['start_date'] %> - <%= conservation_treatment['end_date'] %>
-                  <% end %>
-                </div>
+              </div>
+              <div class="col-xs-2">
+                <% if conservation_treatment["assessment"] %>
+                  <div ><%= conservation_treatment["assessment"]['_resolved']['qsa_id_prefixed'] %></div>
+                <% end %>
+              </div>
+              <div class="col-xs-3">
+                <%= Array(conservation_treatment["treatments"]).length %> treatments
+              </div>
+              <div class="col-xs-4">
+                <% if conservation_treatment['start_date'] || conservation_treatment['end_date'] %>
+                  <%= conservation_treatment['start_date'] %> - <%= conservation_treatment['end_date'] %>
+                <% end %>
               </div>
             </div>
           </div>

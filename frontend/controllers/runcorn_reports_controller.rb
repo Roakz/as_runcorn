@@ -69,6 +69,39 @@ class RuncornReportsController < ApplicationController
           end
         end
       end
+    when 'assessments_report'
+      self.response_body = Enumerator.new do |stream|
+        JSONModel::HTTP::stream('/runcorn_reports/assessments', {
+          :from_date => params[:from_date],
+          :to_date => params[:to_date],
+        }) do |response|
+          response.read_body do |chunk|
+            stream << chunk
+          end
+        end
+      end
+    when 'conservation_requests_report'
+      self.response_body = Enumerator.new do |stream|
+        JSONModel::HTTP::stream('/runcorn_reports/conservation_requests', {
+          :from_date => params[:from_date],
+          :to_date => params[:to_date],
+        }) do |response|
+          response.read_body do |chunk|
+            stream << chunk
+          end
+        end
+      end
+    when 'conservation_treatments_report'
+      self.response_body = Enumerator.new do |stream|
+        JSONModel::HTTP::stream('/runcorn_reports/conservation_treatments', {
+          :from_date => params[:from_date],
+          :to_date => params[:to_date],
+        }) do |response|
+          response.read_body do |chunk|
+            stream << chunk
+          end
+        end
+      end
     else
       raise "Report not supported: #{params[:report]}"
     end

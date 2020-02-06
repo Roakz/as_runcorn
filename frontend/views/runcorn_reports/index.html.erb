@@ -7,6 +7,9 @@
           <label for="report">Report</label>
           <select name="report" class="form-control" id="report">
             <option value="archives_search_user_activity">Archives Search User Activity</option>
+            <option value="assessments_report">Assessments</option>
+            <option value="conservation_requests_report">Conservation Requests</option>
+            <option value="conservation_treatments_report">Conservation Treatments</option>
             <option value="agency_loans_report">File Issue and Loans</option>
             <option value="file_issue_invoices">File Issue Invoices</option>
             <option value="agency_transfer_proposals_report">Transfer Proposals</option>
@@ -69,7 +72,10 @@
     file_issue_invoices: ['agency_ref', 'agency_location', 'from_date', 'to_date'],
     agency_transfer_proposals_report: ['from_date', 'to_date'],
     agency_transfers_report: ['from_date', 'to_date'],
-  }
+    assessments_report: ['from_date', 'to_date'],
+    conservation_requests_report: ['from_date', 'to_date'],
+    conservation_treatments_report: ['from_date', 'to_date'],
+  };
 
   $(function() {
     $('.linker:not(.initialised)').linker();

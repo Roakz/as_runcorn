@@ -17,6 +17,7 @@
     <% end %>
 
     <%= form.hidden_input "treatment_batch_id" %>
+    <%= form.hidden_input "persistent_create_time" %>
 
     <%= form.label_and_textarea "treatment_process", {:field_opts => {:clean => true, :escape => false}} %>
 
@@ -25,8 +26,6 @@
 
     <%= form.label_and_textarea "materials_used_consumables", {:field_opts => {:clean => true, :escape => false}} %>
     <%= form.label_and_textarea "materials_used_staff_time", {:field_opts => {:clean => true, :escape => false}} %>
-
-    <%= form.label_and_textarea "treatments_applied", {:field_opts => {:clean => true, :escape => false}} %>
 
     <%= form.label_and_textfield "external_reference" %>
 
@@ -115,6 +114,48 @@
         </div>
       <% end %>
     <% end %>
+    <% end %>
+
+    <hr>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <%= I18n.t('conservation_treatment.treatments_applied') %>
+      </div>
+    </div>
+
+    <% if form.readonly? %>
+      <br>
+      <div class="row">
+        <div class="col-sm-12">
+          <% if ASUtils.wrap(form.obj['treatments']).empty? %>
+            <span class="muted">No treatments applied</span>
+          <% else %>
+            <ul>
+              <% ASUtils.wrap(form.obj['treatments']).sort_by{|t| t['label']}.each do |treatment| %>
+                <li><%= treatment['label'] %></li>
+              <% end %>
+            </ul>
+          <% end %>
+        </div>
+      </div>
+    <% else %>
+      <div class="row">
+        <% formats_index = 0 %>
+        <% (@assessment_attribute_definitions.global_formats + @assessment_attribute_definitions.repo_formats).sort_by{|f| f['label']}.each do |format| %>
+          <% form.push(form.set_index("treatments[]", formats_index), ASUtils.wrap(form.obj['treatments']).find{|r| r['definition_id'] == format['id']} || {'definition_id' => format['id'], 'value' => 'false'}) do %>
+            <div class="col-md-6">
+              <div class="form-group">
+                <%= label_tag form.id_for('definition_id'), I18n.t("assessment_attribute.format.#{format.fetch('label')}", :default => format.fetch('label')), :class => 'col-sm-6 control-label' %>
+                <div class="col-sm-1 checkbox">
+                  <%= form.checkbox('definition_id', {:value => form.obj['definition_id']}, false, form.obj['value'] == 'true') %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+          <% formats_index += 1 %>
+        <% end %>
+      </div>
     <% end %>
   </div>
 <% end %>

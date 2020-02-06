@@ -125,8 +125,7 @@ class IndexerCommon
         doc['conservation_treatment_in_progress_u_sbool'] = Array(record['record']['conservation_treatments']).any?{|t| t['status'] == 'in_progress'}
 
         doc['conservation_treatments_applied_u_sstr'] = Array(record['record']['conservation_treatments'])
-          .select{|t| !!t['treatments_applied']}
-          .map{|t| t['treatments_applied'].split(/, */)}.flatten.uniq
+          .map{|ct| Array(ct['treatments']).map{|t| t['label']}}.flatten.uniq
       end
     }
 

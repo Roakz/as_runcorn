@@ -12,7 +12,10 @@
       "treatment_process" => {"type" => "string"},
       "materials_used_consumables" => {"type" => "string"},
       "materials_used_staff_time" => {"type" => "string"},
-      "treatments_applied" => {"type" => "string"},
+
+      "materials_used_staff_time" => {"type" => "string"},
+
+      "treatments" => {"type" => "array", "items" => {"type" => "JSONModel(:assessment_attribute) object"}},
 
       "external_reference" => {"type" => "string"},
 
@@ -47,6 +50,8 @@
           }
         }
       },
+
+      'persistent_create_time' => {'type' => 'date-time'}
     },
   },
 }

@@ -61,6 +61,8 @@ class ArchivesSpaceService < Sinatra::Base
         PhysicalRepresentation.generate_treatments!(params[:representation_id], assessment.id, treatment_template)
         json_response({:status => 'success', :errors => []})
       rescue
+        $stderr.puts($!.message)
+        $stderr.puts($!.backtrace)
         json_response({:status => 'error', :errors => ["Error generating treatments: #{$!}"]})
       end
     else

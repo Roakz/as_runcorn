@@ -32,12 +32,12 @@ class AssessmentsReport < RuncornReport
         base_ds = aspacedb[:assessment]
 
         if @from_date
-          from_time = @from_date.to_time.to_i * 1000
+          from_time = @from_date.to_time
           base_ds = base_ds.where { Sequel.qualify(:assessment, :create_time) >= from_time }
         end
 
         if @to_date
-          to_time = (@to_date + 1).to_time.to_i * 1000 - 1
+          to_time = (@to_date + 1).to_time - 1
           base_ds = base_ds.where { Sequel.qualify(:assessment, :create_time) <= to_time }
         end
 

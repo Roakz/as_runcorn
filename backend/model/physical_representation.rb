@@ -255,6 +255,9 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
 
     now = Time.now
 
+    applied_treatments = treatment_template.fetch('treatments', [])
+    treatment_template.delete('treatments')
+
     treatment_row = {
       :treatment_batch_id => treatment_batch_id,
       :physical_representation_id => 'SETME',
@@ -267,6 +270,17 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
       :system_mtime => now,
       :user_mtime => now,
     }.merge(treatment_template)
+
+    applied_treatment_rows = applied_treatments.map do |attribute|
+      {
+        :conservation_treatment_id => 'SETME',
+        :assessment_attribute_definition_id => attribute.fetch('definition_id'),
+        :created_by => username,
+        :last_modified_by => username,
+        :system_mtime => now,
+        :user_mtime => now,
+      }
+    end
 
     user_rlshp_row = {
       :conservation_treatment_id => 'SETME',
@@ -296,6 +310,11 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
 
       treatment_row[:physical_representation_id] = representation_id
       treatment_id = db[:conservation_treatment].insert(treatment_row)
+
+      applied_treatment_rows.each do |applied_treatment_row|
+        applied_treatment_row[:conservation_treatment_id] = treatment_id
+        db[:conservation_treatment_applied_treatment].insert(applied_treatment_row)
+      end
 
       user_rlshp_row[:conservation_treatment_id] = treatment_id
       db[:conservation_treatment_user_rlshp].insert(user_rlshp_row)
