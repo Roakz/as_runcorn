@@ -51,6 +51,7 @@ class ConservationTreatmentsReport < RuncornReport
 
         responsible_agency_map = build_responsible_agency_map(base_ds)
         agency_qsa_ids = build_agency_qsa_id_map(aspacedb, responsible_agency_map)
+        treatments_map = build_treatments_map(base_ds)
 
         base_ds
           .left_join(:conservation_treatment_assessment_rlshp, Sequel.qualify(:conservation_treatment_assessment_rlshp, :conservation_treatment_id) => Sequel.qualify(:conservation_treatment, :id))
@@ -71,6 +72,7 @@ class ConservationTreatmentsReport < RuncornReport
               Sequel.as(Sequel.qualify(:physical_representation, :format_id), :pr_format_id),
               Sequel.as(Sequel.qualify(:archival_object, :id), :archival_object_id),
               Sequel.as(Sequel.qualify(:archival_object, :qsa_id), :controlling_record_qsa_id),
+              Sequel.as(Sequel.qualify(:conservation_treatment, :id), :conservation_treatment_id),
               Sequel.qualify(:conservation_treatment, :status),
               Sequel.qualify(:conservation_treatment, :treatment_process),
               Sequel.qualify(:conservation_treatment, :materials_used_consumables),
@@ -96,8 +98,8 @@ class ConservationTreatmentsReport < RuncornReport
             BackendEnumSource.value_for_id('runcorn_format', row[:pr_format_id]),
             row[:status].gsub('_', ' '),
             row[:treatment_process],
-            row[:treatments_applied],
-            row[:treatments_applied] ? row[:treatments_applied].split(',').reject{|s| s.strip.empty?}.length : 0,
+            (treatments = treatments_map.fetch(row[:conservation_treatment_id], nil)) ? treatments.sort.join(', ') : treatments,
+            treatments_map.fetch(row[:conservation_treatment_id], []).length,
             row[:materials_used_consumables],
             row[:materials_used_staff_time],
             row[:date_required_by],
@@ -141,5 +143,21 @@ class ConservationTreatmentsReport < RuncornReport
       .map do |row|
       [row[:id], QSAId.prefixed_id_for(AgentCorporateEntity, row[:qsa_id])]
     end.to_h
+  end
+
+  def build_treatments_map(base_ds)
+    result = {}
+
+    base_ds
+      .join(:conservation_treatment_applied_treatment, Sequel.qualify(:conservation_treatment_applied_treatment, :conservation_treatment_id) => Sequel.qualify(:conservation_treatment, :id))
+      .join(:assessment_attribute_definition, Sequel.qualify(:assessment_attribute_definition, :id) => Sequel.qualify(:conservation_treatment_applied_treatment, :assessment_attribute_definition_id))
+      .select(Sequel.qualify(:conservation_treatment, :id),
+              Sequel.qualify(:assessment_attribute_definition, :label))
+      .map do |row|
+      result[row[:id]] ||= []
+      result[row[:id]] << row[:label]
+    end
+
+    result
   end
 end
