@@ -1,31 +1,37 @@
 ASpaceGems.setup if defined? ASpaceGems
 
-gem "aws-sdk-s3"
+# If you change these, you may want to rm -rf ./local_gems/ and rerun
+# bootstrap.sh to pull down your updated versions.
+local_gems = [
+  {
+    gem: "xlsx_streaming_reader",
+    url: "https://github.com/hudmol/xlsx_streaming_reader.git",
+    ref: "tags/qa",
+  },
+]
 
-if ENV['RELEASE_BRANCH']
-  branch = ENV['RELEASE_BRANCH']
-  $stderr.puts("Building with xlsx_streaming_reader=#{branch}")
 
-  gem "xlsx_streaming_reader", git: "https://github.com/hudmol/xlsx_streaming_reader.git", branch: branch
-else
-  xlsx_streaming_reader_ref = nil
+local_gems_path = File.join(File.dirname(__FILE__), "local_gems")
 
-  gemfile_lock = Bundler::LockfileParser.new(Bundler.read_file(Bundler.default_lockfile))
-  gemfile_lock.sources.each do |src|
-    next unless src.is_a?(Bundler::Source::Git)
+FileUtils.mkdir_p(local_gems_path)
 
-    if src.name == 'xlsx_streaming_reader'
-      xlsx_streaming_reader_ref = src.ref
-    end
+local_gems.each do |gem|
+  checkout_dir = File.join(local_gems_path, gem.fetch(:gem))
+
+  # If the gem hasn't been checked out to local_gems/, grab a copy now.
+  unless Dir.exist?(checkout_dir)
+    system("git", "clone", gem.fetch(:url), checkout_dir)
+    system("git", "-C", checkout_dir, "reset", "--hard", gem.fetch(:ref))
   end
 
-  # If we're running without an explicit branch set, just figure out what
-  # version is meant to be loaded by looking at Gemfile.lock.
-  if xlsx_streaming_reader_ref
-    $stderr.puts("xlsx_streaming_reader=#{xlsx_streaming_reader_ref}")
-    gem "xlsx_streaming_reader", git: "https://github.com/hudmol/xlsx_streaming_reader.git", branch: xlsx_streaming_reader_ref
-  else
-    raise "Please set the RELEASE_BRANCH environment variable to `qa` or `master` " +
-          "to select which versions of xlsx_streaming_reader to build with"
-  end
+  # Add to load path
+  $LOAD_PATH << File.join(checkout_dir, 'lib')
 end
+
+# Require dependencies
+local_gems.each do |gem|
+  require gem.fetch(:gem)
+end
+
+
+gem "aws-sdk-s3"
