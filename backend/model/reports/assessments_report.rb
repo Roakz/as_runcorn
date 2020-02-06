@@ -17,7 +17,7 @@ class AssessmentsReport < RuncornReport
     tempfile = Tempfile.new('AssessmentsReport')
 
     CSV.open(tempfile, 'w') do |csv|
-      csv << ['Assessement ID (AS)',
+      csv << ['Assessment ID (AS)',
               'Series ID (S)/Title',
               'Status',
               'Survey Start',

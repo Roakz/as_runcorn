@@ -18,12 +18,12 @@ class ConservationTreatmentsReport < RuncornReport
 
     CSV.open(tempfile, 'w') do |csv|
       csv << ['Conservation Requests (CR)',
-              'Assessement ID (AS)',
+              'Assessment ID (AS)',
               'Agency ID (A)',
               'Series ID (S)',
               'Series Title',
               'Record ID (ITM)',
-              'Physcial Reperesentation ID (PR)',
+              'Physical Representation ID (PR)',
               'Format',
               'Status',
               'Treatment Process',
@@ -49,7 +49,7 @@ class ConservationTreatmentsReport < RuncornReport
           base_ds = base_ds.where { Sequel.qualify(:conservation_treatment, :create_time) <= to_time }
         end
 
-        responsible_agency_map = build_responsible_agency(base_ds)
+        responsible_agency_map = build_responsible_agency_map(base_ds)
         agency_qsa_ids = build_agency_qsa_id_map(aspacedb, responsible_agency_map)
 
         base_ds
@@ -115,17 +115,12 @@ class ConservationTreatmentsReport < RuncornReport
     tempfile
   end
 
-  def build_responsible_agency(base_ds)
+  def build_responsible_agency_map(base_ds)
     result = {}
 
     repo_id = base_ds
                 .join(:physical_representation, Sequel.qualify(:physical_representation, :id) => Sequel.qualify(:conservation_treatment, :physical_representation_id))
                 .select(:repo_id).first[:repo_id]
-
-    controlling_record_ids = base_ds
-                              .join(:physical_representation, Sequel.qualify(:physical_representation, :id) => Sequel.qualify(:conservation_treatment, :physical_representation_id))
-                              .select(Sequel.qualify(:physical_representation, :archival_object_id))
-                              .map{|row| row[:archival_object_id]}.uniq
 
     RequestContext.open(:repo_id => repo_id) do
       ArchivalObject
