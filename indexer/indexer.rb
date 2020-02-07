@@ -217,8 +217,13 @@ class IndexerCommon
       end
 
       if record['record']['date_of_request']
-        doc['date_start_u_ssort'] = record['record']['date_of_request']
+        doc['date_start_u_ssort'] = (parsed = DateParse.date_parse_down(record['record']['date_of_request'])) ? parsed.iso8601 : nil
         doc['date_start_u_sstr'] = record['record']['date_of_request']
+      end
+
+      if record['record']['date_required_by']
+        doc['date_end_u_ssort'] = (parsed = DateParse.date_parse_up(record['record']['date_required_by'])) ? parsed.iso8601 : nil
+        doc['date_end_u_sstr'] = record['record']['date_required_by']
       end
     end
 
