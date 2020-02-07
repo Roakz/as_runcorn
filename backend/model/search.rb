@@ -175,9 +175,19 @@ class Search
           json['type']
         end
       elsif doc['primary_type'] == 'file_issue_request'
-        nil # FIXME
+        types = []
+        types << 'Physical' if json['physical_request_status'] != 'NONE_REQUESTED'
+        types << 'Digital' if json['digital_request_status'] != 'NONE_REQUESTED'
+
+        if type.length > 0
+          '%s %s' % [types.join('/'), 'File Issue Request']
+        end
       elsif doc['primary_type'] == 'file_issue'
-        nil # FIXME json['issue_type']?
+        if json['issue_type'] == 'PHYSICAL'
+          'Physical File Issue'
+        else
+          'Digital File Issue'
+        end
       elsif doc['primary_type'] == 'transfer_proposal'
         if Array(json['series']).length > 0
           Array(json['series']).map{|series| series['composition']}.flatten.uniq.sort.join('/')
