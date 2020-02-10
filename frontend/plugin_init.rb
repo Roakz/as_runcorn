@@ -309,7 +309,12 @@ Rails.application.config.after_initialize do
 
     alias :as_runcorn_render_orig :render
     def render(*args, &block)
-      @show_multiselect_column = true
+      if params[:linker] === 'true'
+        @show_multiselect_column = false
+      else
+        @show_multiselect_column = true
+      end
+
       @display_context = false
       @show_search_result_identifier_column = false
       @display_identifier = false
