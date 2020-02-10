@@ -5,8 +5,6 @@ ArchivalObjectsController.class_eval do
 
   alias :new_pre_as_runcorn :new
   def new
-    @assessment_attribute_definitions = AssessmentAttributeDefinitions.find(nil)
-
     if inline? && params[:clone_from_uri]
       parsed_uri = JSONModel.parse_reference(params[:clone_from_uri])
 
@@ -36,24 +34,6 @@ ArchivalObjectsController.class_eval do
     else
       new_pre_as_runcorn
     end
-  end
-
-  alias :create_pre_as_runcorn :create
-  def create
-    @assessment_attribute_definitions = AssessmentAttributeDefinitions.find(nil)
-    create_pre_as_runcorn
-  end
-
-  alias :edit_pre_as_runcorn :edit
-  def edit
-    @assessment_attribute_definitions = AssessmentAttributeDefinitions.find(nil)
-    edit_pre_as_runcorn
-  end
-
-  alias :update_pre_as_runcorn :update
-  def update
-    @assessment_attribute_definitions = AssessmentAttributeDefinitions.find(nil)
-    update_pre_as_runcorn
   end
 
   def index

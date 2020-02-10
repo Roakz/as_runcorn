@@ -1,3 +1,14 @@
+<%
+  # The conservation treatment form mimics the checkboxes from the assessment
+  # form for formats/treatments.  As such, whereever we show this form, we need
+  # to first grab all of these definitions.
+  #
+  # Instead of aliasing all controllers that may possibly use this template, I
+  # grab these definitions on demand (yep, it's a backend API call with a bunch
+  # of SQL no doubt).  She'll be right.
+  @assessment_attribute_definitions ||= AssessmentAttributeDefinitions.find(nil)
+%>
+
 <% define_template "conservation_treatment", jsonmodel_definition(:conservation_treatment) do |form| %>
   <div class="subrecord-form-fields">
 
@@ -116,46 +127,48 @@
     <% end %>
     <% end %>
 
-    <hr>
+    <hr/>
 
-    <div class="row">
-      <div class="col-sm-12">
-        <%= I18n.t('conservation_treatment.treatments_applied') %>
-      </div>
-    </div>
-
-    <% if form.readonly? %>
-      <br>
+    <div class="subrecord-form-container">
       <div class="row">
-        <div class="col-sm-12">
-          <% if ASUtils.wrap(form.obj['treatments']).empty? %>
-            <span class="muted">No treatments applied</span>
-          <% else %>
-            <ul>
-              <% ASUtils.wrap(form.obj['treatments']).sort_by{|t| t['label']}.each do |treatment| %>
-                <li><%= treatment['label'] %></li>
-              <% end %>
-            </ul>
-          <% end %>
+        <div class="col-sm-2 text-right">
+          <%= I18n.t('conservation_treatment.treatments_applied') %>
         </div>
       </div>
-    <% else %>
-      <div class="row">
-        <% formats_index = 0 %>
-        <% (@assessment_attribute_definitions.global_formats + @assessment_attribute_definitions.repo_formats).sort_by{|f| f['label']}.each do |format| %>
-          <% form.push(form.set_index("treatments[]", formats_index), ASUtils.wrap(form.obj['treatments']).find{|r| r['definition_id'] == format['id']} || {'definition_id' => format['id'], 'value' => 'false'}) do %>
-            <div class="col-md-6">
-              <div class="form-group">
-                <%= label_tag form.id_for('definition_id'), I18n.t("assessment_attribute.format.#{format.fetch('label')}", :default => format.fetch('label')), :class => 'col-sm-6 control-label' %>
-                <div class="col-sm-1 checkbox">
-                  <%= form.checkbox('definition_id', {:value => form.obj['definition_id']}, false, form.obj['value'] == 'true') %>
+
+      <% if form.readonly? %>
+        <br>
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-2">
+            <% if ASUtils.wrap(form.obj['treatments']).empty? %>
+              <span class="muted">No treatments applied</span>
+            <% else %>
+              <ul>
+                <% ASUtils.wrap(form.obj['treatments']).sort_by{|t| t['label']}.each do |treatment| %>
+                  <li><%= treatment['label'] %></li>
+                <% end %>
+              </ul>
+            <% end %>
+          </div>
+        </div>
+      <% else %>
+        <div class="row">
+          <% formats_index = 0 %>
+          <% (@assessment_attribute_definitions.global_formats + @assessment_attribute_definitions.repo_formats).sort_by{|f| f['label']}.each do |format| %>
+            <% form.push(form.set_index("treatments[]", formats_index), ASUtils.wrap(form.obj['treatments']).find{|r| r['definition_id'] == format['id']} || {'definition_id' => format['id'], 'value' => 'false'}) do %>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <%= label_tag form.id_for('definition_id'), I18n.t("assessment_attribute.format.#{format.fetch('label')}", :default => format.fetch('label')), :class => 'col-sm-6 control-label' %>
+                  <div class="col-sm-1 checkbox">
+                    <%= form.checkbox('definition_id', {:value => form.obj['definition_id']}, false, form.obj['value'] == 'true') %>
+                  </div>
                 </div>
               </div>
-            </div>
+            <% end %>
+            <% formats_index += 1 %>
           <% end %>
-          <% formats_index += 1 %>
-        <% end %>
-      </div>
-    <% end %>
+        </div>
+      <% end %>
+    </div>
   </div>
 <% end %>
