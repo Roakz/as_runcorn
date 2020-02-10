@@ -7,7 +7,7 @@ class Search
     criteria.delete(:modified_since)
     criteria[:dt] = "json"
     criteria[:page] = 1
-    criteria[:page_size] = 500
+    criteria[:page_size] = 50
 
     tempfile = Tempfile.new('SearchExport')
 
@@ -41,7 +41,7 @@ class Search
         'Disposal Class',
         'Home Location',
         'Current Location',
-        'Availiability',
+        'Availability',
         'Status',
         'Colour',
         'File Size',
@@ -293,18 +293,23 @@ class Search
     end
 
     def agency_control_number
+      nil # FIXME
     end
 
     def previous_system_location
+      nil # FIXME
     end
 
     def disposal_class
+      nil # FIXME
     end
 
     def home_location
+      nil # FIXME
     end
 
     def current_location
+      nil # FIXME
     end
 
     def availability
