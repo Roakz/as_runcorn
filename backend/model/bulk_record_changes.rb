@@ -1,5 +1,3 @@
-# FIXME: enforce required fields upfront.  Will need this for ID columns if nothing else.
-
 class BulkRecordChanges
 
   extend JSONModel
@@ -127,8 +125,6 @@ class BulkRecordChanges
               end
             end
           rescue JSONModel::ValidationException => validation_errors
-            # FIXME: DB-level validation errors?
-
             # Validation errors either correspond to the AO or one of the
             # representation rows.  We need to do some footwork to work out
             # which it is.
@@ -183,7 +179,7 @@ class BulkRecordChanges
         # had.
 
         physical_representation_rows = [:placeholder_for_existing_rep] * ao_json.physical_representations.length
-        digital_representation_rows = [:placeholder_for_existing_rep] * ao_json.digital_representations.length 
+        digital_representation_rows = [:placeholder_for_existing_rep] * ao_json.digital_representations.length
 
         # Slot in our new representations
         representations.each do |representation|
@@ -221,12 +217,19 @@ class BulkRecordChanges
         @pending_records -= representations
       end
 
-      if errors.length > 0
-        raise BulkUpdateFailed.new(errors)
+      unless @pending_records.empty?
+        @pending_records.each do |pending|
+          errors << {
+            sheet: CREATE_SHEET_NAME,
+            row: pending.row.row_number,
+            column: COLUMN_PARENT.heading,
+            errors: ["record parent could not be created. Please check that your parent references exist and don't make a loop!"],
+          }
+        end
       end
 
-      unless @pending_records.empty?
-        raise "FIXME: Cycle detected in #{@pending_records.pretty_inspect}"
+      if errors.length > 0
+        raise BulkUpdateFailed.new(errors)
       end
     end
 
@@ -314,6 +317,8 @@ class BulkRecordChanges
                                            [ao_row, json_property]
                                          end
 
+            # FIXME: what if target_row is nil due to an existing record being messed up?
+
             errors << {
               sheet: UPDATE_SHEET_NAME,
               json_property: json_property,
@@ -366,7 +371,6 @@ class BulkRecordChanges
     end
 
     def fulfil_promises
-
       # Map QSAIDs to AO URIs (QSAID -> AO)
       qsa_ids = @promise_groups.fetch(:ao).keys.map(&:qsa_id_number).compact
 
@@ -473,9 +477,224 @@ class BulkRecordChanges
 
 
   def self.run(filename)
+    check_sheet(filename)
+
     handle_creates(filename)
     handle_updates(filename)
   end
+
+  def self.check_sheet(filename)
+    errors = []
+
+    rules = {
+      COLUMN_PARENT => {required: ['ITM', 'PR', 'DR']},
+      COLUMN_TITLE => {required: ['ITM', 'PR', 'DR']},
+      COLUMN_FORMAT => {required: ['PR', 'DR']},
+      COLUMN_START_DATE => {required: ['ITM']},
+      COLUMN_START_DATE_QUALIFIER => {optional: ['ITM']},
+      COLUMN_END_DATE => {optional: ['ITM']},
+      COLUMN_END_DATE_QUALIFIER => {optional: ['ITM']},
+      COLUMN_AGENCY_CONTROL_NUMBER => {optional: ['ITM', 'PR', 'DR']},
+      COLUMN_BOX_NUMBER => {required: ['PR']},
+      COLUMN_CONTAINED_WITHIN => {required: ['PR', 'DR']},
+      COLUMN_SENSITIVITY_LABEL => {optional: ['ITM']},
+      COLUMN_TRANSFER_ID => {optional: ['ITM', 'PR', 'DR']},
+      COLUMN_PREVIOUS_SYSTEM_ID => {optional: ['ITM', 'PR', 'DR']},
+      COLUMN_SIGNIFICANCE => {optional: ['ITM', 'PR', 'DR']},
+      COLUMN_INHERIT_SIGNIFICANCE => {optional: ['ITM', 'PR', 'DR']},
+      COLUMN_COPYRIGHT_STATUS => {optional: ['ITM']},
+      COLUMN_SUBJECTS => {optional: ['ITM']},
+      COLUMN_REMARKS => {optional: ['ITM', 'PR', 'DR']},
+    }
+
+    ## Check create sheet
+    rows_by_transfer_id = {}
+
+    each_row(filename, CREATE_SHEET_NAME) do |row|
+      next if row.empty?
+
+      record_type = row.fetch(COLUMN_CREATE_RECORD_TYPE)
+
+      if record_type.nil?
+        errors << {
+          sheet: CREATE_SHEET_NAME,
+          row: row.row_number,
+          column: COLUMN_CREATE_RECORD_TYPE.heading,
+          errors: ["must specify the type of record to create (ITM, PR, DR)"],
+        }
+
+        next
+      end
+
+      errors.concat(check_against_rules(row, rules, record_type, CREATE_SHEET_NAME))
+
+      if transfer_id = row.fetch(COLUMN_TRANSFER_ID)
+        rows_by_transfer_id[transfer_id] ||= []
+        rows_by_transfer_id[transfer_id] << row
+      end
+    end
+
+    errors.concat(check_qsa_ids(filename, COLUMN_PARENT, CREATE_SHEET_NAME))
+
+    # Check transfer IDs
+    MAPDB.open do |mapdb|
+      existing_transfer_ids = mapdb[:transfer].filter(:id => rows_by_transfer_id.keys.map(&:to_i)).select(:id).map {|row| row[:id]}
+
+      missing_transfer_ids = rows_by_transfer_id.keys.reject {|k|
+        i = k.to_i
+        i > 0 && existing_transfer_ids.include?(i)
+      }
+
+      missing_transfer_ids.each do |missing_id|
+        rows_by_transfer_id.fetch(missing_id, []).each do |row|
+          errors << {
+            sheet: CREATE_SHEET_NAME,
+            row: row.row_number,
+            column: COLUMN_TRANSFER_ID.heading,
+            errors: ["transfer ID could not be found"],
+          }
+        end
+      end
+    end
+
+    ## Check update sheet
+    utter_update_failure = false
+
+    update_rules = rules.map {|column, rules|
+      rules = rules.clone
+
+      rules[:optional] ||= []
+      rules[:optional].concat(Array(rules[:required]))
+      rules.delete(:required)
+      [column, rules]
+    }.to_h
+
+    each_row(filename, UPDATE_SHEET_NAME) do |row|
+      next if row.empty?
+
+      record_type = row.fetch(COLUMN_UPDATE_ID)
+
+      if record_type.nil?
+        errors << {
+          sheet: UPDATE_SHEET_NAME,
+          row: row.row_number,
+          column: COLUMN_UPDATE_ID.heading,
+          errors: ["record to update must be specified"],
+        }
+
+        utter_update_failure = true
+        next
+      elsif !['ITM', 'PR', 'DR'].include?(IDRef.new(record_type).prefix)
+        errors << {
+          sheet: UPDATE_SHEET_NAME,
+          row: row.row_number,
+          column: COLUMN_UPDATE_ID.heading,
+          errors: ["record type not supported for update"],
+        }
+
+        utter_update_failure = true
+        next
+      end
+
+      unless utter_update_failure
+        errors.concat(check_against_rules(row, update_rules, IDRef.new(record_type).prefix, UPDATE_SHEET_NAME))
+      end
+    end
+
+    unless utter_update_failure
+      errors.concat(check_qsa_ids(filename, COLUMN_UPDATE_ID, UPDATE_SHEET_NAME))
+    end
+
+    ## Freak out!
+    unless errors.empty?
+      raise BulkUpdateFailed.new(errors)
+    end
+  end
+
+
+  def self.check_qsa_ids(filename, column, sheet_name)
+    rows_by_record_id = {}
+
+    each_row(filename, sheet_name) do |row|
+      if record_id = row.fetch(column)
+        record_id = IDRef.new(record_id)
+
+        if record_id.qsa_id_number
+          rows_by_record_id[record_id] ||= []
+          rows_by_record_id[record_id] << row
+        end
+      end
+    end
+
+    missing_qsa_ids = []
+
+    rows_by_record_id.keys.group_by(&:prefix).each do |record_type, qsa_idrefs|
+      case record_type
+      when 'ITM'
+        found_qsa_ids = ArchivalObject.filter(:qsa_id => qsa_idrefs.map(&:qsa_id_number)).select(:qsa_id).map {|row| row[:qsa_id]}
+        missing_qsa_ids.concat(qsa_idrefs.reject {|id| found_qsa_ids.include?(id.qsa_id_number) })
+      when 'PR'
+        found_qsa_ids = PhysicalRepresentation.filter(:qsa_id => qsa_idrefs.map(&:qsa_id_number)).select(:qsa_id).map {|row| row[:qsa_id]}
+        missing_qsa_ids.concat(qsa_idrefs.reject {|id| found_qsa_ids.include?(id.qsa_id_number) })
+      when 'DR'
+        found_qsa_ids = DigitalRepresentation.filter(:qsa_id => qsa_idrefs.map(&:qsa_id_number)).select(:qsa_id).map {|row| row[:qsa_id]}
+        missing_qsa_ids.concat(qsa_idrefs.reject {|id| found_qsa_ids.include?(id.qsa_id_number) })
+      else
+        # Not a supported type
+        missing_qsa_ids.concat(qsa_idrefs)
+      end
+    end
+
+    errors = []
+
+    missing_qsa_ids.each do |missing_parent_qsaid|
+      rows_by_record_id.fetch(missing_parent_qsaid, []).each do |row|
+        errors << {
+          sheet: sheet_name,
+          row: row.row_number,
+          column: column.heading,
+          errors: ["referenced record could not be found"],
+        }
+      end
+    end
+
+    errors
+  end
+
+  def self.check_against_rules(row, rules, record_type, sheet_name)
+    errors = []
+
+    rules.each do |column, rule|
+      next unless row.has_heading?(column)
+
+      value = row.fetch(column)
+
+      if value.nil? && rule.fetch(:required, []).include?(record_type)
+        errors << {
+          sheet: sheet_name,
+          row: row.row_number,
+          column: column.heading,
+          errors: ["is a required field for #{record_type} record types"],
+        }
+
+        next
+      end
+
+      if value && (!rule.fetch(:required, []).include?(record_type) && !rule.fetch(:optional, []).include?(record_type))
+        errors << {
+          sheet: sheet_name,
+          row: row.row_number,
+          column: column.heading,
+          errors: ["is not a supported field for #{record_type} record types"],
+        }
+
+        next
+      end
+    end
+
+    errors
+  end
+
 
   def self.handle_creates(filename)
     batch = CreateBatch.new
@@ -589,6 +808,9 @@ class BulkRecordChanges
     record[:title] = row.fetch(COLUMN_TITLE)
     record[:description] = row.fetch(COLUMN_DESCRIPTION)
 
+    record[:publish] = false
+    record[:archivist_approved] = false
+
     record[:dates] = [{
                       :jsonmodel_type => 'date',
                       :begin => reformat_date(row.fetch(COLUMN_START_DATE)),
@@ -621,14 +843,9 @@ class BulkRecordChanges
     if remarks = row.fetch(COLUMN_REMARKS)
       record[:notes] = [
         {
-          'jsonmodel_type' => 'note_multipart',
-          'type' => 'odd',
-          'subnotes' => [
-            {
-              'content' => remarks,
-              'jsonmodel_type' => 'note_text',
-            }
-          ]
+          'jsonmodel_type' => 'note_singlepart',
+          'type' => 'remarks',
+          'content' => [remarks],
         }
       ]
     end
@@ -662,6 +879,9 @@ class BulkRecordChanges
     record[:title] = row.fetch(COLUMN_TITLE)
     record[:description] = row.fetch(COLUMN_DESCRIPTION)
     record[:format] = row.fetch(COLUMN_FORMAT)
+
+    record[:publish] = false
+    record[:archivist_approved] = false
 
     if row.fetch(COLUMN_BOX_NUMBER)
       record[:container] = batch.promise_for(:top_container, row.fetch(COLUMN_BOX_NUMBER), row)
@@ -703,6 +923,9 @@ class BulkRecordChanges
 
     record[:title] = row.fetch(COLUMN_TITLE)
     record[:description] = row.fetch(COLUMN_DESCRIPTION)
+
+    record[:publish] = false
+    record[:archivist_approved] = false
 
     record[:contained_within] = row.fetch(COLUMN_CONTAINED_WITHIN)
 

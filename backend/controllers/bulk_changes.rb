@@ -1,3 +1,5 @@
+require 'pp'
+
 class ArchivesSpaceService < Sinatra::Base
   Endpoint.post('/repositories/:repo_id/bulk_record_changes')
     .description("FIXME")
@@ -15,7 +17,8 @@ class ArchivesSpaceService < Sinatra::Base
 
       json_response({})
     rescue BulkRecordChanges::BulkUpdateFailed => errors
-      json_response(errors.to_json)
+      Log.error("Failure in bulk update:\n#{errors.to_json.pretty_inspect}")
+      json_response(errors.to_json, 400)
     end
   end
 end
