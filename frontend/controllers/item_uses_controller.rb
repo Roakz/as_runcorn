@@ -24,8 +24,7 @@ class ItemUsesController < ApplicationController
         search_params["facet[]"] = ITEM_USE_FACETS
         search_params["type[]"] = "item_use"
         search_params["sort"] = "user_mtime desc"
-        uri = "/repositories/#{session[:repo_id]}/search"
-#        uri = "/repositories/#{session[:repo_id]}/item_uses/csv"
+        uri = "/repositories/#{session[:repo_id]}/item_uses/csv"
 
         Search.build_filters(search_params)
         csv_response( uri, search_params )

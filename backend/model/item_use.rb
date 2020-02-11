@@ -1,3 +1,5 @@
+require 'csv'
+
 class ItemUse < Sequel::Model(:item_use)
   include ASModel
   corresponds_to JSONModel(:item_use)
@@ -64,7 +66,61 @@ class ItemUse < Sequel::Model(:item_use)
   end
 
 
-  def self.csv(params)
+  CSV_COLUMNS = [
+                 'Representation ID',
+                 'Representation Title',
+                 'Representation Format',
+                 'Use ID',
+                 'Use Type',
+                 'Status',
+                 'Used By',
+                 'Start Date',
+                 'End Date',
+                 'Access Status',
+                 'Parent Item ID',
+                 'Series ID',
+                 'Series Name',
+                 'Date Last Conservation Assessment Completed',
+                 'Assessment ID',
+                 'Date Last Conservation Treatment Completed',
+                ]
 
+  def self.csv(params)
+    page = 1
+    params[:dt] = 'json'
+    params[:page_size] = 100
+
+    Enumerator.new do |y|
+      y << CSV_COLUMNS.to_csv
+      while true
+        params[:page] = page
+        result = Search.search(params, params[:repo_id])
+
+        puts result.pretty_inspect
+
+        y << result['results'].map{|r|
+          [
+           r['item_qsa_id_u_ssort'],
+           r['item_title_u_ssort'],
+           r['item_format_u_ssort'],
+           r['use_qsa_id_u_ssort'],
+           r['item_use_type_u_ssort'],
+           r['item_use_status_u_ssort'],
+           r['item_use_used_by_u_ssort'],
+           r['date_start_u_ssort'],
+           r['date_end_u_ssort'],
+           r['item_access_status_u_ssort'],
+           r['controlling_record_qsa_id_u_ssort'],
+           r['series_qsa_id_u_ssort'],
+           r['series_title_u_ssort'],
+           r['item_last_completed_assessment_date_u_ssort'],
+           r['item_last_completed_assessment_qsa_id_u_ssort'],
+           r['item_last_completed_treatment_date_u_ssort'],
+          ].to_csv
+        }.join('')
+        break if result['this_page'] == result['last_page']
+        page += 1
+      end
+    end
   end
 end

@@ -21,6 +21,9 @@ class IndexerCommon
   add_attribute_to_resolve('container::container_locations')
   add_attribute_to_resolve('responsible_agency')
   add_attribute_to_resolve('actions')
+  add_attribute_to_resolve('representation')
+  add_attribute_to_resolve('representation::controlling_record_series')
+  add_attribute_to_resolve('representation::assessments')
 
   def self.build_recent_agency_filter(recent_agencies)
     result = []
@@ -323,6 +326,7 @@ class IndexerCommon
     indexer.add_document_prepare_hook do |doc, record|
       if doc['primary_type'] == 'item_use'
         rep = record['record'].fetch('representation', {})
+        rep_res = rep.fetch('_resolved', {})
 
         doc['title'] = record['record']['display_string']
         doc['item_use_item_uri_u_sstr'] = rep['ref']
@@ -340,6 +344,27 @@ class IndexerCommon
         doc['date_start_u_sstr'] = record['record']['start_date']
         doc['date_end_u_ssort'] = record['record']['end_date']
         doc['date_end_u_sstr'] = record['record']['end_date']
+
+        doc['series_qsa_id_u_ssort'] = rep_res['controlling_record_series']['qsa_id_prefixed']
+        doc['series_title_u_ssort'] = rep_res['controlling_record_series']['_resolved']['title']
+        doc['controlling_record_qsa_id_u_ssort'] = rep_res['controlling_record']['qsa_id_prefixed']
+        doc['item_title_u_ssort'] = rep_res['title']
+        doc['item_format_u_ssort'] = rep_res['format']
+        doc['item_access_status_u_ssort'] = rep_res['rap_access_status']
+
+        last_assessment = rep_res.fetch('assessments', [])
+                                 .select{|a| a['_resolved']['survey_end']}
+                                 .map{|a| a['_resolved']}
+                                 .sort{|a,b| a['survey_end'] <=> b['survey_end']}.last || {}
+
+        doc['item_last_completed_assessment_date_u_ssort'] = last_assessment['survey_end']
+        doc['item_last_completed_assessment_qsa_id_u_ssort'] = last_assessment['qsa_id_prefixed']
+
+        last_treatment = rep_res.fetch('conservation_treatments', [])
+                                .select{|t| t['status'] == 'completed'}
+                                .sort{|a,b| a['end_date'] <=> b['end_date']}.last || {}
+
+        doc['item_last_completed_treatment_date_u_ssort'] = last_treatment['end_date']
       end
     end
 
