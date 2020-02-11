@@ -34,7 +34,7 @@ class Search
         'RAP Publish Details?',
         'RAP is inherited?',
         'Significance',
-        'Significance Inherited?',
+        'Inherit Significance?',
         'Sensitivity Label',
         'Agency Control No.',
         'Previous System Location',
@@ -284,8 +284,14 @@ class Search
       json['significance']
     end
 
-    def significance_inherited
-      nil # FIXME
+    def inherit_significance
+      if json.has_key?('significance_is_sticky')
+        if json['significance_is_sticky']
+          'Y'
+        else
+          'N'
+        end
+      end
     end
 
     def sensitivity_label
@@ -293,23 +299,23 @@ class Search
     end
 
     def agency_control_number
-      nil # FIXME
+      json['agency_assigned_id']
     end
 
-    def previous_system_location
-      nil # FIXME
+    def previous_system_identifier
+      json['previous_system_identifiers']
     end
 
     def disposal_class
-      nil # FIXME
+      json['disposal_class']
     end
 
     def home_location
-      nil # FIXME
+      Array(doc['top_container_home_location_u_sstr']).first
     end
 
     def current_location
-      nil # FIXME
+      Array(doc['current_location_u_sstr']).first
     end
 
     def availability
@@ -507,10 +513,10 @@ class Search
         rap_publish_details,
         rap_is_inherited,
         significance,
-        significance_inherited,
+        inherit_significance,
         sensitivity_label,
         agency_control_number,
-        previous_system_location,
+        previous_system_identifier,
         disposal_class,
         home_location,
         current_location,
