@@ -40,7 +40,7 @@ class RuncornNotifications
       ]
     elsif row[:file_issue_id]
       [
-          QSAId.prefixed_id_for(FileIssue, row[:file_issue_id]),
+          '%s%s%d' % [QSAId.prefix_for(FileIssue), row[:issue_type][0].upcase, row[:file_issue_id]],
           JSONModel::JSONModel(:file_issue).uri_for(row[:file_issue_id]),
           :manage_file_issues,
       ]
@@ -77,11 +77,14 @@ class RuncornNotifications
       from_time = @from_date.to_time.to_i * 1000
       mapdb[:conversation]
         .join(:handle, Sequel.qualify(:handle, :id) => Sequel.qualify(:conversation, :handle_id))
-        .filter(Sequel.|({ :source_system => 'ARCHIVES_GATEWAY' },
-                         Sequel.&({ :source_system => 'ARCHIVESSPACE' },
-                                  Sequel.~(:created_by => current_username))))
-        .where{ create_time >= from_time }
-        .order(Sequel.desc(:create_time))
+        .left_join(:file_issue, Sequel.qualify(:handle, :file_issue_id) => Sequel.qualify(:file_issue, :id))
+        .filter(Sequel.|({ Sequel.qualify(:conversation, :source_system) => 'ARCHIVES_GATEWAY' },
+                         Sequel.&({ Sequel.qualify(:conversation, :source_system) => 'ARCHIVESSPACE' },
+                                  Sequel.~(Sequel.qualify(:conversation, :created_by) => current_username))))
+        .where{ Sequel.qualify(:conversation, :create_time) >= from_time }
+        .order(Sequel.desc(Sequel.qualify(:conversation, :create_time)))
+        .select_all(:conversation, :handle)
+        .select_append(Sequel.qualify(:file_issue, :issue_type))
         .map do |row|
           qsa_id, uri, required_permission = parse_record_from_row(row)
 
