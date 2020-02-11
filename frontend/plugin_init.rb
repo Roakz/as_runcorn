@@ -325,7 +325,11 @@ Rails.application.config.after_initialize do
          proc { |record|
            record['_json_parsed_'] ||= ASUtils.json_parse(record['json'])
            # show the QSA ID or just the ID if no QSA ID
-           record['_json_parsed_']['qsa_id_prefixed'] || JSONModel(record['_json_parsed_']['jsonmodel_type'].intern).id_for(record['id']).to_s
+           if record['_json_parsed_']['qsa_id_prefixed']
+             QSAIdHelper.id(record['_json_parsed_']['qsa_id_prefixed'])
+           else
+             JSONModel(record['_json_parsed_']['jsonmodel_type'].intern).id_for(record['id']).to_s
+           end
          }, :sortable => true, :sort_by => 'qsa_id_u_sort')
 
       add_column('Title',
