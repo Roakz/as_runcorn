@@ -125,6 +125,10 @@
             "type" => "string",
             "readonly" => "true"
           },
+          "inherited" => {
+            "type" => "boolean",
+            "readonly" => "true"
+          },
           "_resolved" => {
             "type" => "object",
             "readonly" => "true"

@@ -395,11 +395,11 @@ class Search
     end
 
     def responsible_agency_inherited
-      if doc['primary_type'] == 'archival_object'
-        if Array(json['series_system_agent_relationships']).any?{|rlshp| rlshp['relationship_id'] == json['responsible_agency']['relationship_id']}
-          'N'
-        else
+      if ['physical_representation', 'digital_representation','archival_object'].include?(doc['primary_type'])
+        if !!json.dig('responsible_agency', 'inherited')
           'Y'
+        else
+          'N'
         end
       end
     end
