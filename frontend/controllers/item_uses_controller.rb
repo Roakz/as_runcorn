@@ -27,7 +27,7 @@ class ItemUsesController < ApplicationController
         uri = "/repositories/#{session[:repo_id]}/item_uses/csv"
 
         Search.build_filters(search_params)
-        csv_response(uri, search_params)
+        csv_response(uri, search_params, 'item_uses_')
       }
     end
   end
