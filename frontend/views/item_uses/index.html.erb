@@ -45,9 +45,34 @@
 
 %>
 
-<div class="row">
+<div class="row item-use-content">
   <div class="col-md-3">
     <div class="sidebar">
+      <h3>Date Range</h3>
+
+      From:
+      <input class="form-control date-field" type="text" name="date_range_start" value="<%= params['date_range_start'] %>"
+             data-format="yyyy-mm-dd"
+             data-date="<%= params['date_range_start'] %>"
+             data-autoclose="true"
+             data-force-parse="true">
+
+      To:  
+      <input class="form-control date-field" type="text" name="date_range_end" value="<%= params['date_range_end'] %>"
+             data-format="yyyy-mm-dd"
+             data-date="<%= params['date_range_end'] %>"
+             data-autoclose="true"
+             data-force-parse="true">
+
+      <div style="margin-top:10px;margin-bottom:20px">
+        <a href="javascript:void(0);" class="btn btn-default pull-left" id="item-use-clear-dates">Clear dates</a>
+        <%= link_to 'Apply range', build_search_params, :class => 'btn btn-default pull-right' %>
+      </div>
+
+      <div class="clearfix"></div>
+
+      <h3>Filter</h3>
+
       <%= render_aspace_partial :partial => "search/filter" %>
 
       <%
@@ -81,7 +106,7 @@
           <% values.each do |value| %>
             <li>
               <%= link_to (filter == 'item_use_used_by_u_ssort' ? value.sub(/\s*\<.+\>$/, '') : value),
-                          build_search_params({}).merge("filter_term[]" => {filter => value}.to_json) %>
+                          build_search_params.merge("filter_term[]" => {filter => value}.to_json) %>
             </li>
           <% end %>
         </ul>
@@ -91,7 +116,9 @@
   <div class="col-md-9">
     <div class="record-toolbar">
       <div class="btn-group pull-right">
-        <%= link_to I18n.t("actions.export_csv"), request.parameters.merge({:format => :csv}), id: "searchExport",  class:  "btn btn-sm btn-info" %> 
+        <%= link_to I18n.t("actions.export_csv"),
+                    request.parameters.reject{|p,v|  p.start_with?('date_range') }.merge({:format => :csv}),
+                    id: "searchExport",  class:  "btn btn-sm btn-info" %> 
       </div>
       <br style="clear:both" />
     </div>
@@ -107,3 +134,40 @@
     </div>
   </div>
 </div>
+
+<script>
+  $(function() {
+    $('.item-use-content form[action*=item_uses] button').on('click', function(e) {
+      var date_range_start = $('input[name=date_range_start]').val();
+      var date_range_end = $('input[name=date_range_end]').val();
+
+      $form = $(this).closest('form');
+
+      if (date_range_start) {
+        $form.append('<input type="hidden" name="date_range_start" value="' + date_range_start + '">');
+      }
+
+      if (date_range_end) {
+        $form.append('<input type="hidden" name="date_range_start" value="' + date_range_end + '">');
+      }
+    });
+
+    $('.item-use-content a[href*=item_uses]').on('click', function(e) {
+      var date_range_start = $('input[name=date_range_start]').val();
+      var date_range_end = $('input[name=date_range_end]').val();
+
+      if (date_range_start) {
+        $(this).attr('href', $(this).attr('href') + '&date_range_start=' + date_range_start);
+      }
+
+      if (date_range_end) {
+        $(this).attr('href', $(this).attr('href') + '&date_range_end=' + date_range_end);
+      }
+    });
+
+    $('#item-use-clear-dates').on('click', function(e) {
+      $('input[name=date_range_start]').val('');
+      $('input[name=date_range_end]').val('');
+    });
+  });
+</script>

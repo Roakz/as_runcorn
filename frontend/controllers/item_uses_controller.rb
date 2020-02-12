@@ -17,17 +17,17 @@ class ItemUsesController < ApplicationController
                                        {
                                          "facet[]" => ITEM_USE_FACETS,
                                          "sort" => "user_mtime desc"
-                                       }.merge(params_for_backend_search))
+                                       }.merge(item_use_search_params(params_for_backend_search)))
       }
       format.csv {
-        search_params = params_for_backend_search
+        search_params = item_use_search_params(params_for_backend_search)
         search_params["facet[]"] = ITEM_USE_FACETS
         search_params["type[]"] = "item_use"
         search_params["sort"] = "user_mtime desc"
         uri = "/repositories/#{session[:repo_id]}/item_uses/csv"
 
         Search.build_filters(search_params)
-        csv_response( uri, search_params )
+        csv_response(uri, search_params)
       }
     end
   end
@@ -36,4 +36,23 @@ class ItemUsesController < ApplicationController
     item_use = JSONModel(:item_use).find(params[:id])
     redirect_to :controller => :resolver, :action => :resolve_readonly, :uri => item_use.representation['ref']
   end
+
+
+  def item_use_search_params(search_params)
+    if params['date_range_start'] || params['date_range_end']
+      date_query = {
+        'query' => {
+          'jsonmodel_type' => 'range_query',
+          'field' => 'date_start_u_ssort',
+          'from' => params[:date_range_start],
+          'to' => params[:date_range_end],
+        }
+      }
+
+      search_params['filter'] = JSONModel(:advanced_query).from_hash(date_query).to_json
+    end
+
+    search_params
+  end
+
 end
