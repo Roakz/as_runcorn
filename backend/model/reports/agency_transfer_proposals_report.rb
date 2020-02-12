@@ -53,7 +53,7 @@ class AgencyTransferProposalsReport < RuncornReport
     tempfile = Tempfile.new('AgencyTransferProposalsReport')
 
     CSV.open(tempfile, 'w') do |csv|
-      csv << ['ID (P)', 'Transfer Title', 'Transfer ID', 'Agency ID', 'Agency Title', 'Status', 'Request Date']
+      csv << ['ID (P)', 'Transfer Title', 'Transfer ID', 'Agency ID', 'Agency Title', 'Status', 'Scheduled Date']
       DB.open do |aspacedb|
         MAPDB.open do |mapdb|
           transfer_dataset(aspacedb, mapdb) do |row|
