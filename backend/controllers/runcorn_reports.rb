@@ -97,7 +97,7 @@ class ArchivesSpaceService < Sinatra::Base
   end
 
   Endpoint.get_or_post('/runcorn_reports/archives_search_user_activity')
-    .description("Report on Archives Search User Activity")
+    .description("Report on ArchivesSearch User Activity")
     .params(["from_date", String, "From date in range", :optional => true],
             ["to_date", String, "To date in range", :optional => true])
     .permissions([]) # FIXME
