@@ -12,10 +12,10 @@ class ItemUse < Sequel::Model(:item_use)
     objs.zip(jsons).each do |obj, json|
       if  obj.physical_representation_id
         rep_uri = JSONModel(:physical_representation).uri_for(obj.physical_representation_id, :repo_id => obj.repo_id)
-        rep_qsa_id =  QSAId.prefixed_id_for(PhysicalRepresentation, obj.physical_representation_id)
+        rep_qsa_id =  QSAId.prefixed_id_for(PhysicalRepresentation, PhysicalRepresentation[obj.physical_representation_id].qsa_id)
       else
         rep_uri = JSONModel(:digital_representation).uri_for(obj.digital_representation_id, :repo_id => obj.repo_id)
-        rep_qsa_id =  QSAId.prefixed_id_for(DigitalRepresentation, obj.digital_representation_id)
+        rep_qsa_id =  QSAId.prefixed_id_for(DigitalRepresentation, DigitalRepresentation[obj.digital_representation_id].qsa_id)
       end
 
       json['representation'] = {'ref' => rep_uri, 'qsa_id' => rep_qsa_id}
