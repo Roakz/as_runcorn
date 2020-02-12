@@ -42,6 +42,7 @@ class AgencyTransferProposalsReport < RuncornReport
       .select_append(Sequel.as(Sequel.qualify(:agency_location, :name), :agency_location_name))
       .select_append(Sequel.as(Sequel.qualify(:transfer, :id), :transfer_id))
       .select_append(Sequel.as(Sequel.qualify(:transfer, :date_scheduled), :transfer_date_scheduled))
+      .select_append(Sequel.as(Sequel.qualify(:transfer, :create_time), :transfer_date_approved))
       .each do |row|
       row[:agency_qsa_id] = QSAId.prefixed_id_for(AgentCorporateEntity, aspace_agency_map.fetch(row[:aspace_agency_id]).fetch(:qsa_id))
       row[:agency_name] = aspace_agency_map.fetch(row[:aspace_agency_id]).fetch(:sort_name)
@@ -53,11 +54,12 @@ class AgencyTransferProposalsReport < RuncornReport
     tempfile = Tempfile.new('AgencyTransferProposalsReport')
 
     CSV.open(tempfile, 'w') do |csv|
-      csv << ['ID (P)', 'Transfer Title', 'Transfer ID', 'Agency ID', 'Agency Title', 'Status', 'Scheduled Date']
+      csv << ['Date Submitted', 'ID (P)', 'Transfer Title', 'Transfer ID', 'Agency ID', 'Agency Title', 'Status', 'Scheduled Date', 'Date Approved']
       DB.open do |aspacedb|
         MAPDB.open do |mapdb|
           transfer_dataset(aspacedb, mapdb) do |row|
             csv << [
+              Time.at(row[:create_time] / 1000).to_date.iso8601,
               QSAId.prefixed_id_for(TransferProposal, row[:id]),
               row[:title],
               row[:transfer_id] ? QSAId.prefixed_id_for(Transfer, row[:transfer_id]) : nil,
@@ -65,6 +67,7 @@ class AgencyTransferProposalsReport < RuncornReport
               row[:agency_name],
               row[:status],
               row[:transfer_date_scheduled],
+              Time.at(row[:transfer_date_approved] / 1000).to_date.iso8601,
             ]
           end
         end
