@@ -11,6 +11,7 @@ class RuncornReportsController < ApplicationController
 
     case params[:report]
     when 'agency_loans_report'
+      self.response.headers['Content-Disposition'] = "attachment; filename=\"File Issue Statistics #{Date.today.iso8601}.csv\""
       self.response_body = Enumerator.new do |stream|
         JSONModel::HTTP::stream('/runcorn_reports/file_issues_and_loans', {
           :from_date => params[:from_date],
