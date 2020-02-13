@@ -5,7 +5,7 @@ class CsvExportRepresentations < CsvExport
       Column.new('Representation ID', proc{|record| record.id}),
       Column.new('Representation Name', proc{|record| record.title}),
       Column.new('Representation Type', proc{|record| record.type}),
-      Column.new('Format', proc{|record| record.category_format}),
+      Column.new('Format', proc{|record| record.physical_representation_format}),
       Column.new('Parent Item Start Date', proc{|record| record.start_date}),
       Column.new('Certainty', proc{|record| record.start_date_certainty}),
       Column.new('Parent Item End Date', proc{|record| record.end_date}),

@@ -155,6 +155,14 @@ class CSVExportRecord
     end
   end
 
+  def rap_years
+    if json['rap_applied']
+      json.dig('rap_applied', 'years')
+    elsif json['rap_attached']
+      json.dig('rap_attached', 'years')
+    end
+  end
+
   def rap_status
     json['rap_access_status']
   end
@@ -323,6 +331,12 @@ class CSVExportRecord
     end
   end
 
+  def number_of_other_responsible_agencies
+    if doc['primary_type'] == 'resource'
+      Array(json['other_responsible_agencies']).length
+    end
+  end
+
   def repository
     if doc['primary_type'] == 'location'
       json['building']
@@ -448,6 +462,162 @@ class CSVExportRecord
   def number_of_mandate_relationships
     if ['mandate'].include?(doc['primary_type'])
       Array(json['series_system_mandate_relationships']).length
+    end
+  end
+
+  def number_of_physical_representations
+    if doc['primary_type'] == 'resource'
+      json['physical_representations_count']
+    end
+  end
+
+  def number_of_digital_representations
+    if doc['primary_type'] == 'resource'
+      json['digital_representations_count']
+    end
+  end
+
+  def number_of_transfers_into_series
+    if doc['primary_type'] == 'resource'
+      Array(json['transfers']).length
+    end
+  end
+
+  def number_of_significant_items_mow
+    if doc['primary_type'] == 'resource'
+      json.dig('significant_representations_counts', 'memory_of_the_world') || 0
+    end
+  end
+
+  def number_of_significant_items_iconic
+    if doc['primary_type'] == 'resource'
+      json.dig('significant_representations_counts', 'iconic') || 0
+    end
+  end
+
+  def number_of_significant_items_high
+    if doc['primary_type'] == 'resource'
+      json.dig('significant_representations_counts', 'high') || 0
+    end
+  end
+
+  def archivist_approval_date
+    json['approval_date']
+  end
+
+  def archivist_approved_by
+    json.dig('approved_by', '_resolved', 'title')
+  end
+
+  def restrictions_apply
+    if json.include?('restrictions_apply')
+      json['restrictions_apply'] ? 'Y' : 'N'
+    end
+  end
+
+  def copyright_status
+    json['copyright_status']
+  end
+
+  def number_of_children
+    if doc['primary_type'] == 'resource'
+      json['items_count']
+    end
+  end
+
+  def parent_item_id
+    if doc['primary_type'] == 'archival_object'
+      "** FIXME **"
+    end
+  end
+
+  def has_overriding_raps
+    if doc['primary_type'] == 'resource'
+      "** FIXME **"
+    elsif doc['primary_type'] == 'archival_object'
+      if json['rap_attached']
+        'Y'
+      elsif (Array(json['physical_representations']) + Array(json['digital_representations'])).any?{|rep| rep['rap_attached']}
+        'Y'
+      else
+        'N'
+      end
+    end
+  end
+
+  def number_of_representations_with_overriding_raps
+    if doc['primary_type'] == 'archival_object'
+      (Array(json['physical_representations']) + Array(json['digital_representations'])).select{|rep| rep['rap_attached']}.count
+    end
+  end
+
+  def number_of_representations_with_overriding_significance
+    if doc['primary_type'] == 'archival_object'
+      (Array(json['physical_representations']) + Array(json['digital_representations'])).select{|rep| rep['rap_attached']}.count
+    end
+  end
+
+  def rap_inherited
+    if ['archival_object', 'physical_representation', 'digital_representation'].include?(doc['primary_type'])
+      if json['rap_applied']['uri'] == json.dig('rap_attached', 'uri')
+        'N'
+      else
+        'Y'
+      end
+    end
+  end
+
+  def transfer_id
+    json['transfer_id']
+  end
+
+  def transfer_name
+    json.dig('transfer', '_resolved', 'title')
+  end
+
+  def digital_file_attached
+    if doc['primary_type'] == 'digital_representation'
+      json['representation_file'] ? 'Y' : 'N'
+    end
+  end
+
+  def other_restrictions
+    json['other_restrictions_notes']
+  end
+
+  def monetary_value
+    json['monetary_value']
+  end
+
+  def number_of_movements
+    if json.include?('movements')
+      Array(json['movements']).length
+    end
+  end
+
+  def citation
+    json['preferred_citation']
+  end
+
+  def rap_inherited_from_parent_item
+    if ['physical_representation', 'digital_representation'].include?(doc['primary_type'])
+      if json.dig('rap_applied', 'attached_to', 'ref') == json.dig('controlling_record', 'ref')
+        'Y'
+      else
+        'N'
+      end
+    end
+  end
+
+  def physical_representation_format
+    if doc['primary_type'] == 'physical_representation'
+      json['format']
+    end
+  end
+
+  def file_type
+    if doc['primary_type'] == 'digital_representation'
+      json['file_type']
     end
   end
 

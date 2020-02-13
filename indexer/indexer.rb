@@ -24,6 +24,7 @@ class IndexerCommon
   add_attribute_to_resolve('representation')
   add_attribute_to_resolve('representation::controlling_record_series')
   add_attribute_to_resolve('representation::assessments')
+  add_attribute_to_resolve('transfer')
 
   def self.build_recent_agency_filter(recent_agencies)
     result = []
