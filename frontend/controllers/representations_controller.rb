@@ -4,6 +4,8 @@ class RepresentationsController < ApplicationController
 
   REPRESENTATION_FACETS = [
     'primary_type',
+    'publish',
+    'archivist_approved_u_sbool',
     'representation_intended_use_u_sstr',
     'significance_u_sstr',
     'rap_open_access_metadata_u_ssort',

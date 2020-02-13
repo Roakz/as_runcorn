@@ -246,6 +246,15 @@ Rails.application.config.after_initialize do
   Plugins.add_facet_group_i18n('item_use_type_u_ssort',
                                proc {|facet| "item_use.item_use_type_values.#{facet}" })
 
+  [:resource,
+   :archival_object,
+   :mandate,
+   :function,
+   :agent_corporate_entity].each do |record_type|
+    Plugins.add_search_facets(record_type, 'publish')
+    Plugins.add_search_facets(record_type, 'archivist_approved_u_sbool')
+  end
+
   # Eager load all JSON schemas
   Dir.glob(File.join(File.dirname(__FILE__), "..", "schemas", "*.rb")).each do |schema|
     next if schema.end_with?('_ext.rb')
