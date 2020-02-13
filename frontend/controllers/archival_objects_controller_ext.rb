@@ -36,6 +36,8 @@ ArchivalObjectsController.class_eval do
     end
   end
 
+  include ExportHelper
+
   def index
     respond_to do |format|
       format.html {
@@ -43,10 +45,10 @@ ArchivalObjectsController.class_eval do
         @search_data = Search.for_type(session[:repo_id], ["archival_object"], params_for_backend_search.merge({"facet[]" => SearchResultData.RESOURCE_FACETS}))
       }
       format.csv {
-        search_params = params_for_backend_search.merge({"facet[]" => SearchResultData.RESOURCE_FACETS})
+        search_params = params_for_backend_search.merge({"facet[]" => []})
         search_params["type[]"] = ["archival_object"]
         uri = "/repositories/#{session[:repo_id]}/search"
-        csv_response( uri, search_params )
+        csv_response( uri, Search.build_filters(search_params), 'items.' )
       }
     end
   end

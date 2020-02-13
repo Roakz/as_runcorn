@@ -1,5 +1,7 @@
 class RepresentationsController < ApplicationController
 
+  include ExportHelper
+
   set_access_control "view_repository" => [:index, :view_file, :upload_file, :create_batch]
 
   REPRESENTATION_FACETS = [
@@ -28,9 +30,10 @@ class RepresentationsController < ApplicationController
         end
       }
       format.csv {
+        search_params = params_for_backend_search.merge({"facet[]" => []})
         search_params["type[]"] = ['physical_representation', 'digital_representation']
         uri = "/repositories/#{session[:repo_id]}/search"
-        csv_response( uri, search_params )
+        csv_response( uri, Search.build_filters(search_params), 'representations.' )
       }
     end
   end

@@ -433,6 +433,24 @@ class CSVExportRecord
     end
   end
 
+  def number_of_agency_relationships
+    if ['function', 'mandate'].include?(doc['primary_type'])
+      Array(json['series_system_agent_relationships']).length
+    end
+  end
+
+  def number_of_function_relationships
+    if ['mandate'].include?(doc['primary_type'])
+      Array(json['series_system_function_relationships']).length
+    end
+  end
+
+  def number_of_mandate_relationships
+    if ['mandate'].include?(doc['primary_type'])
+      Array(json['series_system_mandate_relationships']).length
+    end
+  end
+
   def method_missing(*args)
     "** FIXME **"
   end
