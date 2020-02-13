@@ -293,3 +293,21 @@
 <% end %>
 
 <%= javascript_include_tag 'runcorn_reports' %>
+<% if defined?(@search_data) %>
+  <%= javascript_include_tag 'runcorn_download_csv' %>
+  <script type="text/template" id="runcornDownloadCSVPopupTemplate">
+    <div>
+      <div class="modal-body">
+        <p>You are about to generate a CSV report for <strong>~<%=  @search_data["total_hits"]  || 0 %> records</strong>.</p>
+        <p>This may take a few moments.</p>
+        <p>Click Download CSV to proceed.</p>
+        <p class="downloading-message hide"><strong>Generating CSV...</strong></p>
+      </div>
+      <div class="modal-footer">
+        <button id="runcornConfirmDownloadCSV" class="btn btn-info">Download CSV</button>
+        <button id="runcornDownloadCSVDone" data-dismiss="modal" class="btn btn-primary hide">Done</button>
+        <button class="btn btn-cancel btn-default" data-dismiss="modal"><%= I18n.t "actions.cancel" %></button>
+      </div>
+    </div>
+  </script>
+<% end %>
