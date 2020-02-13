@@ -1,6 +1,4 @@
-require_relative 'csv_export_record'
-
-class BaseCSVExport
+class CsvExport
   attr_accessor :criteria, :repo_id
 
   def initialize(criteria, repo_id)
@@ -83,11 +81,7 @@ class BaseCSVExport
 
         break if Array(result['results']).empty?
 
-        result['results'].each do |doc|
-          json = ASUtils.json_parse(doc['json'])
-          record = CSVExportRecord.new(doc, json)
-          csv << columns.map {|col| col.value.call(record)}
-        end
+        process_results(result, csv)
 
         break if result['last_page'] <= result['this_page']
 
@@ -97,5 +91,17 @@ class BaseCSVExport
 
     tempfile.rewind
     tempfile
+  end
+
+  def process_results(solr_response, csv)
+    solr_response['results'].each do |doc|
+      record = record_for_solr_doc(doc)
+      csv << columns.map {|col| col.value.call(record)}
+    end
+  end
+
+  def record_for_solr_doc(doc)
+    json = ASUtils.json_parse(doc['json'])
+    CSVExportRecord.new(doc, json)
   end
 end

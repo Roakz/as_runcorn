@@ -402,4 +402,38 @@ class CSVExportRecord
   def last_modified_by
     json['last_modified_by']
   end
+
+  def agent_name
+    json.dig('display_name', 'sort_name')
+  end
+
+  def agent_non_preferred_names
+    Array(json.dig('names')).reject{|name| name['is_display_name']}.map{|name| name['sort_name']}.join('; ')
+  end
+
+  def agency_acronym
+    if doc['primary_type'] == 'agent_corporate_entity'
+      Array(json.dig('names')).map{|name| name['subordinate_name_1']}.compact.join('; ')
+    end
+  end
+
+  def agency_category
+    if doc['primary_type'] == 'agent_corporate_entity'
+      json['agency_category']
+    end
+  end
+
+  def agent_status
+    end_date.nil? ? 'Current' : 'Terminated'
+  end
+
+  def agency_status
+    if doc['primary_type'] == 'agent_corporate_entity'
+      json['registration_state']
+    end
+  end
+
+  def method_missing(*args)
+    "** FIXME **"
+  end
 end
