@@ -398,12 +398,12 @@ Rails.application.config.after_initialize do
 
     def render_aspace_partial(args)
       if args[:partial] == "search/listing"
-        no_audit!
-
         if BROWSE_SCREEN_OVERRIDES.fetch(controller.controller_name, []).include?(controller.action_name)
           columns_to_append = extra_columns? ? extra_columns.clone : []
 
           clear_extra_columns
+
+          no_audit!
           @display_context = false
           @show_search_result_identifier_column = false
           @display_identifier = false
