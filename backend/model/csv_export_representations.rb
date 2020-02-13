@@ -31,7 +31,7 @@ class CsvExportRepresentations < CsvExport
       Column.new('Intended Use', proc{|record| record.intended_use}),
       Column.new('Significance', proc{|record| record.significance}),
       Column.new('Inherit Significance?', proc{|record| record.inherit_significance}),
-      Column.new('Sensitivity Label', proc{|record| record.sensitivity_label}),
+      # Column.new('Sensitivity Label', proc{|record| record.sensitivity_label}), FIXME NOT INDEXED ON REPRESENTATION
       Column.new('Archivist Approved?', proc{|record| record.archivist_approved}),
       Column.new('Approval Date', proc{|record| record.archivist_approval_date}),
       Column.new('Approved By', proc{|record| record.archivist_approved_by}),

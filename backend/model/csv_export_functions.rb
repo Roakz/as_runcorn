@@ -12,7 +12,6 @@ class CsvExportFunctions < CsvExport
       Column.new('Certainty', proc{|record| record.end_date_certainty}),
       Column.new('No of Agencies Applied to', proc{|record| record.number_of_agency_relationships}),
       Column.new('No of Series Applied to', proc{|record| record.number_of_series_relationships}),
-      Column.new('Function Level', proc{|record| record.function_level}),
       Column.new('Published?', proc{|record| record.published}),
       Column.new('Created Date', proc{|record| record.created_date}),
       Column.new('Created By', proc{|record| record.created_by}),
