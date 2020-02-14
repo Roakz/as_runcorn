@@ -65,6 +65,19 @@
         "type" => "non_negative_integer",
         "readonly" => "true",
       },
+
+      "migration_physical_representations" => {
+        "type" => "array",
+        "items" => {
+          "type" => "object",
+          "subtype" => "ref",
+          "properties" => {
+            "ref" => {
+              "type" => [{"type" => "JSONModel(:physical_representation) uri"}],
+            },
+          }
+        }
+      }
     },
   },
 }

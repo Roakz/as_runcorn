@@ -9,6 +9,20 @@ class ConservationRequest < Sequel::Model(:conservation_request)
                       :contains_references_to_types => proc {[Assessment]},
                       :is_array => false)
 
+  def self.create_from_json(json, extra_values = {})
+    obj = super
+
+    if ASUtils.migration_mode?
+      physrep_ids = Array(json['migration_physical_representations']).map {|ref|
+        JSONModel.parse_reference(ref['ref'])[:id]
+      }
+
+      obj.add_physical_representations(*physrep_ids)
+    end
+
+    obj
+  end
+
   ## Representations
 
   def add_physical_representations(*ids)
