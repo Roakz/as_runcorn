@@ -499,7 +499,7 @@ class BulkRecordChanges
     rules = {
       COLUMN_PARENT => {required: ['ITM', 'PR', 'DR']},
       COLUMN_TITLE => {required: ['ITM', 'PR', 'DR']},
-      COLUMN_FORMAT => {required: ['PR', 'DR']},
+      COLUMN_FORMAT => {required: ['PR']},
       COLUMN_START_DATE => {required: ['ITM']},
       COLUMN_START_DATE_QUALIFIER => {optional: ['ITM']},
       COLUMN_END_DATE => {optional: ['ITM']},
