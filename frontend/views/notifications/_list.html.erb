@@ -14,7 +14,7 @@
     <tbody>
       <% notifications.each do |notification| %>
         <tr>
-          <td><%= notification['qsa_id'] %></td>
+          <td><%= QSAIdHelper.id(notification['qsa_id']) %></td>
           <td>
             A comment was added by <%= notification['by'] %> <% if notification['source_system'] == 'ARCHIVES_GATEWAY' %>(Agency)<% else %>(QSA)<% end %>
           </td>
