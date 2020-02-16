@@ -410,55 +410,61 @@ Rails.application.config.after_initialize do
     }
 
     def render_aspace_partial(args)
-      if args[:partial] == "search/listing"
-        if BROWSE_SCREEN_OVERRIDES.fetch(controller.controller_name, []).include?(controller.action_name)
-          columns_to_append = extra_columns? ? extra_columns.clone : []
+      begin
+        if args[:partial] == "search/listing"
+          if defined?(controller) && BROWSE_SCREEN_OVERRIDES.fetch(controller.controller_name, []).include?(controller.action_name)
+            columns_to_append = extra_columns? ? extra_columns.clone : []
 
-          clear_extra_columns
+            clear_extra_columns
 
-          no_audit!
-          @display_context = false
-          @show_search_result_identifier_column = false
-          @display_identifier = false
-          @context_column_header = false
-          @no_title = true
+            no_audit!
+            @display_context = false
+            @show_search_result_identifier_column = false
+            @display_identifier = false
+            @context_column_header = false
+            @no_title = true
 
-          add_column('ID',
-                     proc { |record|
-                       record['_json_parsed_'] ||= ASUtils.json_parse(record['json'])
-                       # show the QSA ID or just the ID if no QSA ID
-                       if record['_json_parsed_']['qsa_id_prefixed']
-                         QSAIdHelper.id(record['_json_parsed_']['qsa_id_prefixed'])
-                       else
-                         JSONModel(record['_json_parsed_']['jsonmodel_type'].intern).id_for(record['id']).to_s
-                       end
-                     }, :sortable => true, :sort_by => 'qsa_id_u_sort')
+            add_column('ID',
+                       proc { |record|
+                         record['_json_parsed_'] ||= ASUtils.json_parse(record['json'])
+                         # show the QSA ID or just the ID if no QSA ID
+                         if record['_json_parsed_']['qsa_id_prefixed']
+                           QSAIdHelper.id(record['_json_parsed_']['qsa_id_prefixed'])
+                         else
+                           JSONModel(record['_json_parsed_']['jsonmodel_type'].intern).id_for(record['id']).to_s
+                         end
+                       }, :sortable => true, :sort_by => 'qsa_id_u_sort')
 
-          add_column(title_column_header_label,
-                     proc { |record|
-                       clean_mixed_content(record["title"] || record['display_string']).html_safe
-                     }, :sortable => true, :sort_by => 'title_sort')
+            add_column(title_column_header_label,
+                       proc { |record|
+                         clean_mixed_content(record["title"] || record['display_string']).html_safe
+                       }, :sortable => true, :sort_by => 'title_sort')
 
-          add_column('Start Date',
-                     proc { |record|
-                       Array(record['date_start_u_sstr']).first
-                     }, :sortable => true, :sort_by => 'date_start_u_ssort')
+            add_column('Start Date',
+                       proc { |record|
+                         Array(record['date_start_u_sstr']).first
+                       }, :sortable => true, :sort_by => 'date_start_u_ssort')
 
-          add_column('End Date',
-                     proc { |record|
-                       Array(record['date_end_u_sstr']).first
-                     }, :sortable => true, :sort_by => 'date_end_u_ssort')
+            add_column('End Date',
+                       proc { |record|
+                         Array(record['date_end_u_sstr']).first
+                       }, :sortable => true, :sort_by => 'date_end_u_ssort')
 
-          add_column('Published?',
-                     proc { |record|
-                       record['publish'] ? 'Yes' : 'No'
-                     }, :sortable => true, :sort_by => 'publish')
+            add_column('Published?',
+                       proc { |record|
+                         record['publish'] ? 'Yes' : 'No'
+                       }, :sortable => true, :sort_by => 'publish')
 
-          extra_columns.concat(columns_to_append)
+            extra_columns.concat(columns_to_append)
+          end
         end
-      end
 
-      render_aspace_partial_pre_as_runcorn(args)
+        render_aspace_partial_pre_as_runcorn(args)
+      rescue
+        logger.error("Failure in as_runcorn search override.  Error was: #{$!}")
+        logger.error($@.join("\n"))
+        raise $!
+      end
     end
   end
 end
