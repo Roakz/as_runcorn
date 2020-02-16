@@ -208,9 +208,9 @@ class CSVExportRecord
   def inherit_significance
     if json.has_key?('significance_is_sticky')
       if json['significance_is_sticky']
-        'Y'
-      else
         'N'
+      else
+        'Y'
       end
     end
   end
