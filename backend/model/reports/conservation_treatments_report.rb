@@ -98,7 +98,7 @@ class ConservationTreatmentsReport < RuncornReport
             BackendEnumSource.value_for_id('runcorn_format', row[:pr_format_id]),
             row[:status].gsub('_', ' '),
             row[:treatment_process],
-            (treatments = treatments_map.fetch(row[:conservation_treatment_id], nil)) ? treatments.sort.join(', ') : treatments,
+            (treatments = treatments_map.fetch(row[:conservation_treatment_id], nil)) ? treatments.sort.join('; ') : nil,
             treatments_map.fetch(row[:conservation_treatment_id], []).length,
             row[:materials_used_consumables],
             row[:materials_used_staff_time],
