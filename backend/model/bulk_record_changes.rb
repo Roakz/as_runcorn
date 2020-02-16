@@ -997,7 +997,7 @@ class BulkRecordChanges
     end
 
     def initialize(qsa_id_or_row_ref)
-      @ref = qsa_id_or_row_ref
+      @ref = qsa_id_or_row_ref.upcase
     end
 
     def prefix
