@@ -62,6 +62,10 @@
 </div>
 
 <script>
+ $('#import_data_submit').on('click', function () {
+   $(this).attr('disabled', 'disabled');
+ });
+
  $('#import_data_input').on('change', function () {
    if (this.files.length > 0) {
      $('#import_data_submit').attr('disabled', null);
