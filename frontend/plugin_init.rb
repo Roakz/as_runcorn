@@ -312,6 +312,10 @@ Rails.application.config.after_initialize do
     end
   end
 
+  # Force Rails to autoload the thing we're about to patch
+  SearchController
+
+
   class SearchController
     include SearchHelper
     include ApplicationHelper
