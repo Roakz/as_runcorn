@@ -31,7 +31,7 @@ class BulkRecordChanges
     COLUMN_TRANSFER_ID = ColumnDef.new('Transfer ID', maps_to: ['transfer']),
     COLUMN_PREVIOUS_SYSTEM_ID = ColumnDef.new('Previous System ID', maps_to: ['previous_system_identifiers']),
     COLUMN_SIGNIFICANCE = ColumnDef.new('Significance', maps_to: ['significance']),
-    COLUMN_INHERIT_SIGNIFICANCE = ColumnDef.new('Inherit Significance?', maps_to: ['significance_is_sticky']),
+    COLUMN_INHERIT_SIGNIFICANCE = ColumnDef.new("Don't inherit Significance changes", maps_to: ['significance_is_sticky']),
     COLUMN_COPYRIGHT_STATUS = ColumnDef.new('Copyright Status', maps_to: ['copyright_status']),
     COLUMN_SUBJECTS = ColumnDef.new('Subjects', maps_to: ['subjects/:index/term']),
     COLUMN_REMARKS = ColumnDef.new('Remarks', maps_to: ['remarks']),
