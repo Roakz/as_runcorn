@@ -2,6 +2,14 @@
   <%= form.label_and_select "agency_category", form.possible_options_for('agency_category', true) %>
   <%= form.label_and_textarea "agency_note" %>
   <%= form.label_and_date "original_registration_date" %>
+
+  <% unless @agent.registration_state == 'approved' %>
+    <script>
+     <%# Hide the publish option if workflow prevents it %>
+     $('#agent_publish_').closest('.form-group').hide();
+     $('#agent_publish_').val(false);
+    </script>
+  <% end %>
 <% end %>
 
 <% form.emit_template("runcorn_agency") %>
