@@ -18,10 +18,11 @@ module PublicationPolice
       # and they don't get published independently anyway
       if self.top_level?
         current_user = User[:username => RequestContext.get(:current_username)]
-        unless !current_user.can?('update_publish_flag')
+        unless current_user.can?('update_publish_flag')
           json['publish'] = false
         end
       end
+
       super
     end
   end
