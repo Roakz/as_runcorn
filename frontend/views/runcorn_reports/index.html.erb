@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-md-12">
       <h1>Reports</h1>
-      <%= form_tag({:controller => :runcorn_reports, :action => :generate_report}, {:method => 'POST'}) do %>
+      <%= form_tag({:controller => :runcorn_reports, :action => :generate_report}, {:method => 'POST', :id => 'generate_runcorn_report_form'}) do %>
         <div class="form-group">
           <label for="report">Report</label>
           <select name="report" class="form-control" id="report">
@@ -116,5 +116,43 @@
 
     $('#report').on('change', updateInputs);
     updateInputs();
+
+    $('#generate_runcorn_report_form').on('submit', function(event) {
+      if ($(this).data('confirmed')) {
+        $(this).data('confirmed', false);
+        return true;
+      } else {
+        event.preventDefault();
+
+        var self = this;
+        var $content = $(AS.renderTemplate('runcornReportsDownloadingModalTemplate'));
+        var $modal = AS.openCustomModal('runcornReportsDownloadingModal', 'Downloading Report', $content.html(), false, {keyboard: false}, self.$button);
+
+        $('#runcornConfirmDownloadReport', $modal).on('click', function() {
+          $(this).prop('disabled', true);
+          $('.downloading-message', $modal).removeClass('hide');
+          $('#generate_runcorn_report_form').data('confirmed', true);
+          $('#generate_runcorn_report_form').submit();
+          $(this).addClass('hide');
+          $('#runcornDownloadReportDone', $modal).removeClass('hide');
+        });
+
+        return false;
+      }
+    });
   });
+</script>
+<script type="text/template" id="runcornReportsDownloadingModalTemplate">
+  <div>
+    <div class="modal-body">
+      <p>Generating a report may take a few moments.</p>
+      <p>Click Generate Report to proceed.</p>
+      <p class="downloading-message hide"><strong>Generating report...</strong></p>
+    </div>
+    <div class="modal-footer">
+      <button id="runcornConfirmDownloadReport" class="btn btn-primary">Generate Report</button>
+      <button id="runcornDownloadReportDone" data-dismiss="modal" class="btn btn-primary hide">Done</button>
+      <button class="btn btn-cancel btn-default" data-dismiss="modal"><%= I18n.t "actions.cancel" %></button>
+    </div>
+  </div>
 </script>
