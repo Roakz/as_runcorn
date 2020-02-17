@@ -43,6 +43,7 @@
                      :method => 'POST',
                      :authenticity_token => true,
                      :multipart => true,
+                     :id => 'bulkChangesform'
                    }) do |f| %>
         <div class="form-group">
           <label for="import_data">Excel file to apply</label>
@@ -61,15 +62,16 @@
 </div>
 
 <script>
- $('#import_data_submit').on('click', function () {
-   $(this).attr('disabled', 'disabled');
+ $('#bulkChangesform').on('submit', function () {
+   $('#bulkChangesform :input').prop('readonly', true);
+   $('#import_data_submit').prop('disabled', true);
  });
 
  $('#import_data_input').on('change', function () {
    if (this.files.length > 0) {
-     $('#import_data_submit').attr('disabled', null);
+     $('#import_data_submit').prop('disabled', false);
    } else {
-     $('#import_data_submit').attr('disabled', 'disabled');
+     $('#import_data_submit').prop('disabled', true);
    }
  });
 </script>
