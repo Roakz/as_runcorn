@@ -126,7 +126,7 @@
 
         var self = this;
         var $content = $(AS.renderTemplate('runcornReportsDownloadingModalTemplate'));
-        var $modal = AS.openCustomModal('runcornReportsDownloadingModal', 'Generate Report', $content.html(), false, {keyboard: false}, self.$button);
+        var $modal = AS.openCustomModal('runcornReportsDownloadingModal', 'Generate Report', $content.html(), false, {keyboard: false}, $('#generate_runcorn_report_form :submit'));
 
         $('#runcornConfirmDownloadReport', $modal).on('click', function() {
           $(this).prop('disabled', true);
