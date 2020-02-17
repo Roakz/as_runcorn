@@ -400,6 +400,9 @@ class IndexerCommon
         doc['date_start_certainty_u_sstr'] = date['certainty']
         doc['date_end_u_sstr'] = date['end']
         doc['date_end_certainty_u_sstr'] = date['certainty_end']
+      else
+        doc['date_start_u_ssort'] = DateRangeQuery.date_pad_start('')
+        doc['date_end_u_ssort'] = DateRangeQuery.date_pad_end('')
       end
     end
 
