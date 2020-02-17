@@ -459,12 +459,13 @@ Rails.application.config.after_initialize do
           end
         end
 
-        render_aspace_partial_pre_as_runcorn(args)
       rescue
         logger.error("Failure in as_runcorn search override.  Error was: #{$!}")
         logger.error($@.join("\n"))
         raise $!
       end
+
+      render_aspace_partial_pre_as_runcorn(args)
     end
   end
 end
