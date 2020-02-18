@@ -156,6 +156,10 @@
       var date_range_start = $('input[name=date_range_start]').val();
       var date_range_end = $('input[name=date_range_end]').val();
 
+      if (!$(this).attr('href').includes('?') && (date_range_start || date_range_end)) {
+        $(this).attr('href', $(this).attr('href') + '?sort=user_mtime+desc');
+      }
+
       if (date_range_start) {
         $(this).attr('href', $(this).attr('href') + '&date_range_start=' + date_range_start);
       }
