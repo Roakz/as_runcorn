@@ -17,12 +17,12 @@ class AgencyTransfersReport < RuncornReport
     base_ds = mapdb[:transfer].filter(Sequel.~(Sequel.qualify(:transfer, :date_received) => nil))
 
     if @from_date
-      from_time = @from_date.to_time.to_i * 1000
+      from_time = @from_date
       base_ds = base_ds.where { Sequel.qualify(:transfer, :date_received) >= from_time }
     end
 
     if @to_date
-      to_time = (@to_date + 1).to_time.to_i * 1000 - 1
+      to_time = @to_date
       base_ds = base_ds.where { Sequel.qualify(:transfer, :date_received) <= to_time }
     end
 
