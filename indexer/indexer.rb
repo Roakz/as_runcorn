@@ -183,6 +183,17 @@ class IndexerCommon
         doc['rap_access_category_u_ssort'] = applied['access_category']
       end
 
+      if doc['primary_type'] == 'resource'
+        if attached = record['record']['rap_attached']
+          doc['rap_open_access_metadata_u_ssort'] = attached['open_access_metadata'] ? 'yes' : 'no'
+          doc['rap_access_category_u_ssort'] = attached['access_category']
+        else
+          # If there is no RAP attached to this resource, we're applying the system default.
+          doc['rap_open_access_metadata_u_ssort'] = 'no'
+          doc['rap_access_category_u_ssort'] = 'N/A'
+        end
+      end
+
       if record['record']['rap_access_status'] && !doc['rap_access_status_u_ssort']
         doc['rap_access_status_u_ssort'] = record['record']['rap_access_status']
       end
@@ -286,6 +297,8 @@ class IndexerCommon
     indexer.add_document_prepare_hook {|doc, record|
       if ['resource', 'archival_object'].include?(doc['primary_type'])
         counts = []
+
+        doc['significance_u_sstr'] = record['record']['significance']
 
         if doc['primary_type'] == 'resource'
           counts << [record['record']['items_count'], "#{record['record']['items_count']} items"]

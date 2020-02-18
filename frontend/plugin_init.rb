@@ -255,6 +255,12 @@ Rails.application.config.after_initialize do
     Plugins.add_search_facets(record_type, 'archivist_approved_u_sbool')
   end
 
+  Plugins.add_search_facets(:resource, 'rap_access_category_u_ssort')
+
+  Plugins.add_search_facets(:archival_object, 'rap_access_category_u_ssort')
+  Plugins.add_search_facets(:archival_object, 'rap_access_status_u_ssort')
+  Plugins.add_search_facets(:archival_object, 'significance_u_sstr')
+
   # Eager load all JSON schemas
   Dir.glob(File.join(File.dirname(__FILE__), "..", "schemas", "*.rb")).each do |schema|
     next if schema.end_with?('_ext.rb')
@@ -469,3 +475,5 @@ Rails.application.config.after_initialize do
     end
   end
 end
+
+

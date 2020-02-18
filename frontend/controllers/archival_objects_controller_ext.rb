@@ -39,10 +39,16 @@ ArchivalObjectsController.class_eval do
   include ExportHelper
 
   def index
+    (search_params, expiring_within) = build_search_params
+
     respond_to do |format|
       format.html {
-        # THINKME: Do we need an ARCHIVAL_OBJECT_FACETS separate to RESOURCE_FACETS here?
-        @search_data = Search.for_type(session[:repo_id], ["archival_object"], params_for_backend_search.merge({"facet[]" => SearchResultData.RESOURCE_FACETS}))
+        @search_data = Search.for_type(session[:repo_id], ["archival_object"], search_params)
+
+        # If we dropped the filter_term out, add it back so the results page looks right.
+        if expiring_within
+          @search_data[:criteria]['filter_term[]'] << expiring_within
+        end
       }
       format.csv {
         search_params = params_for_backend_search.merge({"facet[]" => []})
@@ -51,6 +57,51 @@ ArchivalObjectsController.class_eval do
         csv_response( uri, Search.build_filters(search_params), 'items.' )
       }
     end
+  end
+
+
+  def build_search_params
+    search_params = params_for_backend_search.merge("facet[]" => SearchResultData.ARCHIVAL_OBJECT_FACETS)
+
+    expiring_days = nil
+
+    expiring_within = nil
+
+    if search_params['filter_term[]']
+      if expiring_within = search_params['filter_term[]'].find {|term| JSON.parse(term).keys[0] == 'rap_expiring_within'}
+        search_params['filter_term[]'].delete(expiring_within)
+
+        expiring_days = JSON.parse(expiring_within).values[0]
+      end
+    end
+
+    if expiring_days
+      start_date, end_date = [Date.today, Date.today + expiring_days].sort
+
+      query = {'query' => {
+                 'jsonmodel_type' => 'boolean_query',
+                 'op' => 'AND',
+                 'subqueries' => [
+                   {
+                     'jsonmodel_type' => 'date_field_query',
+                     'comparator' => 'greater_than',
+                     'field' => 'rap_expiry_date_sort_u_ssortdate',
+                     'value' => "%sT00:00:00Z" % [start_date.iso8601],
+                   },
+                   {
+                     'jsonmodel_type' => 'date_field_query',
+                     'comparator' => 'lesser_than',
+                     'field' => 'rap_expiry_date_sort_u_ssortdate',
+                     'value' => "%sT00:00:00Z" % [end_date.iso8601],
+                   }
+                 ]
+               }
+              }
+
+      search_params['filter'] = JSONModel(:advanced_query).from_hash(query).to_json
+    end
+
+    [search_params, expiring_within]
   end
 
 

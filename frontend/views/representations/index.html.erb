@@ -14,46 +14,12 @@
 
 %>
 
-<%
-
-def duration_in_days(duration, units)
-    case units
-    when :day, :days
-        duration
-    when :month, :months
-        (Date.today.next_month(duration) - Date.today).to_i
-    when :year, :years
-        (Date.today.next_year(duration) - Date.today).to_i
-    end
-end
-%>
 
 <div class="row">
   <div class="col-md-3">
     <div class="sidebar">
       <%= render_aspace_partial :partial => "search/filter" %>
-
-      <% if @search_data.results? && !Array(@search_data[:criteria]['filter_term[]']).find {|term| JSON.parse(term).keys[0] == 'rap_expiring_within'} %>
-        <% [['RAP Expired In Past', -1], ['RAP To Expire Within', 1]].each do |section, multiplier| %>
-          <h3><%= section %></h3>
-          <ul>
-            <% [[multiplier * 30, :days], [multiplier * 60, :days], [multiplier * 90, :days],
-                [multiplier * 6, :months],
-                [multiplier * 1, :year], [multiplier * 2, :years], [multiplier * 5, :years]].each do |duration, units| %>
-              <% days = duration_in_days(duration, units) %>
-              <% if days.to_s == params[:expiring_within_days].to_s %>
-                <li><%= days %> days <%= link_to("(clear)", build_search_params({})) %></li>
-              <% else %>
-                <%
-                label = "#{duration.abs} #{units}"
-                %>
-                <li><%= link_to(label, build_search_params({}).merge("filter_term[]" => {"rap_expiring_within" => days}.to_json)) %></li>
-              <% end %>
-            <% end %>
-          </ul>
-        <% end %>
-
-      <% end %>
+      <%= render_aspace_partial :partial => 'raps/rap_facets' %>
     </div>
   </div>
   <div class="col-md-9">

@@ -3,12 +3,23 @@
 <%
    add_browse_columns("archival_object", {"level" => "archival_record_level", "language" => "language_iso639_2"})
    @display_context = true
+
+   add_column(I18n.t("representation.rap_expiry_date"),
+              proc {|record|
+                    if record.fetch('rap_expiry_date_u_sstr', [])[0]
+                    (record.fetch('rap_expiry_date_u_sstr', [])[0] + (record.fetch('rap_expired_u_sbool', [])[0] ? ' (expired)' : ''))
+                    else
+                    ''
+                    end
+              }, :sortable => true, :sort_by => 'rap_expiry_date_sort_u_ssortdate')
 %>
+
 
 <div class="row">
    <div class="col-md-3">
      <div class="sidebar">
        <%= render_aspace_partial :partial => "search/filter" %>
+      <%= render_aspace_partial :partial => 'raps/rap_facets' %>
      </div>
    </div>
    <div class="col-md-9">
