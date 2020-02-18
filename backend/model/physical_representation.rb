@@ -270,6 +270,7 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
       :create_time => now,
       :system_mtime => now,
       :user_mtime => now,
+      :persistent_create_time => now,
     }.merge(treatment_template)
 
     applied_treatment_rows = applied_treatments.map do |attribute|
