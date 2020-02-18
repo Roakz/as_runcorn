@@ -20,4 +20,42 @@ class CsvExportFunctions < CsvExport
     ]
   end
 
+  def process_results(solr_response, csv)
+    @function_data = prep_extra_data(solr_response)
+    super
+  end
+
+  def record_for_solr_doc(doc)
+    record = super
+    record.append_extra_data(@function_data.fetch(doc['id'], {}))
+    record
+  end
+
+  def prep_extra_data(solr_response)
+    function_data = {}
+    function_refs = []
+
+    Array(solr_response['results']).each do |doc|
+      if doc['primary_type'] == 'function'
+        function_refs << doc['id']
+      end
+    end
+
+    # First let's look at Resources!
+    query = Solr::Query.create_keyword_search('series_series_system_function_relationships_u_sstr:(%s)' % [function_refs.map{|uri| '"' + uri + '"'}.join(' OR ')])
+    query.set_facets(['series_series_system_function_relationships_u_sstr'])
+    query.set_record_types(['resource'])
+    query.pagination(1, 1)
+    query.set_repo_id(repo_id)
+    query.add_solr_param(:"facet.limit", function_refs.length)
+    query.use_standard_query_type
+    results = Solr.search(query)
+
+    (results.dig('facets', 'facet_fields', 'series_series_system_function_relationships_u_sstr') || []).each_slice(2).each do |uri, count|
+      function_data[uri] ||= {}
+      function_data[uri][:number_of_series_relationships] = count
+    end
+
+    function_data
+  end
 end

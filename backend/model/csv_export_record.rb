@@ -644,6 +644,12 @@ class CSVExportRecord
     end
   end
 
+  def number_of_series_relationships
+    if doc['primary_type'] == 'function'
+      extra_data.fetch(:number_of_series_relationships, 0)
+    end
+  end
+
   def method_missing(*args)
     "** FIXME **"
   end
