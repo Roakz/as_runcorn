@@ -47,4 +47,39 @@ class CsvExportItems < CsvExport
     ]
   end
 
+  def process_results(solr_response, csv)
+    resolver = SearchResolver.new(['ancestors:id'])
+    resolver.resolve(solr_response)
+    super
+  end
+
+  def record_for_solr_doc(doc)
+    record = super
+    if Array(doc['ancestors']).length > 0
+      parent = Array(doc['_resolved_ancestors'].fetch(doc['ancestors'].first, nil)).first
+      series = Array(doc['_resolved_ancestors'].fetch(doc['ancestors'].last, nil)).first
+
+      parent_item_id = nil
+      series_id = nil
+      series_name = nil
+
+      if parent && parent['primary_type'] == 'archival_object'
+        parent_item_id = parent['qsa_id_u_ssort']
+      end
+
+      if series
+        series_id = series['qsa_id_u_ssort']
+        series_name = series['title']
+      end
+
+      record.append_extra_data({
+                                :parent_item_id => parent_item_id,
+                                :series_id => series_id,
+                                :series_name => series_name,
+                               })
+    end
+
+    record
+  end
+
 end

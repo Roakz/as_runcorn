@@ -532,7 +532,19 @@ class CSVExportRecord
 
   def parent_item_id
     if doc['primary_type'] == 'archival_object'
-      "** FIXME **"
+      extra_data.fetch(:parent_item_id, nil)
+    end
+  end
+
+  def series_id
+    if doc['primary_type'] == 'archival_object'
+      extra_data.fetch(:series_id, nil)
+    end
+  end
+
+  def series_name
+    if doc['primary_type'] == 'archival_object'
+      extra_data.fetch(:series_name, nil)
     end
   end
 
