@@ -1,9 +1,14 @@
 class CSVExportRecord
-  attr_accessor :doc, :json
+  attr_accessor :doc, :json, :extra_data
 
   def initialize(doc, json)
     @doc = doc
     @json = json
+    @extra_data = {}
+  end
+
+  def append_extra_data(data)
+    @extra_data.merge!(data)
   end
 
   def type
@@ -618,6 +623,24 @@ class CSVExportRecord
   def file_type
     if doc['primary_type'] == 'digital_representation'
       json['file_type']
+    end
+  end
+
+  def number_of_series_controlled
+    if doc['primary_type'] == 'agent_corporate_entity'
+      extra_data.fetch(:number_of_series_controlled, 0)
+    end
+  end
+
+  def agency_creating_agency
+    if doc['primary_type'] == 'agent_corporate_entity'
+      extra_data.fetch(:is_agency_creating_agency, false) ? 'Y' : 'N'
+    end
+  end
+
+  def number_of_items_in_other_series_controlled
+    if doc['primary_type'] == 'agent_corporate_entity'
+      extra_data.fetch(:number_of_items_in_other_series_controlled, 0)
     end
   end
 

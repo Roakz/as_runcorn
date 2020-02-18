@@ -33,10 +33,13 @@ class CsvExportAgents < CsvExport
   end
 
   def record_for_solr_doc(doc)
-    super
+    record = super
+    record.append_extra_data(@agent_data.fetch(doc['id'], {}))
+    record
   end
 
   def prep_extra_agent_data(solr_response)
+    agent_data = {}
     agency_refs = []
 
     Array(solr_response['results']).each do |doc|
@@ -45,6 +48,48 @@ class CsvExportAgents < CsvExport
       end
     end
 
-    # FIXME this crap
+    # First let's look at Resources!
+    query = Solr::Query.create_keyword_search('responsible_agency_u_sstr:(%s)' % [agency_refs.map{|uri| '"' + uri + '"'}.join(' OR ')])
+    query.set_facets(['responsible_agency_u_sstr', 'creating_agency_u_sstr'])
+    query.set_record_types(['resource'])
+    query.pagination(1, 1)
+    query.set_repo_id(repo_id)
+    query.add_solr_param(:"facet.limit", agency_refs.length)
+    query.use_standard_query_type
+    results = Solr.search(query)
+
+    (results.dig('facets', 'facet_fields', 'responsible_agency_u_sstr') || []).each_slice(2).each do |uri, count|
+      agent_data[uri] ||= {}
+      agent_data[uri][:number_of_series_controlled] = count
+    end
+
+    (results.dig('facets', 'facet_fields', 'creating_agency_u_sstr') || []).each_slice(2).each do |uri, count|
+      agent_data[uri] ||= {}
+      agent_data[uri][:is_agency_creating_agency] = count > 0
+    end
+
+    # Now do the Archival Objects!
+    query = Solr::Query.create_keyword_search('responsible_agency_u_sstr:(%s)' % [agency_refs.map{|uri| '"' + uri + '"'}.join(' OR ')])
+    query.set_facets(['creating_agency_u_sstr', 'responsible_agency_overrides_series_u_sstr'])
+    query.set_record_types(['archival_object'])
+    query.pagination(1, 1)
+    query.set_repo_id(repo_id)
+    query.add_solr_param(:"facet.limit", agency_refs.length)
+    query.use_standard_query_type
+    results = Solr.search(query)
+
+    (results.dig('facets', 'facet_fields', 'creating_agency_u_sstr') || []).each_slice(2).each do |uri, count|
+      agent_data[uri] ||= {}
+      unless agent_data[uri][:is_agency_creating_agency]
+        agent_data[uri][:is_agency_creating_agency] = count > 0
+      end
+    end
+
+    (results.dig('facets', 'facet_fields', 'responsible_agency_overrides_series_u_sstr') || []).each_slice(2).each do |uri, count|
+      agent_data[uri] ||= {}
+      agent_data[uri][:number_of_items_in_other_series_controlled] = count
+    end
+
+    agent_data
   end
 end
