@@ -21,7 +21,7 @@ class CsvExportSeries < CsvExport
       Column.new('Responsible Agency ID', proc{|record| record.responsible_agency_id}),
       Column.new('Responsible Agency Name', proc{|record| record.responsible_agency_name}),
       Column.new('No of other Responsible Agencies', proc{|record| record.number_of_other_responsible_agencies}),
-      Column.new('No of Items with Overriding Responsible Agencies', proc{|record| record.number_of_items_with_overidden_responsible_agency}),
+      Column.new('No of Items with Overriding Responsible Agencies', proc{|record| record.number_of_items_with_overridden_responsible_agency}),
       Column.new('No of Significant Items (Memory of the World)', proc{|record| record.number_of_significant_items_mow}),
       Column.new('No of Significant Items (Iconic)', proc{|record| record.number_of_significant_items_iconic}),
       Column.new('No of Significant Items (High)', proc{|record| record.number_of_significant_items_high}),
@@ -92,7 +92,24 @@ class CsvExportSeries < CsvExport
 
     (results.dig('facets', 'facet_fields', 'series_with_responsible_agency_overrides_u_sstr') || []).each_slice(2).each do |uri, count|
       series_data[uri] ||= {}
-      series_data[uri][:number_of_items_with_overidden_responsible_agency] = count
+      series_data[uri][:number_of_items_with_overridden_responsible_agency] = count
+    end
+
+    # Contains Items/ Reps with overriding RAPs?
+    query = Solr::Query.create_keyword_search('rap_attached_overrides_series_u_sstr:(%s)' % [series_refs.map{|uri| '"' + uri + '"'}.join(' OR ')])
+    query.set_facets(['rap_attached_overrides_series_u_sstr'])
+    query.set_record_types(['archival_object', 'physical_representation', 'digital_representation'])
+    query.pagination(1, 1)
+    query.set_repo_id(repo_id)
+    query.add_solr_param(:"facet.limit", series_refs.length)
+    query.use_standard_query_type
+    results = Solr.search(query)
+
+    (results.dig('facets', 'facet_fields', 'rap_attached_overrides_series_u_sstr') || []).each_slice(2).each do |uri, count|
+      series_data[uri] ||= {}
+      unless series_data[uri][:has_overriding_raps]
+        series_data[uri][:has_overriding_raps] = count > 0
+      end
     end
 
     series_data

@@ -550,7 +550,7 @@ class CSVExportRecord
 
   def has_overriding_raps
     if doc['primary_type'] == 'resource'
-      "** FIXME **"
+      extra_data.fetch(:has_overriding_raps, false) ? 'Y' : 'N'
     elsif doc['primary_type'] == 'archival_object'
       if json['rap_attached']
         'Y'
@@ -668,9 +668,9 @@ class CSVExportRecord
     end
   end
 
-  def number_of_items_with_overidden_responsible_agency
+  def number_of_items_with_overridden_responsible_agency
     if doc['primary_type'] == 'resource'
-      extra_data.fetch(:number_of_items_with_overidden_responsible_agency, 0)
+      extra_data.fetch(:number_of_items_with_overridden_responsible_agency, 0)
     end
   end
 

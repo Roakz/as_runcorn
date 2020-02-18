@@ -207,6 +207,13 @@ class IndexerCommon
         doc['rap_is_open_access_u_sbool'] = doc['rap_access_status_u_ssort'] == 'Open Access'
       end
 
+      if record['record']['rap_attached']
+        if doc['primary_type'] == 'archival_object'
+          doc['rap_attached_overrides_series_u_sstr'] = record['record'].dig('resource', 'ref')
+        elsif ['physical_representation', 'digital_representation'].include?(doc['primary_type'])
+          doc['rap_attached_overrides_series_u_sstr'] = record['record'].dig('controlling_record_series', 'ref')
+        end
+      end
     end
 
 
