@@ -147,9 +147,9 @@ class AssessmentsReport < RuncornReport
     result = {}
 
     base_ds
-      .join(:assessment_rlshp, Sequel.qualify(:assessment_rlshp, :assessment_id) => Sequel.qualify(:assessment, :id))
-      .join(:physical_representation, Sequel.qualify(:physical_representation, :id) => Sequel.qualify(:assessment_rlshp, :physical_representation_id))
-      .join(:conservation_treatment, Sequel.qualify(:conservation_treatment, :physical_representation_id) => Sequel.qualify(:physical_representation, :id))
+      .join(:conservation_treatment_assessment_rlshp, Sequel.qualify(:conservation_treatment_assessment_rlshp, :assessment_id) => Sequel.qualify(:assessment, :id))
+      .join(:conservation_treatment, Sequel.qualify(:conservation_treatment, :id) => Sequel.qualify(:conservation_treatment_assessment_rlshp, :conservation_treatment_id))
+      .join(:physical_representation, Sequel.qualify(:physical_representation, :id) => Sequel.qualify(:conservation_treatment, :physical_representation_id))
       .group_and_count(Sequel.qualify(:assessment, :id),
                        Sequel.qualify(:physical_representation, :resource_id),
                        Sequel.qualify(:conservation_treatment, :status))
