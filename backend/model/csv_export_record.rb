@@ -662,6 +662,18 @@ class CSVExportRecord
     end
   end
 
+  def number_of_top_containers
+    if doc['primary_type'] == 'resource'
+      extra_data.fetch(:number_of_top_containers, 0)
+    end
+  end
+
+  def number_of_items_with_overidden_responsible_agency
+    if doc['primary_type'] == 'resource'
+      extra_data.fetch(:number_of_items_with_overidden_responsible_agency, 0)
+    end
+  end
+
   def method_missing(*args)
     "** FIXME **"
   end

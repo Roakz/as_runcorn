@@ -121,9 +121,14 @@ class IndexerCommon
         doc['controlling_record_begin_date_u_ssort'] = record.dig('record', 'controlling_record', 'begin_date')
         doc['controlling_record_end_date_u_ssort'] = record.dig('record', 'controlling_record', 'end_date')
 
+        doc['controlling_record_series_u_sstr'] = record['record']['controlling_record_series']['ref']
         doc['controlling_record_series_qsa_id_u_sint'] = record['record']['controlling_record_series']['qsa_id']
         doc['controlling_record_series_qsa_id_u_sort'] = record['record']['controlling_record_series']['qsa_id'].to_s.rjust(9, '0')
         doc['controlling_record_series_qsa_id_u_ssort'] = record['record']['controlling_record_series']['qsa_id_prefixed']
+
+        if doc['top_container_uri_u_sstr']
+          doc['series_top_container_uri_u_sstr'] = '%s::%s' % [doc['controlling_record_series_u_sstr'], doc['top_container_uri_u_sstr']]
+        end
 
         doc['conservation_awaiting_treatment_u_sbool'] = Array(record['record']['conservation_treatments']).any?{|t| t['status'] == 'awaiting_treatment'}
         doc['conservation_treatment_in_progress_u_sbool'] = Array(record['record']['conservation_treatments']).any?{|t| t['status'] == 'in_progress'}

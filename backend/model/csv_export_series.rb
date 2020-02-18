@@ -43,4 +43,59 @@ class CsvExportSeries < CsvExport
     ]
   end
 
+  def process_results(solr_response, csv)
+    @series_data = prep_extra_series_data(solr_response)
+    super
+  end
+
+  def record_for_solr_doc(doc)
+    record = super
+    record.append_extra_data(@series_data.fetch(doc['id'], {}))
+    record
+  end
+
+  def prep_extra_series_data(solr_response)
+    series_data = {}
+    series_refs = []
+
+    Array(solr_response['results']).each do |doc|
+      if doc['primary_type'] == 'resource'
+        series_refs << doc['id']
+      end
+    end
+
+    query = Solr::Query.create_keyword_search('controlling_record_series_u_sstr:(%s)' % [series_refs.map{|uri| '"' + uri + '"'}.join(' OR ')])
+    query.set_facets(['series_top_container_uri_u_sstr'])
+    query.set_record_types(['physical_representation'])
+    query.pagination(1, 1)
+    query.set_repo_id(repo_id)
+    query.add_solr_param(:"facet.limit", series_refs.length)
+    query.use_standard_query_type
+    results = Solr.search(query)
+
+    (results.dig('facets', 'facet_fields', 'series_top_container_uri_u_sstr') || []).each_slice(2).each do |facet_value, _|
+      resource_uri, _ = facet_value.split('::')
+      series_data[resource_uri] ||= {}
+      series_data[resource_uri][:number_of_top_containers] ||= 0
+      series_data[resource_uri][:number_of_top_containers] += 1
+    end
+
+    # No of Items with Overriding Responsible Agencies
+    query = Solr::Query.create_keyword_search('series_with_responsible_agency_overrides_u_sstr:(%s)' % [series_refs.map{|uri| '"' + uri + '"'}.join(' OR ')])
+    query.set_facets(['series_with_responsible_agency_overrides_u_sstr'])
+    query.set_record_types(['archival_object'])
+    query.pagination(1, 1)
+    query.set_repo_id(repo_id)
+    query.add_solr_param(:"facet.limit", series_refs.length)
+    query.use_standard_query_type
+    results = Solr.search(query)
+
+    (results.dig('facets', 'facet_fields', 'series_with_responsible_agency_overrides_u_sstr') || []).each_slice(2).each do |uri, count|
+      series_data[uri] ||= {}
+      series_data[uri][:number_of_items_with_overidden_responsible_agency] = count
+    end
+
+    series_data
+  end
+
 end
