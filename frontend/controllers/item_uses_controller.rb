@@ -43,7 +43,7 @@ class ItemUsesController < ApplicationController
       date_query = {
         'query' => {
           'jsonmodel_type' => 'range_query',
-          'field' => 'date_start_u_ssort',
+          'field' => 'item_use_start_date_u_ssort',
           'from' => params[:date_range_start],
           'to' => params[:date_range_end],
         }
