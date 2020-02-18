@@ -67,7 +67,7 @@ class AgencyTransferProposalsReport < RuncornReport
               row[:agency_name],
               row[:status],
               row[:transfer_date_scheduled],
-              Time.at(row[:transfer_date_approved] / 1000).to_date.iso8601,
+              row[:transfer_date_approved] ? (Time.at(row[:transfer_date_approved] / 1000).to_date.iso8601) : nil,
             ]
           end
         end
