@@ -47,11 +47,11 @@
             </select>
           </div>
           <div class="form-group">
-            <label for="from_date">From</label>
+            <label for="from_date">From <span class="text-muted date-filter-target-field"></span></label>
             <input type="date" name="from_date" id="from_date" class="form-control" placeholder="YYYY-MM-DD" style="width: auto"/>
           </div>
           <div class="form-group">
-            <label for="to_date">To</label>
+            <label for="to_date">To <span class="text-muted date-filter-target-field"></span></label>
             <input type="date" name="to_date" id="to_date" class="form-control" placeholder="YYYY-MM-DD" style="width: auto"/>
           </div>
         </div>
@@ -75,6 +75,11 @@
     assessments_report: ['from_date', 'to_date'],
     conservation_requests_report: ['from_date', 'to_date'],
     conservation_treatments_report: ['from_date', 'to_date'],
+  };
+
+  DATE_FILTER_TARGET_FIELD = {
+    DEFAULT: '(Create Time)',
+    agency_transfers_report: '(Date Received)',
   };
 
   $(function() {
@@ -112,6 +117,9 @@
       SUPPORTED_INPUTS[report].forEach(function(inputId) {
        $('#report-inputs').append($('#disabled-form-elements').find('#' + inputId).closest('.form-group'));
       });
+
+      var dateFilterTarget = DATE_FILTER_TARGET_FIELD[report] || DATE_FILTER_TARGET_FIELD['DEFAULT'];
+      $('.date-filter-target-field').text(dateFilterTarget);
     }
 
     $('#report').on('change', updateInputs);
