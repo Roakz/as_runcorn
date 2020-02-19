@@ -84,17 +84,13 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
   def self.sequel_to_jsonmodel(objs, opts = {})
     jsons = super
 
-    # FUTURE NOTE: Public Access Requests and Exhibitions should be added to the
-    # list of included context_uris once they're implemented.
-    if rand < 0.01
-      Log.warn("HEY: Currently this query only supports file issues because Public Access Requests and Exhibitions haven't been implemented yet.  Once they exist, find this message and await further instructions.")
-    end
-
     frequency_of_use = Movement
                          .filter(:physical_representation_id => objs.map(&:id))
                          .filter(Sequel.|(
-                                   Sequel.like(:context_uri, '/file_issues/%'))
-                                )
+                                   Sequel.like(:context_uri, '/file_issues/%'),
+                                   Sequel.like(:context_uri, '/reading_room_requests/%'),
+                                   Sequel.like(:context_uri, '/agency_reading_room_requests/%'),
+                                 ))
                          .group_and_count(:physical_representation_id)
                          .map {|row| [row[:physical_representation_id], row[:count]]}
                          .to_h
