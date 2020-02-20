@@ -52,3 +52,9 @@
     font-weight: 900;
     content: "\f70e";
 }
+
+.search-listing-filter .facet,
+.search-listing-filter .facet-selected {
+    white-space: normal;
+    word-break: break-word;
+}
