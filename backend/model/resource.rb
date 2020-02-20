@@ -6,6 +6,7 @@ Resource.include(RAPs)
 Resource.include(ControlGapsCalculator)
 Resource.include(Deaccessioned)
 Resource.include(ArchivistApproval)
+Resource.include(Batchable)
 
 class Resource
   define_relationship(:name => :representation_approved_by,

@@ -8,6 +8,7 @@ ArchivalObject.include(Significance)
 ArchivalObject.include(Deaccessioned)
 ArchivalObject.include(ArchivistApproval)
 ArchivalObject.include(WithinSets)
+ArchivalObject.include(Batchable)
 
 class ArchivalObject
   define_relationship(:name => :representation_approved_by,

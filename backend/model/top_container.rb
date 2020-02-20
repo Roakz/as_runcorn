@@ -2,6 +2,7 @@ class TopContainer
   include Movements
   move_to_storage_permitted
   include ContentsAwareness
+  include Batchable
 
   # replacements for:
   #   self.bulk_update_location(ids, location_uri)
