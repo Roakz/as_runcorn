@@ -45,6 +45,7 @@ class QSAId
   def self.parse_prefixed_id(prefixed_id)
     parsed = prefixed_id.scan(/([^\d]+)?(\d+)/)[0]
     return {} unless !!parsed
+    return {} if parsed[0].nil?
 
     out = [:prefix, :id].zip(parsed).to_h
     out[:model] = self.model_for(out[:prefix])
