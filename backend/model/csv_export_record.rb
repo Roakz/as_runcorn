@@ -12,7 +12,7 @@ class CSVExportRecord
   end
 
   def type
-    doc['primary_type'].split('_').collect(&:capitalize).join(' ')
+    I18n.t("#{doc['primary_type']}._singular")
   end
 
   def id
@@ -26,7 +26,11 @@ class CSVExportRecord
   end
 
   def title
-    doc['title'] || doc['display_string']
+    if doc['primary_type'] == 'archival_object' && json['title']
+      json['title']
+    else
+      doc['title'] || doc['display_string']
+    end
   end
 
   def start_date
@@ -174,7 +178,7 @@ class CSVExportRecord
 
   def rap_expiry_date
     if json['rap_expiration']
-      if json['expires']
+      if !!json['rap_expiration']['expires']
         json.dig('rap_expiration', 'expiry_date')
       else
         'No expiry'

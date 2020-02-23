@@ -25,6 +25,7 @@ class CsvExport
       Column.new('Associated Record ID', proc{|record| record.associated_record_id}),
       Column.new('Contained Within', proc{|record| record.contained_within}),
       Column.new('Top Container', proc{|record| record.top_container}),
+      Column.new('RAP Years', proc{|record| record.rap_years}),
       Column.new('RAP Status', proc{|record| record.rap_status}),
       Column.new('RAP Expiry Date', proc{|record| record.rap_expiry_date}),
       Column.new('Access Category', proc{|record| record.access_category}),
