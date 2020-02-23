@@ -43,7 +43,7 @@ class AssessmentsReport < RuncornReport
 
         resource_map = build_assessment_to_resources_map(base_ds)
         treatment_counts_map = build_treatment_counts_map(base_ds)
-        conservation_issues_map = build_conservation_issues_map(base_ds)
+        proposed_treatments = build_proposed_treatments_map(base_ds)
 
         base_ds
           .left_join(:conservation_request_assessment_rlshp, Sequel.qualify(:conservation_request_assessment_rlshp, :assessment_id) => Sequel.qualify(:assessment, :id))
@@ -73,7 +73,7 @@ class AssessmentsReport < RuncornReport
                 row[:survey_end],
                 BackendEnumSource.value_for_id('runcorn_treatment_priority', row[:treatment_priority_id]),
                 treatment_summary,
-                conservation_issues_map.fetch(row[:id], false) ? conservation_issues_map.fetch(row[:id]).join('; ') : nil,
+                proposed_treatments.fetch(row[:id], false) ? proposed_treatments.fetch(row[:id]).join('; ') : nil,
                 row[:surveyed_duration],
                 resource_data.fetch(:count)
               ]
@@ -88,7 +88,7 @@ class AssessmentsReport < RuncornReport
               row[:survey_end],
               BackendEnumSource.value_for_id('runcorn_treatment_priority', row[:treatment_priority_id]),
               nil,
-              conservation_issues_map.fetch(row[:id], false) ? conservation_issues_map.fetch(row[:id]).join('; ') : nil,
+              proposed_treatments.fetch(row[:id], false) ? proposed_treatments.fetch(row[:id]).join('; ') : nil,
               row[:surveyed_duration],
               nil
             ]
@@ -125,14 +125,14 @@ class AssessmentsReport < RuncornReport
     result
   end
 
-  def build_conservation_issues_map(base_ds)
+  def build_proposed_treatments_map(base_ds)
     result = {}
 
     base_ds
       .join(:assessment_attribute, Sequel.qualify(:assessment_attribute, :assessment_id) => Sequel.qualify(:assessment, :id))
       .join(:assessment_attribute_definition, Sequel.qualify(:assessment_attribute_definition, :id) => Sequel.qualify(:assessment_attribute, :assessment_attribute_definition_id))
       .filter(Sequel.qualify(:assessment_attribute, :value) => 'true')
-      .filter(Sequel.qualify(:assessment_attribute_definition, :type) => 'conservation_issue')
+      .filter(Sequel.qualify(:assessment_attribute_definition, :type) => 'format')
       .select(Sequel.qualify(:assessment, :id),
               Sequel.qualify(:assessment_attribute_definition, :label))
       .each do |row|
