@@ -15,11 +15,13 @@
     </ul>
 
     <table class="table table-striped table-bordered table-condensed table-hover table-sortable">
-      <col style="width:55%">
+      <col style="width:8%">
+      <col style="width:50%">
       <col style="width:20%">
-      <col style="width:25%">
+      <col style="width:22%">
       <thead>
         <tr>
+          <th class="col sortable">ID</th>
           <th class="col title sortable"><%= t('agent_corporate_entity._singular') %></th>
           <th class="col sortable"><%= t("managed_registration.list.#{section}") %></th>
           <th class="col sortable"><%= t("managed_registration.list.last_action_time") %></th>
@@ -29,6 +31,7 @@
       <tbody>
         <% @list[section].each do |agency| %>
           <tr>
+            <td><%= QSAIdHelper.id(agency['qsa_id_prefixed']) %></td>
             <td>
               <%= link_to agency['title'], {:controller => :agents,
                                             :action => :show,

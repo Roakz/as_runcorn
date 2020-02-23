@@ -48,10 +48,10 @@ class ArchivesSpaceService < Sinatra::Base
   do
     if params[:state].intern == :all
       json_response({
-                      :draft => Registration.list(AgentCorporateEntity),
-                      :withdrawn => Registration.list(AgentCorporateEntity, :withdraw),
-                      :submitted => Registration.list(AgentCorporateEntity, :submit),
-                      :approved => Registration.list(AgentCorporateEntity, :approve),
+                      :draft => Registration.list(AgentCorporateEntity, :draft),
+                      :withdrawn => Registration.list(AgentCorporateEntity, :withdrawn),
+                      :submitted => Registration.list(AgentCorporateEntity, :submitted),
+                      :approved => Registration.list(AgentCorporateEntity, :approved),
                     })
     else
       json_response(Registration.list(AgentCorporateEntity, params[:state]))
