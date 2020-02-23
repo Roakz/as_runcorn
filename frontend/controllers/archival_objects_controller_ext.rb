@@ -19,7 +19,7 @@ ArchivalObjectsController.class_eval do
                                                             [proc { |hash, schema|
                                                                hash = hash.clone
                                                                schema['properties'].each do |name, properties|
-                                                                 if name == 'ref_id'
+                                                                 if ['ref_id', 'qsa_id', 'existing_ref', 'representation_file'].include?(name)
                                                                    hash.delete(name)
                                                                  elsif properties['readonly'] && name != '_resolved'
                                                                    hash.delete(name)
