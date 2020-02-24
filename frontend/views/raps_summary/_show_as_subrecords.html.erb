@@ -1,6 +1,6 @@
 <section id="<%= section_id %>" class="subrecord-form-dummy" data-uri="<%= record['uri'] %>">
-  <h3>
-    <%= I18n.t("rap_summary.heading") %>
+  <h3 class="subrecord-form-heading">
+    <%= wrap_with_tooltip(I18n.t('rap_summary.heading'), 'qsa_tooltips.rap_summary_tooltip', 'subrecord-form-heading-label') %>
   </h3>
   <div class="subrecord-form-container">
     <div class="subrecord-form-fields">

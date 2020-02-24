@@ -1,8 +1,8 @@
 <% render_aspace_partial :partial => "raps/template" %>
 
 <section id="<%= section_id %>" class="subrecord-form-dummy">
-  <h3>
-    <%= I18n.t("rap_attached._plural") %>
+  <h3 class="subrecord-form-heading">
+    <%= wrap_with_tooltip(I18n.t('rap_attached._plural'), 'qsa_tooltips.rap_attached_tooltip', 'subrecord-form-heading-label') %>
     <% if user_can?('set_raps') %>
       <button class="attach-rap-button btn btn-sm btn-default pull-right" data-uri="<%= record['uri'] %>">Attach RAP</button>
     <% end %>
