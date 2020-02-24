@@ -313,6 +313,9 @@ class BulkRecordChanges
         end
 
         begin
+          # We never need to change the position for an existing record
+          ao_json['position'] = nil
+
           ao.update_from_json(ao_json)
           job.write_output("Updated existing Item record: \"#{ao_json.display_string}\"")
         rescue JSONModel::ValidationException => validation_errors
