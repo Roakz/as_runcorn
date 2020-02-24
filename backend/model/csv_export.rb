@@ -72,32 +72,27 @@ class CsvExport
   end
 
   def to_csv
-    tempfile = Tempfile.new('SearchExport')
-
-    CSV.open(tempfile, 'w') do |csv|
-      csv << columns.map(&:heading)
+    Enumerator.new do |y|
+      y << CSV.generate_line(columns.map(&:heading))
 
       while(true) do
         result = Search.search(criteria, repo_id)
 
         break if Array(result['results']).empty?
 
-        process_results(result, csv)
+        process_results(result, y)
 
         break if result['last_page'] <= result['this_page']
 
         criteria[:page] = criteria[:page] + 1
       end
     end
-
-    tempfile.rewind
-    tempfile
   end
 
-  def process_results(solr_response, csv)
+  def process_results(solr_response, y)
     solr_response['results'].each do |doc|
       record = record_for_solr_doc(doc)
-      csv << columns.map {|col| col.value.call(record)}
+      y << CSV.generate_line(columns.map {|col| col.value.call(record)})
     end
   end
 
