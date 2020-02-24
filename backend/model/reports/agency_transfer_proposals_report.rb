@@ -51,31 +51,27 @@ class AgencyTransferProposalsReport < RuncornReport
   end
 
   def to_stream
-    tempfile = Tempfile.new('AgencyTransferProposalsReport')
+    Enumerator.new do |y|
+      y << CSV.generate_line(['Date Submitted', 'ID (P)', 'Transfer Title', 'Transfer ID', 'Agency ID', 'Agency Title', 'Status', 'Scheduled Date', 'Date Approved'])
 
-    CSV.open(tempfile, 'w') do |csv|
-      csv << ['Date Submitted', 'ID (P)', 'Transfer Title', 'Transfer ID', 'Agency ID', 'Agency Title', 'Status', 'Scheduled Date', 'Date Approved']
       DB.open do |aspacedb|
         MAPDB.open do |mapdb|
           transfer_dataset(aspacedb, mapdb) do |row|
-            csv << [
-              Time.at(row[:create_time] / 1000).to_date.iso8601,
-              QSAId.prefixed_id_for(TransferProposal, row[:id]),
-              row[:title],
-              row[:transfer_id] ? QSAId.prefixed_id_for(Transfer, row[:transfer_id]) : nil,
-              row[:agency_qsa_id],
-              row[:agency_name],
-              row[:status],
-              row[:transfer_date_scheduled],
-              row[:transfer_date_approved] ? (Time.at(row[:transfer_date_approved] / 1000).to_date.iso8601) : nil,
-            ]
+            y << CSV.generate_line([
+                Time.at(row[:create_time] / 1000).to_date.iso8601,
+                QSAId.prefixed_id_for(TransferProposal, row[:id]),
+                row[:title],
+                row[:transfer_id] ? QSAId.prefixed_id_for(Transfer, row[:transfer_id]) : nil,
+                row[:agency_qsa_id],
+                row[:agency_name],
+                row[:status],
+                row[:transfer_date_scheduled],
+                row[:transfer_date_approved] ? (Time.at(row[:transfer_date_approved] / 1000).to_date.iso8601) : nil,
+            ])
           end
         end
       end
     end
-
-    tempfile.rewind
-    tempfile
   end
 
 end

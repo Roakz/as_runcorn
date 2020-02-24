@@ -14,19 +14,17 @@ class AssessmentsReport < RuncornReport
   end
 
   def to_stream
-    tempfile = Tempfile.new('AssessmentsReport')
-
-    CSV.open(tempfile, 'w') do |csv|
-      csv << ['Assessment ID (AS)',
-              'Series ID (S)/Title',
-              'Status',
-              'Survey Start',
-              'Survey End',
-              'Treatment Priority',
-              'Treatment Summary',
-              'Proposed Treatments',
-              'Time it took to Complete Survey',
-              'Number of items']
+    Enumerator.new do |y|
+      y << CSV.generate_line(['Assessment ID (AS)',
+                              'Series ID (S)/Title',
+                              'Status',
+                              'Survey Start',
+                              'Survey End',
+                              'Treatment Priority',
+                              'Treatment Summary',
+                              'Proposed Treatments',
+                              'Time it took to Complete Survey',
+                              'Number of items'])
 
       DB.open do |aspacedb|
         base_ds = aspacedb[:assessment]
@@ -65,7 +63,7 @@ class AssessmentsReport < RuncornReport
                 treatment_summary = treatment_data.map {|status, count| '%d %s' % [count, status.gsub('_', ' ')]}.join('; ')
               end
 
-              csv << [
+              y << CSV.generate_line([
                 QSAId.prefixed_id_for(Assessment, row[:id]),
                 '%s %s' % [resource_data.fetch(:qsa_id), resource_data.fetch(:title)],
                 BackendEnumSource.value_for_id('conservation_request_status', row[:status_id]),
@@ -76,11 +74,11 @@ class AssessmentsReport < RuncornReport
                 proposed_treatments.fetch(row[:id], false) ? proposed_treatments.fetch(row[:id]).join('; ') : nil,
                 row[:surveyed_duration],
                 resource_data.fetch(:count)
-              ]
+              ])
             end
           else
             # no items linked to assessment
-            csv << [
+            y << CSV.generate_line([
               QSAId.prefixed_id_for(Assessment, row[:id]),
               nil,
               BackendEnumSource.value_for_id('conservation_request_status', row[:status_id]),
@@ -91,14 +89,11 @@ class AssessmentsReport < RuncornReport
               proposed_treatments.fetch(row[:id], false) ? proposed_treatments.fetch(row[:id]).join('; ') : nil,
               row[:surveyed_duration],
               nil
-            ]
+            ])
           end
         end
       end
     end
-
-    tempfile.rewind
-    tempfile
   end
 
   def build_assessment_to_resources_map(base_ds)

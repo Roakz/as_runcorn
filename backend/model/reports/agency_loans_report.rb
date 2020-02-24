@@ -192,89 +192,85 @@ class AgencyLoansReport < RuncornReport
   end
 
   def to_stream
-    tempfile = Tempfile.new('AgencyLoansReport')
+    Enumerator.new do |y|
+      y << CSV.generate_line(['Date Created', 'ID', 'ITM (REP) number count', 'Agency (ID)', 'Agency', 'Status', 'Request Type (NRS, RTI, Other)', 'Agency Location', 'Delivery Location', 'Expiry Date', 'Overdue', 'Number Returned', 'Quote Amount'])
 
-    CSV.open(tempfile, 'w') do |csv|
-      csv << ['Date Created', 'ID', 'ITM (REP) number count', 'Agency (ID)', 'Agency', 'Status', 'Request Type (NRS, RTI, Other)', 'Agency Location', 'Delivery Location', 'Expiry Date', 'Overdue', 'Number Returned', 'Quote Amount']
       DB.open do |aspacedb|
         MAPDB.open do |mapdb|
           file_issue_request_dataset(aspacedb, mapdb) do |row|
-            csv << [
-              Time.at(row[:create_time] / 1000).to_date.iso8601,
-              QSAId.prefixed_id_for(FileIssueRequest, row[:id]),
-              row[:count],
-              row[:agency_qsa_id],
-              row[:agency_name],
-              'Digital: %s; Physical: %s' % [row[:digital_request_status], row[:physical_request_status]],
-              row[:request_type],
-              row[:agency_location_name],
-              row[:delivery_location],
-              '',
-              '',
-              '',
-              '',
-            ]
+            y << CSV.generate_line([
+                Time.at(row[:create_time] / 1000).to_date.iso8601,
+                QSAId.prefixed_id_for(FileIssueRequest, row[:id]),
+                row[:count],
+                row[:agency_qsa_id],
+                row[:agency_name],
+                'Digital: %s; Physical: %s' % [row[:digital_request_status], row[:physical_request_status]],
+                row[:request_type],
+                row[:agency_location_name],
+                row[:delivery_location],
+                '',
+                '',
+                '',
+                '',
+            ])
           end
 
           file_issue_dataset(aspacedb, mapdb, 'PHYSICAL') do |row|
-            csv << [
-              Time.at(row[:create_time] / 1000).to_date.iso8601,
-              "%s%s%s" % [QSAId.prefix_for(FileIssue), 'P', row[:id]],
-              row[:count],
-              row[:agency_qsa_id],
-              row[:agency_name],
-              row[:status],
-              row[:request_type],
-              row[:agency_location_name],
-              row[:delivery_location],
-              [row[:min_expiry_date], row[:max_expiry_date]].compact.uniq.join(' - '),
-              row[:has_overdue] ? 'true' : '',
-              row[:returned_count],
-              row[:quote],
-            ]
+            y << CSV.generate_line([
+                Time.at(row[:create_time] / 1000).to_date.iso8601,
+                "%s%s%s" % [QSAId.prefix_for(FileIssue), 'P', row[:id]],
+                row[:count],
+                row[:agency_qsa_id],
+                row[:agency_name],
+                row[:status],
+                row[:request_type],
+                row[:agency_location_name],
+                row[:delivery_location],
+                [row[:min_expiry_date], row[:max_expiry_date]].compact.uniq.join(' - '),
+                row[:has_overdue] ? 'true' : '',
+                row[:returned_count],
+                row[:quote],
+            ])
           end
 
           file_issue_dataset(aspacedb, mapdb, 'DIGITAL') do |row|
-            csv << [
-              Time.at(row[:create_time] / 1000).to_date.iso8601,
-              "%s%s%s" % [QSAId.prefix_for(FileIssue), 'D', row[:id]],
-              row[:count],
-              row[:agency_qsa_id],
-              row[:agency_name],
-              row[:status],
-              row[:request_type],
-              row[:agency_location_name],
-              row[:delivery_location],
-              [row[:min_expiry_date], row[:max_expiry_date]].compact.uniq.join(' - '),
-              '',
-              '',
-              row[:quote],
-            ]
+            y << CSV.generate_line([
+                Time.at(row[:create_time] / 1000).to_date.iso8601,
+                "%s%s%s" % [QSAId.prefix_for(FileIssue), 'D', row[:id]],
+                row[:count],
+                row[:agency_qsa_id],
+                row[:agency_name],
+                row[:status],
+                row[:request_type],
+                row[:agency_location_name],
+                row[:delivery_location],
+                [row[:min_expiry_date], row[:max_expiry_date]].compact.uniq.join(' - '),
+                '',
+                '',
+                row[:quote],
+            ])
           end
 
           search_request_dataset(aspacedb, mapdb) do |row|
-            csv << [
-              Time.at(row[:create_time] / 1000).to_date.iso8601,
-              QSAId.prefixed_id_for(SearchRequest, row[:id]),
-              '',
-              row[:agency_qsa_id],
-              row[:agency_name],
-              row[:status],
-              row[:purpose],
-              row[:agency_location_name],
-              '',
-              '',
-              '',
-              '',
-              row[:quote],
-            ]
+            y << CSV.generate_line([
+                Time.at(row[:create_time] / 1000).to_date.iso8601,
+                QSAId.prefixed_id_for(SearchRequest, row[:id]),
+                '',
+                row[:agency_qsa_id],
+                row[:agency_name],
+                row[:status],
+                row[:purpose],
+                row[:agency_location_name],
+                '',
+                '',
+                '',
+                '',
+                row[:quote],
+            ])
           end
         end
       end
     end
-
-    tempfile.rewind
-    tempfile
   end
 
 end

@@ -54,32 +54,28 @@ class AgencyTransfersReport < RuncornReport
   end
 
   def to_stream
-    tempfile = Tempfile.new('AgencyTransfersReport')
+    Enumerator.new do |y|
+      y << CSV.generate_line(["Date Received", 'ID(T)', 'ID (P)', 'Transfer Title', 'Agency ID', 'Agency Title', 'Status', 'Item numbers', 'Quantity Received', 'Agency Location'])
 
-    CSV.open(tempfile, 'w') do |csv|
-      csv << ["Date Received", 'ID(T)', 'ID (P)', 'Transfer Title', 'Agency ID', 'Agency Title', 'Status', 'Item numbers', 'Quantity Received', 'Agency Location']
       DB.open do |aspacedb|
         MAPDB.open do |mapdb|
           transfer_dataset(aspacedb, mapdb) do |row|
-            csv << [
-              row[:date_received],
-              QSAId.prefixed_id_for(Transfer, row[:id]),
-              QSAId.prefixed_id_for(TransferProposal, row[:transfer_proposal_id]),
-              row[:title],
-              row[:agency_qsa_id],
-              row[:agency_name],
-              row[:status],
-              row[:item_count],
-              row[:quantity_received],
-              row[:agency_location_name],
-            ]
+            y << CSV.generate_line([
+                row[:date_received],
+                QSAId.prefixed_id_for(Transfer, row[:id]),
+                QSAId.prefixed_id_for(TransferProposal, row[:transfer_proposal_id]),
+                row[:title],
+                row[:agency_qsa_id],
+                row[:agency_name],
+                row[:status],
+                row[:item_count],
+                row[:quantity_received],
+                row[:agency_location_name],
+            ])
           end
         end
       end
     end
-
-    tempfile.rewind
-    tempfile
   end
 
 end

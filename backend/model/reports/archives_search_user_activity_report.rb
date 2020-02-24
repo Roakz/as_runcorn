@@ -14,19 +14,17 @@ class ArchivesSearchUserActivityReport < RuncornReport
   end
 
   def to_stream
-    tempfile = Tempfile.new('AgencyLoansReport')
-
-    CSV.open(tempfile, 'w') do |csv|
-      csv << ['User ID',
-              'User Name',
-              'Registration Date',
-              'Verified',
-              'Status',
-              'Admin',
-              'Last Login Date?',
-              'Open Requests',
-              'Date Made Inactive',
-              'Reason Made Inactive']
+    Enumerator.new do |y|
+      y << CSV.generate_line(['User ID',
+                              'User Name',
+                              'Registration Date',
+                              'Verified',
+                              'Status',
+                              'Admin',
+                              'Last Login Date?',
+                              'Open Requests',
+                              'Date Made Inactive',
+                              'Reason Made Inactive'])
 
       PublicDB.open do |publicdb|
         base_ds = publicdb[:user]
@@ -54,7 +52,7 @@ class ArchivesSearchUserActivityReport < RuncornReport
         base_ds
           .order(Sequel.asc(:create_time))
           .each do |row|
-          csv << [
+          y << CSV.generate_line([
             row[:email],
             [row[:last_name], row[:first_name]].compact.reject{|s| s.empty?}.join(', ').strip,
             Time.at(row[:create_time] / 1000).strftime('%d/%m/%Y'),
@@ -65,13 +63,10 @@ class ArchivesSearchUserActivityReport < RuncornReport
             users_with_active_orders_map.fetch(row[:id], false) ? 'Y' : 'N',
             row[:inactive_time] ? Time.at(row[:inactive_time] / 1000).strftime('%d/%m/%Y') : nil,
             row[:admin_notes],
-          ]
+          ])
         end
       end
     end
-
-    tempfile.rewind
-    tempfile
   end
 
 

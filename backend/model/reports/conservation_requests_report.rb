@@ -14,21 +14,19 @@ class ConservationRequestsReport < RuncornReport
   end
 
   def to_stream
-    tempfile = Tempfile.new('ConservationRequestsReport')
-
-    CSV.open(tempfile, 'w') do |csv|
-      csv << ['Conservation Requests (CR)',
-              'Series ID (S)',
-              'Series Title ',
-              'Status',
-              'Assessment (AS)',
-              'Date of Request',
-              'Requested By',
-              'Requested For',
-              'Reason Requested',
-              'Client Type',
-              'Date Conservation Required By',
-              'Number of items']
+    Enumerator.new do |y|
+      y << CSV.generate_line(['Conservation Requests (CR)',
+                              'Series ID (S)',
+                              'Series Title ',
+                              'Status',
+                              'Assessment (AS)',
+                              'Date of Request',
+                              'Requested By',
+                              'Requested For',
+                              'Reason Requested',
+                              'Client Type',
+                              'Date Conservation Required By',
+                              'Number of items'])
 
       DB.open do |aspacedb|
         base_ds = aspacedb[:conservation_request]
@@ -62,7 +60,7 @@ class ConservationRequestsReport < RuncornReport
           .each do |cr_row|
           if resource_map.include?(cr_row[:id])
             resource_map.fetch(cr_row[:id], []).each do |resource_data|
-              csv << [
+              y << CSV.generate_line([
                 QSAId.prefixed_id_for(ConservationRequest, cr_row[:id]),
                 resource_data.fetch(:qsa_id),
                 resource_data.fetch(:title),
@@ -75,11 +73,11 @@ class ConservationRequestsReport < RuncornReport
                 BackendEnumSource.value_for_id('conservation_request_client_type', cr_row[:client_type_id]),
                 cr_row[:date_required_by],
                 resource_data.fetch(:count),
-              ]
+              ])
             end
           else
             # no linked records
-            csv << [
+            y << CSV.generate_line([
               QSAId.prefixed_id_for(ConservationRequest, cr_row[:id]),
               nil,
               nil,
@@ -92,14 +90,11 @@ class ConservationRequestsReport < RuncornReport
               BackendEnumSource.value_for_id('conservation_request_client_type', cr_row[:client_type_id]),
               cr_row[:date_required_by],
               '0'
-            ]
+            ])
           end
         end
       end
     end
-
-    tempfile.rewind
-    tempfile
   end
 
   def build_cr_to_resources_map(base_ds)

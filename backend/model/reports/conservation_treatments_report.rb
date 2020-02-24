@@ -14,27 +14,25 @@ class ConservationTreatmentsReport < RuncornReport
   end
 
   def to_stream
-    tempfile = Tempfile.new('ConservationTreatmentsReport')
-
-    CSV.open(tempfile, 'w') do |csv|
-      csv << ['Conservation Requests (CR)',
-              'Assessment ID (AS)',
-              'Agency ID (A)',
-              'Series ID (S)',
-              'Series Title',
-              'Record ID (ITM)',
-              'Physical Representation ID (PR)',
-              'Format',
-              'Status',
-              'Treatment Process',
-              'Treatments Applied',
-              'Number of Treatments applied',
-              'Materials Used - Consumables',
-              'Materials Used - Staff Time',
-              'Date Conservation Required By',
-              'Date Commenced',
-              'Date Completed',
-              'Created By']
+    Enumerator.new do |y|
+      y << CSV.generate_line(['Conservation Requests (CR)',
+                              'Assessment ID (AS)',
+                              'Agency ID (A)',
+                              'Series ID (S)',
+                              'Series Title',
+                              'Record ID (ITM)',
+                              'Physical Representation ID (PR)',
+                              'Format',
+                              'Status',
+                              'Treatment Process',
+                              'Treatments Applied',
+                              'Number of Treatments applied',
+                              'Materials Used - Consumables',
+                              'Materials Used - Staff Time',
+                              'Date Conservation Required By',
+                              'Date Commenced',
+                              'Date Completed',
+                              'Created By'])
 
       DB.open do |aspacedb|
         base_ds = aspacedb[:conservation_treatment]
@@ -87,7 +85,7 @@ class ConservationTreatmentsReport < RuncornReport
               Sequel.qualify(:assessment, :id)
           )
           .each do |row|
-          csv << [
+          y << CSV.generate_line([
             row[:conservation_request_id] ? QSAId.prefixed_id_for(ConservationRequest, row[:conservation_request_id]) : nil,
             row[:assessment_id] ? QSAId.prefixed_id_for(Assessment, row[:assessment_id]) : nil,
             agency_qsa_ids.fetch(responsible_agency_map.fetch(row[:archival_object_id]), nil),
@@ -106,13 +104,10 @@ class ConservationTreatmentsReport < RuncornReport
             row[:start_date],
             row[:end_date],
             row[:created_by],
-          ]
+          ])
         end
       end
     end
-
-    tempfile.rewind
-    tempfile
   end
 
   def build_responsible_agency_map(base_ds)
