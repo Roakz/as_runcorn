@@ -14,7 +14,7 @@
       <% if @conservation_request.status == 'Draft' && @conservation_request.linked_representation_count > 0 %>
         <div class="btn-group">
           <%= form_tag({:controller => :conservation_requests, :action => :submit_for_review}) do |f| %>
-            <button class="btn btn-sm btn-primary"><%= I18n.t("conservation_request._frontend.action.submit_for_review") %></button>
+            <button class="btn btn-sm btn-primary" title="Click here to submit your request to Conservation ."><%= I18n.t("conservation_request._frontend.action.submit_for_review") %></button>
           <% end %>
         </div>
       <% end %>

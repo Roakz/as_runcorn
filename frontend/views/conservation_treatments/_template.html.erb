@@ -7,12 +7,13 @@
   # grab these definitions on demand (yep, it's a backend API call with a bunch
   # of SQL no doubt).  She'll be right.
   @assessment_attribute_definitions ||= AssessmentAttributeDefinitions.find(nil)
+  is_from_assessment = defined?(generating_from_assessment)
 %>
 
 <% define_template "conservation_treatment", jsonmodel_definition(:conservation_treatment) do |form| %>
   <div class="subrecord-form-fields">
 
-    <% if !defined?(generating_from_assessment) %>
+    <% if !is_from_assessment %>
 
     <div class="form-group">
       <%= form.label('status', {}, ['col-sm-2']) %>
@@ -40,7 +41,7 @@
 
     <%= form.label_and_textfield "external_reference" %>
 
-    <% if !defined?(generating_from_assessment) %>
+    <% if !is_from_assessment %>
 
     <% if form.readonly? %>
       <% if form.obj["user"] %>
@@ -132,7 +133,11 @@
     <div class="subrecord-form-container">
       <div class="row">
         <div class="col-sm-2 text-right">
-          <%= I18n.t('conservation_treatment.treatments_applied') %>
+          <% if is_from_assessment %>
+            <%= wrap_with_tooltip(I18n.t('conservation_treatment.treatments_applied'), "qsa_tooltips.assessment.#{form.i18n_for('treatments_applied')}_tooltip", 'subrecord-form-heading-label') %>
+          <% else %>
+            <%= wrap_with_tooltip(I18n.t('conservation_treatment.treatments_applied'), "qsa_tooltips.#{form.i18n_for('treatments_applied')}_tooltip", 'subrecord-form-heading-label') %>
+          <% end %>
         </div>
       </div>
 
