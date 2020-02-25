@@ -262,7 +262,7 @@ class BatchesController < ApplicationController
 
   def csv
     self.response.headers['Content-Type'] = 'text/csv'
-    self.response.headers['Content-Disposition'] = "attachment; filename=cr#{params[:id]}.csv"
+    self.response.headers['Content-Disposition'] = "attachment; filename=BAT#{params[:id]}.csv"
     self.response.headers['Last-Modified'] = Time.now.ctime
 
     self.response_body = Enumerator.new do |stream|
