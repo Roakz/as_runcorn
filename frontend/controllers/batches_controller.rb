@@ -27,7 +27,7 @@ class BatchesController < ApplicationController
       session[:repo_id],
       "batch",
       {
-        "sort" => "title_sort asc",
+        "sort" => "user_mtime desc",
         "facet[]" => Plugins.search_facets_for_type(:batch),
       }.merge(params_for_backend_search)
     )
