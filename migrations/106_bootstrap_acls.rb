@@ -77,7 +77,7 @@ Sequel.migration do
                                        :username=>"admin",
                                        :create_time=>Time.parse("2019-04-01 05:16:21 UTC"),
                                        :system_mtime=>Time.parse("2019-04-01 05:18:14 UTC"),
-                                       :pwhash=>"!!!INVALID"}])
+                                       :pwhash=>"$2a$10$Yi9D/WF46zYFLZhU/gS3OerxNR4p.4g8HNdc4b84LZS7ZzCP9R1sy"}])
 
 
         self[:agent_corporate_entity].multi_insert([
