@@ -28,6 +28,7 @@
       "attached_to" => {
         "type" => "object",
         "subtype" => "ref",
+        "readonly" => "true",
         "properties" => {
           "ref" => {
             "type" => [{"type" => "JSONModel(:repository) uri"},
