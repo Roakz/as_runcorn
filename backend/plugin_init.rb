@@ -247,7 +247,7 @@ ArchivesSpaceService.plugins_loaded_hook do
                   :qsa_id => base_representation_qsa_id + count + idx,
                   :current_location_id => 2381, #HOME
                   :normal_location_id => 2381,
-                  :contained_within_id => 1819, #ARCBX
+                  :contained_within_id => 4743, #ARCBX
                   :format_id => 1782, #Object
                   :create_time => Time.now,
                   :system_mtime => Time.now,
