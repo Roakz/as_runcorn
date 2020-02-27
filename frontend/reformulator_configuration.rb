@@ -152,6 +152,7 @@ Reformulator.configure(
         },
         {
           "selector" => 'input[name="resource[language]"]',
+          "onlyIfEmpty" => true,
           "value" => 'eng',
         },
         {
@@ -160,6 +161,7 @@ Reformulator.configure(
         },
         {
           "selector" => 'select[name="archival_object[language]"]',
+          "onlyIfEmpty" => true,
           "value" => 'eng',
         },
         {
