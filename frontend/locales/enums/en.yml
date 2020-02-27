@@ -235,7 +235,7 @@ en:
       iconic: Iconic
       memory_of_the_world: Memory of the World
     runcorn_physical_representation_availability:
-      available: "Available. There are no other restrictions current."
+      available: "There are no other restrictions current."
       unavailable_temporarily: "Temporarily Unavailable. Contact QSA for more information."
       unavailable_due_to_conservation: "This must be assessed by a conservator to determine if it can be made available."
       unavailable_due_to_condition: "This is unavailable due to its condition. Where possible, a copy will be made available."
