@@ -121,6 +121,21 @@ Sequel.migration do
                                                      :user_mtime=>Time.parse("2019-10-13 07:07:37 UTC"),
                                                      :authorized=>1,
                                                      :is_display_name=>1}])
+
+        self[:date].multi_insert([
+                                  {:id=>1,
+                                   :lock_version=>0,
+                                   :json_schema_version=>1,
+                                   :agent_corporate_entity_id=>1,
+                                   :begin=>'1959',
+                                   :date_type_id=>1281,
+                                   :label_id=>916,
+                                   :created_by=>"admin",
+                                   :last_modified_by=>"admin",
+                                   :create_time=>Time.parse("2019-10-13 07:07:37 UTC"),
+                                   :system_mtime=>Time.parse("2019-10-13 07:07:37 UTC"),
+                                   :user_mtime=>Time.parse("2019-10-13 07:07:37 UTC")}])
+
         self[:repository].multi_insert([
                                          {:id=>1,
                                           :lock_version=>0,
