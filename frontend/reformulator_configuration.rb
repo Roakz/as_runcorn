@@ -275,17 +275,10 @@ Reformulator.configure(
       "agent_corporate_entity_related_agents" => {
         "show" => [],
       },
-      "agent_corporate_entity_names" => {
-        "show" => [
-          ["agent_names_", "_primary_name_"],
-          ["agent_names_", "_subordinate_name_1_"],
-          ["agent_names_", "_subordinate_name_2_"]
-        ],
-        "defaultValues" => [
-          { "path" => ["agent_names_", "_source_"], "value" => "local" }
-        ],
-        "moveSectionAfter" => "basic_information",
+      "agent_corporate_entity_contact_details" => {
+        "show" => [],
       },
+
       "agent_corporate_entity_dates_of_existence" => {
         "show" => [
           ["agent_dates_of_existence_", "_begin_"],
@@ -296,8 +289,38 @@ Reformulator.configure(
         ],
         "defaultValues" => [
           {"path" => ["agent_dates_of_existence_", "_date_type_"], "value" => "range"}
-        ]
-      }
+        ],
+        "moveSectionAfter" => "basic_information",
+      },
+
+      "agent_corporate_entity_notes" => {
+        "moveSectionAfter" => "dates_of_existence",
+      },
+
+      "agent_corporate_entity_names" => {
+        "show" => [
+          ["agent_names_", "_primary_name_"],
+          ["agent_names_", "_subordinate_name_1_"],
+          ["agent_names_", "_subordinate_name_2_"]
+        ],
+        "defaultValues" => [
+          { "path" => ["agent_names_", "_source_"], "value" => "local" }
+        ],
+        "moveSectionAfter" => "_relationships_",
+      },
+
+      "agent_corporate_entity_external_documents" => {
+        "moveSectionAfter" => "agent_corporate_entity_names",
+      },
+
+      "agent_corporate_entity_external_ids" => {
+        "moveSectionAfter" => "agent_corporate_entity_external_documents",
+      },
+
+      "agency_delegates" => {
+        "moveSectionAfter" => "agent_corporate_entity_external_ids",
+      },
+
     },
 
     "top_containers" => {
