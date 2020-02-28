@@ -257,18 +257,55 @@ Reformulator.configure(
           {"path" => ["resource", "_archivist_approved_"], "moveAfter" => "_repository_processing_note_"}
         ]
       },
+
       "resource_rights_statements_" => {
         "show" => []
       },
+
       "resource_collection_management_" => {
         "show" => []
       },
+
       "resource_classifications_" => {
         "show" => []
       },
+
       "resource_user_defined_" => {
         "show" => []
       },
+
+      "archival_object_dates_" => {
+        "moveSectionAfter" => "basic_information",
+      },
+
+      "archival_object_rap_applied" => {
+        "moveSectionAfter" => "archival_object_dates_",
+      },
+
+      "archival_object_subjects_" => {
+        "moveSectionAfter" => "archival_object_dates_",
+      },
+
+      "archival_object_external_documents_" => {
+        "moveSectionAfter" => "_relationships_",
+      },
+
+      "archival_object_external_ids" => {
+        "moveSectionAfter" => "archival_object_external_documents_",
+      },
+
+      "archival_object_rights_statements_" => {
+        "moveSectionAfter" => "archival_object_external_documents_",
+      },
+
+      "notes" => {
+        "moveSectionAfter" => "_relationships_",
+      },
+
+      "archival_object_deaccessions" => {
+        "moveSectionAfter" => "notes",
+      },
+
     },
 
     "agents" => {
