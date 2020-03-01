@@ -10,6 +10,7 @@ Rails.application.config.after_initialize do
   # Override #checkbox to to ensure users without the 'manage_publication'
   # permission can't change publish flags. Doing it this way to avoid having
   # to override lots and lots of templates.
+  AspaceFormHelper::FormContext
   module AspaceFormHelper
     class FormContext
       alias_method :checkbox_orig, :checkbox
