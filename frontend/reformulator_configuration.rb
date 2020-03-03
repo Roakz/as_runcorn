@@ -254,7 +254,22 @@ Reformulator.configure(
       "basic_information" => {
         "fieldMoves" => [
           {"path" => ["resource", "_abstract_"], "moveAfter" => "_title_"},
-          {"path" => ["resource", "_archivist_approved_"], "moveAfter" => "_repository_processing_note_"}
+          {"path" => ["resource", "_archivist_approved_"], "moveAfter" => "_repository_processing_note_"},
+
+          {"path" => ["archival_object", "_title_"], "moveAfter" => "_qsa_id_prefixed_"},
+          {"path" => ["archival_object", "_description_"], "moveAfter" => "_title_"},
+          {"path" => ["archival_object", "_previous_system_identifiers_"], "moveAfter" => "_description_"},
+          {"path" => ["archival_object", "_agency_assigned_id_"], "moveAfter" => "_previous_system_identifiers_"},
+          {"path" => ["archival_object", "_publish_"], "moveAfter" => "_title_"},
+          {"path" => ["archival_object", "_archivist_approved_"], "moveAfter" => "_publish_"},
+          {"path" => ["archival_object", "_restrictions_apply_"], "moveAfter" => "_archivist_approved_"},
+          {"path" => ["archival_object", "_accessioned_status_"], "moveAfter" => "_restrictions_apply_"},
+          {"path" => ["archival_object", "_significance_"], "moveAfter" => "_accessioned_status_"},
+          {"path" => ["archival_object", "_significance_is_sticky_"], "moveAfter" => "_significance_"},
+          {"path" => ["archival_object", "_sensitivity_label_"], "moveAfter" => "_significance_is_sticky_"},
+          {"path" => ["archival_object", "_access_clearance_procedure_"], "moveAfter" => "_sensitivity_label_"},
+          {"path" => ["archival_object", "_copyright_status_"], "moveAfter" => "_access_clearance_procedure_"},
+          {"path" => ["archival_object", "_disposal_class_"], "moveAfter" => "_copyright_status_"},
         ]
       },
 
