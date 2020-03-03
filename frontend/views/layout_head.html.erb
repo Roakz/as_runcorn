@@ -1,9 +1,9 @@
 <% if controller_supports_current_record? && current_record.respond_to?(:registration_state) &&
       controller.action_name == 'show' &&
       current_record.registration_state != 'approved' && user_can?('update_agent_record') %>
-  <%= stylesheet_link_tag "#{AppConfig[:frontend_proxy_prefix]}assets/managed_registration.css" %>
+  <%= stylesheet_link_tag "#{AppConfig[:frontend_proxy_prefix]}assets/managed_registration.css?_t=#{ASConstants.VERSION}" %>
 
-  <%= javascript_include_tag 'registration_action_dropdown' %>
+  <%= javascript_include_tag "registration_action_dropdown.js?_t=#{ASConstants.VERSION}" %>
 
   <script>
      REGISTRATION_STATE = '<%=j current_record.registration_state %>';
@@ -11,7 +11,7 @@
   </script>
 <% end %>
 
-<%= stylesheet_link_tag "#{AppConfig[:frontend_proxy_prefix]}assets/runcorn.css" %>
+<%= stylesheet_link_tag "#{AppConfig[:frontend_proxy_prefix]}assets/runcorn.css?_t=#{ASConstants.VERSION}" %>
 
 <script type="text/template" id="browseAgenciesTemplate">
   <li><%= link_to I18n.t("agent_corporate_entity._plural"), {:controller => :agents, :action => :index, :filter_term => ["{\"primary_type\":\"agent_corporate_entity\"}"]} %></li>
@@ -141,18 +141,18 @@
 </script>
 
 
-<%= stylesheet_link_tag "#{AppConfig[:frontend_proxy_prefix]}assets/qsa_id.css" %>
+<%= stylesheet_link_tag "#{AppConfig[:frontend_proxy_prefix]}assets/qsa_id.css?_t=#{ASConstants.VERSION}" %>
 
-<%= javascript_include_tag 'runcorn_tree_toolbar_ext' %>
-<%= javascript_include_tag 'runcorn_agency_form' %>
-<%= javascript_include_tag 'runcorn_see_no_digital_objects' %>
-<%= javascript_include_tag 'runcorn_representation_files' %>
-<%= javascript_include_tag 'runcorn_representation_quick_add' %>
-<%= javascript_include_tag 'runcorn_advanced_search' %>
+<%= javascript_include_tag "runcorn_tree_toolbar_ext.js?_t=#{ASConstants.VERSION}" %>
+<%= javascript_include_tag "runcorn_agency_form.js?_t=#{ASConstants.VERSION}" %>
+<%= javascript_include_tag "runcorn_see_no_digital_objects.js?_t=#{ASConstants.VERSION}" %>
+<%= javascript_include_tag "runcorn_representation_files.js?_t=#{ASConstants.VERSION}" %>
+<%= javascript_include_tag "runcorn_representation_quick_add.js?_t=#{ASConstants.VERSION}" %>
+<%= javascript_include_tag "runcorn_advanced_search.js?_t=#{ASConstants.VERSION}" %>
 
 
 <% if controller_supports_current_record? && current_record && current_record.jsonmodel_type == 'resource' %>
-  <%= javascript_include_tag 'runcorn_deaccessions' %>
+  <%= javascript_include_tag "runcorn_deaccessions.js?_t=#{ASConstants.VERSION}" %>
   <script>
     $(function() {
         $(document).on('loadedrecordform.aspace', function(event, $container) {
@@ -222,7 +222,7 @@
 <% end %>
 
 <% if controller_supports_current_record? && current_record && current_record.jsonmodel_type == 'resource' %>
-  <%= javascript_include_tag 'runcorn_raps' %>
+  <%= javascript_include_tag "runcorn_raps.js?_t=#{ASConstants.VERSION}" %>
   <script type="text/template" id="runcornRAPAttachWorkflowTemplate">
     <div>
       <div class="modal-body">
@@ -257,7 +257,7 @@
 <% end %>
 
 <% if controller_supports_current_record? && current_record && current_record.jsonmodel_type == 'assessment' %>
-  <%= javascript_include_tag 'runcorn_assessments' %>
+  <%= javascript_include_tag "runcorn_assessments.js?_t=#{ASConstants.VERSION}" %>
   <script type="text/template" id="runcornAssessmentGenerateTreatmentsWorkflowTemplate">
     <div>
       <div class="modal-body">
@@ -272,7 +272,7 @@
 <% end %>
 
 <% if controller.controller_name == 'top_containers' && controller.action_name == 'index' %>
-  <%= javascript_include_tag("runcorn_top_containers.bulk") %>
+  <%= javascript_include_tag("runcorn_top_containers.bulk.js?_t=#{ASConstants.VERSION}") %>
   <%= render_aspace_partial :partial => "top_containers/bulk_operations/bulk_action_extra_templates" %>
 <% end %>
 
@@ -292,9 +292,9 @@
   </script>
 <% end %>
 
-<%= javascript_include_tag 'runcorn_reports' %>
+<%= javascript_include_tag "runcorn_reports.js?_t=#{ASConstants.VERSION}" %>
 <% if defined?(@search_data) %>
-  <%= javascript_include_tag 'runcorn_download_csv' %>
+  <%= javascript_include_tag "runcorn_download_csv.js?_t=#{ASConstants.VERSION}" %>
   <script type="text/template" id="runcornDownloadCSVPopupTemplate">
     <div>
       <div class="modal-body">

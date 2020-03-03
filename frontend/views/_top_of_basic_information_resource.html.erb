@@ -19,7 +19,7 @@
 <% end %>
 
 <% if form.obj['uri'] %>
-  <%= javascript_include_tag 'runcorn_gaps_in_control' %>
+  <%= javascript_include_tag "runcorn_gaps_in_control.js?_t=#{ASConstants.VERSION}" %>
   <div class="row">
     <div class="col-sm-12">
       <div id="runcornGapsInControl"></div>

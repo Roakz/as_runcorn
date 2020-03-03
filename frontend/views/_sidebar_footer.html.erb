@@ -6,7 +6,7 @@
      QSA_ID_EXISTING_ID = '<%=j QSAId.existing_id_for(current_record.jsonmodel_type.intern).to_s %>';
   </script>
 
-  <%= javascript_include_tag 'qsa_id' %>
+  <%= javascript_include_tag "qsa_id.js?_t=#{ASConstants.VERSION}" %>
 
 <% end %>
 
