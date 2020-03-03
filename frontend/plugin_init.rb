@@ -420,7 +420,11 @@ Rails.application.config.after_initialize do
       begin
         if args[:partial] == "search/listing"
           if defined?(controller) && BROWSE_SCREEN_OVERRIDES.fetch(controller.controller_name, []).include?(controller.action_name)
-            columns_to_append = extra_columns? ? extra_columns.clone : []
+            # FIXME: The identifier column is mysteriously appearing on series browse.
+            #        We never want it so zapping here. Someone should work out how the
+            #        hell it's getting added in the first place and stop it, then this
+            #        reject call can be removed. Thank you future person!
+            columns_to_append = extra_columns? ? extra_columns.clone.reject{|c| c.label == 'Identifier'} : []
 
             clear_extra_columns
 
