@@ -117,6 +117,11 @@ module RepresentationControl
       dates_by_record_id = {}
 
       ao_ids = controlling_records_by_representation_id.values.map(&:id)
+
+      if ao_ids.empty?
+        return dates_by_record_id
+      end
+
       ASDate
         .filter(:archival_object_id => ao_ids)
         .select(:archival_object_id, :begin, :end)

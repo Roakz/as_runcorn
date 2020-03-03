@@ -31,14 +31,17 @@ module RAPs
 
       backlink_col = :"#{table_name}_id"
 
-      rap_jsons = {}
-      raps = RAP.filter(backlink_col => objs.map(&:id)).all
-      raps.zip(RAP.sequel_to_jsonmodel(raps)).each do |sequel_obj, json|
-        rap_jsons[sequel_obj[backlink_col]] = json.to_hash
-      end
+      unless objs.empty?
+        rap_jsons = {}
 
-      objs.zip(jsons).each do |obj, json|
-        json['rap_attached'] = rap_jsons.fetch(obj.id, nil)
+        raps = RAP.filter(backlink_col => objs.map(&:id)).all
+        raps.zip(RAP.sequel_to_jsonmodel(raps)).each do |sequel_obj, json|
+          rap_jsons[sequel_obj[backlink_col]] = json.to_hash
+        end
+
+        objs.zip(jsons).each do |obj, json|
+          json['rap_attached'] = rap_jsons.fetch(obj.id, nil)
+        end
       end
 
       jsons
