@@ -77,6 +77,49 @@ module Representations
     def sequel_to_jsonmodel(objs, opts = {})
       jsons = super
 
+      if RequestContext.get(:current_username) == 'search_indexer'
+        DB.open do |db|
+          all_physrep_counts = db[:physical_representation]
+                                 .filter(:archival_object_id => objs.map(&:id))
+                                 .group_and_count(:archival_object_id)
+                                 .map {|row| [row[:archival_object_id], row[:count]]}.to_h
+
+          all_digrep_counts = db[:digital_representation]
+                                .filter(:archival_object_id => objs.map(&:id))
+                                .group_and_count(:archival_object_id)
+                                .map {|row| [row[:archival_object_id], row[:count]]}.to_h
+
+          deaccessioned_physrep_counts = db[:physical_representation]
+                                           .join(:deaccession, Sequel.qualify(:deaccession, :physical_representation_id) => Sequel.qualify(:physical_representation, :id))
+                                           .group_and_count(Sequel.qualify(:physical_representation, :archival_object_id))
+                                           .map {|row| [row[:archival_object_id], row[:count]]}.to_h
+
+          deaccessioned_digrep_counts = db[:digital_representation]
+                                           .join(:deaccession, Sequel.qualify(:deaccession, :digital_representation_id) => Sequel.qualify(:digital_representation, :id))
+                                           .group_and_count(Sequel.qualify(:digital_representation, :archival_object_id))
+                                           .map {|row| [row[:archival_object_id], row[:count]]}.to_h
+
+          deaccessioned_map = Deaccessioned.build_deaccessioned_map(objs.map(&:id))
+
+          jsons.zip(objs).each do |json, obj|
+            json['physical_representations'] = "NOTUSEDBYINDEXER"
+            json['digital_representations'] = "ALSONOTUSEDBYINDEXER"
+
+            if deaccessioned_map.fetch(obj.id)
+              # This whole AO is deaccessioned.
+              json['physical_representations_count'] = 0
+              json['digital_representations_count'] = 0
+            else
+              json['physical_representations_count'] = all_physrep_counts.fetch(obj.id, 0) - deaccessioned_physrep_counts.fetch(obj.id, 0)
+              json['digital_representations_count'] = all_digrep_counts.fetch(obj.id, 0) - deaccessioned_digrep_counts.fetch(obj.id, 0)
+            end
+          end
+        end
+
+        return jsons
+      end
+
+
       # Grab all referenced representations and slot them in
       backlink_col = :"#{self.table_name}_id"
 
