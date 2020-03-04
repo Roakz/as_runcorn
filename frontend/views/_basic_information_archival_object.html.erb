@@ -12,8 +12,8 @@
 <% if form.readonly? %>
   <% if form.obj['significance'] %>
     <div class="form-group">
-      <div class="control-label col-sm-2"><%= I18n.t("archival_object.significance") %></div>
-      <div class="controls col-sm-10">
+      <div class="control-label col-sm-2" for="archival_object_significance_"><%= I18n.t("archival_object.significance") %></div>
+      <div class="controls col-sm-10 label-only">
         <%= SignificanceHelper.display(form.obj['significance']) %>
         <%= I18n.t('as_runcorn.sticky_significance_message') if form.obj['significance_is_sticky'] %>
       </div>

@@ -3,7 +3,7 @@
   <%= form.label_and_date "approval_date" %>
   <% if form['approval_date'] %>
     <div class="form-group">
-      <div class="control-label col-sm-2"><%= I18n.t("archival_object.approved_by") %></div>
+      <div class="control-label col-sm-2" for="approved_by"><%= I18n.t("archival_object.approved_by") %></div>
       <div class="controls token-list col-sm-10">
         <%= form.hidden_input('approved_by', form['approved_by']) %>
         <% ASUtils.wrap(form['approved_by']).each do |record| %>
@@ -22,7 +22,7 @@
     <%= form.label_and_readonly "approval_date" %>
   <%= form.hidden_input('approval_date', form['approval_date']) %>
     <div class="form-group">
-      <div class="control-label col-sm-2"><%= I18n.t("archival_object.approved_by") %></div>
+      <div class="control-label col-sm-2" for="approved_by"><%= I18n.t("archival_object.approved_by") %></div>
       <div class="controls token-list col-sm-10">
         <%= form.hidden_input('approved_by', form['approved_by']) %>
         <% ASUtils.wrap(form['approved_by']).each do |record| %>
