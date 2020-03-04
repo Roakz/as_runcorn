@@ -321,6 +321,28 @@ en:
       allowed_true: "True"
       allowed_false: "False"
       allowed_contact_qsa: "Contact QSA"
+    runcorn_image_resource_type:
+      image: Image
+      text: Text
+      physical_object: Physical Object
+      sound: Sound
+      moving_image: Moving Image
+    subject_term_type:
+      geographical_name: Geographical Name
+      record_type: Record Type
+      subject: Subject
+      temporal: Temporal
+      genre: Genre
+    subject_source:
+      agift: AGIFT
+      hr: Heritage Register
+      lcgh1: Library of Congress Graphic Headings I
+      lcgh2: Library of Congress Graphic Headings II
+      nla: National Library of Australia
+      qgaz: Place Names Register
+      qsa: Queensland State Archives
+      slq: State Library of Queensland
+      lc_graphic: LC Graphic
   enumeration_names:
     runcorn_access_category: Runcorn Plugin - Access Category
     runcorn_access_clearance_procedure: Runcorn Plugin - Runcorn Access Clearance Procedure
@@ -346,3 +368,4 @@ en:
     runcorn_note_singlepart_type: Runcorn Singlepart Note Type
     runcorn_storage_type: Runcorn Storage Type
     runcorn_file_issue_allowed: Runcorn File Issue Allowed
+    runcorn_image_resource_type: Runcorn Image Resource Type

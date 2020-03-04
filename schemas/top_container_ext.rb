@@ -32,4 +32,5 @@
       }
     }
   },
+  "remarks" => {"type" => "string"}
 }

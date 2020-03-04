@@ -77,6 +77,7 @@ en:
     current_location: Current location
     storage_location: Home Location
     absent_contents: Absent Contents
+    remarks: Remarks
     _frontend:
       bulk_operations:
         update_functional_locations_singular: "Update Functional Locations"
@@ -219,7 +220,6 @@ en:
         add: Add Physical Representation
       messages:
         calculated_availability_preamble: "The calculated availability differs to its normal value:"
-
   digital_representation: &digital_representation
     access_category: Access Status
     normal_location: Normal Location
@@ -245,12 +245,13 @@ en:
     preservation_priority_rating: Preservation Priority Rating
     processing_handling_notes: Processing/Handling Notes
     publish: Publish
-    remarks: Remarks
     significance: Significance
     title: Title
     deaccessioned: This record has been deaccessioned
     rap_access_status: Access Status
     archivist_approved: Archivist Approved?
+    image_resource_type: Resource Type
+    previous_system_identifiers: Previous System Identifiers
     _plural: Digital Representations
     _singular: Digital Representation
     _frontend:

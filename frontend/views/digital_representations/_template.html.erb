@@ -17,8 +17,7 @@
     <%= form.label_and_textarea "description" %>
     <%= form.label_and_textfield "agency_assigned_id" %>
 
-    <%= form.label_and_select "access_category", form.possible_options_for("access_category", true) %>
-    <%= form.label_and_select "normal_location", form.possible_options_for("normal_location", true) %>
+    <%= form.hidden_input "normal_location", "HOME" %>
     <%= form.label_and_select "accessioned_status", form.possible_options_for("accessioned_status", true) %>
     <%= form.label_and_select "colour", form.possible_options_for("colour", true) %>
     <%= form.label_and_select "contained_within", form.possible_options_for("contained_within", true) %>
@@ -29,13 +28,15 @@
     <%= form.label_and_textfield "file_size" %>
     <%= form.label_and_select "file_type", form.possible_options_for("file_type", true) %>
     <%= form.label_and_select "intended_use", form.possible_options_for("intended_use", true) %>
-    <%= form.label_and_textfield "original_registration_date" %>
+    <%= form.label_and_date "original_registration_date" %>
     <%= form.label_and_textarea "other_restrictions_notes" %>
     <%= form.label_and_textarea "preferred_citation" %>
     <%= form.label_and_textarea "preservation_notes" %>
     <%= form.label_and_select "preservation_priority_rating", form.possible_options_for("preservation_priority_rating", true) %>
     <%= form.label_and_textarea "processing_handling_notes" %>
     <%= form.label_and_textarea "remarks" %>
+    <%= form.label_and_textarea "previous_system_identifiers" %>
+    <%= form.label_and_select "image_resource_type", form.possible_options_for("image_resource_type", true) %>
 
     <% if !form.readonly? && form.obj['publishable'] == false %>
       <div class="form-group">

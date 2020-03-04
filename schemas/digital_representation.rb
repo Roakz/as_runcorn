@@ -232,6 +232,8 @@
               }
           }
       },
+      "previous_system_identifiers" => {"type" => "string"},
+      "image_resource_type" => {"type" => "string", "dynamic_enum" => "runcorn_image_resource_type"}
     },
-  },
+  }
 }

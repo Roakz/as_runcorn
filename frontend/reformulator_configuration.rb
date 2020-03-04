@@ -37,12 +37,12 @@ Reformulator.configure(
           "hideClosestSelector" => '.form-group',
         },
         {
-            "selector" => 'select[name="resource[level]"]',
-            "hideClosestSelector" => '.form-group'
+          "selector" => 'select[name="resource[level]"]',
+          "hideClosestSelector" => '.form-group'
         },
         {
-            "selector" => 'select[name="archival_object[level]"]',
-            "hideClosestSelector" => '.form-group'
+          "selector" => 'select[name="archival_object[level]"]',
+          "hideClosestSelector" => '.form-group'
         },
         {
           "selector" => '.extent-calculator-btn',
@@ -57,8 +57,8 @@ Reformulator.configure(
         },
 
         {
-            "selector" => 'input[name="archival_object[access_clearance_procedure]"]',
-            "hideClosestSelector" => '.form-group',
+          "selector" => 'input[name="archival_object[access_clearance_procedure]"]',
+          "hideClosestSelector" => '.form-group',
         },
         {
           "selector" => '#resource_form select[name^="resource[dates]["][name$="][label]"] option:not([value="existence"])',
