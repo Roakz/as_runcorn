@@ -6,6 +6,11 @@ Sequel.migration do
     if self[:repository].count == 0
       # If we're running against a brand new installation, bootstrap our basics right away.
 
+      # MAP migration needs this
+      alter_table(:physical_representation) do
+        add_index([:qsa_id], :name => 'physrep_qsa_id_idx')
+      end
+
       self.transaction do
         self[:group].delete
         self[:permission].delete
