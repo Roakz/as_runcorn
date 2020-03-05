@@ -8,6 +8,7 @@ Sequel.migration do
 
     self[:subject_term].delete
     self[:term].delete
+    self[:subject_rlshp].delete
     self[:subject].delete
     self[:enumeration_value].filter(:enumeration_id => subject_source_enum_id).delete
     self[:enumeration_value].filter(:enumeration_id => term_type_enum_id).delete
