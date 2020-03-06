@@ -35,6 +35,7 @@ Sequel.migration do
       'system_of_arrangement',
       'other_restrictions',
       'legacy_metadata_item',
+      'legacy_metadata_image',
       'legacy_metadata_agency',
       'legacy_metadata_series',
       'information_sources',
