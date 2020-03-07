@@ -13,7 +13,9 @@ module ReindexSeriesRepresentations
   def update_from_json(json, opts = {}, apply_nested_records = true)
     result = super
 
-    reindex_representations!
+    unless ASUtils.migration_mode?
+      reindex_representations!
+    end
 
     result
   end
