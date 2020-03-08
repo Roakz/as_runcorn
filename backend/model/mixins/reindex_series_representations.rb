@@ -2,10 +2,14 @@ module ReindexSeriesRepresentations
 
   def reindex_representations!
     DB.open do |db|
-      id_set = db[:archival_object].filter(:root_record_id => self.id).select(:id)
+      now = Time.now
 
       [:physical_representation, :digital_representation].each do |tbl|
-        db[tbl].filter(:archival_object_id => id_set).update(:system_mtime => Time.now)
+        db[:archival_object]
+          .join(tbl,
+                Sequel.qualify(tbl, :archival_object_id) => Sequel.qualify(:archival_object, :id))
+          .filter(Sequel.qualify(:archival_object, :root_record_id) => self.id)
+          .update(Sequel.qualify(tbl, :system_mtime) => now)
       end
     end
   end
