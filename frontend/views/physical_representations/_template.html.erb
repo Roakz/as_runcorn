@@ -146,9 +146,6 @@
           <%= render_aspace_partial :partial => "top_containers/linker", :locals => {:form => form, :label => I18n.t("top_container._singular"), :required => is_container_required} %>
         <% end %>
       <% end %>
-      <% unless form.readonly? && ASUtils.wrap(form.obj['extents']).empty? %>
-        <%= render_aspace_partial :partial => "shared/subrecord_form", :locals => {:form => form, :name => "extents"} %>
-      <% end %>
       <% unless form.readonly? && ASUtils.wrap(form.obj['deaccessions']).empty? %>
         <%= render_aspace_partial :partial => "shared/subrecord_form", :locals => {:form => form, :name => "deaccessions"} %>
       <% end %>
