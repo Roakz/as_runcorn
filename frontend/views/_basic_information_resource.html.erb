@@ -3,7 +3,7 @@
 <% if form.readonly? %>
   <% unless form['significant_representations_counts'].values.all?{|v| v == 0} %>
     <div class="form-group">
-      <div class="control-label col-sm-2"><%= I18n.t("resource.significant_representations_counts") %></div>
+      <div class="control-label col-sm-2" for="resource_significant_item_summary_"><%= I18n.t("resource.significant_representations_counts") %></div>
       <div class="col-sm-9 label-only">
         <% form['significant_representations_counts'].each do |sig, count| %>
 
