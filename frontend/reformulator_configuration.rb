@@ -280,49 +280,6 @@ Reformulator.configure(
         ]
       },
 
-      'archival_object_physical_representations' => {
-        "fieldOrder" => [
-          {"path" => ["physical_representation", "_qsa_id_prefixed_"]},
-          {"path" => ["archival_object_physical_representations_", "_title_"]},
-          {"path" => ["archival_object_physical_representations_", "_description_"]},
-          {"path" => ["archival_object_physical_representations_", "_previous_system_identifiers_"]},
-          {"path" => ["archival_object_physical_representations_", "_agency_assigned_id_"]},
-          {"path" => ["archival_object_physical_representations_", "_publish_"]},
-          {"path" => ["archival_object_physical_representations_", "_archivist_approved_"]},
-          {"path" => ["archival_object_physical_representations_", "_accessioned_status_"]},
-          {"path" => ["archival_object_physical_representations_", "_container_"]},
-          {"path" => ["archival_object_physical_representations_", "_current_location_"]},
-          {"path" => ["archival_object_physical_representations_", "_availability_"]},
-          {"path" => ["archival_object_physical_representations_", "_other_restrictions_notes_"]},
-          {"path" => ["archival_object_physical_representations_", "_contained_within_"]},
-          {"path" => ["archival_object_physical_representations_", "_format_"]},
-          {"path" => ["archival_object_physical_representations_", "_colour_"]},
-          {"path" => ["archival_object_physical_representations_", "_physical_format_details_"]},
-          {"path" => ["archival_object_physical_representations_", "_intended_use_"]},
-          {"path" => ["archival_object_physical_representations_", "_file_issue_allowed_"]},
-          {"path" => ["archival_object_physical_representations_", "_processing_handling_notes_"]},
-          {"path" => ["archival_object_physical_representations_", "_preservation_priority_rating_"]},
-          {"path" => ["archival_object_physical_representations_", "_preservation_notes_"]},
-          {"path" => ["archival_object_physical_representations_", "_significance_"]},
-          {"path" => ["archival_object_physical_representations_", "_significance_is_sticky_"]},
-          {"path" => ["archival_object_physical_representations_", "_exhibition_quality_"]},
-          {"path" => ["archival_object_physical_representations_", "_exhibition_history_"]},
-          {"path" => ["archival_object_physical_representations_", "_exhibition_notes_"]},
-          {"path" => ["archival_object_physical_representations_", "_monetary_value_"]},
-          {"path" => ["archival_object_physical_representations_", "_monetary_value_note_"]},
-          {"path" => ["archival_object_physical_representations_", "_remarks_"]},
-          {"path" => ["approved_by_linker"]},
-          {"path" => ["archival_object_physical_representations_", "_approved_by_"]},
-          {"path" => ["archival_object_physical_representations_", "_approval_date_"]},
-          {"path" => ["archival_object_physical_representations_", "_original_registration_date_"]},
-        ]
-      },
-
-
-      "archival_object_physical_representations__extents_" => {
-        "show" => []
-      },
-
       "resource_rights_statements_" => {
         "show" => []
       },

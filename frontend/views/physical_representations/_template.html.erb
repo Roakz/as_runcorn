@@ -31,7 +31,55 @@
     <%= render_aspace_partial :partial => 'shared/qsa_id_form', :locals => {:form => form, :model => :physical_representation} %>
     <%= form.label_and_textfield "title" %>
     <%= form.label_and_textarea "description" %>
+    <%= form.label_and_textarea "previous_system_identifiers" %>
     <%= form.label_and_textfield "agency_assigned_id" %>
+
+    <% if !form.readonly? && form.obj['publishable'] == false %>
+      <div class="form-group">
+        <label class="control-label col-sm-2" for="<%= form.id_for('publish') %>">Publish?</label>
+        <div class="checkbox col-sm-9">
+          <input id="<%= form.id_for('publish') %>"
+                 type="checkbox"
+                 value="0"
+                 disabled="disabled" />
+          <span class="help-inline"><span class="text-muted">Record cannot be published due to RAP restriction</span></span>
+        </div>
+      </div>
+    <% else %>
+      <%= form.label_and_boolean "publish" %>
+    <% end %>
+
+    <%= render_aspace_partial :partial => 'shared/archivist_approval_fields', :locals => {:form => form} %>
+
+    <%= form.label_and_select "accessioned_status", form.possible_options_for("accessioned_status", true) %>
+
+    <% if form.readonly? %>
+      <% if form['container']  %>
+        <div class="form-group">
+          <div class="control-label col-sm-2"><%= I18n.t("top_container._singular") %></div>
+          <div class="controls token-list col-sm-10">
+            <% ASUtils.wrap(form['container']).each do |record| %>
+              <%= render_token :object => record['_resolved'],
+                 :label => record['_resolved']['title'] || record['_resolved']['display_string'],
+                 :type => record['_resolved']['jsonmodel_type'],
+                 :uri => record['ref'],
+                 :placement => "top" %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <% is_container_required  = !form.obj['deaccessioned'] %>
+      <% form.push("container", form.obj["container"] || {}) do %>
+        <%= render_aspace_partial :partial => "top_containers/linker", :locals => {:form => form, :label => I18n.t("top_container._singular"), :required => is_container_required} %>
+      <% end %>
+    <% end %>
+
+    <%= form.hidden_input "current_location", "HOME" %>
+    <% if form.obj['current_location'] %>
+      <%= form.label_and_readonly "current_location" %>
+    <% end %>
+    <%= form.hidden_input "normal_location", "HOME" %>
 
     <% if form.readonly? && form['calculated_availability_overrides_availability'] %>
       <div class="form-group">
@@ -51,44 +99,16 @@
       <%= form.label_and_select "availability", form.possible_options_for("availability", true) %>
     <% end %>
 
-    <%= form.hidden_input "current_location", "HOME" %>
-    <% if form.obj['current_location'] %>
-      <%= form.label_and_readonly "current_location" %>
-    <% end %>
-    <%= form.hidden_input "normal_location", "HOME" %>
-    <%= form.label_and_select "accessioned_status", form.possible_options_for("accessioned_status", true) %>
-    <%= form.label_and_select "colour", form.possible_options_for("colour", true) %>
-    <%= form.label_and_select "contained_within", form.possible_options_for("contained_within", true) %>
-    <%= form.label_and_textarea "exhibition_history" %>
-    <%= form.label_and_textarea "exhibition_notes" %>
-    <%= form.label_and_boolean "exhibition_quality" %>
-    <%= form.label_and_select "file_issue_allowed", form.possible_options_for("file_issue_allowed") %>
-    <%= form.label_and_select "format", form.possible_options_for("format", true) %>
-    <%= form.label_and_select "intended_use", form.possible_options_for("intended_use", true) %>
-    <%= form.label_and_textfield "original_registration_date" %>
     <%= form.label_and_textarea "other_restrictions_notes" %>
+    <%= form.label_and_select "contained_within", form.possible_options_for("contained_within", true) %>
+    <%= form.label_and_select "format", form.possible_options_for("format", true) %>
+    <%= form.label_and_select "colour", form.possible_options_for("colour", true) %>
     <%= form.label_and_textarea "physical_format_details" %>
-    <%= form.label_and_textarea "preferred_citation" %>
-    <%= form.label_and_textarea "preservation_notes" %>
-    <%= form.label_and_select "preservation_priority_rating", form.possible_options_for("preservation_priority_rating", true) %>
+    <%= form.label_and_select "intended_use", form.possible_options_for("intended_use", true) %>
+    <%= form.label_and_select "file_issue_allowed", form.possible_options_for("file_issue_allowed") %>
     <%= form.label_and_textarea "processing_handling_notes" %>
-    <%= form.label_and_textarea "remarks" %>
-    <%= form.label_and_textarea "previous_system_identifiers" %>
-
-    <% if !form.readonly? && form.obj['publishable'] == false %>
-      <div class="form-group">
-        <label class="control-label col-sm-2" for="<%= form.id_for('publish') %>">Publish?</label>
-        <div class="checkbox col-sm-9">
-          <input id="<%= form.id_for('publish') %>"
-                 type="checkbox"
-                 value="0"
-                 disabled="disabled" />
-          <span class="help-inline"><span class="text-muted">Record cannot be published due to RAP restriction</span></span>
-        </div>
-      </div>
-    <% else %>
-      <%= form.label_and_boolean "publish" %>
-    <% end %>
+    <%= form.label_and_select "preservation_priority_rating", form.possible_options_for("preservation_priority_rating", true) %>
+    <%= form.label_and_textarea "preservation_notes" %>
 
     <% if form.readonly? %>
       <% if form.obj['significance'] %>
@@ -120,35 +140,19 @@
       <%= form.label_and_boolean "significance_is_sticky" %>
     <% end %>
 
+    <%= form.label_and_boolean "exhibition_quality" %>
+    <%= form.label_and_textarea "exhibition_history" %>
+    <%= form.label_and_textarea "exhibition_notes" %>
     <%= form.label_and_textfield "monetary_value" %>
     <%= form.label_and_textarea "monetary_value_note" %>
+    <%= form.label_and_textarea "remarks" %>
 
-    <%= render_aspace_partial :partial => 'shared/archivist_approval_fields', :locals => {:form => form} %>
+    <%# approved by and approved date should be here %>
 
-      <% if form.readonly? %>
-        <% if form['container']  %>
-          <div class="form-group">
-            <div class="control-label col-sm-2"><%= I18n.t("top_container._singular") %></div>
-            <div class="controls token-list col-sm-10">
-              <% ASUtils.wrap(form['container']).each do |record| %>
-                <%= render_token :object => record['_resolved'],
-                 :label => record['_resolved']['title'] || record['_resolved']['display_string'],
-                 :type => record['_resolved']['jsonmodel_type'],
-                 :uri => record['ref'],
-                 :placement => "top" %>
-              <% end %>
-            </div>
-          </div>
-        <% end %>
-      <% else %>
-        <% is_container_required  = !form.obj['deaccessioned'] %>
-        <% form.push("container", form.obj["container"] || {}) do %>
-          <%= render_aspace_partial :partial => "top_containers/linker", :locals => {:form => form, :label => I18n.t("top_container._singular"), :required => is_container_required} %>
-        <% end %>
-      <% end %>
-      <% unless form.readonly? && ASUtils.wrap(form.obj['deaccessions']).empty? %>
-        <%= render_aspace_partial :partial => "shared/subrecord_form", :locals => {:form => form, :name => "deaccessions"} %>
-      <% end %>
+    <%= form.label_and_textfield "original_registration_date" %>
+
+    <%# not listed in story about reordering so leaving here %>
+    <%= form.label_and_textarea "preferred_citation" %>
 
       <% if form.readonly? && !ASUtils.wrap(form.obj['assessments']).empty? %>
         <section class="subrecord-form-dummy">
@@ -174,5 +178,11 @@
       <% else %>
         <%= form_plugins_for("physical_representation", form, JSONModel(:physical_representation).from_hash(form.obj, false, true)) %>
       <% end %>
+
+      <%# the story says put it last, so here it is %>
+      <% unless form.readonly? && ASUtils.wrap(form.obj['deaccessions']).empty? %>
+        <%= render_aspace_partial :partial => "shared/subrecord_form", :locals => {:form => form, :name => "deaccessions"} %>
+      <% end %>
+
     </div>
 <% end %>

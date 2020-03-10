@@ -59,67 +59,6 @@ Rails.application.config.after_initialize do
     )
   )
 
-  Plugins.register_plugin_section(
-    Plugins::PluginSubRecord.new(
-      'as_runcorn',
-      'external_ids',
-      ['accession', 'resource', 'archival_object',
-       'collection_management', 'event', 'location', 'subject',
-       'agent_corporate_entity', 'agent_person', 'agent_family', 'agent_software',
-       'mandate', 'digital_representation', 'physical_representation', 'assessment',
-      ],
-      {
-        template_name: 'external_id',
-        js_edit_template_name: 'template_external_id',
-        heading_text:  I18n.t('external_id._plural'),
-        sidebar_label:  I18n.t('external_id._plural'),
-      }
-    )
-  )
-
-  Plugins.register_plugin_section(
-    Plugins::PluginSubRecord.new(
-      'as_runcorn',
-      'deaccessions',
-      ['archival_object'],
-      {
-        template_name: 'deaccession',
-        js_edit_template_name: 'template_deaccession',
-        heading_text:  I18n.t('deaccession._plural'),
-        sidebar_label:  I18n.t('deaccession._plural'),
-        erb_readonly_template_path: 'deaccessions/show',
-      }
-    )
-  )
-
-
-  Plugins.register_plugin_section(
-    Plugins::PluginSubRecord.new(
-      'as_runcorn',
-      'movements',
-      ['physical_representation', 'top_container'],
-      {
-        template_name: 'movement',
-        js_edit_template_name: 'template_movement',
-        heading_text:  I18n.t('movement._plural'),
-        sidebar_label:  I18n.t('movement._plural'),
-      }
-    )
-  )
-
-  Plugins.register_plugin_section(
-    Plugins::PluginSubRecord.new(
-      'as_runcorn',
-      'conservation_treatments',
-      ['physical_representation'],
-      {
-        template_name: 'conservation_treatment',
-        js_edit_template_name: 'template_conservation_treatment',
-        heading_text:  I18n.t('conservation_treatments._plural'),
-      }
-    )
-  )
-
 
   class RAPSection < Plugins::AbstractPluginSection
     def render_readonly(view_context, record, form_context)
@@ -200,6 +139,65 @@ Rails.application.config.after_initialize do
     )
   )
 
+  Plugins.register_plugin_section(
+    Plugins::PluginSubRecord.new(
+      'as_runcorn',
+      'external_ids',
+      ['accession', 'resource', 'archival_object',
+       'collection_management', 'event', 'location', 'subject',
+       'agent_corporate_entity', 'agent_person', 'agent_family', 'agent_software',
+       'mandate', 'digital_representation', 'physical_representation', 'assessment',
+      ],
+      {
+        template_name: 'external_id',
+        js_edit_template_name: 'template_external_id',
+        heading_text:  I18n.t('external_id._plural'),
+        sidebar_label:  I18n.t('external_id._plural'),
+      }
+    )
+  )
+
+  Plugins.register_plugin_section(
+    Plugins::PluginSubRecord.new(
+      'as_runcorn',
+      'deaccessions',
+      ['archival_object'],
+      {
+        template_name: 'deaccession',
+        js_edit_template_name: 'template_deaccession',
+        heading_text:  I18n.t('deaccession._plural'),
+        sidebar_label:  I18n.t('deaccession._plural'),
+        erb_readonly_template_path: 'deaccessions/show',
+      }
+    )
+  )
+
+  Plugins.register_plugin_section(
+    Plugins::PluginSubRecord.new(
+      'as_runcorn',
+      'movements',
+      ['physical_representation', 'top_container'],
+      {
+        template_name: 'movement',
+        js_edit_template_name: 'template_movement',
+        heading_text:  I18n.t('movement._plural'),
+        sidebar_label:  I18n.t('movement._plural'),
+      }
+    )
+  )
+
+  Plugins.register_plugin_section(
+    Plugins::PluginSubRecord.new(
+      'as_runcorn',
+      'conservation_treatments',
+      ['physical_representation'],
+      {
+        template_name: 'conservation_treatment',
+        js_edit_template_name: 'template_conservation_treatment',
+        heading_text:  I18n.t('conservation_treatments._plural'),
+      }
+    )
+  )
 
   Plugins.add_resolve_field(['approved_by',
                              'container',
