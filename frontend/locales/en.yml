@@ -252,6 +252,7 @@ en:
     archivist_approved: Archivist Approved?
     image_resource_type: Resource Type
     previous_system_identifiers: Previous System Identifiers
+    remarks: Remarks
     _plural: Digital Representations
     _singular: Digital Representation
     _frontend:
