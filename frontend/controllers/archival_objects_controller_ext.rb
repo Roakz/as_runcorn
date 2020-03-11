@@ -1,4 +1,8 @@
 ArchivalObjectsController.class_eval do
+
+  @permission_mappings.fetch("view_repository") << :create_batch
+  set_access_control(@permission_mappings)
+
   # Support 'clone_from_uri' when creating a new archival object
   # and ensure that all readonly properties (and ref_id) are dropped
   # from the source JSONModel.
@@ -105,4 +109,17 @@ ArchivalObjectsController.class_eval do
   end
 
 
+  def create_batch
+    post_uri = URI("/repositories/#{session[:repo_id]}/batches/create_from_search")
+
+    (search_params, expiring_within) = build_search_params
+    search_params["type[]"] = ['archival_object']
+
+    Search.build_filters(search_params)
+    response = JSONModel::HTTP.post_form(post_uri, search_params)
+    result = ASUtils.json_parse(response.body)
+
+    flash[:success] = I18n.t("batch._frontend.messages.created")
+    redirect_to :controller => :batches, :action => :show, :id => result.fetch('id')
+  end
 end
