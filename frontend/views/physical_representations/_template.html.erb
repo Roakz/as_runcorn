@@ -49,7 +49,12 @@
       <%= form.label_and_boolean "publish" %>
     <% end %>
 
-    <%= render_aspace_partial :partial => 'shared/archivist_approval_fields', :locals => {:form => form} %>
+    <% if user_can?('approve_records') %>
+      <%= form.label_and_boolean "archivist_approved" %>
+    <% else %>
+      <%= form.label_and_readonly "archivist_approved" %>
+      <%= form.hidden_input('archivist_approved', form['archivist_approved'] ? 1 : 0) %>
+    <% end %>
 
     <%= form.label_and_select "accessioned_status", form.possible_options_for("accessioned_status", true) %>
 
@@ -147,7 +152,7 @@
     <%= form.label_and_textarea "monetary_value_note" %>
     <%= form.label_and_textarea "remarks" %>
 
-    <%# approved by and approved date should be here %>
+    <%= render_aspace_partial :partial => 'shared/archivist_approval_fields', :locals => {:form => form, :skip_archivist_approved => true} %>
 
     <%= form.label_and_textfield "original_registration_date" %>
 
