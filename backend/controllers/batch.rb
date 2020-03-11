@@ -47,10 +47,11 @@ class ArchivesSpaceService < Sinatra::Base
     page = 1
     objs = {}
 
-    sparms = params.merge(:page_size => 2**16,
-                          :type => Batch.models,
+    sparms = params.merge(:page_size => 32768,
                           :fields => ['primary_type', 'uri'],
                           :sort => 'primary_type asc')
+
+    sparms[:type] = (params.fetch(:type, Batch.models).map(&:intern) & Batch.models)
 
     sr = Search.search(sparms.merge(:page => page), params[:repo_id])
 
@@ -62,7 +63,7 @@ class ArchivesSpaceService < Sinatra::Base
     end
 
     objs.each do |model, uris|
-      batch.add_by_ref(model, *uris)
+      batch.add_objects(model, *uris.map{|u| JSONModel.parse_reference(u).fetch(:id)})
     end
 
     created_response(batch)
