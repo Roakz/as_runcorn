@@ -5,7 +5,13 @@ class RepresentationFileStore
   end
 
   def get_file(key, &block)
-    ByteStorage.get.get_stream(key, &block)
+    begin
+      ByteStorage.get.get_stream(key, &block)
+    rescue => e
+      Log.error("Failure while fetching digital representation with key #{key}")
+      Log.exception(e)
+      raise e
+    end
   end
 
 end
