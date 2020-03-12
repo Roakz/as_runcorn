@@ -129,13 +129,13 @@ module Representations
       representations = PhysicalRepresentation.filter(backlink_col => objs.map(&:id)).all
       representations.zip(PhysicalRepresentation.sequel_to_jsonmodel(representations)).each do |sequel_obj, json|
         physical_representation_jsons[sequel_obj[backlink_col]] ||= []
-        physical_representation_jsons[sequel_obj[backlink_col]] << json.to_hash
+        physical_representation_jsons[sequel_obj[backlink_col]] << json.to_hash(:trusted)
       end
 
       representations = DigitalRepresentation.filter(backlink_col => objs.map(&:id)).all
       representations.zip(DigitalRepresentation.sequel_to_jsonmodel(representations)).each do |sequel_obj, json|
         digital_representation_jsons[sequel_obj[backlink_col]] ||= []
-        digital_representation_jsons[sequel_obj[backlink_col]] << json.to_hash
+        digital_representation_jsons[sequel_obj[backlink_col]] << json.to_hash(:trusted)
       end
 
       objs.zip(jsons).each do |obj, json|
