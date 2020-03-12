@@ -436,5 +436,17 @@ class IndexerCommon
         doc['runcorn_set_u_ustr'] = record['record']['within'].map{|qsa_id| [qsa_id.upcase, qsa_id.downcase]}.flatten
       end
     end
+
+    indexer.add_document_prepare_hook do |doc, record|
+      if doc['primary_type'] == 'resource'
+        doc['retention_status_u_sstr'] = record['record']["retention_status"]
+      end
+    end
+
+    indexer.add_document_prepare_hook do |doc, record|
+      if ['archival_object', 'physical_representation', 'digital_representation'].include?(doc['primary_type'])
+        doc['accessioned_status_u_sstr'] = record['record']["accessioned_status"]
+      end
+    end
   end
 end

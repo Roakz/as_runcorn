@@ -605,6 +605,8 @@ en:
     enum:
       runcorn_location: Current location
       runcorn_format: Format
+      runcorn_retention_status: Retention Status
+      runcorn_accessioned_status: Accessioned Status
     boolean:
       deaccessioned: Deaccessioned records
       archivist_approved: Archivist approved

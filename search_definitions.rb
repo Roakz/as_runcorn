@@ -14,3 +14,5 @@ AdvancedSearch.define_field(:name => 'start_date', :type => :range, :visibility 
 AdvancedSearch.define_field(:name => 'end_date', :type => :range, :visibility => [:staff], :solr_field => DateRangeQuery.new('date_end_u_ssort'))
 AdvancedSearch.remove_field('creators')
 AdvancedSearch.define_field(:name => 'within_set', :type => :text, :visibility => [:staff], :solr_field => 'runcorn_set_u_ustr')
+AdvancedSearch.define_field(:name => 'runcorn_retention_status', :type => :enum, :visibility => [:staff], :solr_field => 'retention_status_u_sstr')
+AdvancedSearch.define_field(:name => 'runcorn_accessioned_status', :type => :enum, :visibility => [:staff], :solr_field => 'accessioned_status_u_sstr')
