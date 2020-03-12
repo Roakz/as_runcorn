@@ -78,6 +78,19 @@ class QSAId
       if use_database_id
         asmodel.def_column_alias(:qsa_id, :id)
       else
+        # check that the sequence is good
+        seq_name =  "QSA_ID_#{asmodel.table_name.upcase}"
+        max_id = asmodel.max(:qsa_id) || 0
+        DB.open do |db|
+          if (current_seq = db[:sequence].filter(:sequence_name => seq_name).get(:value))
+            if current_seq < max_id
+              db[:sequence].filter(:sequence_name => seq_name).update(:value => max_id)
+            end
+          else
+            db[:sequence].insert(:sequence_name => seq_name, :value => max_id)
+          end
+        end
+
         asmodel.include(AutoGenerator)
         asmodel.auto_generate :property => :qsa_id,
                               :generator => proc { |json| Sequence.get("QSA_ID_#{asmodel.table_name.upcase}") },
