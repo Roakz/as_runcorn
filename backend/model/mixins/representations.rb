@@ -35,14 +35,16 @@ module Representations
 
 
   def reindex_representations!
-    DB.open do |db|
-      ao_ids = [self.id]
-      while !ao_ids.empty?
-        [:physical_representation, :digital_representation].each do |tbl|
-          db[tbl].filter(:archival_object_id => ao_ids).update(:system_mtime => Time.now)
-        end
+    unless ASUtils.migration_mode?
+      DB.open do |db|
+        ao_ids = [self.id]
+        while !ao_ids.empty?
+          [:physical_representation, :digital_representation].each do |tbl|
+            db[tbl].filter(:archival_object_id => ao_ids).update(:system_mtime => Time.now)
+          end
 
-        ao_ids = self.class.filter(:parent_id => ao_ids).select(:id).map(&:id)
+          ao_ids = self.class.filter(:parent_id => ao_ids).select(:id).map(&:id)
+        end
       end
     end
   end
