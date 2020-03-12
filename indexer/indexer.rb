@@ -446,6 +446,7 @@ class IndexerCommon
     indexer.add_document_prepare_hook do |doc, record|
       if ['archival_object', 'physical_representation', 'digital_representation'].include?(doc['primary_type'])
         doc['accessioned_status_u_sstr'] = record['record']["accessioned_status"]
+        doc['retention_status_u_sstr'] = record['record']["series_retention_status"]
       end
     end
   end

@@ -115,4 +115,10 @@
       "type" => "string",
     }
   },
+
+  "series_retention_status" => {
+    "type" => "string",
+    "readonly" => "true"
+  },
+
 }

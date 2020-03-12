@@ -17,6 +17,8 @@ class DigitalRepresentation < Sequel::Model(:digital_representation)
 
   include Batchable
 
+  include  SeriesRetentionStatus
+
   define_relationship(:name => :representation_approved_by,
                       :json_property => 'approved_by',
                       :contains_references_to_types => proc {[AgentPerson]},
