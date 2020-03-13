@@ -353,12 +353,12 @@ Rails.application.config.after_initialize do
       add_column('Start Date',
                  proc { |record|
                    Array(record['date_start_u_sstr']).first
-                 }, :sortable => true, :sort_by => 'date_start_u_ssort')
+                 }, :sortable => true, :sort_by => 'date_start_u_ssort', :cell_class => 'browse-date-column')
 
       add_column('End Date',
                  proc { |record|
                    Array(record['date_end_u_sstr']).first
-                 }, :sortable => true, :sort_by => 'date_end_u_ssort')
+                 }, :sortable => true, :sort_by => 'date_end_u_ssort', :cell_class => 'browse-date-column')
 
       as_runcorn_render_orig(*args, &block)
     end
