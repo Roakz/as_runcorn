@@ -79,6 +79,11 @@ module Representations
     def sequel_to_jsonmodel(objs, opts = {})
       jsons = super
 
+      if opts[:skip_representations]
+        return jsons
+      end
+
+
       if RequestContext.get(:current_username) == 'search_indexer'
         DB.open do |db|
           all_physrep_counts = db[:physical_representation]
