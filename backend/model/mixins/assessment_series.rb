@@ -11,7 +11,7 @@ module AssessmentSeries
       series_hash = series_for(objs)
 
       objs.zip(jsons).each do |obj, json|
-        json['series'] = series_hash[obj.id].map do |series|
+        json['series'] = series_hash.fetch(obj.id, []).map do |series|
           {
             'ref' => JSONModel(:resource).uri_for(series[:id], :repo_id => RequestContext.get(:repo_id)),
             'title' => series[:title],
