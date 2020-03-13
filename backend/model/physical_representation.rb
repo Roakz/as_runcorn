@@ -124,6 +124,11 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
       end
     end
 
+    controlling_records_objs = controlling_records_by_representation_id.values.uniq
+    responsible_agencies = ControlledRecord::ResponsibleAgencyCalculator.build_agency_control_map(controlling_records_objs)
+    responsible_agencies = responsible_agencies.map {|obj, info| [obj.id, info]}.to_h
+    recent_responsible_agencies = ControlledRecord::ResponsibleAgencyCalculator.build_recent_agency_control_map(controlling_records_objs)
+
     objs.zip(jsons).each do |obj, json|
       json['existing_ref'] = obj.uri
       json['display_string'] = build_display_string(json)
@@ -143,10 +148,16 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
                                             'qsa_id' => controlling_records_qsa_id_map.fetch(resource_uri).fetch(:qsa_id),
                                             'qsa_id_prefixed' => controlling_records_qsa_id_map.fetch(resource_uri).fetch(:qsa_id_prefixed),
                                           }
-      json['responsible_agency'] = { 'ref' => controlling_record.responsible_agency.fetch(:uri),
-                                     'start_date' => controlling_record.responsible_agency.fetch(:start_date),
-                                     'inherited' => controlling_record.responsible_agency.fetch(:inherited) }
-      json['recent_responsible_agencies'] = controlling_record.recent_responsible_agencies
+
+      new_agency_info = responsible_agencies.fetch(controlling_record.id)
+      json['responsible_agency'] =  {
+        'ref' => new_agency_info.agency_uri,
+        'start_date' => new_agency_info.start_date,
+        'inherited' => new_agency_info.inherited,
+        'inherited_from' => new_agency_info.inherited_from,
+        'overrides_series' => new_agency_info.overrides_series,
+      }
+      json['recent_responsible_agencies'] = recent_responsible_agencies.fetch([ArchivalObject, controlling_record.id])
 
       json['deaccessioned'] = !json['deaccessions'].empty? || deaccessioned_map.fetch(controlling_record.id)
 
