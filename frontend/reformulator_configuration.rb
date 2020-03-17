@@ -225,7 +225,7 @@ Reformulator.configure(
       },
 
       "resource_subjects_" => {
-        "moveSectionAfter" => "notes",
+        "moveSectionAfter" => "resource_notes_",
       },
 
       "resource_external_documents_" => {
@@ -248,16 +248,18 @@ Reformulator.configure(
         "moveSectionAfter" => "resource_rap_summary",
       },
 
-
       "resource_related_accessions_" => {
         "show" => [],
       },
+
       "finding_aid" => {
         "show" => [],
       },
+
       "resource_linked_agents_" => {
         "show" => [],
       },
+
       "resource_extents_" => {
         "show" => [],
         "defaultValues" => [
@@ -297,7 +299,7 @@ Reformulator.configure(
           {"path" => ["resource", "_significant_item_summary_"]},
           {"path" => ["resource", "_publish_"]},
           {"path" => ["resource", "_archivist_approved_"]},
-          {"path" => ["resource", "_restrictions_apply_"]},
+          {"path" => ["resource", "_restrictions_"]},
           {"path" => ["resource", "_serialised_"]},
           {"path" => ["resource", "_sensitivity_label_"]},
           {"path" => ["resource", "_copyright_status_"]},
@@ -325,7 +327,7 @@ Reformulator.configure(
           {"path" => ["archival_object", "_copyright_status_"]},
           {"path" => ["archival_object", "_disposal_class_"]},
           {"path" => ["archival_object", "_language_"]},
-          {"path" => ["archival_object","approved_by_linker"]},
+          {"path" => ["archival_object", "approved_by_linker"]},
           {"path" => ["archival_object", "approved_by_"]},
           {"path" => ["archival_object", "_approval_date_"]},
           {"path" => ["archival_object", "_original_registration_date_"]},
@@ -333,6 +335,10 @@ Reformulator.configure(
       },
 
       "resource_rights_statements_" => {
+        "show" => []
+      },
+
+     "resource_revision_statements_" => {
         "show" => []
       },
 
