@@ -306,9 +306,27 @@ class BulkRecordChanges
           # Apply updates from our pending record where there's a value to take.
           # Empty cells are ignored.
           pending.record_hash.each do |k, v|
-            next if v.nil? || (k == :dates && v[0][:begin].to_s.empty?)
+            next if v.nil?
 
-            target[k.to_s] = v
+            if k == :dates
+              date_fields = [:begin, :certainty, :end, :certainty_end]
+                              .map {|field| v[0][field].to_s.empty? ? nil : [field.to_s, v[0][field]]}
+                              .compact
+                              .to_h
+
+              # Nothing to update
+              next if date_fields.empty?
+
+              if Array(target['dates']).empty?
+                # There was no date previously.  Take values from the update sheet wholesale.
+                target['dates'] = v
+              else
+                # Merge values into the existing date
+                target['dates'][0] = target['dates'][0].merge(date_fields)
+              end
+            else
+              target[k.to_s] = v
+            end
           end
         end
 
@@ -511,7 +529,7 @@ class BulkRecordChanges
       COLUMN_BOX_NUMBER => {required: ['PR']},
       COLUMN_CONTAINED_WITHIN => {required: ['PR', 'DR']},
       COLUMN_SENSITIVITY_LABEL => {optional: ['ITM']},
-      COLUMN_TRANSFER_ID => {optional: ['ITM', 'PR', 'DR']},
+      COLUMN_TRANSFER_ID => {required: ['ITM', 'PR', 'DR']},
       COLUMN_PREVIOUS_SYSTEM_ID => {optional: ['ITM', 'PR', 'DR']},
       COLUMN_SIGNIFICANCE => {optional: ['ITM', 'PR', 'DR']},
       COLUMN_INHERIT_SIGNIFICANCE => {optional: ['ITM', 'PR', 'DR']},
