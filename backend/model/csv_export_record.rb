@@ -26,7 +26,7 @@ class CSVExportRecord
   end
 
   def title
-    if doc['primary_type'] == 'archival_object' && json['title']
+    if json['title']
       json['title']
     else
       doc['title'] || doc['display_string']
