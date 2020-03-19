@@ -475,13 +475,13 @@ class CSVExportRecord
   end
 
   def number_of_physical_representations
-    if doc['primary_type'] == 'resource'
+    if ['resource', 'archival_object'].include?(doc['primary_type'])
       json['physical_representations_count']
     end
   end
 
   def number_of_digital_representations
-    if doc['primary_type'] == 'resource'
+    if ['resource', 'archival_object'].include?(doc['primary_type'])
       json['digital_representations_count']
     end
   end
