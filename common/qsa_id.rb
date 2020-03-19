@@ -53,6 +53,14 @@ class QSAId
   end
 
 
+  def self.ref_for(qsa_id, repo_id)
+    parsed = parse_prefixed_id(qsa_id)
+    return 'NOT A VALID QSA ID' if parsed.empty?
+
+    parsed[:model].my_jsonmodel.uri_for(parsed[:model].filter(:qsa_id => parsed[:id]).get(:id), :repo_id => repo_id)
+  end
+
+
   def self.mode(mode = false)
     @mode ||= :backend
     @mode = mode if mode
