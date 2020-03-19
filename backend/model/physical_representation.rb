@@ -119,10 +119,13 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
         .join(:file_issue, Sequel.qualify(:file_issue, :id) => Sequel.qualify(:file_issue_item, :file_issue_id))
         .filter(:aspace_record_type => 'physical_representation')
         .filter(:aspace_record_id => objs.map(&:id))
-        .select(:file_issue_id, :aspace_record_id, :issue_type)
+        .select(Sequel.as(Sequel.qualify(:file_issue, :qsa_id), :file_issue_qsa_id),
+                :file_issue_id,
+                :aspace_record_id,
+                :issue_type)
         .map do |row|
         within_sets[row[:aspace_record_id].to_i] ||= []
-        within_sets[row[:aspace_record_id].to_i] << "%s%s%s" % [QSAId.prefix_for(FileIssue), row[:issue_type][0].upcase, row[:file_issue_id]]
+        within_sets[row[:aspace_record_id].to_i] << "%s%s%s" % [QSAId.prefix_for(FileIssue), row[:issue_type][0].upcase, row[:file_issue_qsa_id]]
       end
     end
 
