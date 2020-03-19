@@ -3,16 +3,17 @@ module QSAIdHelper
     parsed_id = QSAId.parse_prefixed_id(qsa_id)
     return unless parsed_id[:model]
 
-    link = !!opts[:link]
-
     out = '<span class="as-runcorn-qsa-id">'
     out << qsa_id
 
-    if link
+    # the :link option can be either an id for, or a uri to, the record
+    if opts.has_key?(:link)
+      link_id = opts[:link].to_s.split('/').last
+
       url_hash = {
         :controller => parsed_id[:model].to_s.pluralize(2),
         :action => 'show',
-        :id => parsed_id[:id],
+        :id => link_id,
         :only_path => true
       }
 
