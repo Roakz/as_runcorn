@@ -85,6 +85,8 @@ class S3AuthenticatedStorage
   end
 
   def exists?(key)
+    candidate_keys = [key, key.downcase].uniq
+    candidate_buckets = [@bucket, @fallback_ro_bucket].compact.uniq
     candidate_buckets.each do |bucket|
       candidate_keys.each do |key|
         begin
