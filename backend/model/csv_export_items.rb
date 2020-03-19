@@ -9,7 +9,6 @@ class CsvExportItems < CsvExport
       Column.new('Certainty', proc{|record| record.start_date_certainty}),
       Column.new('End Date', proc{|record| record.end_date}),
       Column.new('Certainty', proc{|record| record.end_date_certainty}),
-      Column.new('No of Child Items', proc{|record| record.number_of_children}),
       Column.new('No of Physical Representations', proc{|record| record.number_of_physical_representations}),
       Column.new('No of Digital Representations', proc{|record| record.number_of_digital_representations}),
       Column.new('Parent Item ID', proc{|record| record.parent_item_id}),
