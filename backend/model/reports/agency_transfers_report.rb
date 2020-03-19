@@ -62,7 +62,7 @@ class AgencyTransfersReport < RuncornReport
           transfer_dataset(aspacedb, mapdb) do |row|
             y << CSV.generate_line([
                 row[:date_received],
-                QSAId.prefixed_id_for(Transfer, row[:id]),
+                QSAId.prefixed_id_for(Transfer, row[:qsa_id]),
                 QSAId.prefixed_id_for(TransferProposal, row[:transfer_proposal_id]),
                 row[:title],
                 row[:agency_qsa_id],
