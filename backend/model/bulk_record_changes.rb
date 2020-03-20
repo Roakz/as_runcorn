@@ -970,6 +970,8 @@ class BulkRecordChanges
       }
     end
 
+    record[:previous_system_identifiers] = row.fetch(COLUMN_PREVIOUS_SYSTEM_ID)
+
     if row.has_heading?(COLUMN_SIGNIFICANCE)
       record[:significance] = row.fetch(COLUMN_SIGNIFICANCE)
     end
