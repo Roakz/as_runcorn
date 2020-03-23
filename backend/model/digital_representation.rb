@@ -53,6 +53,11 @@ class DigitalRepresentation < Sequel::Model(:digital_representation)
   def self.sequel_to_jsonmodel(objs, opts = {})
     jsons = super
 
+    frequency_of_use = ItemUse.filter(:digital_representation_id => objs.map(&:id))
+                              .group_and_count(:digital_representation_id)
+                              .map {|row| [row[:digital_representation_id], row[:count]]}
+                              .to_h
+
     controlling_records_by_representation_id = self.build_controlling_record_map(objs)
 
     controlling_records_qsa_id_map = build_controlling_records_qsa_id_map(controlling_records_by_representation_id)
@@ -113,6 +118,8 @@ class DigitalRepresentation < Sequel::Model(:digital_representation)
       json['recent_responsible_agencies'] = recent_responsible_agencies.fetch([ArchivalObject, controlling_record.id])
 
       json['deaccessioned'] = !json['deaccessions'].empty? || deaccessioned_map.fetch(controlling_record.id)
+
+      json['frequency_of_use'] = frequency_of_use.fetch(obj.id, 0)
 
       resource_uri = JSONModel(:resource).uri_for(controlling_record.root_record_id, :repo_id => controlling_record.repo_id)
       json['within'] = within_sets.fetch(obj.id, [])

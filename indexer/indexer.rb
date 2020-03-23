@@ -150,6 +150,8 @@ class IndexerCommon
         doc['responsible_agency_title_u_sstr'] = record.dig('record', 'responsible_agency', '_resolved', 'display_name', 'sort_name')
         doc['responsible_agency_qsa_id_u_sstr'] = record.dig('record', 'responsible_agency', '_resolved', 'qsa_id_prefixed')
 
+        doc['frequency_of_use_u_sint'] = record['record']['frequency_of_use']
+
         doc['controlling_record_qsa_id_u_sint'] = record['record']['controlling_record']['qsa_id']
         doc['controlling_record_qsa_id_u_sort'] = record['record']['controlling_record']['qsa_id'].to_s.rjust(9, '0')
         doc['controlling_record_qsa_id_u_ssort'] = record['record']['controlling_record']['qsa_id_prefixed']
