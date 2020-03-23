@@ -7,15 +7,23 @@ Sequel.migration do
       add_column(:qsa_id, Integer, :index => true, :null => true)
     end
 
-    self[:subject].update(:qsa_id => :id)
-    self[:sequence].insert(:sequence_name => "QSA_ID_SUBJECT", :value => self[:subject].max(:qsa_id) + 1)
-
     alter_table(:location) do
       add_column(:qsa_id, Integer, :index => true, :null => true)
     end
 
-    self[:location].update(:qsa_id => :id)
-    self[:sequence].insert(:sequence_name => "QSA_ID_LOCATION", :value => self[:location].max(:qsa_id) + 1)
+    self.transaction do
+      self[:subject].update(:qsa_id => :id)
+
+      if self[:subject].max(:qsa_id)
+        self[:sequence].insert(:sequence_name => "QSA_ID_SUBJECT", :value => self[:subject].max(:qsa_id) + 1)
+      end
+
+      self[:location].update(:qsa_id => :id)
+
+      if self[:location].max(:qsa_id)
+        self[:sequence].insert(:sequence_name => "QSA_ID_LOCATION", :value => self[:location].max(:qsa_id) + 1)
+      end
+    end
   end
 
 end
