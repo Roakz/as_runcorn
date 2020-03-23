@@ -117,6 +117,9 @@ class DigitalRepresentation < Sequel::Model(:digital_representation)
       resource_uri = JSONModel(:resource).uri_for(controlling_record.root_record_id, :repo_id => controlling_record.repo_id)
       json['within'] = within_sets.fetch(obj.id, [])
       json['within'] << controlling_records_qsa_id_map.fetch(resource_uri).fetch(:qsa_id_prefixed)
+      if obj.transfer_id
+        json['within'] << QSAId.prefixed_id_for(Transfer, obj.transfer_id)
+      end
     end
 
     jsons

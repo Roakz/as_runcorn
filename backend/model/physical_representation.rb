@@ -174,6 +174,9 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
 
       json['within'] = within_sets.fetch(obj.id, [])
       json['within'] << controlling_records_qsa_id_map.fetch(resource_uri).fetch(:qsa_id_prefixed)
+      if obj.transfer_id
+        json['within'] << QSAId.prefixed_id_for(Transfer, obj.transfer_id)
+      end
     end
 
     jsons
