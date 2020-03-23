@@ -124,7 +124,11 @@ Reformulator.configure(
           "selector" => 'input[name^="agent[agent_contacts]"]',
           "nameMustMatchRegex" => ".*\\[telephones\\]\\[[0-9]+\\]\\[ext\\]",
           "hideClosestSelector" => ".form-group"
-        }
+        },
+        {
+          "selector" => 'label[for="subject_authority_id_"]',
+          "hideClosestSelector" => '.form-group'
+        },
       ],
       "defaultValues" => [
         {
