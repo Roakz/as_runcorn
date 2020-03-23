@@ -212,6 +212,14 @@ Reformulator.configure(
           "selector" => 'input[name="location_batch[coordinate_3_label]"]',
           "value" => 'Bay'
         },
+        {
+          "selector" => 'input[name*="[extents]"][name$="[number]"]',
+          "value" => '0'
+        },
+        {
+          "selector" => 'select[name*="[extents]"][name$="[extent_type]"]',
+          "value" => 'volumes'
+        },
       ],
     },
 
