@@ -88,18 +88,10 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
   def self.sequel_to_jsonmodel(objs, opts = {})
     jsons = super
 
-    exhibition_location_id = BackendEnumSource.id_for_value('runcorn_location', 'EXH')
-    frequency_of_use = Movement
-                         .filter(:physical_representation_id => objs.map(&:id))
-                         .filter(Sequel.|(
-                                   Sequel.like(:context_uri, '/file_issues/%'),
-                                   Sequel.like(:context_uri, '/reading_room_requests/%'),
-                                   Sequel.like(:context_uri, '/agency_reading_room_requests/%'),
-                                   :functional_location_id => exhibition_location_id,
-                                 ))
-                         .group_and_count(:physical_representation_id)
-                         .map {|row| [row[:physical_representation_id], row[:count]]}
-                         .to_h
+    frequency_of_use = ItemUse.filter(:physical_representation_id => objs.map(&:id))
+                              .group_and_count(:physical_representation_id)
+                              .map {|row| [row[:physical_representation_id], row[:count]]}
+                              .to_h
 
     controlling_records_by_representation_id = self.build_controlling_record_map(objs)
 
