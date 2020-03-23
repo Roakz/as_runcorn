@@ -135,6 +135,7 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
                                      'ref' => controlling_record.uri,
                                      'qsa_id' => controlling_records_qsa_id_map.fetch(controlling_record.uri).fetch(:qsa_id),
                                      'qsa_id_prefixed' => controlling_records_qsa_id_map.fetch(controlling_record.uri).fetch(:qsa_id_prefixed),
+                                     'title' => controlling_records_qsa_id_map.fetch(controlling_record.uri).fetch(:title),
                                      'begin_date' => controlling_records_dates_map.fetch(controlling_record.id, {}).fetch(:begin, nil),
                                      'end_date' => controlling_records_dates_map.fetch(controlling_record.id, {}).fetch(:end, nil),
                                    }
@@ -144,6 +145,7 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
                                             'ref' => resource_uri,
                                             'qsa_id' => controlling_records_qsa_id_map.fetch(resource_uri).fetch(:qsa_id),
                                             'qsa_id_prefixed' => controlling_records_qsa_id_map.fetch(resource_uri).fetch(:qsa_id_prefixed),
+                                            'title' => controlling_records_qsa_id_map.fetch(resource_uri).fetch(:title),
                                           }
 
       new_agency_info = responsible_agencies.fetch(controlling_record.id)
