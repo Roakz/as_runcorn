@@ -175,7 +175,7 @@ class BatchCSV
 
   def date_for(doc, json, which, certainty = false)
     case doc['primary_type']
-    when 'physical_representation'
+    when /_representation$/
       unless certainty
         json['controlling_record'][which.to_s + '_date']
       end
@@ -187,7 +187,7 @@ class BatchCSV
           fld += '_end' if which == :end
           date[fld]
         else
-          date[which]
+          date[which.to_s]
         end
       end
     end
