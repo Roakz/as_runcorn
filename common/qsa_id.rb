@@ -57,7 +57,9 @@ class QSAId
     parsed = parse_prefixed_id(qsa_id)
     return 'NOT A VALID QSA ID' if parsed.empty?
 
-    parsed[:model].my_jsonmodel.uri_for(parsed[:model].filter(:qsa_id => parsed[:id]).get(:id), :repo_id => repo_id)
+    id = parsed[:model].columns.include?(:qsa_id) ? parsed[:model].filter(:qsa_id => parsed[:id]).get(:id) : parsed[:id]
+
+    parsed[:model].my_jsonmodel.uri_for(id, :repo_id => repo_id)
   end
 
 
