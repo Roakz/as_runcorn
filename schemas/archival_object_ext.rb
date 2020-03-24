@@ -121,4 +121,14 @@
     "readonly" => "true"
   },
 
+  "series_summary" => {
+    "type" => "object",
+    "subtype" => "ref",
+    "readonly" => "true",
+    "properties" => {
+      "qsa_id" => {"type" => "number"},
+      "qsa_id_prefixed" => {"type" => "string"},
+      "title" => {"type" => "string"},
+    }
+  },
 }

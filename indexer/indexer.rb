@@ -121,11 +121,6 @@ class IndexerCommon
         doc['controlling_record_begin_date_u_ssort'] = record.dig('record', 'controlling_record', 'begin_date')
         doc['controlling_record_end_date_u_ssort'] = record.dig('record', 'controlling_record', 'end_date')
 
-        doc['controlling_record_series_u_sstr'] = record['record']['controlling_record_series']['ref']
-        doc['controlling_record_series_qsa_id_u_sint'] = record['record']['controlling_record_series']['qsa_id']
-        doc['controlling_record_series_qsa_id_u_sort'] = record['record']['controlling_record_series']['qsa_id'].to_s.rjust(9, '0')
-        doc['controlling_record_series_qsa_id_u_ssort'] = record['record']['controlling_record_series']['qsa_id_prefixed']
-
         if doc['top_container_uri_u_sstr']
           doc['series_top_container_uri_u_sstr'] = '%s::%s' % [doc['controlling_record_series_u_sstr'], doc['top_container_uri_u_sstr']]
         end
@@ -158,10 +153,6 @@ class IndexerCommon
 
         doc['controlling_record_begin_date_u_ssort'] = record.dig('record', 'controlling_record', 'begin_date')
         doc['controlling_record_end_date_u_ssort'] = record.dig('record', 'controlling_record', 'end_date')
-
-        doc['controlling_record_series_qsa_id_u_sint'] = record['record']['controlling_record_series']['qsa_id']
-        doc['controlling_record_series_qsa_id_u_sort'] = record['record']['controlling_record_series']['qsa_id'].to_s.rjust(9, '0')
-        doc['controlling_record_series_qsa_id_u_ssort'] = record['record']['controlling_record_series']['qsa_id_prefixed']
       end
     }
 
@@ -449,6 +440,25 @@ class IndexerCommon
       if ['archival_object', 'physical_representation', 'digital_representation'].include?(doc['primary_type'])
         doc['accessioned_status_u_sstr'] = record['record']["accessioned_status"]
         doc['retention_status_u_sstr'] = record['record']["series_retention_status"]
+      end
+    end
+
+    indexer.add_document_prepare_hook do |doc, record|
+      if ['physical_representation', 'digital_representation'].include?(doc['primary_type'])
+        doc['controlling_record_series_u_sstr'] = record['record']['controlling_record_series']['ref']
+        doc['controlling_record_series_qsa_id_u_sint'] = record['record']['controlling_record_series']['qsa_id']
+        doc['controlling_record_series_qsa_id_u_sort'] = record['record']['controlling_record_series']['qsa_id'].to_s.rjust(9, '0')
+        doc['controlling_record_series_qsa_id_u_ssort'] = record['record']['controlling_record_series']['qsa_id_prefixed']
+        doc['controlling_record_series_title_u_ssort'] = record['record']['controlling_record_series']['title']
+      end
+    end
+
+    indexer.add_document_prepare_hook do |doc, record|
+      if doc['primary_type'] == 'archival_object'
+        doc['series_summary_qsa_id_u_sint'] = record['record']['series_summary']['qsa_id']
+        doc['series_summary_qsa_id_u_sort'] = record['record']['series_summary']['qsa_id'].to_s.rjust(9, '0')
+        doc['series_summary_qsa_id_u_ssort'] = record['record']['series_summary']['qsa_id_prefixed']
+        doc['series_summary_title_u_ssort'] = record['record']['series_summary']['title']
       end
     end
   end
