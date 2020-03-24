@@ -63,7 +63,7 @@ class BatchCSV
           [
            I18n.t(result['primary_type'] + '._singular'),
            result['qsa_id_u_ssort'],
-           result['title'],
+           json.fetch('title', result['title']),
            date_for(result, json, :begin),
            date_for(result, json, :begin, :certainty),
            date_for(result, json, :end),
@@ -101,12 +101,10 @@ class BatchCSV
 
   def series_for(doc, json)
     case doc['primary_type']
-    when 'physical_representation'
-      doc['controlling_record_series_qsa_id_u_ssort']
-    when 'digital_representation'
-      Array(json['within']).find{|qsa_id| QSAId.parse_prefixed_id(qsa_id)[:model] == Resource}
+    when /_representation$/
+      [doc['controlling_record_series_qsa_id_u_ssort'], doc['controlling_record_series_title_u_ssort']].join(': ')
     when 'archival_object'
-      Array(json['within']).find{|qsa_id| QSAId.parse_prefixed_id(qsa_id)[:model] == Resource}
+      [doc['series_summary_qsa_id_u_ssort'], doc['series_summary_title_u_ssort']].join(': ')
     when 'top_container'
       json['collection'].map{|c| [c['identifier'], c['display_string']].compact.join(': ')}.join('; ')
     end
@@ -151,7 +149,7 @@ class BatchCSV
 
   def responsible_agency_for(doc, json, field)
     case doc['primary_type']
-    when 'physical_representation'
+    when /_representation$/
       if field == 'qsa_id_prefixed'
         doc.dig('responsible_agency_qsa_id_u_sstr', 0)
       elsif field == 'title'
@@ -175,7 +173,7 @@ class BatchCSV
 
   def date_for(doc, json, which, certainty = false)
     case doc['primary_type']
-    when 'physical_representation'
+    when /_representation$/
       unless certainty
         json['controlling_record'][which.to_s + '_date']
       end
@@ -187,7 +185,7 @@ class BatchCSV
           fld += '_end' if which == :end
           date[fld]
         else
-          date[which]
+          date[which.to_s]
         end
       end
     end

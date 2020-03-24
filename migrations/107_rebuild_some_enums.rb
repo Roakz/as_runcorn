@@ -19,6 +19,7 @@ Sequel.migration do
                      'Digital media - Optical  - CD',
                      'Digital media - Optical  - DVD',
                      'Digital Media - Other',
+                     'Digital media - Other',
                      'Digital media - PC',
                      'Digital media - Server',
                      'Album',

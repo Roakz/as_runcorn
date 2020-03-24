@@ -53,6 +53,11 @@ class DigitalRepresentation < Sequel::Model(:digital_representation)
   def self.sequel_to_jsonmodel(objs, opts = {})
     jsons = super
 
+    frequency_of_use = ItemUse.filter(:digital_representation_id => objs.map(&:id))
+                              .group_and_count(:digital_representation_id)
+                              .map {|row| [row[:digital_representation_id], row[:count]]}
+                              .to_h
+
     controlling_records_by_representation_id = self.build_controlling_record_map(objs)
 
     controlling_records_qsa_id_map = build_controlling_records_qsa_id_map(controlling_records_by_representation_id)
@@ -67,10 +72,13 @@ class DigitalRepresentation < Sequel::Model(:digital_representation)
         .join(:file_issue, Sequel.qualify(:file_issue, :id) => Sequel.qualify(:file_issue_item, :file_issue_id))
         .filter(:aspace_record_type => 'digital_representation')
         .filter(:aspace_record_id => objs.map(&:id))
-        .select(:file_issue_id, :aspace_record_id, :issue_type)
+        .select(Sequel.as(Sequel.qualify(:file_issue, :qsa_id), :file_issue_qsa_id),
+                :file_issue_id,
+                :aspace_record_id,
+                :issue_type)
         .map do |row|
         within_sets[row[:aspace_record_id].to_i] ||= []
-        within_sets[row[:aspace_record_id].to_i] << "%s%s%s" % [QSAId.prefix_for(FileIssue), row[:issue_type][0].upcase, row[:file_issue_id]]
+        within_sets[row[:aspace_record_id].to_i] << "%s%s%s" % [QSAId.prefix_for(FileIssue), row[:issue_type][0].upcase, row[:file_issue_qsa_id]]
       end
     end
 
@@ -88,6 +96,7 @@ class DigitalRepresentation < Sequel::Model(:digital_representation)
         'ref' => controlling_record.uri,
         'qsa_id' => controlling_records_qsa_id_map.fetch(controlling_record.uri).fetch(:qsa_id),
         'qsa_id_prefixed' => controlling_records_qsa_id_map.fetch(controlling_record.uri).fetch(:qsa_id_prefixed),
+        'title' => controlling_records_qsa_id_map.fetch(controlling_record.uri).fetch(:title),
         'begin_date' => controlling_records_dates_map.fetch(controlling_record.id, {}).fetch(:begin, nil),
         'end_date' => controlling_records_dates_map.fetch(controlling_record.id, {}).fetch(:end, nil),
       }
@@ -97,6 +106,7 @@ class DigitalRepresentation < Sequel::Model(:digital_representation)
           'ref' => resource_uri,
           'qsa_id' => controlling_records_qsa_id_map.fetch(resource_uri).fetch(:qsa_id),
           'qsa_id_prefixed' => controlling_records_qsa_id_map.fetch(resource_uri).fetch(:qsa_id_prefixed),
+          'title' => controlling_records_qsa_id_map.fetch(resource_uri).fetch(:title),
       }
 
       new_agency_info = responsible_agencies.fetch(controlling_record.id)
@@ -111,9 +121,14 @@ class DigitalRepresentation < Sequel::Model(:digital_representation)
 
       json['deaccessioned'] = !json['deaccessions'].empty? || deaccessioned_map.fetch(controlling_record.id)
 
+      json['frequency_of_use'] = frequency_of_use.fetch(obj.id, 0)
+
       resource_uri = JSONModel(:resource).uri_for(controlling_record.root_record_id, :repo_id => controlling_record.repo_id)
       json['within'] = within_sets.fetch(obj.id, [])
       json['within'] << controlling_records_qsa_id_map.fetch(resource_uri).fetch(:qsa_id_prefixed)
+      if obj.transfer_id
+        json['within'] << QSAId.prefixed_id_for(Transfer, obj.transfer_id)
+      end
     end
 
     jsons

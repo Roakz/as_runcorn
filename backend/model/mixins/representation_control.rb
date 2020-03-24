@@ -88,24 +88,26 @@ module RepresentationControl
       ao_ids = controlling_records_by_representation_id.values.map(&:id)
       ArchivalObject
         .filter(:id => ao_ids)
-        .select(:repo_id, :id, :qsa_id)
+        .select(:repo_id, :id, :qsa_id, :title)
         .each do |row|
         record_uri = JSONModel(:archival_object).uri_for(row[:id], :repo_id => row[:repo_id])
         qsa_ids_by_record_uri[record_uri] = {
           :qsa_id => row[:qsa_id],
           :qsa_id_prefixed => QSAId.prefixed_id_for(ArchivalObject, row[:qsa_id]),
+          :title => row[:title],
         }
       end
 
       resource_ids = controlling_records_by_representation_id.values.map(&:root_record_id)
       Resource
         .filter(:id => resource_ids)
-        .select(:repo_id, :id, :qsa_id)
+        .select(:repo_id, :id, :qsa_id, :title)
         .each do |row|
         record_uri = JSONModel(:resource).uri_for(row[:id], :repo_id => row[:repo_id])
         qsa_ids_by_record_uri[record_uri] = {
           :qsa_id => row[:qsa_id],
           :qsa_id_prefixed => QSAId.prefixed_id_for(Resource, row[:qsa_id]),
+          :title => row[:title],
         }
       end
 

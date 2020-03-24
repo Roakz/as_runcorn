@@ -412,6 +412,13 @@ Rails.application.config.after_initialize do
       'resources' => ['index'],
       'archival_objects' => ['index'],
       'representations' => ['index'],
+      'locations' => ['index'],
+      'subjects' => ['index'],
+    }
+
+    SKIPPED_COLUMNS = {
+      'locations' => [:start_date, :end_date, :published],
+      'subjects' => [:start_date, :end_date, :published],
     }
 
     def render_aspace_partial(args)
@@ -433,36 +440,48 @@ Rails.application.config.after_initialize do
             @context_column_header = false
             @no_title = true
 
-            add_column('ID',
-                       proc { |record|
-                         record['_json_parsed_'] ||= ASUtils.json_parse(record['json'])
-                         # show the QSA ID or just the ID if no QSA ID
-                         if record['_json_parsed_']['qsa_id_prefixed']
-                           QSAIdHelper.id(record['_json_parsed_']['qsa_id_prefixed'])
-                         else
-                           JSONModel(record['_json_parsed_']['jsonmodel_type'].intern).id_for(record['id']).to_s
-                         end
-                       }, :sortable => true, :sort_by => 'qsa_id_u_sort')
+            skipped_columns = SKIPPED_COLUMNS.fetch(controller.controller_name, [])
 
-            add_column(title_column_header_label,
-                       proc { |record|
-                         clean_mixed_content(record["title"] || record['display_string']).html_safe
-                       }, :sortable => true, :sort_by => 'title_sort')
+            unless skipped_columns.include?(:id)
+              add_column('ID',
+                         proc { |record|
+                           record['_json_parsed_'] ||= ASUtils.json_parse(record['json'])
+                           # show the QSA ID or just the ID if no QSA ID
+                           if record['_json_parsed_']['qsa_id_prefixed']
+                             QSAIdHelper.id(record['_json_parsed_']['qsa_id_prefixed'])
+                           else
+                             JSONModel(record['_json_parsed_']['jsonmodel_type'].intern).id_for(record['id']).to_s
+                           end
+                         }, :sortable => true, :sort_by => 'qsa_id_u_sort')
+            end
 
-            add_column('Start Date',
-                       proc { |record|
-                         Array(record['date_start_u_sstr']).first
-                       }, :sortable => true, :sort_by => 'date_start_u_ssort', :cell_class => 'browse-date-column')
+            unless skipped_columns.include?(:title)
+              add_column(title_column_header_label,
+                         proc { |record|
+                           clean_mixed_content(record["title"] || record['display_string']).html_safe
+                         }, :sortable => true, :sort_by => 'title_sort')
+            end
 
-            add_column('End Date',
-                       proc { |record|
-                         Array(record['date_end_u_sstr']).first
-                       }, :sortable => true, :sort_by => 'date_end_u_ssort', :cell_class => 'browse-date-column')
+            unless skipped_columns.include?(:start_date)
+              add_column('Start Date',
+                         proc { |record|
+                           Array(record['date_start_u_sstr']).first
+                         }, :sortable => true, :sort_by => 'date_start_u_ssort', :cell_class => 'browse-date-column')
+            end
 
-            add_column('Published?',
-                       proc { |record|
-                         record['publish'] ? 'Yes' : 'No'
-                       }, :sortable => true, :sort_by => 'publish')
+            unless skipped_columns.include?(:end_date)
+              add_column('End Date',
+                         proc { |record|
+                           Array(record['date_end_u_sstr']).first
+                         }, :sortable => true, :sort_by => 'date_end_u_ssort', :cell_class => 'browse-date-column')
+            end
+
+            unless skipped_columns.include?(:published)
+              add_column('Published?',
+                         proc { |record|
+                           record['publish'] ? 'Yes' : 'No'
+                         }, :sortable => true, :sort_by => 'publish')
+            end
 
             extra_columns.concat(columns_to_append)
           end

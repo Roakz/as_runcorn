@@ -88,16 +88,10 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
   def self.sequel_to_jsonmodel(objs, opts = {})
     jsons = super
 
-    frequency_of_use = Movement
-                         .filter(:physical_representation_id => objs.map(&:id))
-                         .filter(Sequel.|(
-                                   Sequel.like(:context_uri, '/file_issues/%'),
-                                   Sequel.like(:context_uri, '/reading_room_requests/%'),
-                                   Sequel.like(:context_uri, '/agency_reading_room_requests/%'),
-                                 ))
-                         .group_and_count(:physical_representation_id)
-                         .map {|row| [row[:physical_representation_id], row[:count]]}
-                         .to_h
+    frequency_of_use = ItemUse.filter(:physical_representation_id => objs.map(&:id))
+                              .group_and_count(:physical_representation_id)
+                              .map {|row| [row[:physical_representation_id], row[:count]]}
+                              .to_h
 
     controlling_records_by_representation_id = self.build_controlling_record_map(objs)
 
@@ -117,10 +111,13 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
         .join(:file_issue, Sequel.qualify(:file_issue, :id) => Sequel.qualify(:file_issue_item, :file_issue_id))
         .filter(:aspace_record_type => 'physical_representation')
         .filter(:aspace_record_id => objs.map(&:id))
-        .select(:file_issue_id, :aspace_record_id, :issue_type)
+        .select(Sequel.as(Sequel.qualify(:file_issue, :qsa_id), :file_issue_qsa_id),
+                :file_issue_id,
+                :aspace_record_id,
+                :issue_type)
         .map do |row|
         within_sets[row[:aspace_record_id].to_i] ||= []
-        within_sets[row[:aspace_record_id].to_i] << "%s%s%s" % [QSAId.prefix_for(FileIssue), row[:issue_type][0].upcase, row[:file_issue_id]]
+        within_sets[row[:aspace_record_id].to_i] << "%s%s%s" % [QSAId.prefix_for(FileIssue), row[:issue_type][0].upcase, row[:file_issue_qsa_id]]
       end
     end
 
@@ -138,6 +135,7 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
                                      'ref' => controlling_record.uri,
                                      'qsa_id' => controlling_records_qsa_id_map.fetch(controlling_record.uri).fetch(:qsa_id),
                                      'qsa_id_prefixed' => controlling_records_qsa_id_map.fetch(controlling_record.uri).fetch(:qsa_id_prefixed),
+                                     'title' => controlling_records_qsa_id_map.fetch(controlling_record.uri).fetch(:title),
                                      'begin_date' => controlling_records_dates_map.fetch(controlling_record.id, {}).fetch(:begin, nil),
                                      'end_date' => controlling_records_dates_map.fetch(controlling_record.id, {}).fetch(:end, nil),
                                    }
@@ -147,6 +145,7 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
                                             'ref' => resource_uri,
                                             'qsa_id' => controlling_records_qsa_id_map.fetch(resource_uri).fetch(:qsa_id),
                                             'qsa_id_prefixed' => controlling_records_qsa_id_map.fetch(resource_uri).fetch(:qsa_id_prefixed),
+                                            'title' => controlling_records_qsa_id_map.fetch(resource_uri).fetch(:title),
                                           }
 
       new_agency_info = responsible_agencies.fetch(controlling_record.id)
@@ -169,6 +168,9 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
 
       json['within'] = within_sets.fetch(obj.id, [])
       json['within'] << controlling_records_qsa_id_map.fetch(resource_uri).fetch(:qsa_id_prefixed)
+      if obj.transfer_id
+        json['within'] << QSAId.prefixed_id_for(Transfer, obj.transfer_id)
+      end
     end
 
     jsons

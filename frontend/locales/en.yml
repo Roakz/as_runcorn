@@ -88,12 +88,10 @@ en:
         update_locations_multiple_help: Choose a Home Location for each selected container.
   location:
     building: Repository
-    barcode: Repository ID
     storage_type: Location Storage Type
   location_batch:
     building: Repository
-    barcode: Repository ID
-    classification: Location Storage Type
+    storage_type: Location Storage Type
   group:
     permission_types:
       manage_agency_registration: manage agency registration workflow
