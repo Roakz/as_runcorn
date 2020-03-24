@@ -35,6 +35,7 @@
   "digital_representations_count" => {"type"=> "number", "readonly" => "true"},
 
   "transfer_id" => {"type"=> "number"},
+  "transfer_qsa_id" => {"type"=> "string", "readonly" => "true"},
   "transfer" => {
     "type" => "object",
     "subtype" => "ref",

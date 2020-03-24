@@ -316,6 +316,7 @@
         }
       },
 
+      "transfer_qsa_id" => {"type"=> "string", "readonly" => "true"},
       "transfer_id" => {"type"=> "number"},
       "transfer" => {
           "type" => "object",
