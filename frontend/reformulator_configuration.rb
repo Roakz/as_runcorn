@@ -37,11 +37,19 @@ Reformulator.configure(
           "hideClosestSelector" => '.form-group',
         },
         {
-          "selector" => 'select[name="resource[level]"]',
+          "selector" => 'label[for="resource_level_"]',
           "hideClosestSelector" => '.form-group'
         },
         {
-          "selector" => 'select[name="archival_object[level]"]',
+          "selector" => 'label[for="resource_description_"]',
+          "hideClosestSelector" => '.form-group'
+        },
+        {
+          "selector" => 'label[for="resource_information_sources_"]',
+          "hideClosestSelector" => '.form-group'
+        },
+        {
+          "selector" => 'label[for="archival_object_level_"]',
           "hideClosestSelector" => '.form-group'
         },
         {
@@ -228,76 +236,7 @@ Reformulator.configure(
     },
 
     "resources" => {
-      "resource_dates_" => {
-        "moveSectionAfter" => "basic_information",
-      },
 
-      "resource_notes_" => {
-        "moveSectionAfter" => "resource_dates_",
-      },
-
-      "resource_subjects_" => {
-        "moveSectionAfter" => "resource_notes_",
-      },
-
-      "resource_external_documents_" => {
-        "moveSectionAfter" => "_relationships_",
-      },
-
-      "resource_external_ids" => {
-        "moveSectionAfter" => "resource_external_documents_",
-      },
-
-      "resource_rap_attached" => {
-        "moveSectionAfter" => "resource_external_ids_",
-      },
-
-      "resource_rap_summary" => {
-        "moveSectionAfter" => "resource_rap_attached",
-      },
-
-      "resource_deaccessions_" => {
-        "moveSectionAfter" => "resource_rap_summary",
-      },
-
-      "resource_related_accessions_" => {
-        "show" => [],
-      },
-
-      "finding_aid" => {
-        "show" => [],
-      },
-
-      "resource_linked_agents_" => {
-        "show" => [],
-      },
-
-      "resource_extents_" => {
-        "show" => [],
-        "defaultValues" => [
-          {"path" => ["resource_extents_", "_number_"], "value" => "0"},
-          {"path" => ["resource_extents_", "_extent_type_"], "value" => "volumes"},
-          ]
-        },
-      "archival_object_linked_agents_" => {
-        "show" => [],
-      },
-      "archival_object_extents_" => {
-        "show" => [],
-        "defaultValues" => [
-          {"path" => ["archival_object_extents_", "_number_"], "value" => "0"},
-          {"path" => ["archival_object_extents_", "_extent_type_"], "value" => "volumes"},
-        ]
-      },
-      "resource_instances_" => {
-        "show" => [],
-      },
-      "archival_object_instances_" => {
-        "show" => [],
-      },
-      "container_locations" => {
-        "show" => [],
-      },
       "basic_information" => {
         "fieldOrder" => [
           {"path" => ["resource", "_qsa_id_prefixed_"]},
@@ -346,6 +285,66 @@ Reformulator.configure(
         ],
       },
 
+      # reordering resource sections
+
+      "resource_dates_" => {
+        "moveSectionAfter" => "basic_information",
+      },
+
+      "resource_notes_" => {
+        "moveSectionAfter" => "resource_dates_",
+      },
+
+      "resource_subjects_" => {
+        "moveSectionAfter" => "resource_notes_",
+      },
+
+      "resource_external_documents_" => {
+        "moveSectionAfter" => "_relationships_",
+      },
+
+      "resource_external_ids" => {
+        "moveSectionAfter" => "resource_external_documents_",
+      },
+
+      "resource_rap_attached" => {
+        "moveSectionAfter" => "resource_external_documents_",
+      },
+
+      "resource_rap_summary" => {
+        "moveSectionAfter" => "resource_rap_attached",
+      },
+
+      "resource_deaccessions_" => {
+        "moveSectionAfter" => "resource_rap_summary",
+      },
+
+      # resource sections to hide
+
+      "resource_related_accessions_" => {
+        "show" => [],
+      },
+
+      "finding_aid" => {
+        "show" => [],
+      },
+
+      "resource_linked_agents_" => {
+        "show" => [],
+      },
+
+      "resource_extents_" => {
+        "show" => [],
+        "defaultValues" => [
+          {"path" => ["resource_extents_", "_number_"], "value" => "0"},
+          {"path" => ["resource_extents_", "_extent_type_"], "value" => "volumes"},
+          ]
+        },
+
+      "resource_instances_" => {
+        "show" => [],
+      },
+
       "resource_rights_statements_" => {
         "show" => []
       },
@@ -364,6 +363,29 @@ Reformulator.configure(
 
       "resource_user_defined_" => {
         "show" => []
+      },
+
+      "linked_assessments" => {
+        "show" => []
+      },
+
+
+      # archival object sections
+
+      "archival_object_linked_agents_" => {
+        "show" => [],
+      },
+
+      "archival_object_extents_" => {
+        "show" => [],
+        "defaultValues" => [
+          {"path" => ["archival_object_extents_", "_number_"], "value" => "0"},
+          {"path" => ["archival_object_extents_", "_extent_type_"], "value" => "volumes"},
+        ]
+      },
+
+      "archival_object_instances_" => {
+        "show" => [],
       },
 
       "archival_object_dates_" => {
