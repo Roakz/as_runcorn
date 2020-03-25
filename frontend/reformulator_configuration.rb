@@ -296,7 +296,7 @@ Reformulator.configure(
       },
 
       "resource_subjects_" => {
-        "moveSectionAfter" => "resource_notes_",
+        "moveSectionAfter" => "resource_dates_",
       },
 
       "resource_external_documents_" => {
