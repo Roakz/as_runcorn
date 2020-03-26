@@ -3,6 +3,7 @@
 <%
    add_browse_columns("archival_object", {"level" => "archival_record_level", "language" => "language_iso639_2"})
    @display_context = true
+   @show_multiselect_column = true
 
    add_column(I18n.t("representation.rap_expiry_date"),
               proc {|record|
@@ -49,3 +50,5 @@
      </div>
    </div>
 </div>
+
+<%= javascript_include_tag("search.js?_t=#{ASConstants.VERSION}") %>
