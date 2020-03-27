@@ -6,6 +6,7 @@
     <div class="col-sm-9 label-only">
       <% if form.obj['qsa_id_prefixed'] %>
         <%= QSAIdHelper.id(form.obj['qsa_id_prefixed']) %>
+        <%= form.hidden_input 'qsa_id_prefixed', form.obj['qsa_id_prefixed'] %>
       <% else %>
         <span class="text-muted">-- auto-generated upon save --</span>
       <% end %>
