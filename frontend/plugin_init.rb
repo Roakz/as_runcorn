@@ -370,6 +370,24 @@ Rails.application.config.after_initialize do
     HistoryController.add_skip_field('container_locations')
     HistoryController.add_skip_field('context_uri')
     HistoryController.add_skip_field('existing_ref')
+    HistoryController.add_skip_field('qsa_id')
+    HistoryController.add_skip_field('id_0')
+    HistoryController.add_skip_field('extents')
+
+    HistoryController.add_enum_handler {|type, field|
+      if type == 'date'
+        if field == 'certainty_end'
+          'date_certainty'
+        end
+      end
+    }
+
+    HistoryController.add_enum_handler {|type, field|
+      if field == 'copyright_status'
+        'runcorn_copyright_status'
+      end
+    }
+
     HistoryController.add_enum_handler {|type, field|
       if ['physical_representation', 'movement', 'top_container', 'absent_content'].include?(type) &&
           ['current_location', 'normal_location', 'functional_location'].include?(field)
