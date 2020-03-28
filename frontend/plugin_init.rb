@@ -373,6 +373,8 @@ Rails.application.config.after_initialize do
     HistoryController.add_skip_field('qsa_id')
     HistoryController.add_skip_field('id_0')
     HistoryController.add_skip_field('extents')
+    HistoryController.add_skip_field('ref_id')
+    HistoryController.add_skip_field('position')
 
     HistoryController.add_enum_handler {|type, field|
       if type == 'date'
@@ -385,6 +387,18 @@ Rails.application.config.after_initialize do
     HistoryController.add_enum_handler {|type, field|
       if field == 'copyright_status'
         'runcorn_copyright_status'
+      end
+    }
+
+    HistoryController.add_enum_handler {|type, field|
+      if field == 'significance'
+        'runcorn_significance'
+      end
+    }
+
+    HistoryController.add_enum_handler {|type, field|
+      if field == 'calculated_availability'
+        'runcorn_physical_representation_availability_concise'
       end
     }
 
