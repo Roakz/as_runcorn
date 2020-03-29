@@ -375,6 +375,12 @@ Rails.application.config.after_initialize do
     HistoryController.add_skip_field('extents')
     HistoryController.add_skip_field('ref_id')
     HistoryController.add_skip_field('position')
+    HistoryController.add_skip_field('id')
+    HistoryController.add_skip_field('access_category_id')
+    HistoryController.add_skip_field('resource_id')
+    HistoryController.add_skip_field('json_schema_version')
+
+    HistoryController.add_top_fields(['qsa_id_prefixed', 'title', 'display_string', 'published', 'publish'])
 
     HistoryController.add_enum_handler {|type, field|
       if type == 'date'
