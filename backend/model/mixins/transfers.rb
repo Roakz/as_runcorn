@@ -15,7 +15,7 @@ module Transfers
     def sequel_to_jsonmodel(objs, opts = {})
       jsons = super
 
-      transfer_ids = objs.map(&:transfer_id).compact
+      transfer_ids = objs.map(&:transfer_id).compact.uniq
       transfer_qsa_id_map = if transfer_ids.empty?
                               {}
                             else
