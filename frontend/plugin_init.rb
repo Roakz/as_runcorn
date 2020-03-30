@@ -327,7 +327,7 @@ Rails.application.config.after_initialize do
 
     alias :as_runcorn_render_orig :render
     def render(*args, &block)
-      @show_multiselect_column = false
+      @show_multiselect_column = true
       @display_context = false
       @show_search_result_identifier_column = false
       @display_identifier = false
@@ -370,6 +370,44 @@ Rails.application.config.after_initialize do
     HistoryController.add_skip_field('container_locations')
     HistoryController.add_skip_field('context_uri')
     HistoryController.add_skip_field('existing_ref')
+    HistoryController.add_skip_field('qsa_id')
+    HistoryController.add_skip_field('id_0')
+    HistoryController.add_skip_field('extents')
+    HistoryController.add_skip_field('ref_id')
+    HistoryController.add_skip_field('position')
+    HistoryController.add_skip_field('id')
+    HistoryController.add_skip_field('access_category_id')
+    HistoryController.add_skip_field('resource_id')
+    HistoryController.add_skip_field('json_schema_version')
+
+    HistoryController.add_top_fields(['qsa_id_prefixed', 'title', 'display_string', 'published', 'publish'])
+
+    HistoryController.add_enum_handler {|type, field|
+      if type == 'date'
+        if field == 'certainty_end'
+          'date_certainty'
+        end
+      end
+    }
+
+    HistoryController.add_enum_handler {|type, field|
+      if field == 'copyright_status'
+        'runcorn_copyright_status'
+      end
+    }
+
+    HistoryController.add_enum_handler {|type, field|
+      if field == 'significance'
+        'runcorn_significance'
+      end
+    }
+
+    HistoryController.add_enum_handler {|type, field|
+      if field == 'calculated_availability'
+        'runcorn_physical_representation_availability_concise'
+      end
+    }
+
     HistoryController.add_enum_handler {|type, field|
       if ['physical_representation', 'movement', 'top_container', 'absent_content'].include?(type) &&
           ['current_location', 'normal_location', 'functional_location'].include?(field)

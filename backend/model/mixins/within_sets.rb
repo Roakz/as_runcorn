@@ -17,8 +17,8 @@ module WithinSets
           json['within'] << parent_qsa_ids.fetch(obj.parent_id)
         end
         json['within'] << series_qsa_ids.fetch(obj.root_record_id).fetch(:qsa_id_prefixed)
-        if obj.transfer_id
-          json['within'] << QSAId.prefixed_id_for(Transfer, obj.transfer_id)
+        if json['transfer_qsa_id']
+          json['within'] << json['transfer_qsa_id']
         end
 
         json['series_summary'] = series_qsa_ids.fetch(obj.root_record_id)

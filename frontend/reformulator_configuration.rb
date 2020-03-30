@@ -37,11 +37,19 @@ Reformulator.configure(
           "hideClosestSelector" => '.form-group',
         },
         {
-          "selector" => 'select[name="resource[level]"]',
+          "selector" => 'label[for="resource_level_"]',
           "hideClosestSelector" => '.form-group'
         },
         {
-          "selector" => 'select[name="archival_object[level]"]',
+          "selector" => 'label[for="resource_description_"]',
+          "hideClosestSelector" => '.form-group'
+        },
+        {
+          "selector" => 'label[for="resource_information_sources_"]',
+          "hideClosestSelector" => '.form-group'
+        },
+        {
+          "selector" => 'label[for="archival_object_level_"]',
           "hideClosestSelector" => '.form-group'
         },
         {
@@ -227,77 +235,8 @@ Reformulator.configure(
       ],
     },
 
+
     "resources" => {
-      "resource_dates_" => {
-        "moveSectionAfter" => "basic_information",
-      },
-
-      "resource_notes_" => {
-        "moveSectionAfter" => "resource_dates_",
-      },
-
-      "resource_subjects_" => {
-        "moveSectionAfter" => "resource_notes_",
-      },
-
-      "resource_external_documents_" => {
-        "moveSectionAfter" => "_relationships_",
-      },
-
-      "resource_external_ids" => {
-        "moveSectionAfter" => "resource_external_documents_",
-      },
-
-      "resource_rap_attached" => {
-        "moveSectionAfter" => "resource_external_ids_",
-      },
-
-      "resource_rap_summary" => {
-        "moveSectionAfter" => "resource_rap_attached",
-      },
-
-      "resource_deaccessions_" => {
-        "moveSectionAfter" => "resource_rap_summary",
-      },
-
-      "resource_related_accessions_" => {
-        "show" => [],
-      },
-
-      "finding_aid" => {
-        "show" => [],
-      },
-
-      "resource_linked_agents_" => {
-        "show" => [],
-      },
-
-      "resource_extents_" => {
-        "show" => [],
-        "defaultValues" => [
-          {"path" => ["resource_extents_", "_number_"], "value" => "0"},
-          {"path" => ["resource_extents_", "_extent_type_"], "value" => "volumes"},
-          ]
-        },
-      "archival_object_linked_agents_" => {
-        "show" => [],
-      },
-      "archival_object_extents_" => {
-        "show" => [],
-        "defaultValues" => [
-          {"path" => ["archival_object_extents_", "_number_"], "value" => "0"},
-          {"path" => ["archival_object_extents_", "_extent_type_"], "value" => "volumes"},
-        ]
-      },
-      "resource_instances_" => {
-        "show" => [],
-      },
-      "archival_object_instances_" => {
-        "show" => [],
-      },
-      "container_locations" => {
-        "show" => [],
-      },
       "basic_information" => {
         "fieldOrder" => [
           {"path" => ["resource", "_qsa_id_prefixed_"]},
@@ -346,67 +285,93 @@ Reformulator.configure(
         ],
       },
 
-      "resource_rights_statements_" => {
-        "show" => []
+      # reordering resource and archival_object sections
+      "sectionOrder" => [
+        "resource_dates_",
+        "resource_notes_",
+        "resource_subjects_",
+        "resource_series_system_series_relationships_",
+        "resource_series_system_agent_relationships_",
+        "resource_series_system_mandate_relationships_",
+        "resource_series_system_function_relationships_",
+        "resource_external_documents_",
+        "resource_external_ids",
+        "resource_rap_attached",
+        "resource_rap_summary",
+        "resource_deaccessions_",
+
+        "archival_object_dates_",
+        "archival_object_rap_applied",
+        "archival_object_subjects_",
+        "archival_object_series_system_item_relationships_",
+        "archival_object_series_system_agent_relationships_",
+        "archival_object_external_documents_",
+        "archival_object_external_ids",
+        "archival_object_rights_statements_",
+        "notes",
+        "archival_object_deaccessions",
+        "archival_object_physical_representations",
+        "archival_object_digital_representations",
+      ],
+
+      "sectionsToHide" => [
+        "resource_related_accessions_",
+        "finding_aid",
+        "resource_linked_agents_",
+        "resource_extents_",
+        "resource_instances_",
+        "resource_rights_statements_",
+        "resource_revision_statements_",
+        "resource_collection_management_",
+        "resource_classifications_",
+        "resource_user_defined_",
+        "linked_assessments",
+        "resource_linked_events_",
+
+        "archival_object_linked_agents_",
+        "archival_object_extents_",
+        "archival_object_instances_",
+      ],
+
+      # set default values
+      "resource_extents_" => {
+        "defaultValues" => [
+          {"path" => ["resource_extents_", "_number_"], "value" => "0"},
+          {"path" => ["resource_extents_", "_extent_type_"], "value" => "volumes"},
+          ]
       },
 
-     "resource_revision_statements_" => {
-        "show" => []
+      "archival_object_extents_" => {
+        "defaultValues" => [
+          {"path" => ["archival_object_extents_", "_number_"], "value" => "0"},
+          {"path" => ["archival_object_extents_", "_extent_type_"], "value" => "volumes"},
+        ]
       },
-
-      "resource_collection_management_" => {
-        "show" => []
-      },
-
-      "resource_classifications_" => {
-        "show" => []
-      },
-
-      "resource_user_defined_" => {
-        "show" => []
-      },
-
-      "archival_object_dates_" => {
-        "moveSectionAfter" => "basic_information",
-      },
-
-      "archival_object_rap_applied" => {
-        "moveSectionAfter" => "archival_object_dates_",
-      },
-
-      "archival_object_subjects_" => {
-        "moveSectionAfter" => "archival_object_dates_",
-      },
-
-      "archival_object_external_documents_" => {
-        "moveSectionAfter" => "_relationships_",
-      },
-
-      "archival_object_external_ids" => {
-        "moveSectionAfter" => "archival_object_external_documents_",
-      },
-
-      "archival_object_rights_statements_" => {
-        "moveSectionAfter" => "archival_object_external_documents_",
-      },
-
-      "notes" => {
-        "moveSectionAfter" => "_relationships_",
-      },
-
-      "archival_object_deaccessions" => {
-        "moveSectionAfter" => "notes",
-      },
-
     },
 
+
     "agents" => {
-      "agent_corporate_entity_related_agents" => {
-        "show" => [],
-      },
-      "agent_corporate_entity_contact_details" => {
-        "show" => [],
-      },
+      "sectionOrder" => [
+        "dates_of_existence",
+        "agent_corporate_entity_dates_of_existence",
+        "agent_corporate_entity_notes",
+        "agent_corporate_entity_series_system_agent_relationships_",
+        "agent_corporate_entity_series_system_mandate_relationships_",
+        "agent_corporate_entity_series_system_function_relationships_",
+        "agent_corporate_entity_series_system_relationships_series_system_record_relationships",
+        "agent_corporate_entity_names",
+        "agent_corporate_entity_external_documents",
+        "agent_corporate_entity_external_ids",
+        "agency_delegates",
+      ],
+
+      "sectionsToHide" => [
+        "agent_corporate_entity_related_agents",
+        "agent_corporate_entity_contact_details",
+        "linked_agents",
+        "events",
+        "linked_via_rights_statements",
+      ],
 
       "agent_corporate_entity_dates_of_existence" => {
         "show" => [
@@ -419,11 +384,6 @@ Reformulator.configure(
         "defaultValues" => [
           {"path" => ["agent_dates_of_existence_", "_date_type_"], "value" => "range"}
         ],
-        "moveSectionAfter" => "basic_information",
-      },
-
-      "agent_corporate_entity_notes" => {
-        "moveSectionAfter" => "dates_of_existence",
       },
 
       "agent_corporate_entity_names" => {
@@ -435,28 +395,15 @@ Reformulator.configure(
         "defaultValues" => [
           { "path" => ["agent_names_", "_source_"], "value" => "local" }
         ],
-        "moveSectionAfter" => "_relationships_",
-      },
-
-      "agent_corporate_entity_external_documents" => {
-        "moveSectionAfter" => "agent_corporate_entity_names",
-      },
-
-      "agent_corporate_entity_external_ids" => {
-        "moveSectionAfter" => "agent_corporate_entity_external_documents",
-      },
-
-      "agency_delegates" => {
-        "moveSectionAfter" => "agent_corporate_entity_external_ids",
       },
 
     },
 
-    "top_containers" => {
-      "container_locations" => {
-        "show" => [],
-      },
 
+    "top_containers" => {
+      "sectionsToHide" => [
+        "container_locations",
+      ]
     }
   }
 )

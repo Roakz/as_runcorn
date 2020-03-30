@@ -589,7 +589,7 @@ class CSVExportRecord
   end
 
   def transfer_id
-    json['transfer_id']
+    json['transfer_qsa_id']
   end
 
   def transfer_name
