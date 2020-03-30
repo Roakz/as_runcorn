@@ -23,8 +23,11 @@
 
   add_column(I18n.t("item_use.used_by"),
              proc {|record|
-               if (qsa_id = QSAIdHelper.id( "A" + record['item_use_used_by_u_ssort'].strip.split(" ")[0], :link => true))
-                qsa_id
+               id = "A" + record['item_use_used_by_u_ssort'].strip.split(" ")[0]
+               description = record['item_use_used_by_u_ssort'].strip.split(" ")
+               description.reject!{|e| e == description[0]}
+               if (qsa_id = QSAIdHelper.id( id, :link => true))
+                qsa_id + " " + description.join(" ")
                else
                  record.fetch('item_use_used_by_u_ssort').sub(/\s*\<.+\>$/, '')
                end
