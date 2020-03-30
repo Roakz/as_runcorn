@@ -311,3 +311,22 @@
     </div>
   </script>
 <% end %>
+
+<% if controller.controller_name == 'repositories' && controller.action_name == 'index' %>
+<script>
+  $(function() {
+    $('.record-toolbar').empty();
+  });
+</script>
+<% end %>
+<script>
+  $(function() {
+    if ($('.select-a-repository').length > 0) {
+      if ($('.select-a-repository option').length === 1) {
+        $('.select-a-repository').remove();
+      } else {
+        $('.select-a-repository').show();
+      }
+    }
+  });
+</script>
