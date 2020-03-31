@@ -379,6 +379,7 @@ Rails.application.config.after_initialize do
     HistoryController.add_skip_field('access_category_id')
     HistoryController.add_skip_field('resource_id')
     HistoryController.add_skip_field('json_schema_version')
+    HistoryController.add_skip_field('action_status_id')
 
     HistoryController.add_top_fields(['qsa_id_prefixed', 'title', 'display_string', 'published', 'publish'])
 
@@ -391,19 +392,14 @@ Rails.application.config.after_initialize do
     }
 
     HistoryController.add_enum_handler {|type, field|
-      if field == 'copyright_status'
+      case field
+      when 'copyright_status'
         'runcorn_copyright_status'
-      end
-    }
-
-    HistoryController.add_enum_handler {|type, field|
-      if field == 'significance'
+      when 'retention_status'
+        'runcorn_retention_status'
+      when 'significance'
         'runcorn_significance'
-      end
-    }
-
-    HistoryController.add_enum_handler {|type, field|
-      if field == 'calculated_availability'
+      when 'calculated_availability'
         'runcorn_physical_representation_availability_concise'
       end
     }
