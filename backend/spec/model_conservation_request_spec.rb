@@ -20,7 +20,6 @@ describe 'Runcorn Conservation Requests' do
                "title" => "bad song",
                "description" => "Let us get physical!",
                "current_location" => "N/A",
-               "normal_location" => "N/A",
                "format" => "Drafting Cloth (Linen)",
                "contained_within" => "OTH",
                "container" => {"ref" => top_container.uri},
@@ -32,7 +31,6 @@ describe 'Runcorn Conservation Requests' do
                "description" => "Let us get digital!",
                "file_type" => "JPEG",
                "contained_within" => "Floppy Disk",
-               "normal_location" => "N/A",
              }
            ])
   }
@@ -45,7 +43,6 @@ describe 'Runcorn Conservation Requests' do
                "title" => "wax lips",
                "description" => "wax lips",
                "current_location" => "N/A",
-               "normal_location" => "N/A",
                "format" => "Drafting Cloth (Linen)",
                "contained_within" => "OTH",
                "container" => {"ref" => top_container.uri},

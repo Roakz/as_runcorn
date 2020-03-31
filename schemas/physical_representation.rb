@@ -12,8 +12,6 @@
 
       "current_location" => {"type" => "string", "dynamic_enum" => "runcorn_location", "ifmissing" => "error"},
 
-      "normal_location" => {"type" => "string", "dynamic_enum" => "runcorn_location", "ifmissing" => "error"},
-
       "accessioned_status" => {"type" => "string", "dynamic_enum" => "runcorn_accessioned_status"},
 
       "agency_assigned_id" => {"type" => "string"},

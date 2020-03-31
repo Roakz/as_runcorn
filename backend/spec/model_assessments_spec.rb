@@ -11,7 +11,6 @@ describe 'Runcorn Assessments' do
                                                    "title" => "Great song",
                                                    "description" => "Let us get physical!",
                                                    "current_location" => "N/A",
-                                                   "normal_location" => "N/A",
                                                    "format" => "Drafting Cloth (Linen)",
                                                    "contained_within" => "OTH",
                                                    "container" => {"ref" => create(:json_top_container).uri},

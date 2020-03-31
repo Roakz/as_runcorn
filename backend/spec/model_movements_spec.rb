@@ -32,7 +32,6 @@ describe 'Runcorn Movements Mixin' do
          "title" => "bad song",
          "description" => "Let us get physical!",
          "current_location" => "CONS",
-         "normal_location" => "HOME",
          "format" => "Drafting Cloth (Linen)",
          "contained_within" => "OTH",
          "container" => {"ref" => tcon.uri},
@@ -137,7 +136,6 @@ describe 'Runcorn Movements Mixin' do
          "title" => "bad song",
          "description" => "Let us get physical!",
          "current_location" => "PER", # wrong - should be fixed on update
-         "normal_location" => "HOME",
          "format" => "Drafting Cloth (Linen)",
          "contained_within" => "OTH",
          "container" => {"ref" => tcon.uri},
@@ -196,7 +194,6 @@ describe 'Runcorn Movements Mixin' do
          "title" => "bad song",
          "description" => "Let us get physical!",
          "current_location" => "CONS",
-         "normal_location" => "HOME",
          "format" => "Drafting Cloth (Linen)",
          "contained_within" => "OTH",
          "movements" =>

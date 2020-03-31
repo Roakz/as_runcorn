@@ -11,7 +11,6 @@ describe 'Runcorn Digital representations' do
         "description" => "Let us get digital!",
         "file_type" => "JPEG",
         "contained_within" => "Floppy Disk",
-        "normal_location" => "N/A",
       }
     ]
 
@@ -43,7 +42,6 @@ describe 'Runcorn Digital representations' do
         "description" => "Let us get digital!",
         "file_type" => "JPEG",
         "contained_within" => "Floppy Disk",
-        "normal_location" => "N/A",
       }
     ]
 
@@ -69,14 +67,12 @@ describe 'Runcorn Digital representations' do
           "description" => "Let us get digital!",
           "file_type" => "JPEG",
           "contained_within" => "Floppy Disk",
-          "normal_location" => "N/A",
         },
         {
           "title" => "also a bad song",
           "description" => "Let us also not get too digital",
           "file_type" => "JPEG",
           "contained_within" => "Floppy Disk",
-          "normal_location" => "N/A",
         },
       ]
     })
@@ -96,14 +92,12 @@ describe 'Runcorn Digital representations' do
           "description" => "Let us get digital!",
           "file_type" => "JPEG",
           "contained_within" => "Floppy Disk",
-          "normal_location" => "N/A",
         },
         {
           "title" => "also a bad song",
           "description" => "Let us also not get too digital",
           "file_type" => "JPEG",
           "contained_within" => "Floppy Disk",
-          "normal_location" => "N/A",
         },
       ]
     })
@@ -115,7 +109,6 @@ describe 'Runcorn Digital representations' do
           "description" => "Let us watch TV",
           "file_type" => "JPEG",
           "contained_within" => "Floppy Disk",
-          "normal_location" => "N/A",
         },
       ]
     })

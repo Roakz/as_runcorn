@@ -28,7 +28,6 @@ FactoryBot.define do
     uri { generate(:url) }
     title { generate(:generic_title) }
     description { generate(:generic_description) }
-    normal_location { generate(:runcorn_location) }
     file_type { generate(:runcorn_file_type) }
     contained_within { generate(:runcorn_digital_representation_contained_within) }
   end
@@ -38,7 +37,6 @@ FactoryBot.define do
     title { generate(:generic_title) }
     description { generate(:generic_description) }
     current_location { generate(:runcorn_location) }
-    normal_location { generate(:runcorn_location) }
     format { generate(:runcorn_format) }
     contained_within { generate(:runcorn_physical_representation_contained_within) }
     container { {:ref => create(:json_top_container).uri} }

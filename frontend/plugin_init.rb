@@ -366,7 +366,6 @@ Rails.application.config.after_initialize do
 
   begin
     HistoryController.add_skip_field('move_to_storage_permitted')
-    HistoryController.add_skip_field('normal_location')
     HistoryController.add_skip_field('container_locations')
     HistoryController.add_skip_field('context_uri')
     HistoryController.add_skip_field('existing_ref')
@@ -406,7 +405,7 @@ Rails.application.config.after_initialize do
 
     HistoryController.add_enum_handler {|type, field|
       if ['physical_representation', 'movement', 'top_container', 'absent_content'].include?(type) &&
-          ['current_location', 'normal_location', 'functional_location'].include?(field)
+          ['current_location', 'functional_location'].include?(field)
         'runcorn_location'
       elsif type == 'physical_representation' && field == 'contained_within'
         'runcorn_physical_representation_contained_within'

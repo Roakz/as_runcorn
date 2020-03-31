@@ -189,10 +189,10 @@ class BulkRecordChanges
         representations.each do |representation|
           if representation.type == :physical_representation
             physical_representation_rows << representation.row
-            ao_json.physical_representations << representation.record_hash.merge(:normal_location => 'HOME', :current_location => 'HOME')
+            ao_json.physical_representations << representation.record_hash.merge(:current_location => 'HOME')
           else
             digital_representation_rows << representation.row
-            ao_json.digital_representations << representation.record_hash.merge(:normal_location => 'HOME')
+            ao_json.digital_representations << representation.record_hash
           end
         end
 
@@ -389,9 +389,9 @@ class BulkRecordChanges
 
             representations.each do |rep|
               if rep.type == :physical_representation
-                ao[:physical_representations] << rep.record_hash.merge(:normal_location => 'HOME', :current_location => 'HOME')
+                ao[:physical_representations] << rep.record_hash.merge(:current_location => 'HOME')
               else
-                ao[:digital_representations] << rep.record_hash.merge(:normal_location => 'HOME')
+                ao[:digital_representations] << rep.record_hash
               end
             end
 
