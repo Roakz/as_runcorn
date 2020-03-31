@@ -17,12 +17,11 @@
         <% if loc_uri.nil? %>
           <%= readonly.label_and_textfield "location" %>
         <% else %>
-          <%= readonly.label_with_field("location", "#{document['location'].split(loc_uri)[0]} #{link_to(loc_uri)} #{document['location'].split(loc_uri)[1]}") %>
+          <%= readonly.label_with_field("location", "#{document['location'].split(loc_uri)[0]} #{link_to(loc_uri, loc_uri)} #{document['location'].split(loc_uri)[1]}") %>
         <% end %>
         <%= readonly.label_and_boolean "publish" %>
       </div>
       <% end %>
     <% end %>
   </div>
-
 </section>
