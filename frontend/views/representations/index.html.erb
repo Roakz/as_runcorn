@@ -1,7 +1,7 @@
 <%= setup_context(:title => I18n.t("representation._plural")) %>
 
 <%
-  @show_multiselect_column = false
+  @show_multiselect_column = true
 
   add_column(I18n.t("representation.rap_expiry_date"),
              proc {|record|
@@ -49,3 +49,5 @@
     </div>
   </div>
 </div>
+
+<%= javascript_include_tag("search.js?_t=#{ASConstants.VERSION}") %>

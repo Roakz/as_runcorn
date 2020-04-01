@@ -12,8 +12,6 @@
 
       "current_location" => {"type" => "string", "dynamic_enum" => "runcorn_location", "ifmissing" => "error"},
 
-      "normal_location" => {"type" => "string", "dynamic_enum" => "runcorn_location", "ifmissing" => "error"},
-
       "accessioned_status" => {"type" => "string", "dynamic_enum" => "runcorn_accessioned_status"},
 
       "agency_assigned_id" => {"type" => "string"},
@@ -112,6 +110,7 @@
                     "ifmissing" => "error"},
           "qsa_id" => {"type" => "number", "readonly" => "true"},
           "qsa_id_prefixed" => {"type" => "string", "readonly" => "true"},
+          "title" => {"type" => "string", "readonly" => "true"},
           "begin_date" => {"type" => "string", "readonly" => "true"},
           "end_date" => {"type" => "string", "readonly" => "true"},
           "_resolved" => {
@@ -130,6 +129,7 @@
                     "ifmissing" => "error"},
           "qsa_id" => {"type" => "number"},
           "qsa_id_prefixed" => {"type" => "string"},
+          "title" => {"type" => "string"},
           "_resolved" => {
             "type" => "object",
             "readonly" => "true"
@@ -314,6 +314,7 @@
         }
       },
 
+      "transfer_qsa_id" => {"type"=> "string", "readonly" => "true"},
       "transfer_id" => {"type"=> "number"},
       "transfer" => {
           "type" => "object",

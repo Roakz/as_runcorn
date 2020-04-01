@@ -35,6 +35,7 @@
   "digital_representations_count" => {"type"=> "number", "readonly" => "true"},
 
   "transfer_id" => {"type"=> "number"},
+  "transfer_qsa_id" => {"type"=> "string", "readonly" => "true"},
   "transfer" => {
     "type" => "object",
     "subtype" => "ref",
@@ -121,4 +122,13 @@
     "readonly" => "true"
   },
 
+  "series_summary" => {
+    "type" => "object",
+    "readonly" => "true",
+    "properties" => {
+      "qsa_id" => {"type" => "number"},
+      "qsa_id_prefixed" => {"type" => "string"},
+      "title" => {"type" => "string"},
+    }
+  },
 }

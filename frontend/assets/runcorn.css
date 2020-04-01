@@ -62,3 +62,7 @@
 .browse-date-column {
     white-space: nowrap;
 }
+
+.select-a-repository {
+    display: none;
+}

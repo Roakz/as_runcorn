@@ -12,8 +12,6 @@
 
       "access_category" => {"type" => "string", "dynamic_enum" => "runcorn_access_category"},
 
-      "normal_location" => {"type" => "string", "dynamic_enum" => "runcorn_location", "ifmissing" => "error"},
-
       "accessioned_status" => {"type" => "string", "dynamic_enum" => "runcorn_accessioned_status"},
 
       "agency_assigned_id" => {"type" => "string"},
@@ -90,6 +88,7 @@
                     "ifmissing" => "error"},
           "qsa_id" => {"type" => "number", "readonly" => "true"},
           "qsa_id_prefixed" => {"type" => "string", "readonly" => "true"},
+          "title" => {"type" => "string", "readonly" => "true"},
           "begin_date" => {"type" => "string", "readonly" => "true"},
           "end_date" => {"type" => "string", "readonly" => "true"},
           "_resolved" => {
@@ -106,6 +105,9 @@
         "properties" => {
           "ref" => {"type" => [{"type" => "JSONModel(:resource) uri"}],
                     "ifmissing" => "error"},
+          "qsa_id" => {"type" => "number"},
+          "qsa_id_prefixed" => {"type" => "string"},
+          "title" => {"type" => "string"},
           "_resolved" => {
             "type" => "object",
             "readonly" => "true"
@@ -217,6 +219,7 @@
         }
       },
 
+      "transfer_qsa_id" => {"type"=> "string", "readonly" => "true"},
       "transfer_id" => {"type"=> "number"},
       "transfer" => {
           "type" => "object",
@@ -238,6 +241,11 @@
       "series_retention_status" => {
         "type" => "string",
         "readonly" => "true"
+      },
+
+      "frequency_of_use" => {
+        "type" => "non_negative_integer",
+        "readonly" => "true",
       },
     },
   }

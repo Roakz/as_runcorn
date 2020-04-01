@@ -53,6 +53,7 @@ class BulkRecordChanges
         :series => {},
         :subject => {},
         :top_container => {},
+        :transfer => {},
       }
 
       @pending_records = []
@@ -188,14 +189,17 @@ class BulkRecordChanges
         representations.each do |representation|
           if representation.type == :physical_representation
             physical_representation_rows << representation.row
-            ao_json.physical_representations << representation.record_hash.merge(:normal_location => 'HOME', :current_location => 'HOME')
+            ao_json.physical_representations << representation.record_hash.merge(:current_location => 'HOME')
           else
             digital_representation_rows << representation.row
-            ao_json.digital_representations << representation.record_hash.merge(:normal_location => 'HOME')
+            ao_json.digital_representations << representation.record_hash
           end
         end
 
         begin
+          # We never need to change the position for an existing record
+          ao_json['position'] = nil
+
           ao.update_from_json(ao_json)
           job.write_output("Added #{representations.length} representation(s) to existing Item record: \"#{ao_json.display_string}\"")
         rescue JSONModel::ValidationException => validation_errors
@@ -306,9 +310,27 @@ class BulkRecordChanges
           # Apply updates from our pending record where there's a value to take.
           # Empty cells are ignored.
           pending.record_hash.each do |k, v|
-            next if v.nil? || (k == :dates && v[0][:begin].to_s.empty?)
+            next if v.nil?
 
-            target[k.to_s] = v
+            if k == :dates
+              date_fields = [:begin, :certainty, :end, :certainty_end]
+                              .map {|field| v[0][field].to_s.empty? ? nil : [field.to_s, v[0][field]]}
+                              .compact
+                              .to_h
+
+              # Nothing to update
+              next if date_fields.empty?
+
+              if Array(target['dates']).empty?
+                # There was no date previously.  Take values from the update sheet wholesale.
+                target['dates'] = v
+              else
+                # Merge values into the existing date
+                target['dates'][0] = target['dates'][0].merge(date_fields)
+              end
+            else
+              target[k.to_s] = v
+            end
           end
         end
 
@@ -367,9 +389,9 @@ class BulkRecordChanges
 
             representations.each do |rep|
               if rep.type == :physical_representation
-                ao[:physical_representations] << rep.record_hash.merge(:normal_location => 'HOME', :current_location => 'HOME')
+                ao[:physical_representations] << rep.record_hash.merge(:current_location => 'HOME')
               else
-                ao[:digital_representations] << rep.record_hash.merge(:normal_location => 'HOME')
+                ao[:digital_representations] << rep.record_hash
               end
             end
 
@@ -469,6 +491,21 @@ class BulkRecordChanges
       end
 
       @promise_groups[:top_container] = {}
+
+      # Find an transfer for the provided transfer qsa id
+      qsa_ids = @promise_groups.fetch(:transfer).keys.map(&:qsa_id_number).compact
+      Transfer.filter(:qsa_id => qsa_ids).select(:id, :qsa_id).each do |row|
+        qsa_id = IDRef.for_qsa_id(Transfer, row[:qsa_id])
+
+        @promise_groups[:transfer][qsa_id].each do |promise_ref|
+          promise_ref.resolve(Transfer.uri_for(:transfer,
+                                               row[:id]))
+        end
+
+        @promise_groups[:transfer][qsa_id] = []
+      end
+
+      @promise_groups[:transfer] = {}
     end
 
     # The number of promises needing to be fulfilled for a given row.  If it's
@@ -511,7 +548,7 @@ class BulkRecordChanges
       COLUMN_BOX_NUMBER => {required: ['PR']},
       COLUMN_CONTAINED_WITHIN => {required: ['PR', 'DR']},
       COLUMN_SENSITIVITY_LABEL => {optional: ['ITM']},
-      COLUMN_TRANSFER_ID => {optional: ['ITM', 'PR', 'DR']},
+      COLUMN_TRANSFER_ID => {required: ['ITM', 'PR', 'DR']},
       COLUMN_PREVIOUS_SYSTEM_ID => {optional: ['ITM', 'PR', 'DR']},
       COLUMN_SIGNIFICANCE => {optional: ['ITM', 'PR', 'DR']},
       COLUMN_INHERIT_SIGNIFICANCE => {optional: ['ITM', 'PR', 'DR']},
@@ -521,7 +558,7 @@ class BulkRecordChanges
     }
 
     ## Check create sheet
-    rows_by_transfer_id = {}
+    rows_by_transfer_qsa_id = {}
 
     each_row(filename, CREATE_SHEET_NAME) do |row|
       next if row.empty?
@@ -541,9 +578,9 @@ class BulkRecordChanges
 
       errors.concat(check_against_rules(row, rules, record_type, CREATE_SHEET_NAME))
 
-      if transfer_id = row.fetch(COLUMN_TRANSFER_ID)
-        rows_by_transfer_id[transfer_id] ||= []
-        rows_by_transfer_id[transfer_id] << row
+      if transfer_qsa_id = row.fetch(COLUMN_TRANSFER_ID)
+        rows_by_transfer_qsa_id[transfer_qsa_id] ||= []
+        rows_by_transfer_qsa_id[transfer_qsa_id] << row
       end
     end
 
@@ -551,15 +588,15 @@ class BulkRecordChanges
 
     # Check transfer IDs
     MAPDB.open do |mapdb|
-      existing_transfer_ids = mapdb[:transfer].filter(:id => rows_by_transfer_id.keys.map(&:to_i)).select(:id).map {|row| row[:id]}
+      existing_transfer_qsa_ids = mapdb[:transfer].filter(:qsa_id => rows_by_transfer_qsa_id.keys.map(&:to_i)).select(:qsa_id).map {|row| row[:qsa_id]}
 
-      missing_transfer_ids = rows_by_transfer_id.keys.reject {|k|
+      missing_transfer_qsa_ids = rows_by_transfer_qsa_id.keys.reject {|k|
         i = k.to_i
-        i > 0 && existing_transfer_ids.include?(i)
+        i > 0 && existing_transfer_qsa_ids.include?(i)
       }
 
-      missing_transfer_ids.each do |missing_id|
-        rows_by_transfer_id.fetch(missing_id, []).each do |row|
+      missing_transfer_qsa_ids.each do |missing_id|
+        rows_by_transfer_qsa_id.fetch(missing_id, []).each do |row|
           errors << {
             sheet: CREATE_SHEET_NAME,
             row: row.row_number,
@@ -840,10 +877,8 @@ class BulkRecordChanges
     record[:agency_assigned_id] = row.fetch(COLUMN_AGENCY_CONTROL_NUMBER)
     record[:sensitivity_label] = row.fetch(COLUMN_SENSITIVITY_LABEL)
 
-    if transfer_id = row.fetch(COLUMN_TRANSFER_ID, nil)
-      record[:transfer] = {
-        'ref' => "/transfers/#{transfer_id}"
-      }
+    if transfer_qsa_id = row.fetch(COLUMN_TRANSFER_ID, nil)
+      record[:transfer] = batch.promise_for(:transfer, IDRef.for_qsa_id(Transfer, transfer_qsa_id), row)
     end
 
     record[:previous_system_identifiers] = row.fetch(COLUMN_PREVIOUS_SYSTEM_ID)
@@ -906,10 +941,8 @@ class BulkRecordChanges
 
     record[:agency_assigned_id] = row.fetch(COLUMN_AGENCY_CONTROL_NUMBER)
 
-    if transfer_id = row.fetch(COLUMN_TRANSFER_ID, nil)
-      record[:transfer] = {
-        'ref' => "/transfers/#{transfer_id}"
-      }
+    if transfer_qsa_id = row.fetch(COLUMN_TRANSFER_ID, nil)
+      record[:transfer] = batch.promise_for(:transfer, IDRef.for_qsa_id(Transfer, transfer_qsa_id), row)
     end
 
     record[:previous_system_identifiers] = row.fetch(COLUMN_PREVIOUS_SYSTEM_ID)
@@ -946,11 +979,11 @@ class BulkRecordChanges
 
     record[:agency_assigned_id] = row.fetch(COLUMN_AGENCY_CONTROL_NUMBER)
 
-    if transfer_id = row.fetch(COLUMN_TRANSFER_ID, nil)
-      record[:transfer] = {
-        'ref' => "/transfers/#{transfer_id}"
-      }
+    if transfer_qsa_id = row.fetch(COLUMN_TRANSFER_ID, nil)
+      record[:transfer] = batch.promise_for(:transfer, IDRef.for_qsa_id(Transfer, transfer_qsa_id), row)
     end
+
+    record[:previous_system_identifiers] = row.fetch(COLUMN_PREVIOUS_SYSTEM_ID)
 
     if row.has_heading?(COLUMN_SIGNIFICANCE)
       record[:significance] = row.fetch(COLUMN_SIGNIFICANCE)

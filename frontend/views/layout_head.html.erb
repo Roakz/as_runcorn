@@ -298,7 +298,7 @@
   <script type="text/template" id="runcornDownloadCSVPopupTemplate">
     <div>
       <div class="modal-body">
-        <p>You are about to generate a CSV report for <strong>~<%=  @search_data["total_hits"]  || 0 %> records</strong>.</p>
+        <p>You are about to generate a CSV report for <strong><span class="download-csv-total-hits">~<%=  @search_data["total_hits"]  || 0 %></span> records</strong>.</p>
         <p>This may take a few moments.</p>
         <p>Click Download CSV to proceed.</p>
         <p class="downloading-message hide"><strong>Generating CSV...</strong></p>
@@ -311,3 +311,22 @@
     </div>
   </script>
 <% end %>
+
+<% if controller.controller_name == 'repositories' && controller.action_name == 'index' %>
+<script>
+  $(function() {
+    $('.record-toolbar').empty();
+  });
+</script>
+<% end %>
+<script>
+  $(function() {
+    if ($('.select-a-repository').length > 0) {
+      if ($('.select-a-repository option').length === 1) {
+        $('.select-a-repository').remove();
+      } else {
+        $('.select-a-repository').show();
+      }
+    }
+  });
+</script>

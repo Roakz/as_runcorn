@@ -42,7 +42,6 @@ describe 'Runcorn Deaccessions' do
             "title" => "Great song",
             "description" => "Let us get physical!",
             "current_location" => "N/A",
-            "normal_location" => "N/A",
             "format" => "Drafting Cloth (Linen)",
             "contained_within" => "OTH",
             "container" => {"ref" => top_container.uri},
@@ -54,7 +53,6 @@ describe 'Runcorn Deaccessions' do
             "description" => "Let us get digital!",
             "file_type" => "JPEG",
             "contained_within" => "Floppy Disk",
-            "normal_location" => "N/A",
           }
         ],
       })
@@ -67,7 +65,6 @@ describe 'Runcorn Deaccessions' do
             "title" => "Another great song",
             "description" => "Let us get physical!",
             "current_location" => "N/A",
-            "normal_location" => "N/A",
             "format" => "Drafting Cloth (Linen)",
             "contained_within" => "OTH",
             "container" => {"ref" => top_container.uri},
@@ -79,7 +76,6 @@ describe 'Runcorn Deaccessions' do
             "description" => "Let us get digital!",
             "file_type" => "JPEG",
             "contained_within" => "Floppy Disk",
-            "normal_location" => "N/A",
           }
         ],
       })
@@ -104,7 +100,6 @@ describe 'Runcorn Deaccessions' do
             "title" => "Great song",
             "description" => "Let us get physical!",
             "current_location" => "N/A",
-            "normal_location" => "N/A",
             "format" => "Drafting Cloth (Linen)",
             "contained_within" => "OTH",
             "container" => {"ref" => top_container.uri},
@@ -116,7 +111,6 @@ describe 'Runcorn Deaccessions' do
             "description" => "Let us get digital!",
             "file_type" => "JPEG",
             "contained_within" => "Floppy Disk",
-            "normal_location" => "N/A",
             "deaccessions" => [
               build(:json_deaccession, {'scope' => 'whole'})
             ],
@@ -135,7 +129,6 @@ describe 'Runcorn Deaccessions' do
             "title" => "Another great song",
             "description" => "Let us get physical!",
             "current_location" => "N/A",
-            "normal_location" => "N/A",
             "format" => "Drafting Cloth (Linen)",
             "contained_within" => "OTH",
             "container" => {"ref" => top_container.uri},
@@ -150,7 +143,6 @@ describe 'Runcorn Deaccessions' do
             "description" => "Let us get digital!",
             "file_type" => "JPEG",
             "contained_within" => "Floppy Disk",
-            "normal_location" => "N/A",
           }
         ],
       })
@@ -237,7 +229,6 @@ describe 'Runcorn Deaccessions' do
             "title" => "Great song",
             "description" => "Let us get physical!",
             "current_location" => "N/A",
-            "normal_location" => "N/A",
             "format" => "Drafting Cloth (Linen)",
             "contained_within" => "OTH",
             "container" => {"ref" => top_container.uri},
@@ -267,7 +258,6 @@ describe 'Runcorn Deaccessions' do
             "title" => "Great song",
             "description" => "Let us get physical!",
             "current_location" => "N/A",
-            "normal_location" => "N/A",
             "format" => "Drafting Cloth (Linen)",
             "contained_within" => "OTH",
             "container" => {"ref" => top_container.uri},
@@ -303,7 +293,6 @@ describe 'Runcorn Deaccessions' do
             "title" => "Great song",
             "description" => "Let us get physical!",
             "current_location" => "N/A",
-            "normal_location" => "N/A",
             "format" => "Drafting Cloth (Linen)",
             "contained_within" => "OTH",
             "container" => {"ref" => top_container.uri},
@@ -323,7 +312,6 @@ describe 'Runcorn Deaccessions' do
             "title" => "Great song",
             "description" => "Let us get physical!",
             "current_location" => "N/A",
-            "normal_location" => "N/A",
             "format" => "Drafting Cloth (Linen)",
             "contained_within" => "OTH",
             "container" => {"ref" => top_container.uri},
@@ -359,7 +347,6 @@ describe 'Runcorn Deaccessions' do
             "title" => "Great song",
             "description" => "Let us get physical!",
             "current_location" => "N/A",
-            "normal_location" => "N/A",
             "format" => "Drafting Cloth (Linen)",
             "contained_within" => "OTH",
             "container" => {"ref" => top_container.uri},
@@ -395,7 +382,6 @@ describe 'Runcorn Deaccessions' do
             "title" => "Great song",
             "description" => "Let us get physical!",
             "current_location" => "N/A",
-            "normal_location" => "N/A",
             "format" => "Drafting Cloth (Linen)",
             "contained_within" => "OTH",
             "container" => {"ref" => top_container.uri},
@@ -427,7 +413,6 @@ describe 'Runcorn Deaccessions' do
             "description" => "Let us get digital!",
             "file_type" => "JPEG",
             "contained_within" => "Floppy Disk",
-            "normal_location" => "N/A",
             "deaccessions" => [
               build(:json_deaccession, {'scope' => 'whole'})
             ],
@@ -455,7 +440,6 @@ describe 'Runcorn Deaccessions' do
             "description" => "Let us get digital!",
             "file_type" => "JPEG",
             "contained_within" => "Floppy Disk",
-            "normal_location" => "N/A",
             "container" => {"ref" => top_container.uri},
           }
         ]
@@ -490,7 +474,6 @@ describe 'Runcorn Deaccessions' do
             "description" => "Let us get digital!",
             "file_type" => "JPEG",
             "contained_within" => "Floppy Disk",
-            "normal_location" => "N/A",
             "container" => {"ref" => top_container.uri},
           }
         ]

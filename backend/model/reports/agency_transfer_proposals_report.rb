@@ -40,7 +40,7 @@ class AgencyTransferProposalsReport < RuncornReport
       .select_all(:transfer_proposal)
       .select_append(Sequel.qualify(:agency, :aspace_agency_id))
       .select_append(Sequel.as(Sequel.qualify(:agency_location, :name), :agency_location_name))
-      .select_append(Sequel.as(Sequel.qualify(:transfer, :id), :transfer_id))
+      .select_append(Sequel.as(Sequel.qualify(:transfer, :qsa_id), :transfer_qsa_id))
       .select_append(Sequel.as(Sequel.qualify(:transfer, :date_scheduled), :transfer_date_scheduled))
       .select_append(Sequel.as(Sequel.qualify(:transfer, :create_time), :transfer_date_approved))
       .each do |row|
@@ -61,7 +61,7 @@ class AgencyTransferProposalsReport < RuncornReport
                 Time.at(row[:create_time] / 1000).to_date.iso8601,
                 QSAId.prefixed_id_for(TransferProposal, row[:id]),
                 row[:title],
-                row[:transfer_id] ? QSAId.prefixed_id_for(Transfer, row[:transfer_id]) : nil,
+                row[:transfer_qsa_id] ? QSAId.prefixed_id_for(Transfer, row[:transfer_qsa_id]) : nil,
                 row[:agency_qsa_id],
                 row[:agency_name],
                 row[:status],

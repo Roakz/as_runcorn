@@ -16,23 +16,46 @@ RuncornDownloadCSVWrapper.prototype.openPopup = function() {
   var self = this;
   var $content = $(AS.renderTemplate('runcornDownloadCSVPopupTemplate'));
   var $modal = AS.openCustomModal('runcornDownloadCSVPopup', 'Download CSV', $content.html(), false, {keyboard: false}, self.$button);
+  var $selected = $('#tabledSearchResults .multiselect-column :checkbox:checked');
+
+  if ($selected.length > 0) {
+    $modal.find('.download-csv-total-hits').html($selected.length);
+  }
 
   $('#runcornConfirmDownloadCSV', $modal).on('click', function() {
     $(this).prop('disabled', true);
     $('.downloading-message', $modal).removeClass('hide');
-
-    // var $iframe = $('<iframe>');
-    // $iframe.attr('src', self.$button.attr('href'));
-    // $iframe.addClass('hide');
-    // $modal.append($iframe);
-    // $iframe[0].onerror = function() {
-    //   $('.downloading-message', $modal).html('<span class="text-danger">Error downloading CSV.</span>');
-    // };
-
     $(this).addClass('hide');
     $('#runcornDownloadCSVDone', $modal).removeClass('hide');
 
-    window.location.href = self.$button.attr('href');
+    var targetURL = self.$button.attr('href');
+
+    if ($selected.length > 0) {
+      var query  = {
+        op: 'OR',
+        jsonmodel_type: 'boolean_query',
+        subqueries: []
+      };
+      $selected.each(function() {
+        var subquery = {
+          field: 'id',
+          value: $(this).val(),
+          literal: true,
+          comparator: 'equals',
+          jsonmodel_type: 'field_query'
+        };
+
+        query.subqueries.push(subquery);
+      });
+      if (targetURL.indexOf('?') < 0) {
+        targetURL += '?';
+      } else {
+        targetURL += '&';
+      }
+      targetURL += 'aq=' + encodeURIComponent(JSON.stringify({query: query}));
+    }
+
+    window.location.href = targetURL;
   });
 };
 

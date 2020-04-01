@@ -55,7 +55,6 @@ ArchivalObjectsController.class_eval do
         end
       }
       format.csv {
-        search_params = params_for_backend_search.merge({"facet[]" => []})
         search_params["type[]"] = ["archival_object"]
         uri = "/repositories/#{session[:repo_id]}/search"
         csv_response( uri, Search.build_filters(search_params), 'items.' )

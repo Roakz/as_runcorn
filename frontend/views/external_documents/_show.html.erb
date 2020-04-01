@@ -13,17 +13,15 @@
         <%= readonly.label_and_textfield "title" %>
         <%= readonly.label_and_select "identifier_type", readonly.possible_options_for('identifier_type', true) %>
 
-        <% loc_uri = (document["location"] || "").slice(URI.regexp) %>
+        <% loc_uri = (document["location"] || "").slice(/((http(s)?(\:\/\/))+(www\.)?([\w\-\.\/])*(\.[a-zA-Z]{2,3}\/?))[^\s\b\n|]*[^.,;:\?\!\@\^\$ -]/) %>
         <% if loc_uri.nil? %>
           <%= readonly.label_and_textfield "location" %>
         <% else %>
-          <%= readonly.label_with_field("location", "#{document['location'].split('Link Address:')[0]}, 
-          Link Address: #{link_to(document["location"].split("Link Address:")[1], loc_uri)}") %>
+          <%= readonly.label_with_field("location", "#{document['location'].split(loc_uri)[0]} #{link_to(loc_uri, loc_uri)} #{document['location'].split(loc_uri)[1]}") %>
         <% end %>
         <%= readonly.label_and_boolean "publish" %>
       </div>
       <% end %>
     <% end %>
   </div>
-
 </section>

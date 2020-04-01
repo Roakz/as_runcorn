@@ -84,7 +84,6 @@
     <% if form.obj['current_location'] %>
       <%= form.label_and_readonly "current_location" %>
     <% end %>
-    <%= form.hidden_input "normal_location", "HOME" %>
 
     <% if form.readonly? && form['calculated_availability_overrides_availability'] %>
       <div class="form-group">

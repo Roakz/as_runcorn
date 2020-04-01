@@ -40,7 +40,7 @@ class RuncornNotifications
       ]
     elsif row[:file_issue_id]
       [
-          '%s%s%d' % [QSAId.prefix_for(FileIssue), row[:issue_type][0].upcase, row[:file_issue_id]],
+          '%s%s%d' % [QSAId.prefix_for(FileIssue), row[:issue_type][0].upcase, row[:file_issue_qsa_id]],
           JSONModel::JSONModel(:file_issue).uri_for(row[:file_issue_id]),
           :manage_file_issues,
       ]
@@ -52,7 +52,7 @@ class RuncornNotifications
       ]
     elsif row[:transfer_id]
       [
-          QSAId.prefixed_id_for(Transfer, row[:transfer_id]),
+          QSAId.prefixed_id_for(Transfer, row[:transfer_qsa_id]),
           JSONModel::JSONModel(:transfer).uri_for(row[:transfer_id]),
           :manage_transfers,
       ]
@@ -78,13 +78,16 @@ class RuncornNotifications
       mapdb[:conversation]
         .join(:handle, Sequel.qualify(:handle, :id) => Sequel.qualify(:conversation, :handle_id))
         .left_join(:file_issue, Sequel.qualify(:handle, :file_issue_id) => Sequel.qualify(:file_issue, :id))
+        .left_join(:transfer, Sequel.qualify(:handle, :transfer_id) => Sequel.qualify(:transfer, :id))
         .filter(Sequel.|({ Sequel.qualify(:conversation, :source_system) => 'ARCHIVES_GATEWAY' },
                          Sequel.&({ Sequel.qualify(:conversation, :source_system) => 'ARCHIVESSPACE' },
                                   Sequel.~(Sequel.qualify(:conversation, :created_by) => current_username))))
         .where{ Sequel.qualify(:conversation, :create_time) >= from_time }
         .order(Sequel.desc(Sequel.qualify(:conversation, :create_time)))
         .select_all(:conversation, :handle)
-        .select_append(Sequel.qualify(:file_issue, :issue_type))
+        .select_append(Sequel.qualify(:file_issue, :issue_type),
+                       Sequel.as(Sequel.qualify(:file_issue, :qsa_id), :file_issue_qsa_id),
+                       Sequel.as(Sequel.qualify(:transfer, :qsa_id), :transfer_qsa_id))
         .map do |row|
           qsa_id, uri, required_permission = parse_record_from_row(row)
 
