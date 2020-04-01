@@ -13,7 +13,7 @@
         <%= readonly.label_and_textfield "title" %>
         <%= readonly.label_and_select "identifier_type", readonly.possible_options_for('identifier_type', true) %>
 
-        <% loc_uri = (document["location"] || "").slice(/((http(s)?(\:\/\/))+(www\.)?([\w\-\.\/])*(\.[a-zA-Z]{2,3}\/?))[^\s\b\n|]*[^.,;:\?\!\@\^\$ -]/) %>
+        <% loc_uri = (document["location"] || "").slice(/(?:www|https?)[^\s]*/) %>
         <% if loc_uri.nil? %>
           <%= readonly.label_and_textfield "location" %>
         <% else %>
