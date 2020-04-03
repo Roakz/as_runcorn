@@ -380,6 +380,7 @@ Rails.application.config.after_initialize do
     HistoryController.add_skip_field('json_schema_version')
     HistoryController.add_skip_field('action_status_id')
     HistoryController.add_skip_field('treatment_batch_id')
+    HistoryController.add_skip_field('transfer_id')
 
     HistoryController.add_top_fields(['qsa_id_prefixed', 'title', 'display_string', 'published', 'publish'])
 
