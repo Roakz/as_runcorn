@@ -47,7 +47,9 @@
                 <%= actn['action_user'] %>
               </div>
               <div class="col-md-3">
-                <%= actn['action_time'] %>
+                <% if actn['action_time'] %>
+                  <%= Time.parse(actn['action_time']).getlocal %>
+                <% end %>
               </div>
             </div>
           </div>
