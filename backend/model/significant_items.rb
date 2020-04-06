@@ -67,7 +67,7 @@ class SignificantItems
       :uri => JSONModel::JSONModel(:physical_representation).uri_for(row[:prep_id], :repo_id => row[:repo_id]),
       :container => {
         :qsa_id => QSAId.prefixed_id_for(TopContainer, row[:tcon_qsa_id]),
-        :label => (row[:tcon_type] ? I18n.t('enumerations.container_type.' + row[:tcon_type]) + ': ' : '') + (row[:tcon_indicator] || '-- NO INDICATOR --'),
+        :label => (row[:tcon_type] ? I18n.t('enumerations.container_type.' + row[:tcon_type], :default => row[:tcon_type]) + ': ' : '') + (row[:tcon_indicator] || '-- NO INDICATOR --'),
         :functional_location => row[:tcon_fn_loc],
         :uri => JSONModel::JSONModel(:top_container).uri_for(row[:tcon_id], :repo_id => row[:repo_id]),
         :storage_location => {
