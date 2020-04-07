@@ -67,7 +67,7 @@ class SignificantItems
     page_query = Solr::Query.create_match_all_query
                    .set_filter(query.build)
                    .set_field_list(['uri'])
-                   .set_sort(build_level_sort('significance_u_sstr', levels) + " desc")
+                   .set_sort(build_level_sort('significance_u_sstr', levels) + " desc,qsa_id_u_sort asc")
                    .pagination(opts[:page], PAGE_SIZE)
 
     physrep_ids = Solr.search(page_query).fetch('results', []).map {|result| JSONModel.parse_reference(result.fetch('uri')).fetch(:id)}
@@ -80,9 +80,10 @@ class SignificantItems
         :first_page_for_levels => first_pages,
         :levels => level_counts
       },
-      :items => selects(base_query.filter(Sequel.qualify(:physical_representation, :id) => physrep_ids)).map {|row|
-        format(row)
-      },
+      :items => selects(base_query.filter(Sequel.qualify(:physical_representation, :id) => physrep_ids))
+                  .all
+                  .sort_by {|row| physrep_ids.index(row[:prep_id])}
+                  .map {|row| format(row) },
     }
   end
 
@@ -170,7 +171,6 @@ class SignificantItems
         .left_join(:archival_object, :archival_object__id => :physical_representation__archival_object_id)
         .left_join(:resource, :resource__id => :archival_object__root_record_id)
         .filter(Sequel.|({:top_container_housed_at_rlshp__status => 'current'}, {:top_container_housed_at_rlshp__status => nil}))
-        .reverse(:significance__position)
     end
   end
 
