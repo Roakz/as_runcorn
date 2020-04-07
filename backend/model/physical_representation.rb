@@ -126,6 +126,9 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
     responsible_agencies = responsible_agencies.map {|obj, info| [obj.id, info]}.to_h
     recent_responsible_agencies = ControlledRecord::ResponsibleAgencyCalculator.build_recent_agency_control_map(controlling_records_objs)
 
+    # Least important to most important
+    significance_levels = BackendEnumSource.values_for('runcorn_significance')
+
     objs.zip(jsons).each do |obj, json|
       json['existing_ref'] = obj.uri
       json['display_string'] = build_display_string(json)
@@ -161,6 +164,8 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
       json['deaccessioned'] = !json['deaccessions'].empty? || deaccessioned_map.fetch(controlling_record.id)
 
       json['frequency_of_use'] = frequency_of_use.fetch(obj.id, 0)
+
+      json['significance_score'] = significance_levels.index {|level| level == json['significance']}
 
       json['assessments'] = assessments_map.fetch(obj.id, []).map{|assessment_blob| { 'ref' => assessment_blob.fetch(:uri) }}
 

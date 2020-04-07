@@ -90,7 +90,6 @@ class IndexerCommon
         top_container_indicator = record['record'].dig('container', '_resolved', 'indicator')
         doc['top_container_identifier_u_ssort'] = SearchUtils.pad_top_container_identifier(top_container_indicator)
 
-
         doc['top_container_title_u_sstr'] = record.dig('record', 'container', '_resolved', 'display_string')
         doc['top_container_location_u_sstr'] = record.dig('record', 'container', '_resolved', 'current_location')
 
@@ -100,6 +99,7 @@ class IndexerCommon
 
         if home_location
           doc['top_container_home_location_u_sstr'] = home_location['_resolved']['title']
+          doc['top_container_home_location_uri_u_sstr'] = home_location['ref']
         end
 
         doc['representation_format_u_sstr'] = record.dig('record', 'format')
@@ -110,6 +110,7 @@ class IndexerCommon
         doc['file_issue_allowed_u_sbool'] = [(record['record']['file_issue_allowed'] == 'allowed_true') && !record['record']['deaccessioned']]
 
         doc['significance_u_sstr'] = record['record']['significance']
+        doc['significance_score_u_ssort'] = record['record']['significance_score']
 
         doc['responsible_agency_title_u_sstr'] = record.dig('record', 'responsible_agency', '_resolved', 'display_name', 'sort_name')
         doc['responsible_agency_qsa_id_u_sstr'] = record.dig('record', 'responsible_agency', '_resolved', 'qsa_id_prefixed')

@@ -6,52 +6,84 @@ class SignificantItems
   def self.list(opts = {})
     opts[:level] ||= 'all'
 
-    ds = base_query
+    query = AdvancedQueryBuilder.new
+    query = query.and('primary_type', 'physical_representation', 'text', literal = true)
 
-    ds = if opts[:level] == 'all'
-           ds.filter(Sequel.~(:significance__value => 'standard'))
-         else
-           ds.filter(:significance__value => opts[:level])
-         end
+
+    if opts[:level] == 'all'
+      query = query.and('significance_u_sstr', 'standard', 'text', literal = true, negated = true)
+    else
+      query = query.and('significance_u_sstr', opts[:level], 'text', literal = true, negated = false)
+    end
 
     if opts[:series]
-      ds = ds.filter(:resource__id => opts[:series].map{|uri| JSONModel.parse_reference(uri).fetch(:id)})
+      query = query.and('controlling_record_series_u_sstr', opts[:series][0], 'text', literal = true)
     end
 
     if opts[:location]
-      ds = add_location_filter(ds, opts[:location])
+      loc_uri = JSONModel.parse_reference(opts[:location])
+
+      location_query = AdvancedQueryBuilder.new
+
+      if loc_uri
+        location_query = location_query
+                           .and('current_location_u_sstr', 'HOME', 'text', literal = true)
+                           .and('top_container_location_u_sstr', 'HOME', 'text', literal = true)
+                           .and('top_container_home_location_uri_u_sstr', opts[:location], 'text', literal = true)
+      else
+        box_moved = AdvancedQueryBuilder.new
+                      .and('current_location_u_sstr', 'HOME', 'text', literal = true)
+                      .and('top_container_location_u_sstr', opts[:location], 'text', literal = true)
+
+        location_query = location_query.and(box_moved).or('current_location_u_sstr', opts[:location], 'text', literal = true)
+      end
+
+      query = query.and(location_query)
     end
 
-    {
-      :counts => summary(ds),
-      :items => selects(ds).limit(PAGE_SIZE, ((opts[:page] - 1) * PAGE_SIZE))
-                           .map{|row| format(row)}
-    }
-  end
+    counts_query = Solr::Query.create_match_all_query
+                     .set_filter(query.build)
+                     .set_sort("significance_score_u_ssort desc")
 
-
-  def self.summary(ds)
     levels = BackendEnumSource.values_for('runcorn_significance').reject{|level| level == 'standard'}.reverse
 
-    level_counts = ds.group_and_count(:physical_representation__significance_id)
-      .map{|level| [BackendEnumSource.value_for_id('runcorn_significance', level[:significance_id]), level[:count]]}.to_h
+    level_counts = Solr.search(counts_query
+                                 .set_facets('significance_u_sstr')
+                                 .pagination(1, 1))
+                     .dig('facets', 'facet_fields', 'significance_u_sstr')
+                     .each_slice(2)
+                     .to_h
 
     total = level_counts.values.reduce{|a,b| a+b}
     pages = (total.to_f / PAGE_SIZE).ceil
 
     running_count = 0
     first_pages = levels.map{|level|
-                              count = level_counts.fetch(level, 0)
-                              running_count += count
-                              [level, ((1.0 + running_count - count)/PAGE_SIZE).ceil]
-                            }.to_h
+      count = level_counts.fetch(level, 0)
+      running_count += count
+      [level, ((1.0 + running_count - count)/PAGE_SIZE).ceil]
+    }.to_h
+
+
+    page_query = Solr::Query.create_match_all_query
+                   .set_filter(query.build)
+                   .set_field_list(['uri'])
+                   .set_sort("significance_score_u_ssort desc")
+                   .pagination(opts[:page], PAGE_SIZE)
+
+    physrep_ids = Solr.search(page_query).fetch('results', []).map {|result| JSONModel.parse_reference(result.fetch('uri')).fetch(:id)}
 
     {
-      :total => total,
-      :pages => pages,
-      :page_size => PAGE_SIZE,
-      :first_page_for_levels => first_pages,
-      :levels => level_counts
+      :counts => {
+        :total => total,
+        :pages => pages,
+        :page_size => PAGE_SIZE,
+        :first_page_for_levels => first_pages,
+        :levels => level_counts
+      },
+      :items => selects(base_query.filter(Sequel.qualify(:physical_representation, :id) => physrep_ids)).map {|row|
+        format(row)
+      },
     }
   end
 
@@ -103,17 +135,6 @@ class SignificantItems
       out[:location] = row[:prep_fn_loc]
     end
     out
-  end
-
-
-  def self.add_location_filter(ds, location)
-    loc_uri = JSONModel.parse_reference(location)
-
-    if loc_uri
-      ds.filter(:prep_fn_loc__value => 'HOME', :tcon_fn_loc__value => 'HOME', :location_id => loc_uri[:id])
-    else
-      ds.where(({prep_fn_loc__value: 'HOME'} & {tcon_fn_loc__value: location}) | {prep_fn_loc__value: location})
-    end
   end
 
 
