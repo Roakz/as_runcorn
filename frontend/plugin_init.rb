@@ -327,7 +327,7 @@ Rails.application.config.after_initialize do
 
     alias :as_runcorn_render_orig :render
     def render(*args, &block)
-      @show_multiselect_column = true
+      @show_multiselect_column = params[:linker] ? false : true
       @display_context = false
       @show_search_result_identifier_column = false
       @display_identifier = false
@@ -474,6 +474,7 @@ Rails.application.config.after_initialize do
             @display_identifier = false
             @context_column_header = false
             @no_title = true
+            @show_multiselect_column = params[:linker] ? false : true
 
             skipped_columns = SKIPPED_COLUMNS.fetch(controller.controller_name, [])
 
