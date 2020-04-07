@@ -165,8 +165,6 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
 
       json['frequency_of_use'] = frequency_of_use.fetch(obj.id, 0)
 
-      json['significance_score'] = significance_levels.index {|level| level == json['significance']}
-
       json['assessments'] = assessments_map.fetch(obj.id, []).map{|assessment_blob| { 'ref' => assessment_blob.fetch(:uri) }}
 
       set_calculated_availability!(json, assessments_map.fetch(obj.id, []), controlling_records_dates_map.fetch(controlling_record.id, {}).fetch(:end, nil), availability_options)

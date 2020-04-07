@@ -110,7 +110,6 @@ class IndexerCommon
         doc['file_issue_allowed_u_sbool'] = [(record['record']['file_issue_allowed'] == 'allowed_true') && !record['record']['deaccessioned']]
 
         doc['significance_u_sstr'] = record['record']['significance']
-        doc['significance_score_u_ssort'] = record['record']['significance_score']
 
         doc['responsible_agency_title_u_sstr'] = record.dig('record', 'responsible_agency', '_resolved', 'display_name', 'sort_name')
         doc['responsible_agency_qsa_id_u_sstr'] = record.dig('record', 'responsible_agency', '_resolved', 'qsa_id_prefixed')

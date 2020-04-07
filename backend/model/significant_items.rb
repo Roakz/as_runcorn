@@ -43,7 +43,6 @@ class SignificantItems
 
     counts_query = Solr::Query.create_match_all_query
                      .set_filter(query.build)
-                     .set_sort("significance_score_u_ssort desc")
 
     levels = BackendEnumSource.values_for('runcorn_significance').reject{|level| level == 'standard'}.reverse
 
@@ -68,7 +67,7 @@ class SignificantItems
     page_query = Solr::Query.create_match_all_query
                    .set_filter(query.build)
                    .set_field_list(['uri'])
-                   .set_sort("significance_score_u_ssort desc")
+                   .set_sort(build_level_sort('significance_u_sstr', levels) + " desc")
                    .pagination(opts[:page], PAGE_SIZE)
 
     physrep_ids = Solr.search(page_query).fetch('results', []).map {|result| JSONModel.parse_reference(result.fetch('uri')).fetch(:id)}
@@ -87,6 +86,24 @@ class SignificantItems
     }
   end
 
+
+  # NOTE: Levels expected to be sorted most important to least important
+  #
+  # Returns a Solr FunctionQuery that returns progressively smaller numbers for
+  # each level.
+  def self.build_level_sort(field, levels)
+    result = ""
+
+    levels.reverse.each_with_index do |level, idx|
+      if idx == 0
+        result = "if(termfreq(#{field},\"#{level}\"),#{idx + 1},0)"
+      else
+        result = "if(termfreq(#{field},\"#{level}\"),#{idx + 1},#{result})"
+      end
+    end
+
+    result
+  end
 
   def self.format(row)
     {
