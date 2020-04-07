@@ -72,7 +72,7 @@
           <ul class="list-group">
             <% JSONModel.enum_values('runcorn_location').reject{|loc| loc =='HOME'}.each do |loc| %>
               <li>
-                <%= link_to I18n.t('enumerations.runcorn_location.' + loc), link_hash.merge(:location => loc) %>
+                <%= link_to I18n.t('enumerations.runcorn_location.' + loc, :default => loc), link_hash.merge(:location => loc) %>
               </li>
             <% end %>
           </ul>
