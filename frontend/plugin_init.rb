@@ -24,7 +24,7 @@ Rails.application.config.after_initialize do
         end
 
         options = {:id => "#{id_for(name)}", :type => "hidden", :name => path(name), :value => obj[name] ? 1 : 0}
-        @forms.tag("input", options) + I18n.t("boolean.#{obj[name]}")
+        @forms.tag("input", options) + I18n.t("boolean.#{obj[name] ? 'true' : 'false'}")
       end
     end
   end
