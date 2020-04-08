@@ -332,6 +332,7 @@ Rails.application.config.after_initialize do
       @display_identifier = false
       @context_column_header = false
       @no_title = true
+      @show_multiselect_column = params[:linker] ? false : true
 
       add_column('ID',
          proc { |record|
