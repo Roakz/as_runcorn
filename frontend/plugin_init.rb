@@ -475,6 +475,9 @@ Rails.application.config.after_initialize do
             @no_title = true
             @show_multiselect_column = params[:linker] ? false : true
 
+            # reset the sort colummns
+            @search_data.sort_fields.clear
+
             skipped_columns = SKIPPED_COLUMNS.fetch(controller.controller_name, [])
 
             unless skipped_columns.include?(:id)
@@ -519,6 +522,9 @@ Rails.application.config.after_initialize do
             end
 
             extra_columns.concat(columns_to_append)
+
+            # add the default sort columns again
+            @search_data.sort_fields.concat(SearchResultData.BASE_SORT_FIELDS)
           end
         end
 
