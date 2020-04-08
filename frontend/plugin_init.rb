@@ -521,6 +521,17 @@ Rails.application.config.after_initialize do
                          }, :sortable => true, :sort_by => 'publish')
             end
 
+            if controller.controller_name == 'representations'
+              add_column(I18n.t("representation.rap_expiry_date"),
+                         proc {|record|
+                           if record.fetch('rap_expiry_date_u_sstr', [])[0]
+                             (record.fetch('rap_expiry_date_u_sstr', [])[0] + (record.fetch('rap_expired_u_sbool', [])[0] ? ' (expired)' : ''))
+                           else
+                             ''
+                           end
+                         }, :sortable => true, :sort_by => 'rap_expiry_date_sort_u_ssortdate')
+           end
+
             extra_columns.concat(columns_to_append)
 
             # add the default sort columns again
