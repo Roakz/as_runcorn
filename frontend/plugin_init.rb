@@ -24,7 +24,7 @@ Rails.application.config.after_initialize do
         end
 
         options = {:id => "#{id_for(name)}", :type => "hidden", :name => path(name), :value => obj[name] ? 1 : 0}
-        @forms.tag("input", options) + I18n.t("boolean.#{obj[name]}")
+        @forms.tag("input", options) + I18n.t("boolean.#{obj[name] ? 'true' : 'false'}")
       end
     end
   end
@@ -327,7 +327,6 @@ Rails.application.config.after_initialize do
 
     alias :as_runcorn_render_orig :render
     def render(*args, &block)
-      @show_multiselect_column = true
       @display_context = false
       @show_search_result_identifier_column = false
       @display_identifier = false
@@ -379,6 +378,8 @@ Rails.application.config.after_initialize do
     HistoryController.add_skip_field('resource_id')
     HistoryController.add_skip_field('json_schema_version')
     HistoryController.add_skip_field('action_status_id')
+    HistoryController.add_skip_field('treatment_batch_id')
+    HistoryController.add_skip_field('transfer_id')
 
     HistoryController.add_top_fields(['qsa_id_prefixed', 'title', 'display_string', 'published', 'publish'])
 
@@ -472,6 +473,7 @@ Rails.application.config.after_initialize do
             @display_identifier = false
             @context_column_header = false
             @no_title = true
+            @show_multiselect_column = params[:linker] ? false : true
 
             skipped_columns = SKIPPED_COLUMNS.fetch(controller.controller_name, [])
 

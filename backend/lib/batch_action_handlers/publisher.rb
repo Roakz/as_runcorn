@@ -72,6 +72,14 @@ class Publisher < BatchActionHandler
                          .update(:system_mtime => now)
           end
         end
+
+        # ... and turns out public needs the inverse
+        if [:physical_representation, :digital_representation].include?(type.intern)
+          db[:archival_object].filter(:id => db[type.intern].filter(:id => ids)
+                                                            .select(:archival_object_id).all
+                                                            .map{|r| r[:archival_object_id]})
+                              .update(:system_mtime => now)
+        end
       end
     end
 

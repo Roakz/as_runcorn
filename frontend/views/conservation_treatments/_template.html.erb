@@ -55,12 +55,12 @@
     <% else %>
       <% form.push("user", form.obj["user"] || {}) do %>
         <div class="form-group">
-          <%= form.label('user', {:for => form.current_id}, ['col-sm-2']) %>
+          <%= form.label('user', {:for => form.id_for(nil)}, ['col-sm-2']) %>
           <div class="col-sm-9">
             <div class="form-group">
               <div class="input-group linker-wrapper">
                 <input type="text" class="linker"
-                       id="<%= form.current_id %>"
+                       id="<%= form.id_for(nil) %>"
                        data-label="<%= I18n.t("conservation_treatment.user") %>"
                        data-label_plural="<%= I18n.t("conservation_treatment.user") %>"
                        data-path="<%= form.path %>"
@@ -97,12 +97,12 @@
     <% else %>
       <% form.push("assessment", form.obj["assessment"] || {}) do %>
         <div class="form-group">
-          <%= form.label('assessment', {:for => form.current_id}, ['col-sm-2']) %>
+          <%= form.label('assessment', {:for => form.id_for(nil)}, ['col-sm-2']) %>
           <div class="col-sm-9">
             <div class="form-group">
               <div class="input-group linker-wrapper">
                 <input type="text" class="linker"
-                       id="<%= form.current_id %>"
+                       id="<%= form.id_for(nil) %>"
                        data-label="<%= I18n.t("conservation_treatment.assessment") %>"
                        data-label_plural="<%= I18n.t("conservation_treatment.assessment") %>"
                        data-path="<%= form.path %>"

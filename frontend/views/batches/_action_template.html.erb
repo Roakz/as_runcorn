@@ -13,7 +13,12 @@
 
         <% if form.readonly? %>
           <%= form.label_and_readonly "action_user" %>
-          <%= form.label_and_readonly "action_time" %>
+          <% if form.obj['action_time'] %>
+            <div class="form-group">
+              <label class="col-sm-2 control-label" for="batch_actions__action_time_"><%= I18n.t('batch_action.action_time') %></label>
+              <div class="col-sm-9 label-only"><%= Time.parse(form.obj['action_time']).getlocal %></div>
+            </div>
+          <% end %>
           <%= form.label_and_readonly "approved_user" %>
         <% end %>
 
