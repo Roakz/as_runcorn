@@ -464,6 +464,45 @@ class Resource
   end
 
 
+  def self.rap_affected_record_counts(resource_id, target_rap_id, subtree_ao_id = nil)
+    default_rap_id = RAP.get_default_id
+
+    result = {}
+
+    DB.open do |db|
+      start_time = Time.now
+
+      record_parents = rap_load_tree(db, resource_id, subtree_ao_id)
+      connected_raps = rap_load_connected_raps(db, resource_id)
+
+      # If the resource doesn't have a RAP, it takes the system default
+      if connected_raps.rap_for(Resource, resource_id).nil?
+        connected_raps.add(Resource, resource_id, default_rap_id)
+      end
+
+      Log.info("RAP preview: Resource: %d" % [resource_id])
+      Log.info("RAP preview: Tree size: %d" % [record_parents.length])
+      Log.info("RAP preview: Connected RAPs: %d" % [connected_raps.length])
+
+      Log.info("RAP preview: Loaded tree structure and existing RAPs in %d ms" % [((Time.now.to_f - start_time.to_f) * 1000).to_i])
+      start_time = Time.now
+
+      record_raps_applied = calculate_raps_applied(resource_id, record_parents, connected_raps)
+
+      Log.info("RAP preview: RAPs calculated in %d ms" % [((Time.now.to_f - start_time.to_f) * 1000).to_i])
+
+      record_raps_applied.delete(Resource, resource_id)
+
+      record_raps_applied.each_chunk(1000) do |record_model, record_ids, rap_ids|
+        result[record_model.my_jsonmodel.record_type] ||= {:count => 0}
+        result[record_model.my_jsonmodel.record_type][:count] += rap_ids.count {|id| id == target_rap_id}
+      end
+    end
+
+    result
+  end
+
+
   def self.rap_needs_propagate(resource_id, subtree_ao_id = nil)
     if RequestContext.active? && RequestContext.get(:deferred_rap_propagation_resource_ids)
       # Defer propagating.  Used for things like batch import.
