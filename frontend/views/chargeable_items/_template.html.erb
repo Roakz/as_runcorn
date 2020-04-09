@@ -3,6 +3,7 @@
 <% define_template "chargeable_item", jsonmodel_definition(:chargeable_item) do |form| %>
   <div class="subrecord-form-fields">
     <%= form.hidden_input "price_cents" %>
+    <%= form.hidden_input "charge_category" %>
 
     <% if ['new', 'create'].include?(controller.action_name) %>
       <%= form.label_and_textfield "name" %>
