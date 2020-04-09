@@ -120,7 +120,6 @@ class FileIssueInvoice
                       Sequel.qualify(:service_quote_line, :charge_category_id),
                       Sequel.as(Sequel.qualify(:chargeable_item, :charge_category_id), :chargeable_item_charge_category_id))
               .each do |quote_line|
-              p quote_line
               quote_totals[quote_line[:service_quote_id]] ||= {}
 
               # table the chargeable item's category if possible
