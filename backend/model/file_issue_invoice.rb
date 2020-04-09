@@ -109,6 +109,8 @@ class FileIssueInvoice
 
             quote_totals = {}
 
+            other_category_id = BackendEnumSource.id_for_value('runcorn_charge_category', 'Other')
+
             db[:service_quote_line].filter(:service_quote_id => quote_ids)
               .select(Sequel.qualify(:service_quote_line, :service_quote_id),
                       Sequel.qualify(:service_quote_line, :quantity),
@@ -116,8 +118,12 @@ class FileIssueInvoice
                       Sequel.qualify(:service_quote_line, :charge_category_id))
               .each do |quote_line|
               quote_totals[quote_line[:service_quote_id]] ||= {}
-              quote_totals[quote_line[:service_quote_id]][quote_line[:charge_category_id]] ||= 0
-              quote_totals[quote_line[:service_quote_id]][quote_line[:charge_category_id]] += quote_line[:quantity] * quote_line[:charge_per_unit_cents]
+
+              # if charge_category_id is empty, assume Other
+              charge_category_id = quote_line[:charge_category_id] || other_category_id
+
+              quote_totals[quote_line[:service_quote_id]][charge_category_id] ||= 0
+              quote_totals[quote_line[:service_quote_id]][charge_category_id] += quote_line[:quantity] * quote_line[:charge_per_unit_cents]
             end
 
             agencies.each do |aspace_agency_id, agency_locations|
@@ -130,7 +136,6 @@ class FileIssueInvoice
                     'Contact' => row[:lodged_by] || '',
                     '# Files' => row[:count],
                   }
-
                   apply_line_item_subtotals!(report_row, row[:"aspace_#{row[:issue_type].downcase}_quote_id"], quote_totals)
 
                   key = AgencyLocation.new(aspace_agency_id,
