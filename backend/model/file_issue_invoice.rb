@@ -112,21 +112,15 @@ class FileIssueInvoice
             other_category_id = BackendEnumSource.id_for_value('runcorn_charge_category', 'Other')
 
             db[:service_quote_line].filter(:service_quote_id => quote_ids)
-              .left_join(:service_quote_line_item_rlshp, Sequel.qualify(:service_quote_line_item_rlshp, :service_quote_line_id) => Sequel.qualify(:service_quote_line, :id))
-              .left_join(:chargeable_item, Sequel.qualify(:chargeable_item, :id) => Sequel.qualify(:service_quote_line_item_rlshp, :chargeable_item_id))
               .select(Sequel.qualify(:service_quote_line, :service_quote_id),
                       Sequel.qualify(:service_quote_line, :quantity),
                       Sequel.qualify(:service_quote_line, :charge_per_unit_cents),
-                      Sequel.qualify(:service_quote_line, :charge_category_id),
-                      Sequel.as(Sequel.qualify(:chargeable_item, :charge_category_id), :chargeable_item_charge_category_id))
+                      Sequel.qualify(:service_quote_line, :charge_category_id))
               .each do |quote_line|
-              p quote_line
               quote_totals[quote_line[:service_quote_id]] ||= {}
 
-              # table the chargeable item's category if possible
-              # otherwise the serivce quote's category
-              # and lastly assume Other
-              charge_category_id = quote_line[:chargeable_item_charge_category_id] || quote_line[:charge_category_id] || other_category_id
+              # if charge_category_id is empty, assume Other
+              charge_category_id = quote_line[:charge_category_id] || other_category_id
 
               quote_totals[quote_line[:service_quote_id]][charge_category_id] ||= 0
               quote_totals[quote_line[:service_quote_id]][charge_category_id] += quote_line[:quantity] * quote_line[:charge_per_unit_cents]
