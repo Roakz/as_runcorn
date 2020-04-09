@@ -3,7 +3,6 @@
 <% define_template "chargeable_item", jsonmodel_definition(:chargeable_item) do |form| %>
   <div class="subrecord-form-fields">
     <%= form.hidden_input "price_cents" %>
-    <%= form.hidden_input "charge_category" %>
 
     <% if ['new', 'create'].include?(controller.action_name) %>
       <%= form.label_and_textfield "name" %>
@@ -14,6 +13,7 @@
     <%= form.label_and_textfield "description" %>
     <%= form.label_and_textfield "price_dollars" %>
     <%= form.label_and_select "charge_quantity_unit", form.possible_options_for("charge_quantity_unit", false) %>
+    <%= form.label_and_select "charge_category", form.possible_options_for("charge_category", true) %>
   </div>
 <% end %>
 

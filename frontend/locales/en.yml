@@ -276,6 +276,7 @@ en:
     price_dollars: Charge
     charge_quantity_unit: Unit
     button_label: Manage Chargeable Items
+    charge_category: Category
     _plural: Chargeable Items
     _singular: Chargeable Item
     _frontend:
