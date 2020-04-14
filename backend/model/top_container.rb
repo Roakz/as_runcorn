@@ -123,7 +123,7 @@ class TopContainer
       json['is_linked_to_published_record'] = publication_status.fetch(obj)
 
       json['display_string'] = obj.display_string
-      json['long_display_string'] = obj.long_display_string
+      json['long_display_string'] = obj.display_string
 
       obj.collections.each do |collection|
         json['collection'] ||= []
