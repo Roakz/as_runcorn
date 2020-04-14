@@ -88,7 +88,7 @@ class ConservationTreatmentsReport < RuncornReport
           y << CSV.generate_line([
             row[:conservation_request_id] ? QSAId.prefixed_id_for(ConservationRequest, row[:conservation_request_id]) : nil,
             row[:assessment_id] ? QSAId.prefixed_id_for(Assessment, row[:assessment_id]) : nil,
-            agency_qsa_ids.fetch(responsible_agency_map.fetch(row[:archival_object_id]), nil),
+            agency_qsa_ids.fetch(responsible_agency_map.fetch(row[:archival_object_id], nil), nil),
             QSAId.prefixed_id_for(Resource, row[:series_qsa_id]),
             row[:series_title],
             QSAId.prefixed_id_for(ArchivalObject, row[:controlling_record_qsa_id]),
@@ -118,12 +118,14 @@ class ConservationTreatmentsReport < RuncornReport
                 .select(:repo_id).first[:repo_id]
 
     RequestContext.open(:repo_id => repo_id) do
-      ArchivalObject
-        .filter(:id => base_ds
-                         .join(:physical_representation, Sequel.qualify(:physical_representation, :id) => Sequel.qualify(:conservation_treatment, :physical_representation_id))
-                         .select(Sequel.qualify(:physical_representation, :archival_object_id)))
-        .each do |ao|
-        result[ao.id] = JSONModel::JSONModel(:agent_corporate_entity).id_for(ao.responsible_agency.fetch(:uri))
+      archival_objects = ArchivalObject
+                          .filter(:id => base_ds
+                                           .join(:physical_representation, Sequel.qualify(:physical_representation, :id) => Sequel.qualify(:conservation_treatment, :physical_representation_id))
+                                           .select(Sequel.qualify(:physical_representation, :archival_object_id)))
+
+
+      ControlledRecord::ResponsibleAgencyCalculator.build_agency_control_map(archival_objects).each do |ao, agency_info|
+        result[ao.id] = JSONModel::JSONModel(:agent_corporate_entity).id_for(agency_info.agency_uri)
       end
     end
 
