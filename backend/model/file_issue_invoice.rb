@@ -132,7 +132,7 @@ class FileIssueInvoice
                   report_row = {
                     'Date' => Time.at((row[:create_time] / 1000).to_i).to_date,
                     'File Issue Request ID' => QSAId.prefixed_id_for(FileIssueRequest, row[:file_issue_request_id]),
-                    'File Issue ID' => FileIssue.qsa_id_prefixed(row[:issue_type], row[:qsa_id]),
+                    'File Issue ID' => FileIssue.qsa_id_prefixed(row[:qsa_id], :issue_type => row[:issue_type]),
                     'Contact' => row[:lodged_by] || '',
                     '# Files' => row[:count],
                   }
