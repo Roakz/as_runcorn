@@ -91,7 +91,7 @@ class S3AuthenticatedStorage
       candidate_keys.each do |key|
         begin
           client.head_object({
-                               :bucket => @bucket,
+                               :bucket => bucket,
                                :key => key
                              })
 
