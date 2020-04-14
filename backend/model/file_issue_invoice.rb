@@ -131,8 +131,8 @@ class FileIssueInvoice
                 rows.each do |row|
                   report_row = {
                     'Date' => Time.at((row[:create_time] / 1000).to_i).to_date,
-                    'File Issue Request ID' => "FIR#{row[:file_issue_request_id]}",
-                    'File Issue ID' => row[:issue_type] == 'PHYSICAL' ? "FIP#{row[:id]}" : "FID#{row[:id]}",
+                    'File Issue Request ID' => QSAId.prefixed_id_for(FileIssueRequest, row[:file_issue_request_id]),
+                    'File Issue ID' => FileIssue.qsa_id_prefixed(row[:issue_type], row[:qsa_id]),
                     'Contact' => row[:lodged_by] || '',
                     '# Files' => row[:count],
                   }
@@ -260,6 +260,7 @@ class FileIssueInvoice
                                  Sequel.qualify(:file_issue, :lodged_by),
                                  Sequel.qualify(:file_issue, :create_time),
                                  Sequel.qualify(:file_issue, :issue_type),
+                                 Sequel.qualify(:file_issue, :qsa_id),
                                  Sequel.as(Sequel.qualify(:file_issue_request, :id), :file_issue_request_id),
                                  Sequel.qualify(:file_issue_request, :aspace_physical_quote_id),
                                  Sequel.qualify(:file_issue_request, :aspace_digital_quote_id))

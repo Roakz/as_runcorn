@@ -78,7 +78,7 @@ class DigitalRepresentation < Sequel::Model(:digital_representation)
                 :issue_type)
         .map do |row|
         within_sets[row[:aspace_record_id].to_i] ||= []
-        within_sets[row[:aspace_record_id].to_i] << "%s%s%s" % [QSAId.prefix_for(FileIssue), row[:issue_type][0].upcase, row[:file_issue_qsa_id]]
+        within_sets[row[:aspace_record_id].to_i] << FileIssue.qsa_id_prefixed(row[:issue_type], row[:file_issue_qsa_id])
       end
     end
 

@@ -40,7 +40,7 @@ class RuncornNotifications
       ]
     elsif row[:file_issue_id]
       [
-          '%s%s%d' % [QSAId.prefix_for(FileIssue), row[:issue_type][0].upcase, row[:file_issue_qsa_id]],
+          FileIssue.qsa_id_prefixed(row[:issue_type], row[:file_issue_qsa_id]),
           JSONModel::JSONModel(:file_issue).uri_for(row[:file_issue_id]),
           :manage_file_issues,
       ]
