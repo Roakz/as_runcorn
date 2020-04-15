@@ -295,7 +295,11 @@ ArchivesSpaceService.plugins_loaded_hook do
 end
 
 ASModel.all_models.each do |model|
-  if model.included_modules.include?(Publishable)
+  # Only add the fuzz to models that can have their publish status changed by
+  # a user (via the DB column `publish`).  Subject is a gotcha as they are
+  # publishable and always so, so they don't have a database column for turning
+  # that off.
+  if model.included_modules.include?(Publishable) && model.columns.include?(:publish)
     model.include(PublicationPolice)
   end
 end
