@@ -215,6 +215,10 @@ class IndexerCommon
       if doc['primary_type'] == 'chargeable_item'
         doc['title'] = record['record']['name']
       end
+
+      if doc['primary_type'] == 'chargeable_service'
+        doc['title'] = record['record']['name']
+      end
     }
 
     indexer.add_document_prepare_hook do |doc, record|
