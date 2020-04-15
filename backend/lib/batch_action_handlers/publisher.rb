@@ -52,9 +52,7 @@ class Publisher < BatchActionHandler
             rap_applied = raps.rap_json_for_rap_applied(obj.id)
             rap_expiration = raps.rap_expiration_for_rap_applied(obj.id)
 
-
-            !rap_applied['is_repository_default'] && rap_applied['access_category'] != RAP::ACCESS_CATEGORY_NA &&
-              (rap_applied['open_access_metadata'] || rap_expiration['expired'])
+            raps.calculate_publishable({'rap_applied' => rap_applied, 'rap_expiration' => rap_expiration})
           end
 
           if all_count > objs.length
