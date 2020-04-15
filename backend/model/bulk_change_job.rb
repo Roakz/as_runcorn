@@ -14,18 +14,20 @@ class BulkChangeJob < JobRunner
         RequestContext.open(:current_username => job.owner.username,
                             :repo_id => job.repo_id) do
           DB.open(true) do
-            summary = BulkRecordChanges.run(input_file.file_path, job)
+            RAP.with_deferred_propagations do
+              summary = BulkRecordChanges.run(input_file.file_path, job)
 
-            job.write_output("\nSuccess!  %d record(s) were created; %d record(s) were updated" % [
-                                summary[:added],
-                                summary[:updated]
-                              ])
+              job.write_output("\nSuccess!  %d record(s) were created; %d record(s) were updated" % [
+                                 summary[:added],
+                                 summary[:updated]
+                               ])
 
-            job.job_blob = ASUtils.to_json(summary)
-            job.save
+              job.job_blob = ASUtils.to_json(summary)
+              job.save
 
-            job.finish!(:completed)
-            self.success!
+              job.finish!(:completed)
+              self.success!
+            end
           end
         end
       rescue BulkRecordChanges::BulkUpdateFailed => e
