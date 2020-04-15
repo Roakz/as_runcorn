@@ -410,7 +410,7 @@ class Batch < Sequel::Model(:batch)
       end
     end
 
-    BatchAction.get_or_die(JSONModel.parse_reference(action['uri'])[:id]).update_from_json(action, :last_report => report)
+    BatchAction.get_or_die(JSONModel.parse_reference(action['uri'])[:id]).update_from_json(action, :last_report => report[0..32767])
   end
 
 
