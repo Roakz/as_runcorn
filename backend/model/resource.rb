@@ -480,6 +480,7 @@ class Resource
           end
 
           ps.executeBatch
+          ps.close
         end
       end
 
