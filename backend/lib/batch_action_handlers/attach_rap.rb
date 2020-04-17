@@ -68,18 +68,21 @@ class AttachRAP < BatchActionHandler
 
     counts = {}
 
+    rap = JSONModel::JSONModel(:rap).from_hash(params)
+
     out = "RAP attached to:\n"
 
-    uris.map {|uri| {:uri => uri, :parsed => JSONModel.parse_reference(uri)}}
-      .group_by {|parsed| parsed[:parsed].fetch(:type)}
-      .each do |type, type_refs|
+    RAP.with_deferred_propagations do
+      uris.map {|uri| {:uri => uri, :parsed => JSONModel.parse_reference(uri)}}
+        .group_by {|parsed| parsed[:parsed].fetch(:type)}
+        .each do |type, type_refs|
 
-      model = ASModel.all_models.select{|m| m.table_name == type.intern}.first
+        model = ASModel.all_models.select{|m| m.table_name == type.intern}.first
 
-      counts[type] = type_refs.length
-
-      type_refs.each do | ref|
-        RAP.attach_rap(model, ref[:parsed][:id], JSONModel::JSONModel(:rap).from_hash(params))
+        counts[type] = type_refs.length
+        type_refs.each do | ref|
+          RAP.attach_rap(model, ref[:parsed][:id], rap)
+        end
       end
     end
 
