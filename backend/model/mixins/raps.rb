@@ -95,15 +95,7 @@ module RAPs
     end
 
     if needs_rap_created || action == :create
-      if obj.is_a?(ArchivalObject)
-        Resource.rap_needs_propagate(obj.root_record_id)
-      elsif obj.is_a?(Resource)
-        Resource.rap_needs_propagate(obj.id)
-      else
-        # Representations
-        ao = ArchivalObject[obj.archival_object_id]
-        Resource.rap_needs_propagate(ao.root_record_id, obj.archival_object_id)
-      end
+      RAP.rap_needs_propagate_for(obj)
     end
 
     # publish check for records with applied RAPs...

@@ -333,13 +333,27 @@ class RAP < Sequel::Model(:rap)
     end
   end
 
-  def self.attach_raps(model_class, ids, rap)
-    objs = model_class.filter(:id => ids).all
-    jsons = model_class.sequel_to_jsonmodel(objs)
+  def self.rap_needs_propagate_for(obj)
+    if obj.is_a?(ArchivalObject)
+      Resource.rap_needs_propagate(obj.root_record_id)
+    elsif obj.is_a?(Resource)
+      Resource.rap_needs_propagate(obj.id)
+    else
+      # Representations
+      ao = ArchivalObject[obj.archival_object_id]
+      Resource.rap_needs_propagate(ao.root_record_id, obj.archival_object_id)
+    end
+  end
 
-    objs.zip(jsons).each do |obj, json|
-      json['rap_attached'] = rap.to_hash
-      obj.update_from_json(json)
+  def self.attach_raps(model_class, ids, rap)
+    RAP.filter(:"#{model_class.table_name}_id" => ids).update(RAPs.supported_models.map {|model| [:"#{model.table_name}_id", nil]}.to_h)
+
+    model_class.filter(:id => ids).each do |obj|
+      RAP.create_from_json(JSONModel(:rap).from_hash(rap), {:"#{obj.class.table_name}_id" => obj.id})
+      obj.mark_as_system_modified
+
+      RAP.rap_needs_propagate_for(obj)
+
       force_unpublish_for_restricted(model_class, obj.id)
     end
   end
