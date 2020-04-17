@@ -97,8 +97,11 @@ class FunctionalMove < BatchActionHandler
       end
 
       # bump lock_version for affected AOs for history
-      linked_ao_ids = db[:physical_representation].filter(:id => ids[:physical_representation]).select(:archival_object_id)
-      ArchivalObject.filter(:id => linked_ao_ids).update(:lock_version => Sequel.expr(1) + :lock_version, :system_mtime => now)
+      ArchivalObject
+        .inner_join(:physical_representation, Sequel.qualify(:physical_representation, :archival_object_id) => Sequel.qualify(:archival_object, :id))
+            .filter(Sequel.qualify(:physical_representation, :id) => ids[:physical_representation])
+            .update(Sequel.qualify(:archival_object, :system_mtime) => now,
+                    Sequel.qualify(:archival_object, :lock_version) => Sequel.expr(1) + Sequel.qualify(:archival_object, :lock_version))
     end
 
     "#{count} object#{count == 1 ? '' : 's'} moved to #{I18n.t('enumerations.runcorn_location.' + params['location'])}."
