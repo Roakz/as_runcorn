@@ -80,9 +80,8 @@ class AttachRAP < BatchActionHandler
         model = ASModel.all_models.select{|m| m.table_name == type.intern}.first
 
         counts[type] = type_refs.length
-        type_refs.each do | ref|
-          RAP.attach_rap(model, ref[:parsed][:id], rap)
-        end
+
+        RAP.attach_raps(model, type_refs.map{|ref| ref[:parsed][:id]}, rap)
       end
     end
 

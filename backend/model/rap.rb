@@ -333,6 +333,17 @@ class RAP < Sequel::Model(:rap)
     end
   end
 
+  def self.attach_raps(model_class, ids, rap)
+    objs = model_class.filter(:id => ids).all
+    jsons = model_class.sequel_to_jsonmodel(objs)
+
+    objs.zip(jsons).each do |obj, json|
+      json['rap_attached'] = rap.to_hash
+      obj.update_from_json(json)
+      force_unpublish_for_restricted(model_class, obj.id)
+    end
+  end
+
   def self.attach_rap(model_class, id, rap)
     obj = model_class.get_or_die(id)
     json = model_class.to_jsonmodel(obj)
