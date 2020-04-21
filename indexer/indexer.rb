@@ -465,5 +465,11 @@ class IndexerCommon
         doc['series_summary_title_u_ssort'] = record['record']['series_summary']['title']
       end
     end
+
+    indexer.add_document_prepare_hook do |doc, record|
+      if record['record'].has_key?('publish')
+        doc['publish_raw_u_sbool'] = !!record['record']['publish']
+      end
+    end
   end
 end

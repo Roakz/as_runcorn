@@ -214,7 +214,7 @@ Rails.application.config.after_initialize do
 
   Plugins.add_search_base_facets("representation_intended_use_u_sstr",
                                  "rap_access_status_u_ssort",
-                                 "publish",
+                                 "publish_raw_u_sbool",
                                  "archivist_approved_u_sbool",
                                  "deaccessioned_u_sbool")
 
@@ -244,13 +244,15 @@ Rails.application.config.after_initialize do
                                proc {|facet| "reading_room_requests.statuses.#{facet}" })
   Plugins.add_facet_group_i18n('item_use_type_u_ssort',
                                proc {|facet| "item_use.item_use_type_values.#{facet}" })
+  Plugins.add_facet_group_i18n('publish_raw_u_sbool',
+                               proc {|facet| "boolean.#{facet}" })
 
   [:resource,
    :archival_object,
    :mandate,
    :function,
    :agent_corporate_entity].each do |record_type|
-    Plugins.add_search_facets(record_type, 'publish')
+    Plugins.add_search_facets(record_type, 'publish_raw_u_sbool')
     Plugins.add_search_facets(record_type, 'archivist_approved_u_sbool')
   end
 
@@ -516,10 +518,10 @@ Rails.application.config.after_initialize do
             end
 
             unless skipped_columns.include?(:published)
-              add_column('Published?',
+              add_column('Publish?',
                          proc { |record|
-                           record['publish'] ? 'Yes' : 'No'
-                         }, :sortable => true, :sort_by => 'publish')
+                           record['publish_raw_u_sbool'] ? 'Yes' : 'No'
+                         }, :sortable => true, :sort_by => 'publish_raw_u_sbool')
             end
 
             if controller.controller_name == 'representations'
