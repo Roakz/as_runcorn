@@ -460,12 +460,12 @@ class BulkRecordChanges
 
         unless subject
           subject = Subject.create_from_json(JSONModel(:subject).from_hash(
-                                               source: 'local',
+                                               source: 'qsa',
                                                vocabulary: '/vocabularies/1',
                                                terms: [{
                                                          jsonmodel_type: 'term',
                                                          term: term,
-                                                         term_type: 'topical',
+                                                         term_type: 'subject',
                                                          vocabulary: '/vocabularies/1',
                                                        }]
                                              ))
