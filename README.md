@@ -144,9 +144,9 @@ Example:
 
 ### AppConfig[:storage_s3_access_key]
 
-This option is used in conjunction with the other `:storage_s3_*` configuration
-options to set the parameters required to store files using Amazon's S3 cloud
-storage service.
+> This option is used in conjunction with the other `:storage_s3_*` config
+> options to set the parameters required to store files using Amazon's S3 cloud
+> storage service.
 
 It specifies the access key required to authenticate to the service.
 
@@ -157,9 +157,9 @@ Example:
 
 ### AppConfig[:storage_s3_bucket]
 
-This option is used in conjunction with the other `:storage_s3_*` configuration
-options to set the parameters required to store files using Amazon's S3 cloud
-storage service.
+> This option is used in conjunction with the other `:storage_s3_*` config
+> options to set the parameters required to store files using Amazon's S3 cloud
+> storage service.
 
 It specifies the bucket name.
 
@@ -170,9 +170,9 @@ Example:
 
 ### AppConfig[:storage_s3_bucket_fallback_ro]
 
-This option is used in conjunction with the other `:storage_s3_*` configuration
-options to set the parameters required to store files using Amazon's S3 cloud
-storage service.
+> This option is used in conjunction with the other `:storage_s3_*` config
+> options to set the parameters required to store files using Amazon's S3 cloud
+> storage service.
 
 It specifies a fallback bucket name for when things go bad and end up readonly.
 
@@ -183,9 +183,9 @@ Example:
 
 ### AppConfig[:storage_s3_region]
 
-This option is used in conjunction with the other `:storage_s3_*` configuration
-options to set the parameters required to store files using Amazon's S3 cloud
-storage service.
+> This option is used in conjunction with the other `:storage_s3_*` config
+> options to set the parameters required to store files using Amazon's S3 cloud
+> storage service.
 
 It specifies the region where the bucket resides.
 
@@ -196,9 +196,9 @@ Example:
 
 ### AppConfig[:storage_s3_secret_access_key]
 
-This option is used in conjunction with the other `:storage_s3_*` configuration
-options to set the parameters required to store files using Amazon's S3 cloud
-storage service.
+> This option is used in conjunction with the other `:storage_s3_*` config
+> options to set the parameters required to store files using Amazon's S3 cloud
+> storage service.
 
 It specifies the secret access key required to authenticate to the service.
 
