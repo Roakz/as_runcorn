@@ -5,6 +5,9 @@ require_relative 'helpers/qsa_id_helper'
 require_relative 'helpers/significance_helper'
 require_relative 'helpers/field_helper'
 
+# Force this to false as we never wanna see those buttons
+AppConfig[:show_view_published] = false
+
 Rails.application.config.after_initialize do
 
   # Override #checkbox to to ensure users without the 'manage_publication'
