@@ -30,7 +30,7 @@ highlights:
   - Approval workflows
   - Functional and storage movement controls and histories
   - Chargeable services and items, and quote generation
-  - Batches and batch actions
+  - [Batches and batch actions](#batches-and-batch-actions)
   - QSA ids
   - Item use tracking and reporting
   - Significant item tracking and reporting
@@ -487,3 +487,5 @@ action accepts.
 
 Future work on batches may include support for running actions as Background
 Jobs. This is entirely doable but wasn't done as part of the initial release.
+
+
