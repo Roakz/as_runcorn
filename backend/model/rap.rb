@@ -250,7 +250,8 @@ class RAP < Sequel::Model(:rap)
             .filter(Sequel.qualify(:archival_object, :publish) => 1)
             .filter(Sequel.qualify(:rap_applied, :is_active) => 1)
             .filter(Sequel.qualify(:rap, :id) => rap_id)
-            .filter(Sequel.~(Sequel.qualify(:rap, :years) => 0))
+            .filter(Sequel.|(Sequel.qualify(:rap, :years) > 0,
+                             Sequel.qualify(:rap, :years) => nil))
             .filter(Sequel.qualify(:rap, :open_access_metadata) => 0)
             .where {
           Sequel.|({ Sequel.qualify(:date, :end) => nil },
