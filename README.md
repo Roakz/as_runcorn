@@ -289,9 +289,6 @@ Records migrated from the legacy system bring their QSA Id with them. Some
 models are new (they weren't represented in the legacy system). These models
 just use their database id for the sequence number portion of the id.
 
-QSA Ids are rendered consistently throughout the UI (in a rounded pale yellow
-box).
-
 Models are registered for QSA Ids in `common/qsa_id_registrations.rb`. The
 registrations are defined in `common` because they need to be loaded in the
 backend, frontend and indexer. You will see `require_relative` statements
@@ -324,6 +321,54 @@ There are two optional arguments:
 For models that don't set `:use_database_id`, the identifers will be minted from
 an ArchivesSpace sequence named `QSA_ID_{model}`, for example the sequence for
 resources is `QSA_ID_RESOURCE`.
+
+Models that are registered for QSA Ids will have two additional properties in
+their JSON schema.
+
+```json
+    "qsa_id": 123,
+    "qsa_id_prefixed": "ITM123",
+```
+
+> Note: these properties are added dynamically so they don't appear in the
+> schema definition file for the model.
+
+There are various methods on the models themselves and on the `QSAId` class that
+help with constructing and parsing QSA Ids. These are defined in the following
+files:
+
+```
+  common/qsa_id.rb
+  backend/model/mixins/qsa_id_prefixer.rb
+```
+
+> Note: QSA Ids were designed to provide a prefix for each registered model.
+> Unfortunately, it was subsequently discovered that `file_issue` needed a
+> different prefix depending on whether it is a physical or digital
+> `file_issue`, `FIP` and `FID` respectively. This required a bit of
+> retrofitting. The key thing to understand is that the class method on
+> FileIssue takes an `:issue_type` argument, like this:
+> ```ruby
+>   FileIssue.qsa_id_prefixed(row[:qsa_id], :issue_type => 'PHYSICAL')
+> ```
+> You won't often have to use this. If you have a FileIssue object, you can
+> safely use the regualr call (because the object knows its `issue_type`) like
+> this: `my_file_issue.qsa_id_prefixed`. The exception is where you are dealing
+> with rows from the database directly say, in which case you won't have an
+> object handy.
+
+QSA Ids are rendered consistently throughout the UI (in a rounded pale yellow
+box). This is achieved via calls to a helper method in the erb templates like
+this:
+
+```erb
+  <%= QSAIdHelper.id(item['qsa_id_prefixed']) %>
+  <%= QSAIdHelper.id(item['qsa_id_prefixed'], :link => true) %>
+```
+
+The second example shows the optional `:link` argument. If this is set to `true`
+then the id will be rendered with a `>` that, when clicked, takes the user to
+the record.
 
 
 ### Agency Registration
