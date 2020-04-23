@@ -23,17 +23,17 @@ to use it.__
 Many features are implemented in this plugin. Here is a brief summary of the
 highlights:
 
-  - Record / Representation conceptual model
-  - Restricted Access Period workflows and controls
-  - Assessment / Conservation Request and Treatment workflows
+  - Record / representation conceptual model
+  - Restricted access period workflows and controls
+  - Assessment / conservation request and treatment workflows
   - Agency registration workflows
   - Approval workflows
-  - Functional and Storage movement controls and histories
-  - Chargeable services and items, quote generation
+  - Functional and storage movement controls and histories
+  - Chargeable services and items, and quote generation
   - Batches and batch actions
-  - QSA Ids
+  - QSA ids
   - Item use tracking and reporting
-  - Significant Item tracking and reporting
+  - Significant item tracking and reporting
   - Bulk ingest and update via speadsheet import
   - Reports
   - CSV exports
