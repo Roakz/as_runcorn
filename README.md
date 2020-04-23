@@ -20,18 +20,18 @@ to use it.__
 
 ## Overview
 
-Many features are implemented in this plugin. Here is a brief summary of the
-highlights:
+Many [features](#features) are implemented in this plugin. Here is a brief
+summary of the highlights:
 
-  - Record / representation conceptual model
-  - Restricted access period workflows and controls
+  - [Record / representation conceptual model](#records-and-representations)
+  - [Restricted access period workflows and controls](#restricted-access-periods-raps)
+  - [QSA ids](#qsa-ids)
+  - [Agency registration workflows](#agency-registration)
+  - [Batches and batch actions](#batches-and-batch-actions)
   - Assessment / conservation request and treatment workflows
-  - Agency registration workflows
   - Approval workflows
   - Functional and storage movement controls and histories
   - Chargeable services and items, and quote generation
-  - [Batches and batch actions](#batches-and-batch-actions)
-  - QSA ids
   - Item use tracking and reporting
   - Significant item tracking and reporting
   - Bulk ingest and update via speadsheet import
