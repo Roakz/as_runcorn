@@ -1,8 +1,8 @@
 module ControllingAgencyPublication
 
   # The publish value of the agency affects any records controlled by the
-  # agency, such that when unpublishing the agency, we need ensure those records
-  # are reindexed and removed from the public application
+  # agency, such that when unpublishing the agency we need ensure those records
+  # are reindexed and subsequently deleted removed from the public index
   def update_from_json(json, opts = {}, apply_nested_records = true)
     unpublishing_the_agency = (self.publish == 1 && !json['publish'])
 
@@ -20,12 +20,13 @@ module ControllingAgencyPublication
 
     DB.open do |db|
       resource_ids = db[:series_system_rlshp]
-        .join(:resource, Sequel.qualify(:resource, :id) => Sequel.qualify(:series_system_rlshp, :resource_id_0))
-        .filter(Sequel.qualify(:series_system_rlshp, :jsonmodel_type) => 'series_system_agent_record_ownership_relationship')
-        .filter(Sequel.qualify(:series_system_rlshp, :end_date) => nil)
-        .filter(Sequel.qualify(:series_system_rlshp, :agent_corporate_entity_id_0) => self.id)
-        .filter(Sequel.qualify(:resource, :publish) => 1)
-        .select(Sequel.qualify(:resource, :id))
+                       .join(:resource, Sequel.qualify(:resource, :id) => Sequel.qualify(:series_system_rlshp, :resource_id_0))
+                       .filter(Sequel.qualify(:series_system_rlshp, :jsonmodel_type) => 'series_system_agent_record_ownership_relationship')
+                       .filter(Sequel.qualify(:series_system_rlshp, :end_date) => nil)
+                       .filter(Sequel.qualify(:series_system_rlshp, :agent_corporate_entity_id_0) => self.id)
+                       .filter(Sequel.qualify(:resource, :publish) => 1)
+                       .select(Sequel.qualify(:resource, :id))
+                       .map{|row| row[:id]}
 
       db[:resource]
         .filter(:id => resource_ids)
