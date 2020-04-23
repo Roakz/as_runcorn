@@ -11,6 +11,8 @@ module ControllingAgencyPublication
     if unpublishing_the_agency
       reindex_published_controlled_records
     end
+
+    result
   end
 
   private
