@@ -232,7 +232,6 @@ FIXME: write the important ones of these
   - Assessment / conservation request and treatment workflows
   - Functional and storage movement controls and histories
   - Chargeable services and items, and quote generation
-  - Batches and batch actions
   - Item use tracking and reporting
   - Significant item tracking and reporting
   - Bulk ingest and update via speadsheet import
@@ -352,7 +351,7 @@ files:
 >   FileIssue.qsa_id_prefixed(row[:qsa_id], :issue_type => 'PHYSICAL')
 > ```
 > You won't often have to use this. If you have a FileIssue object, you can
-> safely use the regualr call (because the object knows its `issue_type`) like
+> safely use the regular call (because the object knows its `issue_type`) like
 > this: `my_file_issue.qsa_id_prefixed`. The exception is where you are dealing
 > with rows from the database directly say, in which case you won't have an
 > object handy.
@@ -394,3 +393,97 @@ the system menu:
 ```
     System > Agency Registrations
 ```
+
+### Batches and Batch Actions
+
+Batches are arbitrary groupings of objects. They can be created from a search
+results screen or from the following browse screens:
+
+```
+  Create > Batch
+  Browse > Items
+  Browse > Representations
+  Browse > Batches
+```
+
+Once a batch has been created and had objects assigned, it can have actions
+added. Batch actions are predefined bulk updates that are applied to all of the
+objects in a batch. Once added to a batch they can be tested using the `Dry Run`
+feature. This will run the action in a database transaction that is immediately
+rolled back, after recording the results of the action.
+
+When the action is run a report of the outcome will be saved in the action under
+the `Report` section. The batch can now have another action added and then run,
+and so on.
+
+Batch actions run synchronously, that is the page won't reload until the action
+is complete. We have endeavoured to make sure the actions run quickly, but some
+action types (eg Attach RAP) might take a while to respond on large batches.
+
+Once a batch has attached actions it can no longer have objects added or
+removed. This is to ensure that the history of the batch remains valid.
+
+It is also possible to download a CSV file for a batch.
+
+
+#### Implementation notes
+
+Batch actions are defined in handler classes. These can be found in:
+
+```
+  backend/lib/batch_action_handlers
+```
+
+A handler class registers one or more action types it will handle in statements
+like this:
+
+```ruby
+  register(:functional_move,
+           'Create a movement to a new functional location.',
+           [:top_container, :physical_representation],
+           :update_resource_record)
+```
+
+The arguments to `#register` are:
+
+  - A symbol containing the name of the action type
+  - A string containing a description of the action type
+  - An array containing the object types that the action supports
+  - A symbol containing the name of the permission required approve the action
+
+In addition to registering for action types, a `batch_action_handler` must
+implement a few methods as follows:
+
+```ruby
+  # mandatory
+  self.default_params
+  self.validate_params(params)
+  self.perform_action(params, user, action_uri, uris)
+
+  # optiional
+  self.process_form_params(params)
+```
+
+See the current handlers for examples of how to implement. If you are adding a
+new action type you will have to, in addition to creating a handler, add an
+action parameter template form named after the action type. For the example
+above the template is:
+
+```
+  frontend/views/batches/action_param_templates/_functional_move.html.erb
+```
+
+You will also have to add translations to `frontend/locales/en.yml`, like this:
+
+```yaml
+  batch_action_types:
+    functional_move:
+      label: Functional Move
+      location: Functional location
+```
+
+This will need an entry for `label` and one for each named parameter that the
+action accepts.
+
+Future work on batches may include support for running actions as Background
+Jobs. This is entirely doable but wasn't done as part of the initial release.
