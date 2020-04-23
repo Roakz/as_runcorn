@@ -226,18 +226,116 @@ Example:
 ```
 
 
-## Functions
+## Features
+
+FIXME: write the important ones of these
+  - Assessment / conservation request and treatment workflows
+  - Functional and storage movement controls and histories
+  - Chargeable services and items, and quote generation
+  - Batches and batch actions
+  - Item use tracking and reporting
+  - Significant item tracking and reporting
+  - Bulk ingest and update via speadsheet import
+  - Reports
+  - CSV exports
+  - Support for file storage on Amazon S3
+  - Home page notifications
+  - Form customizations
+
+
+### Records and Representations
+
+This is a significant change to the core ArchivesSpace datamodel. The goal was
+to give much more emphasis to the relationship between the intellectual entity,
+the _record_ and its various manifestations, its _representations_, and to
+attach rich data and functionality to the representations.
+
+The ArchivesSpace model:
+```
+  # physical
+  resource > archival_object > instance > sub_container > top_container
+  # digital
+  resource > archival_object > instance > digital_object
+```
+
+The runcorn model:
+```
+  # physical
+  resource > archival_object > physical_representation > top_container
+  # digital
+  resource > archival_object > digital_representation
+```
+
+Note that in the UI `resource` is labeled __Series__ and `archival_object` is
+labeled __Item__.
+
+Many of the other changes made in this plugin and others in the suite apply to
+representations. And many of the complications, and implementation challenges,
+arise from the inheritance rules between series, items and representations.
+
+
+### Restricted Access Periods (RAPs)
+
+FIXME: write this!
+
+
+### QSA Ids
+
+Most of the major record types have a QSA Id. This is a legacy identifier scheme
+that replaces the various identifiers that ArchivesSpace has.
+
+A QSA Id consists of a prefix (unique for each model) and a sequence number.
+Records migrated from the legacy system bring their QSA Id with them. Some
+models are new (they weren't represented in the legacy system). These models
+just use their database id for the sequence number portion of the id.
+
+QSA Ids are rendered consistently throughout the UI (in a rounded pale yellow
+box).
+
+Models are registered for QSA Ids in `common/qsa_id_registrations.rb`. The
+registrations are defined in `common` because they need to be loaded in the
+backend, frontend and indexer. You will see `require_relative` statements
+in the `plugin_init.rb` of each of those components. Note that other plugins in
+the suite also register models that they define.
+
+Some example registrations:
+```ruby
+  QSAId.register(:resource, :existing_id_field => :id_0, :prefix => 'S')
+  QSAId.register(:function, :prefix => 'F')
+  QSAId.register(:assessment, :prefix => 'AS', :use_database_id => true)
+```
+
+The first argument to a register call must be a symbol that is the name of a
+JSONModel. The call must specify a `:prefix` argument. The convention is that
+this is a 1 to 3 character value in all caps, but it can be any valid string.
+
+There are two optional arguments:
+
+  - `:existing_id_field` Specifies the name of an ArcihvesSpace identifier field
+                         on the model. If this is set, then the named field will
+                         be populated with the QSA Id. This is necessary for
+                         existing AS models that have mandatory identifier
+                         fields.
+  - `:use_database_id`   If set to `true` then the database id will be used
+                         instead of a separate sequence. This can be used for
+                         new model types - that is those that don't have legacy
+                         identifiers that need to be retained.
+
+For models that don't set `:use_database_id`, the identifers will be minted from
+an ArchivesSpace sequence named `QSA_ID_{model}`, for example the sequence for
+resources is `QSA_ID_RESOURCE`.
+
 
 ### Agency Registration
 
-When Agencies (Agent Corporate Entities) are created they have a 'draft' status.
+When Agencies (Agent Corporate Entities) are created they have a `draft` status.
 
 Draft agencies cannot be published. When the draft agency is ready for
-registration (and potential publication), the user can 'submit' the draft for
+registration (and potential publication), the user can `submit` the draft for
 approval using the green toolbar dropdown (only visible in read only mode).
 
-Submitted agencies cannot be edited, but they can be 'withdrawn' for further
-work, before being 'submitted' once again.
+Submitted agencies cannot be edited, but they can be `withdrawn` for further
+work, before being `submitted` once again.
 
 A user with the `manage_agency_registration` permission (by default, members of
 a repository's `repository-managers` group) can then `approve` the submitted
