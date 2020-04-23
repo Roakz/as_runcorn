@@ -23,7 +23,25 @@ to use it.__
 Many features are implemented in this plugin. Here is a brief summary of the
 highlights:
 
-  - things
+  - Record / Representation conceptual model
+  - Restricted Access Period workflows and controls
+  - Assessment / Conservation Request and Treatment workflows
+  - Agency registration workflows
+  - Approval workflows
+  - Functional and Storage movement controls and histories
+  - Chargeable services and items, quote generation
+  - Batches and batch actions
+  - QSA Ids
+  - Item use tracking and reporting
+  - Significant Item tracking and reporting
+  - Bulk ingest and update via speadsheet import
+  - Reports
+  - CSV exports
+  - Support for file storage on Amazon S3
+  - Home page notifications
+  - Form customizations
+
+Some of these are discussed further below.
 
 
 ## Installation
