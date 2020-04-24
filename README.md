@@ -28,9 +28,9 @@ summary of the highlights:
   - [QSA ids](#qsa-ids)
   - [Agency registration workflows](#agency-registration)
   - [Batches and batch actions](#batches-and-batch-actions)
+  - [Functional and storage movement controls and histories](#movements)
   - Assessment / conservation request and treatment workflows
   - Approval workflows
-  - Functional and storage movement controls and histories
   - Chargeable services and items, and quote generation
   - Item use tracking and reporting
   - Significant item tracking and reporting
@@ -487,5 +487,110 @@ action accepts.
 
 Future work on batches may include support for running actions as Background
 Jobs. This is entirely doable but wasn't done as part of the initial release.
+
+
+### Movements
+
+The standard ArchivesSpace mechanisms for tracking the location of containers
+has been replaced by movements in this plugin. A `movement` is a nested
+subrecord on `top_container` and `physical_representation`. The location of a
+`top_container` or `physical_representation` is set automatical based on its
+most recent `movement`.
+
+There are two kinds of `movement`. A storage move represents a movement to a new
+storage location. A functional move represents a move to a new functional
+location. When a model mixes in the `movements` mixin it can explicitly allow
+storage moves - see below. Without this declaration, objects using the mixin
+will only be permitted to move have functional moves.
+
+```ruby
+  # top_containers allow storage moves
+  # so in backend/model/top_container.rb:
+  include Movements
+  move_to_storage_permitted
+
+  # physical_representations do not allow storage moves
+  # so in backend/model/physical_representation.rb:
+  include Movements
+```
+
+A storage move `movement` record looks like this (with the system fields
+removed):
+
+```json
+  {
+    "context_uri": "/repositories/2/batch_actions/317",
+    "move_date": "2020-02-06",
+    "user":
+    {
+      "ref": "/agents/people/6"
+    },
+    "move_context":
+    {
+      "ref": "/repositories/2/batch_actions/317"
+    },
+    "storage_location":
+    {
+      "ref": "/locations/34"
+    },
+    "move_to_storage_permitted": true
+  }
+```
+
+And a functional move looks like this:
+```json
+  {
+    "context_uri": "/transfers/197",
+    "move_date": "2020-03-04",
+    "functional_location": "HOME",
+    "user":
+      {
+        "ref": "/agents/people/5"
+      },
+    "move_context":
+      {
+        "ref": "/transfers/197"
+      },
+    "move_to_storage_permitted": false
+  }
+```
+
+Every `movement` must have a `move_date`, `user` and either a `storage_location`
+or a `functional_location`. It can optionally have a `move_context`. the other
+two fields (`context_uri` and `move_to_storage_permitted` are set by the
+system).
+
+The `move_context` is a ref to an object that was the reason for the move. Only
+some models can be refered to in a `move_context`. By default `assessment` and
+`batch_action`). If another plugin wants to add to that list (because it
+introduces new models that it wants to be `move_context`s then it makes calls to
+the `MovementContextManager`, defined in `common/movement_context_manager.rb`.
+For example in `as_cartography` in the `plugin_init.rb` files there are lines
+like this:
+```ruby
+  # add new movement context models
+  require_relative '../common/movement_contexts'
+
+```
+Which load `common/movement_contexts`, which looks like this:
+
+```ruby
+  MovementContextManager.add(:file_issue)
+  MovementContextManager.add(:transfer)
+  MovementContextManager.add(:agency_reading_room_request)
+```
+
+So now those models can be used in `move_context`.
+
+Movements can be added to an object by simply adding them to its json and
+calling `#update_from_json`. Alternatively, the movements mixin gives the
+objects a `#move` method that takes care of some additional business logic
+do to with replacing or removing moves associated with a context.
+
+The location fields, `current_location` for functional locations and
+`container_locations` for storage locations, are set automatically on
+`#create_from_json` and `#update_from_json` based on the most recent functional
+and storage move respectively. See `#set_locations_to_last_moves!(json)` in the
+movements mixin `backend/model/mixins/movements.rb`.
 
 
