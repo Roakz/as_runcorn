@@ -90,7 +90,6 @@ class IndexerCommon
         top_container_indicator = record['record'].dig('container', '_resolved', 'indicator')
         doc['top_container_identifier_u_ssort'] = SearchUtils.pad_top_container_identifier(top_container_indicator)
 
-
         doc['top_container_title_u_sstr'] = record.dig('record', 'container', '_resolved', 'display_string')
         doc['top_container_location_u_sstr'] = record.dig('record', 'container', '_resolved', 'current_location')
 
@@ -100,6 +99,7 @@ class IndexerCommon
 
         if home_location
           doc['top_container_home_location_u_sstr'] = home_location['_resolved']['title']
+          doc['top_container_home_location_uri_u_sstr'] = home_location['ref']
         end
 
         doc['representation_format_u_sstr'] = record.dig('record', 'format')
@@ -213,6 +213,10 @@ class IndexerCommon
 
     indexer.add_document_prepare_hook {|doc, record|
       if doc['primary_type'] == 'chargeable_item'
+        doc['title'] = record['record']['name']
+      end
+
+      if doc['primary_type'] == 'chargeable_service'
         doc['title'] = record['record']['name']
       end
     }
@@ -459,6 +463,12 @@ class IndexerCommon
         doc['series_summary_qsa_id_u_sort'] = record['record']['series_summary']['qsa_id'].to_s.rjust(9, '0')
         doc['series_summary_qsa_id_u_ssort'] = record['record']['series_summary']['qsa_id_prefixed']
         doc['series_summary_title_u_ssort'] = record['record']['series_summary']['title']
+      end
+    end
+
+    indexer.add_document_prepare_hook do |doc, record|
+      if record['record'].has_key?('publish')
+        doc['publish'] = !!record['record']['publish']
       end
     end
   end

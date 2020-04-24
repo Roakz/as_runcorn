@@ -117,7 +117,7 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
                 :issue_type)
         .map do |row|
         within_sets[row[:aspace_record_id].to_i] ||= []
-        within_sets[row[:aspace_record_id].to_i] << "%s%s%s" % [QSAId.prefix_for(FileIssue), row[:issue_type][0].upcase, row[:file_issue_qsa_id]]
+        within_sets[row[:aspace_record_id].to_i] << FileIssue.qsa_id_prefixed(row[:file_issue_qsa_id], :issue_type => row[:issue_type])
       end
     end
 
@@ -125,6 +125,9 @@ class PhysicalRepresentation < Sequel::Model(:physical_representation)
     responsible_agencies = ControlledRecord::ResponsibleAgencyCalculator.build_agency_control_map(controlling_records_objs)
     responsible_agencies = responsible_agencies.map {|obj, info| [obj.id, info]}.to_h
     recent_responsible_agencies = ControlledRecord::ResponsibleAgencyCalculator.build_recent_agency_control_map(controlling_records_objs)
+
+    # Least important to most important
+    significance_levels = BackendEnumSource.values_for('runcorn_significance')
 
     objs.zip(jsons).each do |obj, json|
       json['existing_ref'] = obj.uri

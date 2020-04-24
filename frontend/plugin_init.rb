@@ -5,6 +5,9 @@ require_relative 'helpers/qsa_id_helper'
 require_relative 'helpers/significance_helper'
 require_relative 'helpers/field_helper'
 
+# Force this to false as we never wanna see those buttons
+AppConfig[:show_view_published] = false
+
 Rails.application.config.after_initialize do
 
   # Override #checkbox to to ensure users without the 'manage_publication'
@@ -332,6 +335,7 @@ Rails.application.config.after_initialize do
       @display_identifier = false
       @context_column_header = false
       @no_title = true
+      @show_multiselect_column = params[:linker] ? false : true
 
       add_column('ID',
          proc { |record|
@@ -475,6 +479,9 @@ Rails.application.config.after_initialize do
             @no_title = true
             @show_multiselect_column = params[:linker] ? false : true
 
+            # reset the sort colummns
+            @search_data.sort_fields.clear
+
             skipped_columns = SKIPPED_COLUMNS.fetch(controller.controller_name, [])
 
             unless skipped_columns.include?(:id)
@@ -518,7 +525,21 @@ Rails.application.config.after_initialize do
                          }, :sortable => true, :sort_by => 'publish')
             end
 
+            if controller.controller_name == 'representations'
+              add_column(I18n.t("representation.rap_expiry_date"),
+                         proc {|record|
+                           if record.fetch('rap_expiry_date_u_sstr', [])[0]
+                             (record.fetch('rap_expiry_date_u_sstr', [])[0] + (record.fetch('rap_expired_u_sbool', [])[0] ? ' (expired)' : ''))
+                           else
+                             ''
+                           end
+                         }, :sortable => true, :sort_by => 'rap_expiry_date_sort_u_ssortdate')
+           end
+
             extra_columns.concat(columns_to_append)
+
+            # add the default sort columns again
+            @search_data.sort_fields.concat(SearchResultData.BASE_SORT_FIELDS)
           end
         end
 

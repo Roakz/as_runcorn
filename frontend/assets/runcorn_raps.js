@@ -135,10 +135,12 @@
         $modal.find('form').ajaxForm({
             beforeSubmit: function() {
                 $('#confirmRAPAttachButton', $modal).prop('disabled', true);
+                $('.progress-indicator', $modal).show();
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 $modal.find('.modal-body').html(jqXHR.responseText);
                 $('#confirmRAPAttachButton', $modal).prop('disabled', false);
+                $('.progress-indicator', $modal).hide();
                 self.setupForm($modal);
             },
             success: function(html) {
@@ -164,6 +166,7 @@
                     .on('click', function() {
                         $modal.find('form').submit();
                     });
+                $('.progress-indicator', $modal).hide();
                 self.setupForm($modal);
             }
         });
@@ -202,10 +205,12 @@
         $modal.find('form').ajaxForm({
             beforeSubmit: function() {
                 $('#confirmRAPAttachButton', $modal).prop('disabled', true);
+                $('.progress-indicator', $modal).show();
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 $modal.find('.modal-body').html(jqXHR.responseText);
                 $('#confirmRAPAttachButton', $modal).prop('disabled', false);
+                $('.progress-indicator', $modal).hide();
                 self.setupForm($modal);
             },
             success: function(html) {
@@ -234,6 +239,7 @@
                     .on('click', function() {
                         $modal.find('form').submit();
                     });
+                $('.progress-indicator', $modal).hide();
                 self.setupForm($modal);
             }
         });

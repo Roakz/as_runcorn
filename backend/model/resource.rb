@@ -320,7 +320,33 @@ class Resource
     new_raps
   end
 
-  def self.rap_update_locks_and_mtimes(raps_applied)
+  RAP_FULL_SERIES_THRESHOLD = 0.75
+
+  def self.rap_update_locks_and_mtimes(raps_applied, resource_id, subtree_ao_id)
+    if subtree_ao_id.nil?
+      DB.open do |db|
+        # There's a potential fastpath here if the RAP we're updating affects
+        # most of the AOs & representations in this series.  If we're going to
+        # index everything there's no point being selective.
+
+        series_aos = db[:archival_object].filter(:root_record_id => resource_id)
+        series_physreps = db[:physical_representation].filter(:resource_id => resource_id)
+        series_digreps = db[:digital_representation].filter(:resource_id => resource_id)
+
+        if (raps_applied.length.to_f / (series_aos.count + series_physreps.count + series_digreps.count)) >= RAP_FULL_SERIES_THRESHOLD
+          # Probably faster to just index everything.
+          now = Time.now
+
+          db[:resource].filter(:id => resource_id).update(:system_mtime => now, :lock_version => Sequel.expr(1) + :lock_version)
+          db[:archival_object].filter(:root_record_id => resource_id).update(:system_mtime => now, :lock_version => Sequel.expr(1) + :lock_version)
+          db[:physical_representation].filter(:resource_id => resource_id).update(:system_mtime => now)
+          db[:digital_representation].filter(:resource_id => resource_id).update(:system_mtime => now)
+
+          return
+        end
+      end
+    end
+
     raps_applied.each_chunk(1000) do |record_model, record_ids, _rap_ids|
       record_model.update_mtime_for_ids(record_ids)
     end
@@ -454,13 +480,53 @@ class Resource
           end
 
           ps.executeBatch
+          ps.close
         end
       end
 
-      rap_update_locks_and_mtimes(record_raps_applied)
+      rap_update_locks_and_mtimes(record_raps_applied, resource_id, subtree_ao_id)
 
       updated_count
     end
+  end
+
+
+  def self.rap_affected_record_counts(resource_id, target_rap_id, subtree_ao_id = nil)
+    default_rap_id = RAP.get_default_id
+
+    result = {}
+
+    DB.open do |db|
+      start_time = Time.now
+
+      record_parents = rap_load_tree(db, resource_id, subtree_ao_id)
+      connected_raps = rap_load_connected_raps(db, resource_id)
+
+      # If the resource doesn't have a RAP, it takes the system default
+      if connected_raps.rap_for(Resource, resource_id).nil?
+        connected_raps.add(Resource, resource_id, default_rap_id)
+      end
+
+      Log.info("RAP preview: Resource: %d" % [resource_id])
+      Log.info("RAP preview: Tree size: %d" % [record_parents.length])
+      Log.info("RAP preview: Connected RAPs: %d" % [connected_raps.length])
+
+      Log.info("RAP preview: Loaded tree structure and existing RAPs in %d ms" % [((Time.now.to_f - start_time.to_f) * 1000).to_i])
+      start_time = Time.now
+
+      record_raps_applied = calculate_raps_applied(resource_id, record_parents, connected_raps)
+
+      Log.info("RAP preview: RAPs calculated in %d ms" % [((Time.now.to_f - start_time.to_f) * 1000).to_i])
+
+      record_raps_applied.delete(Resource, resource_id)
+
+      record_raps_applied.each_chunk(1000) do |record_model, record_ids, rap_ids|
+        result[record_model.my_jsonmodel.record_type] ||= {:count => 0}
+        result[record_model.my_jsonmodel.record_type][:count] += rap_ids.count {|id| id == target_rap_id}
+      end
+    end
+
+    result
   end
 
 

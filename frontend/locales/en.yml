@@ -129,6 +129,8 @@ en:
     cannot_have_a_value_if_a_functional_location_is_specified: Cannot have a value if storage location is specified
     location_must_be_specified: Property is required
     "must_be_in_range_0-100_inclusive": "Must be in the range 0-100 inclusive"
+    representation_linked_to_rap: Representation(s) cannot be deleted as linked to a RAP
+    representation_linked_to_item_use: Representation(s) cannot be deleted as linked to an Item Use record
   managed_registration:
     title: Agency Registrations
     button_label: Agency Registrations
@@ -276,6 +278,7 @@ en:
     price_dollars: Charge
     charge_quantity_unit: Unit
     button_label: Manage Chargeable Items
+    charge_category: Category
     _plural: Chargeable Items
     _singular: Chargeable Item
     _frontend:

@@ -149,6 +149,22 @@ module RepresentationControl
 
       jsons
     end
+
+    def handle_delete(ids_to_delete)
+      backlink_col = "#{self.table_name}_id".intern
+
+      DB.open do |aspacedb|
+        if aspacedb[:rap].filter(backlink_col => ids_to_delete).count > 0
+          raise JSONModel::ValidationException.new(:errors => {self.table_name.to_s.pluralize => ['representation_linked_to_rap']})
+        end
+
+        if aspacedb[:item_use].filter(backlink_col => ids_to_delete).count > 0
+          raise JSONModel::ValidationException.new(:errors => {self.table_name.to_s.pluralize => ['representation_linked_to_item_use']})
+        end
+      end
+
+      super
+    end
   end
 
 end

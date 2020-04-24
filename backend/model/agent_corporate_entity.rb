@@ -2,6 +2,7 @@ AgentCorporateEntity.prepend(ManagedRegistration)
 AgentCorporateEntity.include(ExternalIDs)
 AgentCorporateEntity.include(AgencyDeletionRules)
 AgentCorporateEntity.include(Batchable)
+AgentCorporateEntity.include(ControllingAgencyPublication)
 
 class AgentCorporateEntity
 

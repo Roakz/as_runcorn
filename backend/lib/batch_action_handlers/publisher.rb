@@ -33,12 +33,14 @@ class Publisher < BatchActionHandler
           .group_by {|parsed| parsed[:parsed].fetch(:type)}
           .each do |type, type_refs|
 
-        # spending a little time in json land to avoid messing up the RAP logic
         model = ASModel.all_models.select{|m| m.table_name == type.intern}.first
-        jsons = model.sequel_to_jsonmodel(model.filter(:id => type_refs.map {|ref| ref[:parsed].fetch(:id)})
-                                               .filter(Sequel.~(:publish => publish)).all)
 
-        all_count = jsons.length
+        objs = model.filter(:id => type_refs.map {|ref| ref[:parsed].fetch(:id)})
+          .filter(Sequel.~(:publish => publish)).all
+
+        raps = RAPsApplied::RAPApplications.new(objs)
+
+        all_count = objs.length
 
         if type_refs.length > all_count
           already[type] = type_refs.length - all_count
@@ -46,17 +48,23 @@ class Publisher < BatchActionHandler
 
         if publish == 1
           # if we're trying to publish, only publish the publishable!
-          jsons = jsons.select{|json| json['publishable']}
-          if all_count > jsons.length
-            unpublishable[type] = all_count - jsons.length
+          objs = objs.select do |obj|
+            rap_applied = raps.rap_json_for_rap_applied(obj.id)
+            rap_expiration = raps.rap_expiration_for_rap_applied(obj.id)
+
+            raps.calculate_publishable({'rap_applied' => rap_applied, 'rap_expiration' => rap_expiration})
           end
 
-          if (unapproved_jsons = jsons.select{|json| !json['archivist_approved']}).length > 0
-            unapproved.concat(unapproved_jsons.map{|json| json['qsa_id_prefixed']})
+          if all_count > objs.length
+            unpublishable[type] = all_count - objs.length
+          end
+
+          if (unapproved_objs = objs.select{|obj| obj[:archivist_approved] != 1}).length > 0
+            unapproved.concat(unapproved_objs.map{|obj| obj.qsa_id_prefixed})
           end
         end
 
-        ids = jsons.map {|json| JSONModel.parse_reference(json[:uri]).fetch(:id)}
+        ids = objs.map {|obj| obj[:id]}
 
         counts[type] = db[type.intern].filter(:id => ids)
                                       .update(:publish => publish,
@@ -75,10 +83,10 @@ class Publisher < BatchActionHandler
 
         # ... and turns out public needs the inverse
         if [:physical_representation, :digital_representation].include?(type.intern)
-          db[:archival_object].filter(:id => db[type.intern].filter(:id => ids)
-                                                            .select(:archival_object_id).all
-                                                            .map{|r| r[:archival_object_id]})
-                              .update(:system_mtime => now)
+          db[:archival_object]
+            .inner_join(type.intern, Sequel.qualify(type.intern, :archival_object_id) => Sequel.qualify(:archival_object, :id))
+            .filter(Sequel.qualify(type.intern, :id) => ids)
+            .update(Sequel.qualify(:archival_object, :system_mtime) => now)
         end
       end
     end

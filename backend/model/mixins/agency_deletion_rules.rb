@@ -15,7 +15,7 @@ module AgencyDeletionRules
     # check for MAP reference
     MAPDB.open do |map_db|
       if map_db[:agency][:aspace_agency_id => self.id]
-        raise ConflictException.new("This agent has been referenced in the MAP and cannot be removed")
+        raise ConflictException.new("This agent has been referenced in ArchivesGateway and cannot be removed")
       end
     end
 

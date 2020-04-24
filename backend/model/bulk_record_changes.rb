@@ -56,7 +56,7 @@ class BulkRecordChanges
         :transfer => {},
       }
 
-      @pending_records = []
+      @pending_records_by_row_number = {}
     end
 
     PendingRecord = Struct.new(:type, :record_hash, :row, :parent_ref)
@@ -67,15 +67,15 @@ class BulkRecordChanges
     end
 
     def add_archival_object(ao, row)
-      @pending_records << PendingRecord.new(:archival_object, ao, row, nil)
+      @pending_records_by_row_number[row.row_number] = PendingRecord.new(:archival_object, ao, row, nil)
     end
 
     def add_physical_representation(rep, row, parent_ref)
-      @pending_records << PendingRecord.new(:physical_representation, rep, row, parent_ref)
+      @pending_records_by_row_number[row.row_number] = PendingRecord.new(:physical_representation, rep, row, parent_ref)
     end
 
     def add_digital_representation(rep, row, parent_ref)
-      @pending_records << PendingRecord.new(:digital_representation, rep, row, parent_ref)
+      @pending_records_by_row_number[row.row_number] = PendingRecord.new(:digital_representation, rep, row, parent_ref)
     end
 
     def promise_for(promise_type, parent_ref, row)
@@ -92,7 +92,7 @@ class BulkRecordChanges
     end
 
     def create(job)
-      created_count = @pending_records.length
+      created_count = @pending_records_by_row_number.length
       errors = []
 
       # Pass 1: Find an AO that is ready to create and create it (along with
@@ -101,7 +101,10 @@ class BulkRecordChanges
         fulfil_promises
 
         to_create, consumed_entries = find_ao_to_create
-        @pending_records -= consumed_entries
+
+        consumed_entries.each do |entry|
+          @pending_records_by_row_number.delete(entry.row.row_number)
+        end
 
         # Like group_by(result.type) but ensuring stable ordering.
         rows_by_type = consumed_entries.reduce({}) do |result, entry|
@@ -165,7 +168,7 @@ class BulkRecordChanges
 
       # Pass 2: Find any representations that are to be created under an
       # existing AO (i.e. an AO that is not listed in this sheet)
-      grouped = @pending_records.group_by {|pending| pending.record_hash.dig(:controlling_record, 'ref')}
+      grouped = @pending_records_by_row_number.values.group_by {|pending| pending.record_hash.dig(:controlling_record, 'ref')}
 
       grouped.each do |ao_uri, representations|
         # Non-representations will be nil here, and if there are any of those
@@ -222,11 +225,13 @@ class BulkRecordChanges
         end
 
         # Mark as done
-        @pending_records -= representations
+        representations.each do |entry|
+          @pending_records_by_row_number.delete(entry.row.row_number)
+        end
       end
 
-      unless @pending_records.empty?
-        @pending_records.each do |pending|
+      unless @pending_records_by_row_number.empty?
+        @pending_records_by_row_number.values.each do |pending|
           errors << {
             sheet: CREATE_SHEET_NAME,
             row: pending.row.row_number,
@@ -244,7 +249,7 @@ class BulkRecordChanges
     end
 
     def update(job)
-      updated_count = @pending_records.length
+      updated_count = @pending_records_by_row_number.length
       errors = []
 
       # Simpler than the create case: here we'll just resolve any subjects
@@ -255,7 +260,7 @@ class BulkRecordChanges
       # one of its contained representations.  Group pending records by the AO
       # they ultimately affect.
       update_qsaid_to_ao = {}
-      @pending_records.group_by {|pending| IDRef.new(pending.row.fetch(COLUMN_UPDATE_ID)).prefix}.each do |record_type, pending_records|
+      @pending_records_by_row_number.values.group_by {|pending| IDRef.new(pending.row.fetch(COLUMN_UPDATE_ID)).prefix}.each do |record_type, pending_records|
         qsa_ids = pending_records.map {|pending| IDRef.new(pending.row.fetch(COLUMN_UPDATE_ID)).qsa_id_number}
 
         case record_type
@@ -282,7 +287,7 @@ class BulkRecordChanges
         end
       end
 
-      @pending_records.group_by {|pending| update_qsaid_to_ao.fetch(IDRef.new(pending.row.fetch(COLUMN_UPDATE_ID)))}.each do |ao_id_for_update, pending_updates|
+      @pending_records_by_row_number.values.group_by {|pending| update_qsaid_to_ao.fetch(IDRef.new(pending.row.fetch(COLUMN_UPDATE_ID)))}.each do |ao_id_for_update, pending_updates|
         ao = ArchivalObject[ao_id_for_update]
         ao_json = ArchivalObject.to_jsonmodel(ao)
 
@@ -372,11 +377,11 @@ class BulkRecordChanges
     private
 
     def find_ao_to_create
-      @pending_records.each do |pending|
+      @pending_records_by_row_number.values.each do |pending|
         if pending.type == :archival_object && pending_promise_count(pending.row) == 0
           # Make sure all of its representations (if any) are also ready.
           row_id = IDRef.new("ROW%d" % [pending.row.row_number])
-          representations = @pending_records.select {|p|
+          representations = @pending_records_by_row_number.values.select {|p|
             [:physical_representation, :digital_representation].include?(p.type) && p.parent_ref == row_id
           }
 
@@ -455,12 +460,12 @@ class BulkRecordChanges
 
         unless subject
           subject = Subject.create_from_json(JSONModel(:subject).from_hash(
-                                               source: 'local',
+                                               source: 'qsa',
                                                vocabulary: '/vocabularies/1',
                                                terms: [{
                                                          jsonmodel_type: 'term',
                                                          term: term,
-                                                         term_type: 'topical',
+                                                         term_type: 'subject',
                                                          vocabulary: '/vocabularies/1',
                                                        }]
                                              ))

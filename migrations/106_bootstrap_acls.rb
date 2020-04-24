@@ -101,7 +101,7 @@ Sequel.migration do
                                                       :registration_last_action=>nil,
                                                       :registration_last_user=>nil,
                                                       :registration_last_time=>nil,
-                                                      :qsa_id=>1,
+                                                      :qsa_id=>0,
                                                       :agency_note=>nil,
                                                       :original_registration_date=>nil}])
         self[:name_corporate_entity].multi_insert([

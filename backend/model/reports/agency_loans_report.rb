@@ -218,7 +218,7 @@ class AgencyLoansReport < RuncornReport
           file_issue_dataset(aspacedb, mapdb, 'PHYSICAL') do |row|
             y << CSV.generate_line([
                 Time.at(row[:create_time] / 1000).to_date.iso8601,
-                "%s%s%s" % [QSAId.prefix_for(FileIssue), 'P', row[:qsa_id]],
+                FileIssue.qsa_id_prefixed(row[:qsa_id], :issue_type => row[:issue_type]),
                 row[:count],
                 row[:agency_qsa_id],
                 row[:agency_name],
@@ -236,7 +236,7 @@ class AgencyLoansReport < RuncornReport
           file_issue_dataset(aspacedb, mapdb, 'DIGITAL') do |row|
             y << CSV.generate_line([
                 Time.at(row[:create_time] / 1000).to_date.iso8601,
-                "%s%s%s" % [QSAId.prefix_for(FileIssue), 'D', row[:qsa_id]],
+                FileIssue.qsa_id_prefixed(row[:issue_type], row[:qsa_id]),
                 row[:count],
                 row[:agency_qsa_id],
                 row[:agency_name],

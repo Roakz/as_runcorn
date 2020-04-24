@@ -109,6 +109,8 @@ class FileIssueInvoice
 
             quote_totals = {}
 
+            other_category_id = BackendEnumSource.id_for_value('runcorn_charge_category', 'Other')
+
             db[:service_quote_line].filter(:service_quote_id => quote_ids)
               .select(Sequel.qualify(:service_quote_line, :service_quote_id),
                       Sequel.qualify(:service_quote_line, :quantity),
@@ -116,8 +118,12 @@ class FileIssueInvoice
                       Sequel.qualify(:service_quote_line, :charge_category_id))
               .each do |quote_line|
               quote_totals[quote_line[:service_quote_id]] ||= {}
-              quote_totals[quote_line[:service_quote_id]][quote_line[:charge_category_id]] ||= 0
-              quote_totals[quote_line[:service_quote_id]][quote_line[:charge_category_id]] += quote_line[:quantity] * quote_line[:charge_per_unit_cents]
+
+              # if charge_category_id is empty, assume Other
+              charge_category_id = quote_line[:charge_category_id] || other_category_id
+
+              quote_totals[quote_line[:service_quote_id]][charge_category_id] ||= 0
+              quote_totals[quote_line[:service_quote_id]][charge_category_id] += quote_line[:quantity] * quote_line[:charge_per_unit_cents]
             end
 
             agencies.each do |aspace_agency_id, agency_locations|
@@ -125,12 +131,11 @@ class FileIssueInvoice
                 rows.each do |row|
                   report_row = {
                     'Date' => Time.at((row[:create_time] / 1000).to_i).to_date,
-                    'File Issue Request ID' => "FIR#{row[:file_issue_request_id]}",
-                    'File Issue ID' => row[:issue_type] == 'PHYSICAL' ? "FIP#{row[:id]}" : "FID#{row[:id]}",
+                    'File Issue Request ID' => QSAId.prefixed_id_for(FileIssueRequest, row[:file_issue_request_id]),
+                    'File Issue ID' => FileIssue.qsa_id_prefixed(row[:qsa_id], :issue_type => row[:issue_type]),
                     'Contact' => row[:lodged_by] || '',
                     '# Files' => row[:count],
                   }
-
                   apply_line_item_subtotals!(report_row, row[:"aspace_#{row[:issue_type].downcase}_quote_id"], quote_totals)
 
                   key = AgencyLocation.new(aspace_agency_id,
@@ -255,6 +260,7 @@ class FileIssueInvoice
                                  Sequel.qualify(:file_issue, :lodged_by),
                                  Sequel.qualify(:file_issue, :create_time),
                                  Sequel.qualify(:file_issue, :issue_type),
+                                 Sequel.qualify(:file_issue, :qsa_id),
                                  Sequel.as(Sequel.qualify(:file_issue_request, :id), :file_issue_request_id),
                                  Sequel.qualify(:file_issue_request, :aspace_physical_quote_id),
                                  Sequel.qualify(:file_issue_request, :aspace_digital_quote_id))

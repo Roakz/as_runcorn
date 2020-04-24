@@ -5,10 +5,17 @@ module QSAIdPrefixer
   end
 
   def qsa_id_prefixed
-    QSAId.prefixed_id_for(self.class, self.qsa_id)
+    self.class.qsa_id_prefixed(self.qsa_id)
   end
 
   module ClassMethods
+    # Subclasses may wish to override this and the instance method
+    # and use opts to customise how they build their prefixed qsa_ids
+    # based on properties of the instance ... looking at you FileIssues
+    def qsa_id_prefixed(qsa_id, opts = {})
+      QSAId.prefixed_id_for(self, qsa_id)
+    end
+
     def sequel_to_jsonmodel(objs, opts = {})
       jsons = super
 

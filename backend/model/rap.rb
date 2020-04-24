@@ -250,7 +250,8 @@ class RAP < Sequel::Model(:rap)
             .filter(Sequel.qualify(:archival_object, :publish) => 1)
             .filter(Sequel.qualify(:rap_applied, :is_active) => 1)
             .filter(Sequel.qualify(:rap, :id) => rap_id)
-            .filter(Sequel.~(Sequel.qualify(:rap, :years) => 0))
+            .filter(Sequel.|(Sequel.qualify(:rap, :years) > 0,
+                             Sequel.qualify(:rap, :years) => nil))
             .filter(Sequel.qualify(:rap, :open_access_metadata) => 0)
             .where {
           Sequel.|({ Sequel.qualify(:date, :end) => nil },
@@ -333,6 +334,31 @@ class RAP < Sequel::Model(:rap)
     end
   end
 
+  def self.rap_needs_propagate_for(obj)
+    if obj.is_a?(ArchivalObject)
+      Resource.rap_needs_propagate(obj.root_record_id)
+    elsif obj.is_a?(Resource)
+      Resource.rap_needs_propagate(obj.id)
+    else
+      # Representations
+      ao = ArchivalObject[obj.archival_object_id]
+      Resource.rap_needs_propagate(ao.root_record_id, obj.archival_object_id)
+    end
+  end
+
+  def self.attach_raps(model_class, ids, rap)
+    RAP.filter(:"#{model_class.table_name}_id" => ids).update(RAPs.supported_models.map {|model| [:"#{model.table_name}_id", nil]}.to_h)
+
+    model_class.filter(:id => ids).each do |obj|
+      RAP.create_from_json(JSONModel(:rap).from_hash(rap), {:"#{obj.class.table_name}_id" => obj.id})
+      obj.mark_as_system_modified
+
+      RAP.rap_needs_propagate_for(obj)
+
+      force_unpublish_for_restricted(model_class, obj.id)
+    end
+  end
+
   def self.attach_rap(model_class, id, rap)
     obj = model_class.get_or_die(id)
     json = model_class.to_jsonmodel(obj)
@@ -365,30 +391,12 @@ class RAP < Sequel::Model(:rap)
                           ArchivalObject[parsed[:id]].root_record_id
                         end
 
-          Resource.propagate_raps!(resource_id, parsed[:type] == 'archival_object' ? parsed[:id] : nil)
-
-          db[:rap_applied]
-            .filter(:rap_id => dummy_rap.id)
-            .filter(:is_active => 1)
-            .each do |row|
-            if row[:archival_object_id]
-              result[:archival_object] ||= {}
-              result[:archival_object][:count] ||= 0
-              result[:archival_object][:count] += 1
-            elsif row[:digital_representation_id]
-              result[:digital_representation] ||= {}
-              result[:digital_representation][:count] ||= 0
-              result[:digital_representation][:count] += 1
-            elsif row[:physical_representation_id]
-              result[:physical_representation] ||= {}
-              result[:physical_representation][:count] ||= 0
-              result[:physical_representation][:count] += 1
-            end
-          end
+          result = Resource.rap_affected_record_counts(resource_id,
+                                              dummy_rap.id,
+                                              parsed[:type] == 'archival_object' ? parsed[:id] : nil)
         rescue
           Log.exception($!)
         ensure
-          p result.inspect
           raise Sequel::Rollback
         end
       end

@@ -115,7 +115,7 @@ class Batch < Sequel::Model(:batch)
       db[:batch_objects].filter(id_col => ids, :batch_id => self.id).delete
       begin
         db[:batch_objects].multi_insert(ids.map {|id| {id_col => id, :batch_id => self.id}})
-        db[:batch].filter(:id => self.id).update(:lock_version => Sequel.expr(1) + :lock_version, :system_mtime => Time.now)
+        tick_new_version
       rescue Sequel::ForeignKeyConstraintViolation
         raise RecordNotFound.new('Attempt to add a non-existent object')
       end
@@ -130,7 +130,7 @@ class Batch < Sequel::Model(:batch)
 
     DB.open do |db|
       db[:batch_objects].filter(id_col => ids, :batch_id => self.id).delete
-      db[:batch].filter(:id => self.id).update(:lock_version => Sequel.expr(1) + :lock_version, :system_mtime => Time.now)
+      tick_new_version
     end
   end
 
@@ -138,7 +138,7 @@ class Batch < Sequel::Model(:batch)
   def remove_all_objects
     DB.open do |db|
       db[:batch_objects].filter(:batch_id => self.id).delete
-      db[:batch].filter(:id => self.id).update(:lock_version => Sequel.expr(1) + :lock_version, :system_mtime => Time.now)
+      tick_new_version
     end
   end
 
@@ -317,7 +317,11 @@ class Batch < Sequel::Model(:batch)
       raise InvalidAction.new('No current action to delete.')
     end
 
-    BatchAction[action.id].delete
+    deleted_action = BatchAction[action.id].delete
+
+    tick_new_version
+
+    deleted_action
   end
 
 
@@ -346,7 +350,11 @@ class Batch < Sequel::Model(:batch)
       :batch => {:ref => self.uri}
     }
 
-    BatchAction.create_from_json(JSONModel(:batch_action).from_hash(json))
+    added_action = BatchAction.create_from_json(JSONModel(:batch_action).from_hash(json))
+
+    tick_new_version
+
+    added_action
   end
 
 
@@ -372,7 +380,11 @@ class Batch < Sequel::Model(:batch)
 
     action['action_status'] = status
 
-    BatchAction.get_or_die(JSONModel.parse_reference(action['uri'])[:id]).update_from_json(action)
+    completed_action = BatchAction.get_or_die(JSONModel.parse_reference(action['uri'])[:id]).update_from_json(action)
+
+    tick_new_version
+
+    completed_action
   end
 
 
@@ -410,7 +422,11 @@ class Batch < Sequel::Model(:batch)
       end
     end
 
-    BatchAction.get_or_die(JSONModel.parse_reference(action['uri'])[:id]).update_from_json(action, :last_report => report)
+    completed_action = BatchAction.get_or_die(JSONModel.parse_reference(action['uri'])[:id]).update_from_json(action, :last_report => report[0..32767])
+
+    tick_new_version
+
+    completed_action
   end
 
 
@@ -477,5 +493,12 @@ class Batch < Sequel::Model(:batch)
     end
 
     super
+  end
+
+  def tick_new_version
+    DB.open do |db|
+      now = Time.now
+      db[:batch].filter(:id => self.id).update(:lock_version => Sequel.expr(1) + :lock_version, :system_mtime => now, :user_mtime => now)
+    end
   end
 end
