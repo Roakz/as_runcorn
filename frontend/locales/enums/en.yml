@@ -115,6 +115,7 @@ en:
       REF: "Refused s.18(3)(c)"
       TEM: "Temporary"
     runcorn_location:
+      N/A: "N/A"
       COND: "Conditioning Room"
       CONS: "Conservation"
       CPH: "CPH Room"
